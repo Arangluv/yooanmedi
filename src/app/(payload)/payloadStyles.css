@@ -1,0 +1,52 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Support Payload’s dark mode toggle by adding a custom variant */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+.table {
+  @apply w-full;
+}
+
+/* 페이지 블럭 추가 방지 -> 이렇게 하면 괜찮은가? */
+/* .blocks-field__drawer-toggler {
+  @apply hidden;
+} */
+
+.pill {
+  @apply bg-blue-500 rounded-full;
+}
+
+.pill__label {
+  @apply text-white font-medium;
+}
+
+.blocks-field__block-number {
+  @apply text-white bg-zinc-600 rounded-full flex w-8 h-8 items-center justify-center;
+}
+
+.render-fields :is(.collapsible__content):first-of-type {
+  /* 원하는 스타일 */
+  @apply bg-zinc-50 dark:bg-zinc-900;
+}
+
+.render-fields .collapsible__content .collapsible__content {
+  /* 중첩된 것들 */
+  /* @apply bg-green-400; */
+  @apply bg-zinc-100 dark:bg-zinc-900;
+}
+
+.field-description {
+  @apply whitespace-pre-line;
+}
+
+/* 메뉴관리 -> Add Label, Remove Label 숨기기 */
+
+/* .home-navbar-setting .array-field__add-row {
+  display: none;
+}
+
+.home-navbar-setting .array-actions__remove {
+  display: none;
+} */
