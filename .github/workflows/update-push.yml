@@ -1,0 +1,76 @@
+name: Update and Push to Customer Repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      github_username:
+        description: '고객 GitHub 유저명(ex. testuser-dot)'
+        required: true
+        type: string
+      email:
+        description: '고객 이메일 (커밋에 사용)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare filtered build
+        run: |
+          set -e
+          TEMPLATE="${{ github.event.inputs.template }}"
+          echo "선택된 템플릿: $TEMPLATE"
+
+          rm -rf filtered-build
+          mkdir -p filtered-build
+
+          # 루트 파일 복사 (apps 제외)
+          rsync -av --progress \
+            --exclude .git \
+            --exclude screen_shot \
+            --exclude '.env*' \
+            --exclude '.vscode' \
+            --exclude 'node_modules' \
+            --exclude 'apps' \
+            . filtered-build/
+
+
+          # 클라이언트용 Supabase awake 워크플로우 복사 (선택)
+          # if [ -f ".github/workflows/client-supabase-awake.yml" ]; then
+          #   mkdir -p filtered-build/.github/workflows
+          #   rsync -av ".github/workflows/client-supabase-awake.yml" "filtered-build/.github/workflows/"
+          # fi
+
+          echo "✅ filtered-build 준비 완료"
+          find filtered-build -maxdepth 3 -type f -print || true
+
+      - name: Push to customer repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.GIT_TOKEN }}
+        with:
+          source-directory: 'filtered-build'
+          destination-github-username: ${{ github.event.inputs.github_username }}
+          destination-repository-name: 'classyweb-repo'
+          user-name: ${{ github.event.inputs.github_username }}
+          user-email: ${{ github.event.inputs.email }}
+          commit-message: '🚀 deploy to customer repo'
+          target-branch: main
+
+      - name: Done
+        run: |
+          echo "🎉 첫 구매 배포 완료!"
+          echo "고객 레포: https://github.com/${{ github.event.inputs.github_username }}/classyweb-repo"
+          echo "템플릿: ${{ github.event.inputs.template }}"
