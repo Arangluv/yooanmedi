@@ -4,13 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       github_username:
-        description: '고객 GitHub 유저명(ex. testuser-dot)'
+        description: 'GitHub Username'
         required: true
-        type: string
+        type: choice
+        options:
+          - yooanmedi-bit
       email:
-        description: '고객 이메일 (커밋에 사용)'
+        description: 'Email'
         required: true
-        type: string
+        type: choice
+        options:
+          - yooanmedi@gmail.com
 
 permissions:
   contents: read
@@ -63,7 +67,7 @@ jobs:
         with:
           source-directory: 'filtered-build'
           destination-github-username: ${{ github.event.inputs.github_username }}
-          destination-repository-name: 'classyweb-repo'
+          destination-repository-name: 'yooanmedi'
           user-name: ${{ github.event.inputs.github_username }}
           user-email: ${{ github.event.inputs.email }}
           commit-message: '🚀 deploy to customer repo'
@@ -71,6 +75,5 @@ jobs:
 
       - name: Done
         run: |
-          echo "🎉 첫 구매 배포 완료!"
-          echo "고객 레포: https://github.com/${{ github.event.inputs.github_username }}/classyweb-repo"
-          echo "템플릿: ${{ github.event.inputs.template }}"
+          echo "🎉 update and push to customer repo completed!"
+          echo "customer repo: https://github.com/${{ github.event.inputs.github_username }}/yooanmedi"
