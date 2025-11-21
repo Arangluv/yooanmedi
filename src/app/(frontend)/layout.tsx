@@ -69,7 +69,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                 }}
               />
               <Popup popup={popup} />
-              <NoticeHeader />
+              {/* <NoticeHeader /> */}
               <main className="overflow-x-hidden">{children}</main>
               <Footer />
             </LogoProvider>
