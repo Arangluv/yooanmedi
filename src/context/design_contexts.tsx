@@ -17,11 +17,11 @@ export const LogoProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 export const DesignContext = createContext({
-  design: <Concept1 />,
+  design: <Concept2 />,
   setDesign: (design: React.ReactElement) => {},
 })
 
 export const DesignProvider = ({ children }: { children: React.ReactNode }) => {
-  const [design, setDesign] = useState<React.ReactElement>(<Concept1 />)
+  const [design, setDesign] = useState<React.ReactElement>(<Concept2 />)
   return <DesignContext.Provider value={{ design, setDesign }}>{children}</DesignContext.Provider>
 }
