@@ -3,6 +3,7 @@ import MainIcon1 from '@public/main_icon_1.png'
 import MainIcon2 from '@public/main_icon_2.png'
 import MainIcon3 from '@public/main_icon_3.png'
 import MainForm from './concept2/MainForm'
+import MainBannerImage from '@public/main_banner.jpg'
 
 export default function Concept2() {
   return (
@@ -27,7 +28,9 @@ function LeftContent() {
         <p className="text-foreground-700">300개 이상의 제품을 원클릭으로 주문해보세요</p>
       </div>
       {/* Content Image */}
-      <div className="w-full aspect-square bg-neutral-200 h-[240px] mb-8"></div>
+      <div className="w-full aspect-square bg-neutral-200 h-[240px] mb-8 rounded-md overflow-hidden">
+        <Image src={MainBannerImage} alt="main banner" className="w-full h-full object-cover" />
+      </div>
       {/* Progress */}
       <div className="flex flex-col gap-4">
         <ProgressItem
