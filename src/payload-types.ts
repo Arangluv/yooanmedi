@@ -127,6 +127,10 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  /**
+   * 유저 타입을 선택해주세요
+   */
+  role?: ('admin' | 'client') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -229,6 +233,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

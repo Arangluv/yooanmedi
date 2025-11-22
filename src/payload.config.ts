@@ -25,8 +25,8 @@ export default buildConfig({
     },
     components: {
       graphics: {
-        Icon: '@/config/Logo#default',
-        Logo: '@/config/Logo#default',
+        Icon: '@/config/Logo#HomeIcon',
+        Logo: '@/config/Logo#BrandLogo',
       },
     },
   },

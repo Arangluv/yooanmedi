@@ -18,6 +18,10 @@
   @apply bg-blue-500 rounded-full;
 }
 
+a[href='/admin/forgot'] {
+  display: none !important;
+}
+
 .pill__label {
   @apply text-white font-medium;
 }

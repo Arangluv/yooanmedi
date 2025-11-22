@@ -45,7 +45,7 @@ function LeftContent() {
         </p>
       </div>
       {/* 중단 이미지 */}
-      <div className="w-full h-[360px] bg-neutral-100">
+      <div className="w-full h-[360px] bg-neutral-100 rounded-md overflow-hidden">
         <Image src={MainBannerImage} alt="main banner" className="w-full h-full object-cover" />
       </div>
       {/* 하단 프로그레스*/}

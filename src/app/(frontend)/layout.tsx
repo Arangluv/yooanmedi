@@ -24,6 +24,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
+  width: 1280,
+  userScalable: false,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
     { media: '(prefers-color-scheme: dark)', color: 'black' },
@@ -68,8 +70,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                   info: <Info className="w-4 h-4 text-brandWeek" />,
                 }}
               />
-              <Popup popup={popup} />
-              {/* <NoticeHeader /> */}
+              {/* <Popup popup={popup} /> */}
+              <NoticeHeader />
               <main className="overflow-x-hidden">{children}</main>
               <Footer />
             </LogoProvider>
