@@ -14,6 +14,7 @@ import NoticeHeader from './_components/NoticeHeader'
 import { Toaster } from 'sonner'
 import { Check, Info } from 'lucide-react'
 import Popup from './_components/Popup'
+import QueryProvider from './query-provider'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -54,28 +55,30 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="ko" className={pretendard.className}>
       <body className={clsx('min-h-screen text-foreground bg-background antialiased')}>
         <Providers>
-          <DesignProvider>
-            <LogoProvider>
-              <Toaster
-                toastOptions={{
-                  duration: 3000,
-                  classNames: {
-                    title: '!text-foreground-800 !font-medium',
-                    description: '!text-foreground-700',
-                  },
-                }}
-                position="bottom-center"
-                icons={{
-                  success: <Check className="w-4 h-4 text-brandWeek" />,
-                  info: <Info className="w-4 h-4 text-brandWeek" />,
-                }}
-              />
-              {/* <Popup popup={popup} /> */}
-              <NoticeHeader />
-              <main className="overflow-x-hidden">{children}</main>
-              <Footer />
-            </LogoProvider>
-          </DesignProvider>
+          <QueryProvider>
+            <DesignProvider>
+              <LogoProvider>
+                <Toaster
+                  toastOptions={{
+                    duration: 3000,
+                    classNames: {
+                      title: '!text-foreground-800 !font-medium',
+                      description: '!text-foreground-700',
+                    },
+                  }}
+                  position="bottom-center"
+                  icons={{
+                    success: <Check className="w-4 h-4 text-brandWeek" />,
+                    info: <Info className="w-4 h-4 text-brandWeek" />,
+                  }}
+                />
+                {/* <Popup popup={popup} /> */}
+                <NoticeHeader />
+                <main className="overflow-x-hidden">{children}</main>
+                <Footer />
+              </LogoProvider>
+            </DesignProvider>
+          </QueryProvider>
         </Providers>
       </body>
     </html>

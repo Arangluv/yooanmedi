@@ -3,7 +3,7 @@
 import { LogoContext } from '@/context/design_contexts'
 import Image from 'next/image'
 import { useContext, useState } from 'react'
-import { Form, Input } from '@heroui/react'
+import { Button, Form, Input } from '@heroui/react'
 import { Globe, Lock, User, Mail } from 'lucide-react'
 import {
   Modal,
@@ -13,11 +13,39 @@ import {
   ModalFooter,
   useDisclosure,
 } from '@heroui/react'
+import { useMutation } from '@tanstack/react-query'
+import { login } from '@/app/(frontend)/actions'
 
 export default function MainForm() {
   const { logoImage } = useContext(LogoContext)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [content, setContent] = useState<React.ReactNode>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { mutate: loginMutation } = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      login(email, password),
+    onSuccess: () => {
+      setIsLoading(false)
+      // redirect to order page
+      alert('로그인 성공 - 추후 주문페이지가 완성 시 이동합니다')
+    },
+    onError: () => {
+      setIsLoading(false)
+      setContent(<ErrorContent />)
+      onOpen()
+      // some action
+    },
+  })
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsLoading(true)
+    const formData = new FormData(e.target as HTMLFormElement)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    loginMutation({ email, password })
+  }
 
   return (
     <>
@@ -29,7 +57,7 @@ export default function MainForm() {
           </div>
         </div>
         {/* 폼 */}
-        <Form validationBehavior="native" className="flex flex-col gap-4">
+        <Form validationBehavior="native" className="flex flex-col gap-4" onSubmit={onSubmit}>
           <Input
             name="email"
             label="이메일"
@@ -39,17 +67,39 @@ export default function MainForm() {
             startContent={<Mail className="text-foreground-500 w-5 h-5" strokeWidth={1.5} />}
             classNames={{
               label: 'font-medium',
+              errorMessage: 'text-[14px]',
+            }}
+            isRequired={true}
+            validate={(value: string) => {
+              if (!value) {
+                return '이메일을 입력해주세요.'
+              }
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+              if (!emailRegex.test(value)) {
+                return '이메일 형식이 올바르지 않습니다.'
+              }
+              return true
             }}
           />
           <Input
             name="password"
             label="비밀번호"
+            type="password"
             size="md"
             placeholder="비밀번호를 입력해주세요."
+            validate={(value: string) => {
+              if (!value) {
+                return '비밀번호를 입력해주세요.'
+              }
+
+              return true
+            }}
+            isRequired={true}
             radius="sm"
             startContent={<Lock className="text-foreground-500 w-5 h-5" strokeWidth={1.5} />}
             classNames={{
               label: 'font-medium',
+              errorMessage: 'text-[14px]',
             }}
           />
           <div className="w-full flex justify-end">
@@ -67,12 +117,13 @@ export default function MainForm() {
           </div>
           <div className="h-[1px] bg-foreground-100 w-full" />
           <div className="flex flex-col gap-2 w-full">
-            <button
+            <Button
               type="submit"
-              className="w-full h-10 rounded-sm bg-brand text-white font-medium cursor-pointer hover:bg-brandWeek transition-all duration-300"
+              isLoading={isLoading}
+              className="w-full h-10 text-base rounded-sm bg-brand text-white font-medium cursor-pointer hover:bg-brandWeek transition-all duration-300"
             >
               로그인
-            </button>
+            </Button>
             <button
               type="button"
               onClick={(e) => {
@@ -120,7 +171,7 @@ export default function MainForm() {
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} radius="sm">
         <ModalContent>
           <ModalHeader>
-            <span className="text-lg font-bold text-brandWeek">알림</span>
+            <span className="text-lg font-bold">알림</span>
           </ModalHeader>
           <ModalBody>{content}</ModalBody>
           <ModalFooter></ModalFooter>
@@ -145,6 +196,16 @@ function JoinContent() {
     <div className="flex flex-col">
       <p className="text-[15px] text-foreground-700">
         <span className="text-brand">회원가입 클릭시</span> 고객에게 노출할 메세지가 들어갑니다
+      </p>
+    </div>
+  )
+}
+
+function ErrorContent() {
+  return (
+    <div className="flex flex-col">
+      <p className="text-[15px] text-foreground-700">
+        <span className="text-danger">아이디 또는 비밀번호가 일치하지 않습니다</span>
       </p>
     </div>
   )
