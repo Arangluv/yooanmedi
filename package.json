@@ -16,6 +16,7 @@
   "dependencies": {
     "@heroui/react": "^2.8.2",
     "@heroui/system": "^2.4.23",
+    "@heroui/theme": "^2.4.23",
     "@payloadcms/db-postgres": "3.51.0",
     "@payloadcms/next": "3.51.0",
     "@payloadcms/payload-cloud": "3.51.0",
@@ -45,10 +46,10 @@
   "devDependencies": {
     "@react-types/shared": "^3.32.1",
     "@tailwindcss/postcss": "4.1.11",
+    "@types/lodash": "^4.17.15",
     "@types/node": "^22.5.4",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "@types/lodash": "^4.17.15",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.4.4",
