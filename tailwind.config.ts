@@ -15,7 +15,6 @@ const config = {
       },
       colors: {
         brand: '#2656f6',
-        brandWeek: '#387afc',
       },
     },
   },
