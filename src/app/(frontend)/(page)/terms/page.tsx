@@ -15,6 +15,7 @@ export default async function TermsPage({
   if (!type || (type !== 'terms' && type !== 'privacy')) {
     return notFound()
   }
+  // test
 
   const payload = await getPayload({ config: config })
   const { content } = await payload.findGlobal({
