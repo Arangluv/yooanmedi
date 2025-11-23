@@ -185,7 +185,8 @@ function PasswordFindContent() {
   return (
     <div className="flex flex-col">
       <p className="text-[15px] text-foreground-700">
-        <span className="text-brand">비밀번호 찾기 클릭시</span> 고객에게 노출할 메세지가 들어갑니다
+        <span className="text-brandWeek">비밀번호 찾기 클릭시</span> 고객에게 노출할 메세지가
+        들어갑니다
       </p>
     </div>
   )
@@ -195,7 +196,7 @@ function JoinContent() {
   return (
     <div className="flex flex-col">
       <p className="text-[15px] text-foreground-700">
-        <span className="text-brand">회원가입 클릭시</span> 고객에게 노출할 메세지가 들어갑니다
+        <span className="text-brandWeek">회원가입 클릭시</span> 고객에게 노출할 메세지가 들어갑니다
       </p>
     </div>
   )
