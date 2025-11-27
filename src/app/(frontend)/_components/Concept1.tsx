@@ -8,14 +8,14 @@ import MainForm from './concept1/MainForm'
 
 export default function Concept1() {
   return (
-    <div className="w-full flex justify-center items-center pt-8">
-      <div className="w-full max-w-7xl h-full flex gap-8">
+    <div className="w-full flex justify-center items-center">
+      <div className="w-full max-w-7xl h-full flex gap-8 items-center">
         {/* 왼쪽 컨텐츠 */}
-        <div className="w-[75%] h-[100vh] flex items-center">
+        <div className="w-[75%] flex items-center">
           <LeftContent />
         </div>
         {/* 로그인 영역 */}
-        <div className="w-[35%] h-full flex items-center">
+        <div className="w-[35%] h-full flex items-center pt-8">
           <div
             className="w-full rounded-lg p-8"
             style={{ boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)' }}
@@ -30,12 +30,12 @@ export default function Concept1() {
 
 function LeftContent() {
   return (
-    <div className="w-full flex flex-col gap-8 relative">
-      <div className="absolute w-[400px] h-[400px] -left-[200px] -top-[200px]">
-        <Image src={BgImage} alt="background" className="w-full h-full object-cover opacity-10" />
-      </div>
+    <div className="w-full flex flex-col gap-8 relative h-[80vh] justify-center">
       {/* 제목 영역 */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 relative">
+        <div className="absolute w-[400px] h-[400px] -left-[200px] -top-[200px]">
+          <Image src={BgImage} alt="background" className="w-full h-full object-cover opacity-10" />
+        </div>
         <h1 className="flex flex-col gap-1 text-4xl">
           <span className="text-brand text-2xl">병의원 필수제품을 판매하는</span>
           <span className="font-black">유안메디팜 온라인 주문 서비스</span>
