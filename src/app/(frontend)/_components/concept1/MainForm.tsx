@@ -1,10 +1,9 @@
 'use client'
 
-import { LogoContext } from '@/context/design_contexts'
 import Image from 'next/image'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Button, Form, Input } from '@heroui/react'
-import { Globe, Lock, User, Mail } from 'lucide-react'
+import { Globe, Lock, Mail } from 'lucide-react'
 import {
   Modal,
   ModalContent,
@@ -15,9 +14,9 @@ import {
 } from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import { login } from '@/app/(frontend)/actions'
+import LogoImage from '@public/v1_logo_full.png'
 
 export default function MainForm() {
-  const { logoImage } = useContext(LogoContext)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [content, setContent] = useState<React.ReactNode>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -53,7 +52,7 @@ export default function MainForm() {
         {/* 로고 */}
         <div className="w-full flex justify-center mb-8">
           <div className="w-[210px] h-[60px]">
-            <Image src={logoImage} alt="logo" className="w-full h-full object-cover" />
+            <Image src={LogoImage} alt="logo" className="w-full h-full object-cover" />
           </div>
         </div>
         {/* 폼 */}
@@ -139,16 +138,28 @@ export default function MainForm() {
         </Form>
         {/* 하단 컨텐츠 */}
         <div className="flex flex-col gap-8 mt-12">
-          {/* service */}
-          <div className="w-full flex flex-col">
-            <span className="font-bold text-brandWeek">상담안내</span>
-            <span className="text-lg font-bold">031-893-0806</span>
-            <div className="flex flex-col gap-1 mt-2">
-              <span className="text-[13px] text-foreground-600">평일 09:00 - 18:00</span>
-              <span className="text-[13px] text-foreground-600">점심시간 12:00 - 13:00</span>
-              <span className="text-[13px] text-foreground-600">(주말 및 공휴일 휴무)</span>
+          <div className="flex gap-4">
+            {/* service */}
+            <div className="w-full flex flex-col">
+              <span className="font-bold text-brandWeek">상담안내</span>
+              <div className="flex flex-col gap-1 mt-2">
+                <span className="text-[13px] text-foreground-600">평일 09:00 - 17:00</span>
+                <span className="text-[13px] text-foreground-600">점심시간 12:00 - 13:00</span>
+                <span className="text-[13px] text-foreground-600">(주말 및 공휴일 휴무)</span>
+              </div>
+              <span className="text-[15px] font-bold mt-3">TEL : 031-893-0806</span>
+              <span className="text-[15px] font-bold mt-1">FAX : 031-893-0809</span>
+            </div>
+            {/* 배송 휴무안내*/}
+            <div className="w-full flex flex-col">
+              <span className="font-bold text-brandWeek">택배 주문마감 안내</span>
+              <div className="flex flex-col gap-1 mt-2">
+                <span className="text-[13px] text-foreground-600">평일 14:00 까지</span>
+                <span className="text-[13px] text-foreground-600">(주말 및 공휴일 휴무)</span>
+              </div>
             </div>
           </div>
+
           {/* info */}
           <div className="w-full flex flex-col gap-2 p-4 rounded-md bg-neutral-50">
             <div className="flex gap-3 flex-col">
@@ -158,10 +169,22 @@ export default function MainForm() {
                   주문관리를 위한 홈페이지입니다. 도메인을 확인해주세요
                 </span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-col">
                 <div className="w-full rounded-full flex items-center gap-1">
                   <Globe className="w-4 h-4 text-brandWeek" />
-                  <span className="text-[17px] text-brandWeek font-medium">www.yooanmedi.com</span>
+                  <span className="text-[15px] text-brandWeek font-medium">www.yooanmedi.com</span>
+                </div>
+                <div className="w-full rounded-full flex items-center gap-1">
+                  <Mail className="w-4 h-4 text-brandWeek" />
+                  <span className="text-[15px] text-brandWeek font-medium">
+                    yooanmedi@gmil.com (일반)
+                  </span>
+                </div>
+                <div className="w-full rounded-full flex items-center gap-1">
+                  <Mail className="w-4 h-4 text-brandWeek" />
+                  <span className="text-[15px] text-brandWeek font-medium">
+                    simson19@hanmail.net (세금계산서용)
+                  </span>
                 </div>
               </div>
             </div>

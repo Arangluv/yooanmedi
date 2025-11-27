@@ -1,14 +1,8 @@
-'use client'
-
 import Link from 'next/link'
-import { InfoIcon } from 'lucide-react'
 import Image from 'next/image'
-import { LogoContext } from '@/context/design_contexts'
-import { useContext } from 'react'
+import LogoImage from '@public/v1_logo_full.png'
 
 export default function Footer() {
-  const { logoImage } = useContext(LogoContext)
-
   return (
     <footer className="w-full flex items-center justify-center bg-neutral-50 py-8 mt-8">
       <div className="w-full max-w-7xl flex flex-col gap-4">
@@ -17,7 +11,7 @@ export default function Footer() {
           <div className="flex flex-col gap-2">
             <div className="w-[140px] h-[40px]">
               <Image
-                src={logoImage}
+                src={LogoImage}
                 alt="로고이미지"
                 unoptimized
                 width={140}
@@ -39,38 +33,12 @@ export default function Footer() {
           </div>
           {/* navigation 영역 */}
           {/* TODO:: 내비게이션 링크 수정해야함 */}
-          <ul className="flex gap-4 items-center">
-            <li>
-              <Link
-                href="/terms?type=terms"
-                className="text-sm text-foreground-600 hover:text-foreground-800 transition-colors duration-300"
-              >
-                <span>이용약관</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/terms?type=privacy"
-                className="text-sm text-foreground-500 hover:text-foreground-800 transition-colors duration-300"
-              >
-                <span>개인정보처리방침</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="text-sm text-foreground-500 hover:text-foreground-800 transition-colors duration-300"
-              >
-                <span>공지사항</span>
-              </Link>
-            </li>
-          </ul>
         </div>
 
         {/* footer middle */}
         <div className="w-full flex justify-between mt-6 items-end">
           {/* left 영역 */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 w-full">
             <div className="flex gap-3 text-[13px] text-foreground-600">
               <span>회사 : 유안메디팜</span>
               <span>대표 : 심광규</span>
@@ -87,12 +55,40 @@ export default function Footer() {
             <div className="flex gap-3 text-[13px] text-foreground-600">
               <span>본 사이트에 게시된 정보를 무단으로 수집되는 것을 거부합니다</span>
             </div>
-            <div className="flex gap-3 text-[13px] text-foreground-600 mt-8">
-              <span>Copyright © 유안메디. All rights reserved.</span>
+            <div className="flex items-center justify-between w-full mt-8">
+              <span className="text-[13px] text-foreground-600">
+                Copyright © 유안메디. All rights reserved.
+              </span>
+              <ul className="flex gap-4 items-center">
+                <li>
+                  <Link
+                    href="/terms?type=terms"
+                    className="text-sm text-foreground-600 hover:text-foreground-800 transition-colors duration-300"
+                  >
+                    <span>이용약관</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms?type=privacy"
+                    className="text-sm text-foreground-500 hover:text-foreground-800 transition-colors duration-300"
+                  >
+                    <span>개인정보처리방침</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/"
+                    className="text-sm text-foreground-500 hover:text-foreground-800 transition-colors duration-300"
+                  >
+                    <span>공지사항</span>
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
           {/* right 영역 */}
-          <div className="flex flex-col h-full justify-between gap-8">
+          {/* <div className="flex flex-col h-full justify-between gap-8">
             <div className="flex gap-8">
               <div className="flex flex-col gap-3">
                 <span className="text-[15px] text-foreground-700 font-bold">영업시간</span>
@@ -112,7 +108,7 @@ export default function Footer() {
                 주문택배 마감시간은 14시 이전입니다.
               </span>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

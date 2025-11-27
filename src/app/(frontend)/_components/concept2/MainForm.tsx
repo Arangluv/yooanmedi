@@ -146,8 +146,8 @@ export default function MainForm() {
               <span className="font-bold text-brand text-lg leading-none">상담안내</span>
               <div className="w-full flex justify-end text-[13px] text-foreground-500">service</div>
             </div>
-            <div className="w-[1px] h-auto bg-foreground-100"></div>
-            <div className="flex flex-col gap-2">
+            {/* <div className="w-[1px] h-auto bg-foreground-100"></div> */}
+            <div className="flex flex-col gap-2 items-end">
               <span className="text-[15px] text-foreground-600 leading-none">
                 평일 09:00 - 18:00
               </span>
@@ -159,8 +159,25 @@ export default function MainForm() {
               </span>
 
               <div className="mt-4">
-                <span className="font-bold text-brand text-lg leading-none">031-893-0806</span>
+                <span className="font-bold text-brand text-lg leading-none">TEL: 031-893-0806</span>
               </div>
+              <div className="">
+                <span className="font-bold text-brand text-lg leading-none">FAX: 031-893-0809</span>
+              </div>
+            </div>
+          </div>
+          {/* service */}
+          <div className="w-full flex gap-8 items-stretch justify-between">
+            <div className="flex flex-col">
+              <span className="font-bold text-brand text-lg leading-none">택배주문 마감안내</span>
+              <div className="w-full flex justify-end text-[13px] text-foreground-500">order</div>
+            </div>
+            {/* <div className="w-[1px] h-auto bg-foreground-100"></div> */}
+            <div className="flex flex-col gap-2 items-end">
+              <span className="text-[15px] text-foreground-600 leading-none">평일 14:00 까지</span>
+              <span className="text-[13px] text-foreground-600 leading-none">
+                (주말 및 공휴일 휴무)
+              </span>
             </div>
           </div>
           {/* info */}
@@ -172,10 +189,22 @@ export default function MainForm() {
                   주문관리를 위한 홈페이지입니다. 도메인을 확인해주세요
                 </span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-col">
                 <div className="w-full rounded-full flex items-center gap-1">
                   <Globe className="w-4 h-4 text-brandWeek" />
-                  <span className="text-[17px] text-brandWeek font-medium">www.yooanmedi.com</span>
+                  <span className="text-[15px] text-brandWeek font-medium">www.yooanmedi.com</span>
+                </div>
+                <div className="w-full rounded-full flex items-center gap-1">
+                  <Mail className="w-4 h-4 text-brandWeek" />
+                  <span className="text-[15px] text-brandWeek font-medium">
+                    yooanmedi@gmil.com (일반)
+                  </span>
+                </div>
+                <div className="w-full rounded-full flex items-center gap-1">
+                  <Mail className="w-4 h-4 text-brandWeek" />
+                  <span className="text-[15px] text-brandWeek font-medium">
+                    simson19@hanmail.net (세금계산서용)
+                  </span>
                 </div>
               </div>
             </div>

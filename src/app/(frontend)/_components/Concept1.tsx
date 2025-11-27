@@ -2,16 +2,16 @@ import Image, { StaticImageData } from 'next/image'
 import MainIcon1 from '@public/main_icon_1.png'
 import MainIcon2 from '@public/main_icon_2.png'
 import MainIcon3 from '@public/main_icon_3.png'
-import MainBannerImage from '@public/main_banner.jpg'
+import MainBannerImage from '@public/main_banner.png'
 import BgImage from '@public/v1_logo_small.png'
 import MainForm from './concept1/MainForm'
 
 export default function Concept1() {
   return (
-    <div className="w-full h-[100vh] flex justify-center items-center">
+    <div className="w-full flex justify-center items-center pt-8">
       <div className="w-full max-w-7xl h-full flex gap-8">
         {/* 왼쪽 컨텐츠 */}
-        <div className="w-[75%] h-full flex items-center">
+        <div className="w-[75%] h-[100vh] flex items-center">
           <LeftContent />
         </div>
         {/* 로그인 영역 */}
@@ -45,8 +45,8 @@ function LeftContent() {
         </p>
       </div>
       {/* 중단 이미지 */}
-      <div className="w-full h-[360px] bg-neutral-100 rounded-md overflow-hidden">
-        <Image src={MainBannerImage} alt="main banner" className="w-full h-full object-cover" />
+      <div className="w-full h-[360px] rounded-md overflow-hidden">
+        <Image src={MainBannerImage} alt="main banner" className="w-full h-full object-contain" />
       </div>
       {/* 하단 프로그레스*/}
       <div className="w-full flex gap-8">

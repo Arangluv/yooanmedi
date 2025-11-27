@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import BrandLogoImage from '@public/v3_logo_full.png'
+import BrandLogoImage from '@public/v1_logo_full.png'
 
 export function BrandLogo() {
   return (

@@ -2,17 +2,16 @@
 
 import { StaticImageData } from 'next/image'
 import { createContext, useState } from 'react'
-import V1LogoImage from '@public/v1_logo_full.png'
+import V3LogoImage from '@public/v3_logo_full.png'
 import Concept1 from '@/app/(frontend)/_components/Concept1'
-import Concept2 from '@/app/(frontend)/_components/Concept2'
 
 export const LogoContext = createContext({
-  logoImage: V1LogoImage,
+  logoImage: V3LogoImage,
   setLogoImage: (logoImage: StaticImageData) => {},
 })
 
 export const LogoProvider = ({ children }: { children: React.ReactNode }) => {
-  const [logoImage, setLogoImage] = useState(V1LogoImage)
+  const [logoImage, setLogoImage] = useState(V3LogoImage)
   return <LogoContext.Provider value={{ logoImage, setLogoImage }}>{children}</LogoContext.Provider>
 }
 
