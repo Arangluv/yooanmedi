@@ -7,8 +7,8 @@ import MainBannerImage from '@public/main_banner.jpg'
 
 export default function Concept2() {
   return (
-    <div className="w-full h-[100vh] flex justify-center items-center">
-      <div className="w-full h-full bg-neutral-50"></div>
+    <div className="w-full flex justify-center">
+      <div className="w-full h-[100vh] bg-neutral-50"></div>
       <section className="w-full max-w-6xl h-full flex-shrink-0 flex">
         <LeftContent />
         <RightContent />
@@ -20,7 +20,7 @@ export default function Concept2() {
 
 function LeftContent() {
   return (
-    <div className="w-[60%] h-full bg-neutral-50 flex flex-col justify-center px-12">
+    <div className="w-[60%] h-[100vh] bg-neutral-50 flex flex-col justify-center px-12">
       {/* Header */}
       <div className="flex flex-col gap-2 mb-8">
         <span className="text-[15px] text-brandWeek">의약외품 브랜드스토어</span>
@@ -81,7 +81,7 @@ function ProgressItem({
 
 function RightContent() {
   return (
-    <div className="w-[40%] h-full bg-white px-12 flex items-center justify-center ">
+    <div className="w-[40%] h-full bg-white py-8 px-12 flex items-center justify-center ">
       <MainForm />
     </div>
   )

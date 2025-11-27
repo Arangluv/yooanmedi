@@ -1,10 +1,9 @@
-'use client'
-
-import { DesignContext } from '@/context/design_contexts'
-import { useContext } from 'react'
+import Concept1 from './_components/Concept1'
 
 export default function HomePage() {
-  const { design } = useContext(DesignContext)
-
-  return <div className="w-full h-full">{design}</div>
+  return (
+    <div className="w-full h-full">
+      <Concept1 />
+    </div>
+  )
 }
