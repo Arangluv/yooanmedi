@@ -14,6 +14,7 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload"
   },
   "dependencies": {
+    "@heroui/checkbox": "^2.3.27",
     "@heroui/react": "^2.8.2",
     "@heroui/system": "^2.4.23",
     "@heroui/theme": "^2.4.23",
