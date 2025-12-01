@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import LogoImage from '@public/v1_logo_full.png'
+import { BrandLogo } from '@/config/Logo'
 
 export default function Footer() {
   return (
@@ -10,14 +9,7 @@ export default function Footer() {
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
             <div className="w-[140px] h-[40px]">
-              <Image
-                src={LogoImage}
-                alt="로고이미지"
-                unoptimized
-                width={140}
-                height={40}
-                className="w-full h-full object-cover"
-              />
+              <BrandLogo width={140} height={40} className="w-[140px] h-[40px]" />
             </div>
             <span className="text-[13px] text-foreground-600">
               Made by{' '}
@@ -76,39 +68,17 @@ export default function Footer() {
                     <span>개인정보처리방침</span>
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     href="/"
                     className="text-sm text-foreground-500 hover:text-foreground-800 transition-colors duration-300"
                   >
                     <span>공지사항</span>
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
-          {/* right 영역 */}
-          {/* <div className="flex flex-col h-full justify-between gap-8">
-            <div className="flex gap-8">
-              <div className="flex flex-col gap-3">
-                <span className="text-[15px] text-foreground-700 font-bold">영업시간</span>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[13px] text-foreground-600">평일 09:00 - 18:00</span>
-                  <span className="text-[13px] text-foreground-600">점심시간 12:00 - 13:00</span>
-                  <span className="text-[13px] text-foreground-600">(주말 및 공휴일 휴무)</span>
-                </div>
-              </div>
-            </div>
-            <div className="bg-neutral-100 w-[300px] p-4 rounded-md flex flex-col gap-2">
-              <div className="flex gap-2 items-center">
-                <InfoIcon className="w-4 h-4 text-brandWeek" />
-                <span className="text-[14px] text-brandWeek font-bold">공지사항</span>
-              </div>
-              <span className="text-[14px] text-foreground-600">
-                주문택배 마감시간은 14시 이전입니다.
-              </span>
-            </div>
-          </div> */}
         </div>
       </div>
     </footer>
