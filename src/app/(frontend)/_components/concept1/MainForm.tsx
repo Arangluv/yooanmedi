@@ -14,7 +14,8 @@ import {
 } from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import { login } from '@/app/(frontend)/actions'
-import LogoImage from '@public/v1_logo_full.png'
+import { BrandLogo } from '@/config/Logo'
+import Link from 'next/link'
 
 export default function MainForm() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -52,7 +53,7 @@ export default function MainForm() {
         {/* 로고 */}
         <div className="w-full flex justify-center mb-8">
           <div className="w-[210px] h-[60px]">
-            <Image src={LogoImage} alt="logo" className="w-full h-full object-cover" />
+            <BrandLogo width={210} height={60} className="w-[210px] h-[60px]" />
           </div>
         </div>
         {/* 폼 */}
@@ -123,17 +124,13 @@ export default function MainForm() {
             >
               로그인
             </Button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault()
-                setContent(<JoinContent />)
-                onOpen()
-              }}
-              className="w-full h-10 rounded-sm border-1 text-brandWeek font-medium cursor-pointer"
+            <Link
+              href="/join"
+              prefetch={false}
+              className="w-full h-10 rounded-sm border-1 text-brandWeek font-medium cursor-pointer flex items-center justify-center"
             >
               회원가입
-            </button>
+            </Link>
           </div>
         </Form>
         {/* 하단 컨텐츠 */}
@@ -210,16 +207,6 @@ function PasswordFindContent() {
       <p className="text-[15px] text-foreground-700">
         <span className="text-brandWeek">비밀번호 찾기 클릭시</span> 고객에게 노출할 메세지가
         들어갑니다
-      </p>
-    </div>
-  )
-}
-
-function JoinContent() {
-  return (
-    <div className="flex flex-col">
-      <p className="text-[15px] text-foreground-700">
-        <span className="text-brandWeek">회원가입 클릭시</span> 고객에게 노출할 메세지가 들어갑니다
       </p>
     </div>
   )

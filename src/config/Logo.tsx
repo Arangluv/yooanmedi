@@ -1,17 +1,18 @@
 import Image from 'next/image'
 import BrandLogoImage from '@public/v1_logo_full.png'
 
-export function BrandLogo() {
+export function BrandLogo({
+  width = 140,
+  height = 40,
+  className = '',
+}: {
+  width: number
+  height: number
+  className: string
+}) {
   return (
-    <div className="w-[140px] h-[40px]">
-      <Image
-        src={BrandLogoImage}
-        alt="brand logo"
-        width={140}
-        height={40}
-        unoptimized
-        className="w-full h-full object-cover"
-      />
+    <div className={className}>
+      <Image src={BrandLogoImage} alt="brand logo" width={width} height={height} unoptimized />
     </div>
   )
 }

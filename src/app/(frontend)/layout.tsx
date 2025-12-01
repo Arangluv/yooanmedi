@@ -6,11 +6,8 @@ import clsx from 'clsx'
 import { getPayload } from 'payload'
 import configPromise from '@/payload.config'
 import localFont from 'next/font/local'
-import Navbar from './_components/Navbar'
-import BannerSection from './_components/BannerSection'
 import Footer from './_components/Footer'
 import { DesignProvider, LogoProvider } from '@/context/design_contexts'
-import NoticeHeader from './_components/NoticeHeader'
 import { Toaster } from 'sonner'
 import { Check, Info } from 'lucide-react'
 import Popup from './_components/Popup'
@@ -20,8 +17,9 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata: Metadata = {
-  title: '유안메디팜 | 의약품 이커머스 플랫폼',
-  description: '의약품 전문몰 유안메디팜 주문부터 배송까지 한번에',
+  title: '유안메디팜',
+  description:
+    '의약품 전자상거래 전문업체 주사제 · 백신 · 흡입제 · 내복제 · 외용제 · 기타 · 수액제',
 }
 
 export const viewport: Viewport = {
@@ -73,7 +71,6 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                   }}
                 />
                 {/* <Popup popup={popup} /> */}
-                {/* <NoticeHeader /> */}
                 <main className="overflow-x-hidden">{children}</main>
                 <Footer />
               </LogoProvider>
