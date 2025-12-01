@@ -1,9 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import { useState } from 'react'
 import { Button, Form, Input } from '@heroui/react'
-import { Globe, Lock, Mail } from 'lucide-react'
+import { Globe, Lock, Mail, User } from 'lucide-react'
 import {
   Modal,
   ModalContent,
@@ -23,8 +22,7 @@ export default function MainForm() {
   const [isLoading, setIsLoading] = useState(false)
 
   const { mutate: loginMutation } = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      login(email, password),
+    mutationFn: ({ id, password }: { id: string; password: string }) => login(id, password),
     onSuccess: () => {
       setIsLoading(false)
       // redirect to order page
@@ -42,9 +40,9 @@ export default function MainForm() {
     e.preventDefault()
     setIsLoading(true)
     const formData = new FormData(e.target as HTMLFormElement)
-    const email = formData.get('email') as string
+    const id = formData.get('id') as string
     const password = formData.get('password') as string
-    loginMutation({ email, password })
+    loginMutation({ id, password })
   }
 
   return (
@@ -59,12 +57,12 @@ export default function MainForm() {
         {/* 폼 */}
         <Form validationBehavior="native" className="flex flex-col gap-4" onSubmit={onSubmit}>
           <Input
-            name="email"
-            label="이메일"
+            name="id"
+            label="아이디"
             size="md"
-            placeholder="이메일을 입력해주세요."
+            placeholder="아이디를 입력해주세요."
             radius="sm"
-            startContent={<Mail className="text-foreground-500 w-5 h-5" strokeWidth={1.5} />}
+            startContent={<User className="text-foreground-500 w-5 h-5" strokeWidth={1.5} />}
             classNames={{
               label: 'font-medium',
               errorMessage: 'text-[14px]',
@@ -72,11 +70,11 @@ export default function MainForm() {
             isRequired={true}
             validate={(value: string) => {
               if (!value) {
-                return '이메일을 입력해주세요.'
+                return '아이디를 입력해주세요.'
               }
-              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-              if (!emailRegex.test(value)) {
-                return '이메일 형식이 올바르지 않습니다.'
+              const idRegex = /^[a-zA-Z0-9]+$/
+              if (!idRegex.test(value)) {
+                return '아이디는 영문과 숫자로 구성되어야 합니다.'
               }
               return true
             }}

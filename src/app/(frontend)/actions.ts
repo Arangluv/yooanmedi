@@ -1,13 +1,13 @@
 'use server'
 
-export async function login(email: string, password: string) {
+export async function login(id: string, password: string) {
   try {
     const res = await fetch(process.env.SITE_URL + '/api/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ id, password }),
     })
 
     if (!res.ok) {
