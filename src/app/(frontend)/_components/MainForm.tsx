@@ -101,17 +101,13 @@ export default function MainForm() {
             }}
           />
           <div className="w-full flex justify-end">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault()
-                setContent(<PasswordFindContent />)
-                onOpen()
-              }}
+            <Link
+              href={'/find?type=id'}
+              prefetch={false}
               className="text-sm text-foreground-500 cursor-pointer hover:text-brandWeek transition-all duration-300"
             >
-              비밀번호 찾기
-            </button>
+              아이디 / 비밀번호 찾기
+            </Link>
           </div>
           <div className="h-[1px] bg-foreground-100 w-full" />
           <div className="flex flex-col gap-2 w-full">

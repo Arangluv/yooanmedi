@@ -1,20 +1,18 @@
 'use server'
 
+import { login as payloadLogin } from '@payloadcms/next/auth'
+import config from '@/payload.config'
+
 export async function login(id: string, password: string) {
   try {
-    const res = await fetch(process.env.SITE_URL + '/api/users/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id, password }),
+    const result = await payloadLogin({
+      config,
+      collection: 'users',
+      password,
+      username: id,
     })
 
-    if (!res.ok) {
-      throw new Error('로그인 실패')
-    }
-
-    return
+    return result
   } catch (error) {
     throw new Error('아이디 또는 비밀번호가 올바르지 않습니다')
   }
