@@ -14,12 +14,22 @@ import {
   useDisclosure,
 } from '@heroui/react'
 import { Checkbox } from '@heroui/checkbox'
-import { ChevronRight, Info, Upload, FileText, Image as ImageIcon, Trash } from 'lucide-react'
+import {
+  ChevronRight,
+  Info,
+  Upload,
+  FileText,
+  Image as ImageIcon,
+  Trash,
+  CheckCircle,
+} from 'lucide-react'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 import clsx from 'clsx'
 import { useMutation } from '@tanstack/react-query'
 import { join } from '../actions'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const inputProps = {
   radius: 'sm',
@@ -71,8 +81,9 @@ export default function JoinForm() {
   const { mutate: joinMutation } = useMutation({
     mutationFn: (formData: FormData) => join(formData),
     onSuccess: () => {
-      console.log('회원가입 성공')
       setIsLoading(false)
+      toast.success('회원가입이 완료되었습니다.')
+      router.push('/')
     },
     onError: (error) => {
       setModalContent({
@@ -175,6 +186,13 @@ export default function JoinForm() {
     joinMutation(formData)
   }
 
+  const router = useRouter()
+  const handleOnOpenChange = (open: boolean) => {
+    if (!open) {
+      router.push('/')
+    }
+  }
+
   return (
     <>
       <Form
@@ -200,12 +218,13 @@ export default function JoinForm() {
         />
         <Button
           type="submit"
+          isLoading={isLoading}
           className="text-base w-full h-12 bg-brand text-white rounded-md font-medium cursor-pointer hover:bg-brandWeek transition-all duration-300"
         >
           회원가입
         </Button>
       </Form>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={handleOnOpenChange}>
         <ModalContent>
           <ModalHeader>{modalContent.header}</ModalHeader>
           <ModalBody>{modalContent.content}</ModalBody>

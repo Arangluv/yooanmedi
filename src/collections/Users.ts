@@ -11,7 +11,9 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
     group: '홈페이지 설정',
   },
-  auth: true,
+  auth: {
+    loginWithUsername: true,
+  },
   access: {
     admin: ({ req }) => {
       return req.user?.role === 'admin'
@@ -39,13 +41,10 @@ export const Users: CollectionConfig = {
     },
     {
       type: 'text',
-      name: 'user_id',
+      name: 'username',
       label: '아이디',
       admin: {
         description: '아이디를 입력해주세요',
-        condition: (data, siblingData) => {
-          return siblingData.role === 'client'
-        },
       },
       required: true,
       unique: true,
@@ -90,6 +89,9 @@ export const Users: CollectionConfig = {
       label: '이메일',
       admin: {
         description: '이메일을 입력해주세요',
+        condition: (data, siblingData) => {
+          return siblingData.role === 'client'
+        },
       },
       required: true,
     },

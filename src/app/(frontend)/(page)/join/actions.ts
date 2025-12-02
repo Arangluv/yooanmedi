@@ -17,7 +17,6 @@ export async function join(formData: FormData) {
     const nursingNumber = formData.get('nursingNumber') as string
     const phoneNumber = formData.get('phoneNumber') as string
     const faxNumber = formData.get('faxNumber') as string
-    const fileList = formData.getAll('fileList') as File[]
 
     // 파일 업로드 - REST API 사용
     const uploadedFileIds: number[] = []
@@ -69,13 +68,10 @@ export async function join(formData: FormData) {
       }
     }
 
-    console.log('uploadedFileIds')
-    console.log(uploadedFileIds)
-
     const user = await payload.create({
       collection: 'users',
       data: {
-        user_id: id,
+        username: id,
         password,
         ceo,
         hospitalName,

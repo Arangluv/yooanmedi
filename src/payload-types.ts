@@ -107,20 +107,18 @@ export interface Config {
 }
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string;
-    password: string;
+    username: string;
   };
   login: {
-    email: string;
     password: string;
+    username: string;
   };
   registerFirstUser: {
-    email: string;
     password: string;
+    username: string;
   };
   unlock: {
-    email: string;
-    password: string;
+    username: string;
   };
 }
 /**
@@ -133,10 +131,6 @@ export interface User {
    * 유저 타입을 선택해주세요
    */
   role?: ('admin' | 'client') | null;
-  /**
-   * 아이디를 입력해주세요
-   */
-  user_id?: string | null;
   /**
    * 대표자명을 입력해주세요
    */
@@ -174,7 +168,11 @@ export interface User {
   /**
    * 이메일을 입력해주세요
    */
-  email: string;
+  email?: string | null;
+  /**
+   * 아이디를 입력해주세요
+   */
+  username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -297,7 +295,6 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
-  user_id?: T;
   ceo?: T;
   hospitalName?: T;
   address?: T;
@@ -309,6 +306,7 @@ export interface UsersSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   email?: T;
+  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
