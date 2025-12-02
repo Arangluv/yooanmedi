@@ -58,15 +58,12 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
               <LogoProvider>
                 <Toaster
                   toastOptions={{
-                    duration: 3000,
-                    classNames: {
-                      title: '!text-foreground-800 !font-medium',
-                      description: '!text-foreground-700',
-                    },
+                    duration: 4000,
                   }}
                   position="bottom-center"
+                  richColors
                   icons={{
-                    success: <Check className="w-4 h-4 text-brandWeek" />,
+                    success: <Check className="w-4 h-4 text-success-500" />,
                     info: <Info className="w-4 h-4 text-brandWeek" />,
                   }}
                 />
