@@ -28,9 +28,9 @@ export default function MainForm() {
       // redirect to order page
       alert('로그인 성공 - 추후 주문페이지가 완성 시 이동합니다')
     },
-    onError: () => {
+    onError: (error) => {
       setIsLoading(false)
-      setContent(<ErrorContent />)
+      setContent(<ErrorContent error={error.message as string} />)
       onOpen()
       // some action
     },
@@ -206,11 +206,11 @@ function PasswordFindContent() {
   )
 }
 
-function ErrorContent() {
+function ErrorContent({ error }: { error: string }) {
   return (
     <div className="flex flex-col">
       <p className="text-[15px] text-foreground-700">
-        <span className="text-danger">아이디 또는 비밀번호가 일치하지 않습니다</span>
+        <span className="text-danger">{error}</span>
       </p>
     </div>
   )
