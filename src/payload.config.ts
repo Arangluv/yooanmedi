@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Image } from './collections/Image'
+import { Files } from './collections/Files'
 import { PopupSetting } from './collections/PopupSetting'
 import { Terms } from './collections/Terms'
 import { PrivacyPolicy } from './collections/PrivacyPolicy'
@@ -30,7 +31,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Image],
+  collections: [Users, Image, Files],
   globals: [PopupSetting, Terms, PrivacyPolicy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

@@ -14,9 +14,12 @@ import {
   useDisclosure,
 } from '@heroui/react'
 import { Checkbox } from '@heroui/checkbox'
-import { ChevronRight, Info } from 'lucide-react'
+import { ChevronRight, Info, Upload, FileText, Image as ImageIcon, Trash } from 'lucide-react'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
+import clsx from 'clsx'
+import { useMutation } from '@tanstack/react-query'
+import { join } from '../actions'
 
 const inputProps = {
   radius: 'sm',
@@ -59,10 +62,41 @@ export default function JoinForm() {
   const [isTermsAgreed, setIsTermsAgreed] = useState(false)
   const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false)
 
+  // 증빙서류파일
+  const [fileList, setFileList] = useState<File[]>([])
+
+  // loading state
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { mutate: joinMutation } = useMutation({
+    mutationFn: (formData: FormData) => join(formData),
+    onSuccess: () => {
+      console.log('회원가입 성공')
+      setIsLoading(false)
+    },
+    onError: (error) => {
+      setModalContent({
+        header: <ModalErrorHeader />,
+        content: <ModdalErrorContent message={error.message as string} />,
+      })
+      onOpen()
+      setIsLoading(false)
+    },
+  })
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true)
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
-    const data = Object.fromEntries(formData.entries())
+    // 실제 파일 데이터를 FormData에 파일별로 추가
+    fileList.forEach((file, idx) => {
+      formData.append('fileList', file)
+    })
+    formData.append('fullAddress', fullAddress)
+
+    formData.forEach((value, key) => {
+      console.log(key, value)
+    })
 
     if (!isTermsAgreed || !isPrivacyAgreed) {
       setModalContent({
@@ -74,13 +108,14 @@ export default function JoinForm() {
         behavior: 'smooth',
       })
       onOpen()
+      setIsLoading(false)
       return
     }
 
-    if (data.password !== data.passwordConfirm) {
+    if (formData.get('password') !== formData.get('passwordConfirm')) {
       setModalContent({
         header: <ModalErrorHeader />,
-        content: <ModdalErrorContent message="비밀번호가가 일치하지 않습니다." />,
+        content: <ModdalErrorContent message="비밀번호가 일치하지 않습니다." />,
       })
       setErrors({
         ...errors,
@@ -88,10 +123,11 @@ export default function JoinForm() {
         passwordConfirm: '비밀번호가 일치하지 않습니다.',
       })
       onOpen()
+      setIsLoading(false)
       return
     }
 
-    if (!fullAddress) {
+    if (!formData.get('fullAddress')) {
       setModalContent({
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="주소를 입력해주세요." />,
@@ -101,10 +137,11 @@ export default function JoinForm() {
         address: '주소를 입력해주세요.',
       })
       onOpen()
+      setIsLoading(false)
       return
     }
 
-    if (!data.addressDetail) {
+    if (!formData.get('addressDetail')) {
       setModalContent({
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="상세주소를 입력해주세요." />,
@@ -114,8 +151,28 @@ export default function JoinForm() {
         addressDetail: '상세주소를 입력해주세요.',
       })
       onOpen()
+      setIsLoading(false)
       return
     }
+
+    if (formData.getAll('fileList').length === 0) {
+      setModalContent({
+        header: <ModalErrorHeader />,
+        content: <ModdalErrorContent message="증빙서류를 업로드해주세요." />,
+      })
+
+      const fileUploadSection = document.querySelector(
+        'label[for="fileUpload"]',
+      ) as HTMLLabelElement | null
+
+      if (fileUploadSection) {
+        fileUploadSection.scrollIntoView({ behavior: 'smooth' })
+      }
+      onOpen()
+      setIsLoading(false)
+      return
+    }
+    joinMutation(formData)
   }
 
   return (
@@ -138,10 +195,15 @@ export default function JoinForm() {
           setFullAddress={setFullAddress}
           errors={errors}
           setErrors={setErrors}
+          fileList={fileList}
+          setFileList={setFileList}
         />
-        <button className="w-full h-12 bg-brand text-white rounded-md font-medium cursor-pointer hover:bg-brandWeek transition-all duration-300">
+        <Button
+          type="submit"
+          className="text-base w-full h-12 bg-brand text-white rounded-md font-medium cursor-pointer hover:bg-brandWeek transition-all duration-300"
+        >
           회원가입
-        </button>
+        </Button>
       </Form>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
@@ -309,6 +371,8 @@ function PersonalInfoContent({
   setFullAddress,
   errors,
   setErrors,
+  fileList,
+  setFileList,
 }: {
   fullAddress: string
   setFullAddress: (value: string) => void
@@ -321,6 +385,8 @@ function PersonalInfoContent({
       addressDetail: string
     }>
   >
+  fileList: File[]
+  setFileList: (value: File[]) => void
 }) {
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -438,6 +504,7 @@ function PersonalInfoContent({
           return true
         }}
       />
+      <FileUploadInput fileList={fileList} setFileList={setFileList} />
     </div>
   )
 }
@@ -476,7 +543,6 @@ function AddressInput({
 
   const sample2_execDaumPostcode = () => {
     if (typeof window === 'undefined' || !(window as any).daum) {
-      console.error('다음 우편번호 API가 로드되지 않았습니다.')
       return
     }
 
@@ -605,6 +671,88 @@ function AddressInput({
         {...inputProps}
       />
     </>
+  )
+}
+
+function FileUploadInput({
+  fileList,
+  setFileList,
+}: {
+  fileList: File[]
+  setFileList: (value: File[]) => void
+}) {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files) {
+      setFileList(Array.from(files))
+    }
+  }
+
+  const FileListItems = ({ file }: { file: File }) => {
+    const handleFileDelete = (file: File) => {
+      // 파일 객체 전체가 아닌 name과 size 모두로 필터해야 동일 파일명 업로드 가능
+      setFileList(fileList.filter((f) => !(f.name === file.name && f.size === file.size)))
+      // input[type=file] value 초기화로 재업로드 가능하게 함
+      const input = document.getElementById('fileUpload') as HTMLInputElement | null
+      if (input) {
+        input.value = ''
+      }
+    }
+
+    return (
+      <div className="flex items-center justify-between gap-6 px-6 py-3 border-1 border-foreground-100 rounded-md">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <FileText className="w-5 h-5 text-foreground-500" />
+          </div>
+          <div className="flex flex-col gap-[2px]">
+            <span className="text-[13px] font-medium">{file.name}</span>
+            <span className="text-[12px] text-foreground-500">
+              {(file.size / 1024 / 1024).toFixed(2)} MB
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Trash
+            className="w-4 h-4 text-foreground-500 cursor-pointer hover:text-danger transition-all duration-300"
+            onClick={() => handleFileDelete(file)}
+          />
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="flex flex-col gap-4">
+      <span className="text-[14px] font-medium after:content-['*'] after:text-danger after:ml-[2px]">
+        증빙서류제출
+      </span>
+      <label
+        htmlFor="fileUpload"
+        className={clsx(
+          'w-full py-6 border-1 border-foreground-200 rounded-md flex flex-col items-center justify-center border-dashed gap-2',
+          'cursor-pointer hover:bg-foreground-50 transition-all duration-300',
+        )}
+      >
+        <div className="p-3 bg-foreground-100 rounded-full">
+          <Upload className="w-5 h-5 text-foreground-400" />
+        </div>
+        <span className="text-[15px] font-medium">
+          증빙서류를 <span className="text-brand">업로드</span>해주세요
+        </span>
+        <span className="text-[13px] text-foreground-500">
+          파일 최대 크기: 25MB • 최대 파일 개수: 5
+        </span>
+      </label>
+      <input type="file" id="fileUpload" className="hidden" multiple onChange={handleFileChange} />
+      {/* 파일 리스트 */}
+      {fileList.length > 0 ? (
+        <div className="flex flex-col gap-2 mt-2">
+          {fileList.map((file) => (
+            <FileListItems key={file.name} file={file} />
+          ))}
+        </div>
+      ) : null}
+    </div>
   )
 }
 

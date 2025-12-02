@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     image: Image;
+    files: File;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,6 +78,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     image: ImageSelect<false> | ImageSelect<true>;
+    files: FilesSelect<false> | FilesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -131,8 +133,47 @@ export interface User {
    * 유저 타입을 선택해주세요
    */
   role?: ('admin' | 'client') | null;
+  /**
+   * 아이디를 입력해주세요
+   */
+  user_id?: string | null;
+  /**
+   * 대표자명을 입력해주세요
+   */
+  ceo?: string | null;
+  /**
+   * 병원명을 입력해주세요
+   */
+  hospitalName?: string | null;
+  /**
+   * 주소를 입력해주세요
+   */
+  address?: string | null;
+  /**
+   * 사업자등록번호를 입력해주세요
+   */
+  businessNumber?: string | null;
+  /**
+   * 요양기관번호를 입력해주세요
+   */
+  nursingNumber?: string | null;
+  /**
+   * 전화번호를 입력해주세요
+   */
+  phoneNumber?: string | null;
+  /**
+   * FAX번호를 입력해주세요
+   */
+  faxNumber?: string | null;
+  /**
+   * 증빙서류를 업로드해주세요
+   */
+  fileList?: (number | File)[] | null;
   updatedAt: string;
   createdAt: string;
+  /**
+   * 이메일을 입력해주세요
+   */
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -148,6 +189,24 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "files".
+ */
+export interface File {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -185,6 +244,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'image';
         value: number | Image;
+      } | null)
+    | ({
+        relationTo: 'files';
+        value: number | File;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -234,6 +297,15 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  user_id?: T;
+  ceo?: T;
+  hospitalName?: T;
+  address?: T;
+  businessNumber?: T;
+  nursingNumber?: T;
+  phoneNumber?: T;
+  faxNumber?: T;
+  fileList?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -257,6 +329,23 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ImageSelect<T extends boolean = true> {
   alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "files_select".
+ */
+export interface FilesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   url?: T;
