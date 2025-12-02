@@ -42,3 +42,62 @@ export async function findId(dto: {
     throw error
   }
 }
+
+export async function findIdToResetPassword(dto: {
+  username: string
+  hospitalName: string
+  nursingNumber: string
+}) {
+  try {
+    const payload = await getPayload({ config: config })
+    const { username, hospitalName, nursingNumber } = dto
+    const user = await payload.find({
+      collection: 'users',
+      select: {
+        username: true,
+      },
+      where: {
+        username: {
+          equals: username,
+        },
+        hospitalName: {
+          equals: hospitalName,
+        },
+
+        nursingNumber: {
+          equals: nursingNumber,
+        },
+      },
+    })
+    const userData = user.docs
+    if (userData.length === 0) {
+      throw new Error('아이디가 존재하지 않습니다')
+    }
+
+    return userData[0].username
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function resetPassword(dto: { username: string; password: string }) {
+  try {
+    const payload = await getPayload({ config: config })
+    const { username, password } = dto
+    const user = await payload.update({
+      collection: 'users',
+      data: {
+        password: password,
+      },
+      where: {
+        username: {
+          equals: username,
+        },
+      },
+    })
+
+    return user
+  } catch (error) {
+    throw error
+  }
+}
