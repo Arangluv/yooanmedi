@@ -1,5 +1,7 @@
 import Image from 'next/image'
 import BrandLogoImage from '@public/v1_logo_full.png'
+import LogoSmall from '@public/v1_logo_small.png'
+import { Home } from 'lucide-react'
 
 export function BrandLogo({
   width = 140,
@@ -17,6 +19,22 @@ export function BrandLogo({
   )
 }
 
+export function BrandLogoSmall({
+  width = 100,
+  height = 100,
+  className = '',
+}: {
+  width: number
+  height: number
+  className: string
+}) {
+  return (
+    <div className={className}>
+      <Image src={LogoSmall} alt="brand logo" width={width} height={height} unoptimized />
+    </div>
+  )
+}
+
 export function HomeIcon() {
-  return <div>홈</div>
+  return <Home className="w-5 h-5 text-foreground-600" />
 }

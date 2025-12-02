@@ -82,7 +82,7 @@ export default function JoinForm() {
     mutationFn: (formData: FormData) => join(formData),
     onSuccess: () => {
       setIsLoading(false)
-      toast.success('회원가입이 완료되었습니다.')
+      toast.success('회원가입 신청이 정상적으로 완료되었습니다.')
       router.push('/')
     },
     onError: (error) => {

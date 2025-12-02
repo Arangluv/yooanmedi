@@ -24,7 +24,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HomeIcon as HomeIcon_97bc79299977fcd966caf47fe3f27eaa } from '@/config/Logo'
-import { BrandLogo as BrandLogo_97bc79299977fcd966caf47fe3f27eaa } from '@/config/Logo'
+import { BrandLogoSmall as BrandLogoSmall_97bc79299977fcd966caf47fe3f27eaa } from '@/config/Logo'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
@@ -54,6 +54,6 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#TableFeatureClient": TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/config/Logo#HomeIcon": HomeIcon_97bc79299977fcd966caf47fe3f27eaa,
-  "@/config/Logo#BrandLogo": BrandLogo_97bc79299977fcd966caf47fe3f27eaa,
+  "@/config/Logo#BrandLogoSmall": BrandLogoSmall_97bc79299977fcd966caf47fe3f27eaa,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

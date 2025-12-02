@@ -7,7 +7,7 @@ export const Users: CollectionConfig = {
     plural: '유저',
   },
   admin: {
-    defaultColumns: ['email', 'role', 'createdAt'],
+    defaultColumns: ['username', 'hospitalName', 'phoneNumber', 'role'],
     useAsTitle: 'email',
     group: '홈페이지 설정',
   },
@@ -38,6 +38,18 @@ export const Users: CollectionConfig = {
         },
       ],
       defaultValue: 'client',
+    },
+    {
+      type: 'checkbox',
+      name: 'isApproved',
+      label: '승인 여부',
+      admin: {
+        description: '승인 여부를 선택해주세요 (체크 시 회원가입이 승인됩니다)',
+        condition: (data, siblingData) => {
+          return siblingData.role === 'client'
+        },
+      },
+      defaultValue: false,
     },
     {
       type: 'text',

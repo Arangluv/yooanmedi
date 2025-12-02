@@ -132,6 +132,10 @@ export interface User {
    */
   role?: ('admin' | 'client') | null;
   /**
+   * 승인 여부를 선택해주세요 (체크 시 회원가입이 승인됩니다)
+   */
+  isApproved?: boolean | null;
+  /**
    * 대표자명을 입력해주세요
    */
   ceo?: string | null;
@@ -295,6 +299,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  isApproved?: T;
   ceo?: T;
   hospitalName?: T;
   address?: T;
