@@ -137,25 +137,30 @@ export default function MainForm() {
             <div className="w-full flex flex-col">
               <span className="font-bold text-brandWeek">상담안내</span>
               <div className="flex flex-col gap-1 mt-2">
-                <span className="text-[13px] text-foreground-600">평일 09:00 - 17:00</span>
-                <span className="text-[13px] text-foreground-600">점심시간 12:00 - 13:00</span>
-                <span className="text-[13px] text-foreground-600">(주말 및 공휴일 휴무)</span>
+                <span className="text-[15px] text-foreground-600">평일 09:00 - 17:00</span>
+                <span className="text-[14px] text-foreground-600">점심시간 12:00 - 13:00</span>
+                <span className="text-[14px] text-foreground-600">(주말 및 공휴일 휴무)</span>
               </div>
-              <span className="text-[15px] font-bold mt-3">TEL : 031-893-0806</span>
-              <span className="text-[15px] font-bold mt-1">FAX : 031-893-0809</span>
             </div>
             {/* 배송 휴무안내*/}
             <div className="w-full flex flex-col">
               <span className="font-bold text-brandWeek">택배 주문마감 안내</span>
               <div className="flex flex-col gap-1 mt-2">
-                <span className="text-[13px] text-foreground-600">평일 14:00 까지</span>
-                <span className="text-[13px] text-foreground-600">(주말 및 공휴일 휴무)</span>
+                <span className="text-[14px] text-foreground-600">평일 14:00 까지</span>
+                <span className="text-[14px] text-foreground-600">(주말 및 공휴일 휴무)</span>
               </div>
             </div>
           </div>
+          <div className="w-full flex flex-col">
+            <span className="text-[16px] font-medium mt-3">TEL : 031-893-0806</span>
+            <span className="text-[16px] font-medium mt-1">FAX : 031-893-0809</span>
+            <span className="text-[16px] font-medium mt-1 flex-shrink-0">
+              EMAIL : yooanmedi@gmail.com
+            </span>
+          </div>
 
           {/* info */}
-          <div className="w-full flex flex-col gap-2 p-4 rounded-md bg-neutral-50">
+          {/* <div className="w-full flex flex-col gap-2 p-4 rounded-md bg-neutral-50">
             <div className="flex gap-3 flex-col">
               <div className="flex flex-col gap-1">
                 <span className="text-[15px] font-bold">의약품 도소매 전문</span>
@@ -182,7 +187,7 @@ export default function MainForm() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} radius="sm">
@@ -195,17 +200,6 @@ export default function MainForm() {
         </ModalContent>
       </Modal>
     </>
-  )
-}
-
-function PasswordFindContent() {
-  return (
-    <div className="flex flex-col">
-      <p className="text-[15px] text-foreground-700">
-        <span className="text-brandWeek">비밀번호 찾기 클릭시</span> 고객에게 노출할 메세지가
-        들어갑니다
-      </p>
-    </div>
   )
 }
 

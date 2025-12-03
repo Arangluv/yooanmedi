@@ -165,7 +165,6 @@ export const Users: CollectionConfig = {
           return siblingData.role === 'client'
         },
       },
-      required: true,
     },
     {
       type: 'upload',

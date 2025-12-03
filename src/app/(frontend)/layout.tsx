@@ -67,7 +67,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                     info: <Info className="w-4 h-4 text-brandWeek" />,
                   }}
                 />
-                {/* <Popup popup={popup} /> */}
+                <Popup popup={popup} />
                 <main className="overflow-x-hidden">{children}</main>
                 <Footer />
               </LogoProvider>

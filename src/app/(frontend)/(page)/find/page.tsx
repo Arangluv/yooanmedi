@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import FindPassword from './_components/FindPassword'
 import FindId from './_components/FindId'
 import { Info } from 'lucide-react'
+import Link from 'next/link'
 
 export default async function FindPage({
   searchParams,
@@ -21,9 +22,9 @@ export default async function FindPage({
       <div className="w-full max-w-2xl flex flex-col">
         {/* Header */}
         <div className="flex flex-col gap-4 justify-center items-center mb-8">
-          <div className="w-full flex justify-center">
+          <Link href="/" className="w-full flex justify-center">
             <BrandLogo width={140} height={40} className="w-[140px] h-[40px]" />
-          </div>
+          </Link>
           <h1 className="text-3xl font-bold text-foreground-900">아이디 비밀번호 찾기</h1>
         </div>
         <div className="flex flex-col w-full rounded-2xl py-12 px-8 gap-6">
