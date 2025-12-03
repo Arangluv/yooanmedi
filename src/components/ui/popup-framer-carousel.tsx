@@ -260,24 +260,12 @@ export function PopupFramerCarousel({ popup }: { popup: any }) {
           {popupItems.map((item: any, i: number) => (
             <div className="shrink-0 w-full h-full" key={i}>
               {item.isOnlyImage ? (
-                <ImageContent src={item.image.url} />
+                <ImageContent src={item.image?.url} />
               ) : (
                 <RichTextContent content={item.content} />
               )}
             </div>
           ))}
-          {/* <div className="shrink-0 w-full h-full">
-            <RichTextContent />
-          </div>
-          <div className="shrink-0 w-full h-full">
-            <ImageContent />
-          </div>
-          <div className="shrink-0 w-full h-full">
-            <RichTextContent />
-          </div>
-          <div className="shrink-0 w-full h-full">
-            <ImageContent />
-          </div> */}
         </motion.div>
 
         {/* Prev Buttons */}
