@@ -23,16 +23,19 @@ export default function MainForm() {
 
   const { mutate: loginMutation } = useMutation({
     mutationFn: ({ id, password }: { id: string; password: string }) => login(id, password),
-    onSuccess: () => {
+    onSuccess: (data: { success: boolean; message: string }) => {
       setIsLoading(false)
-      // redirect to order page
+      if (!data.success) {
+        setContent(<ErrorContent error={data.message} />)
+        onOpen()
+        return
+      }
       alert('로그인 성공 - 추후 주문페이지가 완성 시 이동합니다')
     },
     onError: (error) => {
       setIsLoading(false)
-      setContent(<ErrorContent error={error.message as string} />)
+      setContent(<ErrorContent error={'아이디 혹은 비밀번호가 올바르지 않습니다.'} />)
       onOpen()
-      // some action
     },
   })
 

@@ -80,18 +80,30 @@ export default function JoinForm() {
 
   const { mutate: joinMutation } = useMutation({
     mutationFn: (formData: FormData) => join(formData),
-    onSuccess: () => {
+    onSuccess: (data: { success: boolean; message: string }) => {
       setIsLoading(false)
+      if (!data.success) {
+        setModalContent({
+          header: <ModalErrorHeader />,
+          content: <ModdalErrorContent message={data.message} />,
+        })
+        onOpen()
+        return
+      }
       toast.success('회원가입 신청이 정상적으로 완료되었습니다.')
       router.push('/')
     },
-    onError: (error) => {
+    onError: () => {
+      setIsLoading(false)
       setModalContent({
         header: <ModalErrorHeader />,
-        content: <ModdalErrorContent message={error.message as string} />,
+        content: (
+          <ModdalErrorContent
+            message={'회원가입 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'}
+          />
+        ),
       })
       onOpen()
-      setIsLoading(false)
     },
   })
 
@@ -112,13 +124,32 @@ export default function JoinForm() {
     if (!isTermsAgreed || !isPrivacyAgreed) {
       setModalContent({
         header: <ModalErrorHeader />,
-        content: <ModdalErrorContent message="약관동의를 해주세요." />,
+        content: <ModdalErrorContent message="약관동의를 진행해주세요." />,
       })
       window.scrollTo({
         top: 0,
         behavior: 'smooth',
       })
       onOpen()
+      setIsLoading(false)
+      return
+    }
+    if (!formData.get('password') || formData.get('password') === '') {
+      alert('비밀번호를 입력해주세요.')
+      setErrors({
+        ...errors,
+        password: '비밀번호를 입력해주세요.',
+      })
+      setIsLoading(false)
+      return
+    }
+
+    // @ts-ignore
+    if (formData.get('password').length < 5 || formData.get('password').length > 25) {
+      setErrors({
+        ...errors,
+        password: '비밀번호는 5자 이상 25자 이하로 입력해주세요.',
+      })
       setIsLoading(false)
       return
     }
@@ -187,11 +218,6 @@ export default function JoinForm() {
   }
 
   const router = useRouter()
-  const handleOnOpenChange = (open: boolean) => {
-    if (!open) {
-      router.push('/')
-    }
-  }
 
   return (
     <>
@@ -224,7 +250,7 @@ export default function JoinForm() {
           회원가입
         </Button>
       </Form>
-      <Modal isOpen={isOpen} onOpenChange={handleOnOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           <ModalHeader>{modalContent.header}</ModalHeader>
           <ModalBody>{modalContent.content}</ModalBody>

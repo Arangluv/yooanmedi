@@ -41,12 +41,18 @@ export default function FindId() {
       phoneNumber: string
     }) => findId(dto),
     onSuccess: (data) => {
-      setResult(data)
-      setIsLoading(false)
+      if (!data.success) {
+        setErrorMessage(data.message)
+        onOpen()
+        setIsLoading(false)
+        return
+      }
+      setResult(data.username as string)
       setStep(2)
+      setIsLoading(false)
     },
-    onError: (error) => {
-      setErrorMessage(error.message as string)
+    onError: () => {
+      setErrorMessage('아이디 찾기 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
       onOpen()
       setIsLoading(false)
     },

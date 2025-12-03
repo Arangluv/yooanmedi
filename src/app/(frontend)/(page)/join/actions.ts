@@ -54,8 +54,6 @@ export async function join(formData: FormData) {
             }
 
             const uploadedFile = await response.json()
-            console.log('uploadedFile')
-            console.log(uploadedFile)
 
             if (uploadedFile?.doc?.id) {
               uploadedFileIds.push(uploadedFile.doc.id) // ID만 push
@@ -85,7 +83,7 @@ export async function join(formData: FormData) {
       },
     })
 
-    return user
+    return { success: true, message: '' }
   } catch (error) {
     if (error instanceof APIError) {
       // error.data 예시
@@ -95,13 +93,13 @@ export async function join(formData: FormData) {
       // }
 
       if (error.data.errors[0].path === 'user_id') {
-        throw new Error('이미 사용중인 아이디입니다.')
+        return { success: false, message: '이미 사용중인 아이디입니다.' }
       }
 
       const errorMessage = error.data.errors[0].message
-      throw new Error(errorMessage)
+      return { success: false, message: errorMessage }
     } else {
-      throw new Error('회원가입시 알 수 없는 오류가 발생했습니다.')
+      return { success: false, message: '회원가입시 알 수 없는 오류가 발생했습니다.' }
     }
   }
 }

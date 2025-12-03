@@ -39,7 +39,13 @@ export default function FindPassword() {
     mutationFn: (dto: { username: string; hospitalName: string; nursingNumber: string }) =>
       findIdToResetPassword(dto),
     onSuccess: (data) => {
-      setResult(data)
+      if (!data.success) {
+        setErrorMessage(data.message)
+        onOpen()
+        setIsLoading(false)
+        return
+      }
+      setResult(data.username as string)
       setIsLoading(false)
       setStep(2)
     },

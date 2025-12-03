@@ -34,12 +34,15 @@ export async function findId(dto: {
     })
     const userData = user.docs
     if (userData.length === 0) {
-      throw new Error('가입 이력이 없는 아이디입니다')
+      return { success: false, message: '가입 이력이 없는 아이디입니다' }
     }
 
-    return userData[0].username
+    return { success: true, message: '', username: userData[0].username }
   } catch (error) {
-    throw error
+    return {
+      success: false,
+      message: '아이디 찾기 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    }
   }
 }
 
@@ -71,12 +74,15 @@ export async function findIdToResetPassword(dto: {
     })
     const userData = user.docs
     if (userData.length === 0) {
-      throw new Error('아이디가 존재하지 않습니다')
+      return { success: false, message: '아이디가 존재하지 않거나, 일치하지 않은 정보입니다.' }
     }
 
-    return userData[0].username
+    return { success: true, message: '', username: userData[0].username }
   } catch (error) {
-    throw error
+    return {
+      success: false,
+      message: '아이디 찾기 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    }
   }
 }
 
@@ -96,8 +102,11 @@ export async function resetPassword(dto: { username: string; password: string })
       },
     })
 
-    return user
+    return { success: true, message: '', username: user.docs[0].username }
   } catch (error) {
-    throw error
+    return {
+      success: false,
+      message: '비밀번호 재설정 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    }
   }
 }
