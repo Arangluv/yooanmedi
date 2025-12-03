@@ -537,17 +537,12 @@ function PersonalInfoContent({
       />
       <Input
         name="faxNumber"
-        label="FAX번호"
+        label="FAX번호(선택)"
         placeholder="FAX번호를 입력해주세요."
         type="number"
         description="예: 0212345678"
         {...inputProps}
-        validate={(value: string) => {
-          if (!value) {
-            return 'FAX번호를 입력해주세요.'
-          }
-          return true
-        }}
+        isRequired={false}
       />
       <FileUploadInput fileList={fileList} setFileList={setFileList} />
     </div>
@@ -769,7 +764,7 @@ function FileUploadInput({
   return (
     <div className="flex flex-col gap-4">
       <span className="text-[14px] font-medium after:content-['*'] after:text-danger after:ml-[2px]">
-        증빙서류제출
+        사업자등록증 제출
       </span>
       <label
         htmlFor="fileUpload"
@@ -782,7 +777,7 @@ function FileUploadInput({
           <Upload className="w-5 h-5 text-foreground-400" />
         </div>
         <span className="text-[15px] font-medium">
-          증빙서류를 <span className="text-brand">업로드</span>해주세요
+          사업자등록증을 <span className="text-brand">업로드</span>해주세요
         </span>
         <span className="text-[13px] text-foreground-500">
           파일 최대 크기: 25MB • 최대 파일 개수: 5
