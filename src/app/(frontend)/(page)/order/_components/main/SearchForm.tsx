@@ -13,11 +13,6 @@ const temp = [
   },
 ]
 
-type Temp = {
-  key: string
-  label: string
-}
-
 export default function SearchForm() {
   // 상품명 or 제약사명
   return (
@@ -28,8 +23,8 @@ export default function SearchForm() {
         variant="bordered"
         classNames={{
           base: 'w-[20%]',
-          trigger: 'border-1 border-brandWeek rounded-r-none border-r-0 text-sm',
-          innerWrapper: '&:is(:where(.group)[data-has-value="true"] *):text-foreground-600',
+          trigger:
+            'border-1 border-brandWeek rounded-r-none border-r-0 text-sm data-[hover=true]:border-brandWeekWeek data-[open=true]:border-brandWeekWeek',
         }}
         renderValue={(items: any) => {
           return <span className="text-sm text-foreground-700">{items[0].textValue}</span>
@@ -50,9 +45,7 @@ export default function SearchForm() {
           inputWrapper: clsx(
             'border-1 border-brandWeek rounded-l-none border-l-0',
             'data-[hover=true]:border-brandWeekWeek',
-            'data-[focus=true]:border-brandWeekWeek',
-            'data-[focus-within=true]:border-brandWeekWeek',
-            'data-[focus-visible=true]:border-brandWeekWeek',
+            'group-data-[focus=true]:border-brandWeekWeek',
           ),
         }}
         placeholder="검색어를 입력해주세요."
