@@ -15,6 +15,7 @@ import { NumberInput } from '@heroui/react'
 import { Minus, Plus } from 'lucide-react'
 import Inventory from './_components/main/Inventory'
 import TestImage from '@public/order/order_test.webp'
+import CategoryNav from './_components/main/CategoryNav'
 
 export default function OrderPage() {
   return (
@@ -37,52 +38,12 @@ function Order() {
         </header>
       </div>
       {/* divider */}
-      <div className="w-full h-[1px] bg-foreground-200 mb-6"></div>
+      <div className="w-full h-[1px] bg-foreground-200 mb-4"></div>
       {/* bottom area */}
       <div className="w-full max-w-5xl">
         <div className="flex items-center justify-between w-full">
           {/* 제품카테고리 */}
-          <div className="flex gap-6">
-            <Link
-              href="/order"
-              className="flex gap-1 items-center hover:text-brandWeek transition-colors duration-300"
-            >
-              <Image
-                src={MainIconImage1}
-                alt="의약품"
-                width={26}
-                height={26}
-                className="w-[26px] h-[26px] object-contain"
-              />
-              <span>의약품</span>
-            </Link>
-            <Link
-              href="/order"
-              className="flex gap-1 items-center hover:text-brandWeek transition-colors duration-300"
-            >
-              <Image
-                src={MainIconImage2}
-                alt="주사"
-                width={26}
-                height={26}
-                className="w-[26px] h-[26px] object-contain"
-              />
-              <span>주사</span>
-            </Link>
-            <Link
-              href="/order"
-              className="flex gap-1 items-center hover:text-brandWeek transition-colors duration-300"
-            >
-              <Image
-                src={MainIconImage3}
-                alt="에스테틱"
-                width={26}
-                height={26}
-                className="w-[26px] h-[26px] object-contain"
-              />
-              <span>에스테틱</span>
-            </Link>
-          </div>
+          <CategoryNav />
           {/* 주문서확인 및 주문하기 */}
           <div className="flex gap-6 text-lg">
             <Link href="/order" className="text-brandWeek font-bold">
@@ -96,65 +57,47 @@ function Order() {
       </div>
       <div className="flex w-full">
         <div className="w-[calc((100%-1024px)/2)]"></div>
-        <ProductList />
-        <div className="w-[calc((100%-1024px)/2)] mt-16 px-8 flex flex-col gap-8 relative">
-          {/* 상품 디테일 */}
-          <div
-            style={{ boxShadow: '0 0 6px 0 rgba(0, 0, 0, 0.2)' }}
-            className="flex flex-col gap-4 w-full max-w-[400px] p-4 rounded-lg"
-          >
-            <span className="font-bold">상품 정보</span>
-            <div className="flex flex-col gap-1">
-              <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden">
-                <Image src={TestImage} alt="test" className="w-full h-full object-contain" />
-              </div>
-              <ProductDetailSection name="상품이름" value="테타불린에스앤주PFS" />
-              <ProductDetailSection name="제조사" value="삼성바이오에피스(주)" />
-              <ProductDetailSection name="가격" value="106,000원" />
-              <ProductDetailSection name="규격" value="1ml / 1관" />
-              <ProductDetailSection name="재고" value="재고 있음" accent="brand" />
-              <ProductDetailSection name="반품가능여부" value="반품 불가능" accent="danger" />
-              <Divider className="my-2" />
-              <ProductDetailSection
-                name="결제혜택"
-                value="적립금 1,060원"
-                accent="brand"
-                isBold={true}
-              />
-              <ProductQuantityInput />
-            </div>
+        {/* <ProductList /> */}
+        <SearchResultList />
+        <ProductAsideSection />
+      </div>
+      <Inventory />
+    </div>
+  )
+}
+
+function ProductAsideSection() {
+  return (
+    <div className="w-[calc((100%-1024px)/2)] px-8 flex flex-col gap-8 fixed top-[148px] right-0">
+      {/* 상품 디테일 */}
+      <div
+        style={{ boxShadow: '0 0 6px 0 rgba(0, 0, 0, 0.2)' }}
+        className="flex flex-col gap-4 w-full max-w-[400px] p-4 rounded-lg"
+      >
+        <span className="font-bold">상품 정보</span>
+        <div className="flex flex-col gap-1">
+          <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden">
+            <Image src={TestImage} alt="test" className="w-full h-full object-contain" />
           </div>
-          {/* 장바구니 */}
-          {/* <div
-            style={{ boxShadow: '0 0 6px 0 rgba(0, 0, 0, 0.2)' }}
-            className="flex flex-col gap-4 w-full h-[250px] max-w-[400px] p-4 rounded-lg"
-          >
-            <span className="font-bold">장바구니(주문내역)</span>
-            <table>
-              <thead>
-                <tr className="text-sm text-foreground-600 bg-neutral-100">
-                  <th className="text-start border-1 border-foreground-200 pl-2">상품이름</th>
-                  <th className="text-start border-1 border-foreground-200 pl-2">가격</th>
-                  <th className="text-start border-1 border-foreground-200 pl-2">수량</th>
-                  <th className="text-start border-1 border-foreground-200 pl-2">합계</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="text-sm text-foreground-600 border-1 border-foreground-200">
-                  <td className="text-start pl-2 border-r-1 border-foreground-200">
-                    테타불린에스앤주PFS
-                  </td>
-                  <td className="text-center border-r-1 border-foreground-200">106,000원</td>
-                  <td className="text-center border-r-1 border-foreground-200">10</td>
-                  <td className="text-end">1,060,000원</td>
-                </tr>
-              </tbody>
-            </table>
-          </div> */}
+          <ProductDetailSection name="상품이름" value="테타불린에스앤주PFS" />
+          <ProductDetailSection name="제조사" value="삼성바이오에피스(주)" />
+          <ProductDetailSection name="가격" value="106,000원" />
+          <ProductDetailSection name="규격" value="1ml / 1관" />
+          <ProductDetailSection name="보험코드" value="654400681" />
+          <ProductDetailSection name="배송비" value="4,000원" />
+          <ProductDetailSection name="재고" value="재고 있음" accent="brand" />
+          <ProductDetailSection name="반품가능여부" value="반품 불가능" accent="danger" />
+          <ProductPurchaseHistorySection />
+          <Divider className="my-2" />
+          <ProductDetailSection
+            name="결제혜택"
+            value="적립금 1,060원"
+            accent="brand"
+            isBold={true}
+          />
+          <ProductQuantityInput />
         </div>
       </div>
-      {/* <SearchResultList /> */}
-      <Inventory />
     </div>
   )
 }
@@ -205,6 +148,40 @@ function ProductQuantityInput() {
           }}
         />
       </div>
+    </div>
+  )
+}
+
+function ProductPurchaseHistorySection() {
+  return (
+    <div className="flex gap-2 items-start text-sm text-foreground-600">
+      <span className="text-foreground-700 flex-shrink-0 w-[100px]">최근 구매내역</span>
+      <table className="w-full">
+        <thead>
+          <tr className="bg-neutral-100 text-sm border-1 border-foreground-200">
+            <th className="border-r-1 border-foreground-200">구매일시</th>
+            <th className="border-r-1 border-foreground-200">수량</th>
+            <th>단가</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="text-xs border-1 border-foreground-200">
+            <td className="text-center py-1 border-r-1 border-foreground-200">2025-12-05</td>
+            <td className="text-center border-r-1 border-foreground-200">10</td>
+            <td className="text-center">106,000원</td>
+          </tr>
+          <tr className="text-xs border-1 border-foreground-200">
+            <td className="text-center py-1 border-r-1 border-foreground-200">2025-12-05</td>
+            <td className="text-center border-r-1 border-foreground-200">10</td>
+            <td className="text-center">106,000원</td>
+          </tr>
+          <tr className="text-xs border-1 border-foreground-200">
+            <td className="text-center py-1 border-r-1 border-foreground-200">2025-12-05</td>
+            <td className="text-center border-r-1 border-foreground-200">10</td>
+            <td className="text-center">106,000원</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   )
 }
