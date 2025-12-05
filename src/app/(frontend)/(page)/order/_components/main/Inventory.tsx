@@ -17,7 +17,7 @@ export default function Inventory() {
   const temp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   return (
     <>
-      <div className="fixed bottom-10 right-10">
+      <div className="fixed bottom-6 right-8">
         <Badge content={10} color="danger" placement="top-right" size="lg">
           <button
             className="min-w-20 h-20 bg-brand rounded-md flex items-center gap-2 px-4 justify-center hover:bg-brandWeek transition-colors duration-300 cursor-pointer"
@@ -36,8 +36,10 @@ export default function Inventory() {
           <ModalBody>
             <table>
               <thead>
-                <tr className="text-base text-foreground-700 bg-neutral-100">
+                <tr className="text-[15px] text-foreground-700 bg-neutral-100">
+                  <th className="text-start border-1 border-foreground-200 pl-2 py-2">날짜</th>
                   <th className="text-start border-1 border-foreground-200 pl-2 py-2">상품이름</th>
+                  <th className="text-start border-1 border-foreground-200 pl-2 py-2">보험코드</th>
                   <th className="text-start border-1 border-foreground-200 pl-2">수량</th>
                   <th className="text-start border-1 border-foreground-200 pl-2">단가</th>
                   <th className="text-start border-1 border-foreground-200 pl-2">금액</th>
@@ -46,10 +48,14 @@ export default function Inventory() {
               </thead>
               <tbody>
                 {temp.map((item) => (
-                  <tr className="text-base text-foreground-700 border-1 border-foreground-200">
+                  <tr className="text-[15px] text-foreground-700 border-1 border-foreground-200">
+                    <td className="text-start pl-2 border-r-1 border-foreground-200 py-2">
+                      2025-12-05
+                    </td>
                     <td className="text-start pl-2 border-r-1 border-foreground-200 py-2">
                       테타불린에스앤주PFS
                     </td>
+                    <td className="pl-2 border-r-1 border-foreground-200">654400681</td>
                     <td className="pl-2 border-r-1 border-foreground-200">10</td>
                     <td className="pl-2 border-r-1 border-foreground-200">106,000원</td>
                     <td className="pl-2 border-r-1 border-foreground-200">1,060,000원</td>
