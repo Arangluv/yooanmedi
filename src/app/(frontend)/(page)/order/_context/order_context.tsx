@@ -2,6 +2,7 @@
 
 import { useDisclosure } from '@heroui/react'
 import { createContext, useEffect, useState } from 'react'
+import { ProductItemType } from '../_type'
 
 type OrderContextUserType = {
   user: {
@@ -73,5 +74,28 @@ export const InventoryModalProvider = ({ children }: { children: React.ReactNode
     <InventoryModalContext.Provider value={{ isOpen, onOpen, onOpenChange }}>
       {children}
     </InventoryModalContext.Provider>
+  )
+}
+
+// 상품정보
+
+type ProductInfoContextType = {
+  clickedProduct: ProductItemType | null
+  setClickedProduct: (product: ProductItemType | null) => void
+}
+
+export const ProductInfoContext = createContext<ProductInfoContextType>({
+  clickedProduct: null,
+  setClickedProduct: () => {},
+})
+
+export const ProductInfoProvider = ({ children }: { children: React.ReactNode }) => {
+  const [clickedProduct, setClickedProduct] =
+    useState<ProductInfoContextType['clickedProduct']>(null)
+
+  return (
+    <ProductInfoContext.Provider value={{ clickedProduct, setClickedProduct }}>
+      {children}
+    </ProductInfoContext.Provider>
   )
 }

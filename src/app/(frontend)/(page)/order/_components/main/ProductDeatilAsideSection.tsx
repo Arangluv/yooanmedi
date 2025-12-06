@@ -1,10 +1,67 @@
+'use client'
+
 import Image from 'next/image'
 import TestImage from '@public/order/order_test.webp'
 import { Divider } from '@heroui/react'
 import { clsx } from 'clsx'
 import { NumberInput } from '@heroui/react'
+import { ProductInfoContext } from '@order/_context/order_context'
+import { useContext } from 'react'
+import { Image as ImageIcon } from 'lucide-react'
+import { ProductItemType } from '../../_type'
+import { formatNumberWithCommas, getPointOnPurchase } from '../../utils'
 
 export default function ProductDeatilAsideSection() {
+  const { clickedProduct } = useContext(ProductInfoContext)
+
+  return clickedProduct ? (
+    <SelectedProductDetailSection product={clickedProduct} />
+  ) : (
+    <EmptyProductDetailSection />
+  )
+}
+
+function EmptyProductDetailSection() {
+  return (
+    <div className="w-[calc((100%-1024px)/2)] px-8 flex flex-col gap-8 fixed top-[148px] right-0">
+      {/* 상품 디테일 */}
+      <div
+        style={{ boxShadow: '0 0 6px 0 rgba(0, 0, 0, 0.2)' }}
+        className="flex flex-col gap-4 w-full max-w-[400px] p-4 rounded-lg bg-white"
+      >
+        <span className="font-bold">상품 정보</span>
+        <div className="flex flex-col gap-1">
+          <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden flex items-center justify-center gap-2">
+            <ImageIcon className="w-6 h-6 text-foreground-200" />
+            <span className="text-sm text-foreground-600">상품을 선택해주세요.</span>
+          </div>
+          <ProductDetailSection name="상품명" value="" />
+          <ProductDetailSection name="제조사" value="" />
+          <ProductDetailSection name="규격" value="" />
+          <ProductDetailSection name="가격" value="" />
+          <ProductDetailSection name="보험코드" value="" />
+          <ProductDetailSection name="재고" value="" accent="brand" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SelectedProductDetailSection({ product }: { product: ProductItemType }) {
+  const {
+    name,
+    manufacturer,
+    price,
+    specification,
+    insurance_code,
+    stock,
+    delivery_fee,
+    cashback_rate,
+    returnable,
+  } = product
+  console.log('product')
+  console.log(product)
+
   return (
     <div className="w-[calc((100%-1024px)/2)] px-8 flex flex-col gap-8 fixed top-[148px] right-0">
       {/* 상품 디테일 */}
@@ -17,22 +74,25 @@ export default function ProductDeatilAsideSection() {
           <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden">
             <Image src={TestImage} alt="test" className="w-full h-full object-contain" />
           </div>
-          <ProductDetailSection name="상품명" value="테타불린에스앤주PFS" />
-          <ProductDetailSection name="제조사" value="삼성바이오에피스(주)" />
-          <ProductDetailSection name="가격" value="106,000원" />
-          <ProductDetailSection name="규격" value="1ml / 1관" />
-          <ProductDetailSection name="보험코드" value="654400681" />
-          <ProductDetailSection name="배송비" value="4,000원" />
-          <ProductDetailSection name="재고" value="재고 있음" accent="brand" />
-          <ProductDetailSection name="반품가능여부" value="반품 불가능" accent="danger" />
+          <ProductDetailSection name="상품명" value={name} />
+          <ProductDetailSection name="제조사" value={manufacturer} />
+          <ProductDetailSection name="가격" value={`${formatNumberWithCommas(price)}원`} />
+          <ProductDetailSection name="규격" value={specification ?? ''} />
+          <ProductDetailSection name="보험코드" value={insurance_code ?? ''} />
+          <ProductDetailSection name="배송비" value={`${formatNumberWithCommas(delivery_fee)}원`} />
+          <ProductDetailSection
+            name="재고"
+            value={stock > 0 ? '재고 있음' : '재고 없음'}
+            accent={stock > 0 ? 'brand' : 'danger'}
+          />
+          <ProductDetailSection
+            name="반품가능여부"
+            value={returnable ? '반품 가능' : '반품 불가능'}
+            accent={returnable ? 'brand' : 'danger'}
+          />
           <ProductPurchaseHistorySection />
           <Divider className="my-2" />
-          <ProductDetailSection
-            name="결제혜택"
-            value="적립금 1,060원"
-            accent="brand"
-            isBold={true}
-          />
+          <ProductPointBenefitSection price={price} rate={cashback_rate} />
           <ProductQuantityInput />
         </div>
       </div>
@@ -51,6 +111,10 @@ function ProductDetailSection({
   accent?: 'brand' | 'danger' | 'default'
   isBold?: boolean
 }) {
+  if (!value) {
+    return null
+  }
+
   const accentColor =
     accent === 'brand'
       ? 'text-brandWeek'
@@ -61,9 +125,27 @@ function ProductDetailSection({
   const fontWeight = isBold ? 'font-bold' : 'font-normal'
 
   return (
-    <div className="flex gap-2 items-center text-sm text-foreground-600">
-      <span className="text-foreground-700 block w-[100px]">{name}</span>
+    <div className="flex gap-2 items-start text-sm text-foreground-600">
+      <span className="text-foreground-700 block w-[100px] flex-shrink-0">{name}</span>
       <span className={clsx(accentColor, fontWeight)}>{value}</span>
+    </div>
+  )
+}
+
+function ProductPointBenefitSection({ price, rate }: { price: number; rate: number }) {
+  const willEarnPoint = getPointOnPurchase(price, rate)
+
+  console.log('willEarnPoint')
+  console.log(willEarnPoint)
+
+  if (willEarnPoint === '0' || !willEarnPoint) {
+    return null
+  }
+
+  return (
+    <div className="flex gap-2 items-start text-sm text-foreground-600">
+      <span className="text-foreground-700 block w-[100px] flex-shrink-0">결제혜택</span>
+      <span className="text-brandWeek font-bold">적립금 {willEarnPoint}원</span>
     </div>
   )
 }

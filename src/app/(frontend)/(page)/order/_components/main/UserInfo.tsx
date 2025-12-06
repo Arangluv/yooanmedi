@@ -13,7 +13,7 @@ export default function UserInfo() {
 
   return (
     <div className="w-[calc((100%-1024px)/2)] flex h-full justify-end pr-8">
-      <div className="flex flex-col gap-1 items-end justify-center">
+      <div className="flex flex-col items-end justify-center">
         <span className="text-brandWeek">
           <span className="font-bold mr-1">{user.hospitalName}</span>
           <span className="text-foreground-700">님</span>

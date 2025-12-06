@@ -2,13 +2,20 @@ import Image from 'next/image'
 import { Tooltip } from '@heroui/react'
 import { ShoppingCart } from 'lucide-react'
 import { ProductItemType } from '@order/_type'
+import { ProductInfoContext } from '@order/_context/order_context'
 import { formatNumberWithCommas, getPointOnPurchase } from '@order/utils'
+import { useContext } from 'react'
 
 export default function ProductItem({ productItem }: { productItem: ProductItemType }) {
+  const { setClickedProduct } = useContext(ProductInfoContext)
+
   return (
     <div className="w-full flex flex-col">
       {/* 상품 이미지 :: todo -> 클릭 시 장바구니 이동 */}
-      <div className="flex flex-col group cursor-pointer">
+      <div
+        className="flex flex-col group cursor-pointer"
+        onClick={() => setClickedProduct(productItem)}
+      >
         <div className="w-full aspect-square bg-neutral-50 rounded-lg overflow-hidden mb-4 border-1 border-foreground-200 relative">
           <Image
             src={productItem?.image?.url}

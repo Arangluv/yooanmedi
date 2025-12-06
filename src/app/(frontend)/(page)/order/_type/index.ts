@@ -24,4 +24,8 @@ export type ProductItemType = {
     alt: string | null
   }
   cashback_rate: number
+  insurance_code: string | null | undefined
+  stock: number
+  delivery_fee: number
+  returnable: boolean
 }
