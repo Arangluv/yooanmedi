@@ -1,26 +1,50 @@
 'use client'
-import { Input, Select, SelectItem } from '@heroui/react'
+import { button, Form, Input, Select, SelectItem } from '@heroui/react'
 import clsx from 'clsx'
 import { Search } from 'lucide-react'
-const temp = [
+import { generateQueryString } from '@order/utils'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { SearchParamsType } from '@order/_type'
+
+const searchCondition = [
   {
-    key: 'productName',
+    key: 'pn',
     label: '상품명',
   },
   {
-    key: 'companyName',
+    key: 'cn',
     label: '제약사명',
   },
 ]
 
 export default function SearchForm() {
-  // 상품명 or 제약사명
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement)
+    const condition = formData.get('condition') as string
+    const keyword = formData.get('keyword') as string
+
+    const query = generateQueryString({
+      searchParams,
+      condition,
+      keyword,
+    }) as SearchParamsType
+    router.push(`/order?${query}`)
+  }
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] flex">
+    <Form
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] flex flex-row gap-0"
+      onSubmit={onSubmit}
+    >
       <Select
-        defaultSelectedKeys={[temp[0].key]}
+        defaultSelectedKeys={[searchParams.get('condition') ?? searchCondition[0].key]}
         radius="sm"
+        name="condition"
         variant="bordered"
+        aria-label="검색 조건"
         classNames={{
           base: 'w-[20%]',
           trigger:
@@ -30,7 +54,7 @@ export default function SearchForm() {
           return <span className="text-sm text-foreground-700">{items[0].textValue}</span>
         }}
       >
-        {temp.map((item) => (
+        {searchCondition.map((item) => (
           <SelectItem key={item.key} classNames={{ title: 'text-sm text-foreground-800' }}>
             {item.label}
           </SelectItem>
@@ -38,8 +62,11 @@ export default function SearchForm() {
       </Select>
       <Input
         radius="sm"
+        name="keyword"
         disableAnimation={true}
         variant="bordered"
+        aria-label="검색어"
+        defaultValue={searchParams.get('keyword') ?? ''}
         classNames={{
           base: 'w-[80%]',
           inputWrapper: clsx(
@@ -49,8 +76,12 @@ export default function SearchForm() {
           ),
         }}
         placeholder="검색어를 입력해주세요."
-        endContent={<Search className="w-5 h-5 text-brandWeek" />}
+        endContent={
+          <button type="submit">
+            <Search className="w-5 h-5 text-brandWeek cursor-pointer" />
+          </button>
+        }
       />
-    </div>
+    </Form>
   )
 }

@@ -24,7 +24,8 @@
       "@ui/*": ["./src/components/ui/*"],
       "@components/*": ["./src/components/*"],
       "@payload-config": ["./src/payload.config.ts"],
-      "@public/*": ["./public/*"]
+      "@public/*": ["./public/*"],
+      "@order/*": ["./src/app/(frontend)/(page)/order/*"]
     },
     "target": "ES2022"
   },

@@ -14,6 +14,9 @@ import { Terms } from './collections/Terms'
 import { PrivacyPolicy } from './collections/PrivacyPolicy'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { translations as ko } from '@lib/payload/utils/translation'
+import { Product } from './collections/Product'
+import { ProductCategory } from './collections/ProductCategory'
+import { PointHistory } from './collections/PointHistory'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,7 +34,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Image, Files],
+  collections: [Users, Image, Files, Product, ProductCategory, PointHistory],
   globals: [PopupSetting, Terms, PrivacyPolicy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

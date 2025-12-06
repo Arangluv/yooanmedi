@@ -1,0 +1,154 @@
+import { CollectionConfig } from 'payload'
+
+export const Product: CollectionConfig = {
+  slug: 'product',
+  labels: {
+    singular: '제품',
+    plural: '제품',
+  },
+  admin: {
+    group: '홈페이지 컨텐츠',
+    defaultColumns: ['name', 'category', 'price', 'is_best_product'],
+  },
+  fields: [
+    {
+      name: 'image',
+      type: 'upload',
+      label: '제품이미지',
+      relationTo: 'image',
+      required: true,
+    },
+    {
+      name: 'name',
+      type: 'text',
+      label: '상품명',
+      required: true,
+    },
+    {
+      name: 'category',
+      type: 'relationship',
+      label: '카테고리',
+      relationTo: 'product-category',
+      required: true,
+    },
+    {
+      name: 'insurance_code',
+      type: 'text',
+      label: '보험코드',
+    },
+    {
+      name: 'manufacturer',
+      type: 'text',
+      label: '제조사',
+      required: true,
+    },
+    {
+      name: 'price',
+      type: 'number',
+      label: '가격',
+      defaultValue: 0,
+      required: true,
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return true
+        }
+
+        if (value < 0) {
+          return '가격은 0 이상이어야 합니다.'
+        }
+        return true
+      },
+    },
+    {
+      name: 'cashback_rate',
+      type: 'number',
+      label: '적립금 비율',
+      defaultValue: 0,
+      required: true,
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return true
+        }
+
+        if (value < 0) {
+          return '적립금 비율은 0 이상이어야 합니다.'
+        }
+        return true
+      },
+    },
+    {
+      name: 'specification',
+      type: 'text',
+      label: '규격/단위',
+    },
+    {
+      name: 'stock',
+      type: 'number',
+      label: '재고',
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return true
+        }
+
+        if (value < 0) {
+          return '재고는 0 이상이어야 합니다.'
+        }
+        return true
+      },
+      required: true,
+    },
+    {
+      name: 'delivery_fee',
+      type: 'number',
+      label: '배송비',
+      defaultValue: 0,
+      required: true,
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return true
+        }
+
+        if (value < 0) {
+          return '배송비는 0 이상이어야 합니다.'
+        }
+        return true
+      },
+    },
+    {
+      name: 'returnable',
+      type: 'checkbox',
+      label: '반품가능여부',
+      required: true,
+      defaultValue: false,
+      admin: {
+        description: '반품가능여부를 선택해주세요 (체크 시 반품가능)',
+      },
+    },
+    {
+      name: 'is_best_product',
+      type: 'checkbox',
+      label: '인기 제품 여부',
+      required: true,
+      defaultValue: false,
+      admin: {
+        description: '인기 제품 여부를 선택해주세요 (체크 시 인기 제품)',
+      },
+    },
+  ],
+  hooks: {
+    afterRead: [
+      async ({ doc, req }) => {
+        if (!doc.is_best_product) {
+          return {
+            ...doc,
+            is_best_product: false,
+          }
+        }
+        return {
+          ...doc,
+          is_best_product: true,
+        }
+      },
+    ],
+  },
+}

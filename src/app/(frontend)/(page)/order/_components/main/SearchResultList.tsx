@@ -13,7 +13,7 @@ export default function SearchResultList() {
         <span className="text-brandWeek font-bold">"ㅁㅁㅁ"</span>에 대한 검색결과
       </div>
       {/* sort section */}
-      <div className="flex justify-between px-4 py-2 bg-neutral-50">
+      {/* <div className="flex justify-between px-4 py-2 bg-neutral-50">
         <div className="flex gap-3 text-sm text-foreground-600 items-center">
           <Link href="/order" className="font-bold text-brand">
             낮은 가격순
@@ -30,7 +30,7 @@ export default function SearchResultList() {
         <div>
           <span className="text-[13px] text-foreground-600">총 100건의 검색결과가 있습니다.</span>
         </div>
-      </div>
+      </div> */}
       {/* 상품 리스트 */}
       <div className="grid grid-cols-4 gap-x-4 gap-y-8 mb-10">
         {temp.map((item) => (

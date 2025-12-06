@@ -117,10 +117,6 @@ export default function JoinForm() {
     })
     formData.append('fullAddress', fullAddress)
 
-    formData.forEach((value, key) => {
-      console.log(key, value)
-    })
-
     if (!isTermsAgreed || !isPrivacyAgreed) {
       setModalContent({
         header: <ModalErrorHeader />,
