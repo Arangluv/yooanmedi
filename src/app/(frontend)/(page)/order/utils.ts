@@ -79,7 +79,8 @@ export const generateQueryStringForSearch = (params: { [key: string]: any }) => 
 
 export const getPointOnPurchase = (price: number, cashback_rate: number) => {
   // 10원 단위로 내림
-  const point = Math.floor(price * (cashback_rate / 100)) * 10
+  const calculatedPoint = price * (cashback_rate / 100)
+  const point = Math.floor(calculatedPoint / 10) * 10
 
   return formatNumberWithCommas(point)
 }

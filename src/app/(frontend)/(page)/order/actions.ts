@@ -79,6 +79,10 @@ export async function getBestProducts() {
         cashback_rate: true,
         manufacturer: true,
         specification: true,
+        insurance_code: true,
+        stock: true,
+        delivery_fee: true,
+        returnable: true,
       },
       where: {
         is_best_product: {
