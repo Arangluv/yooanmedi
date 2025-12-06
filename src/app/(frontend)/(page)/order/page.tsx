@@ -13,11 +13,24 @@ import InventoryModal from './_components/main/inventory/InventoryModal'
 import InventoryButtonAsLink from './_components/main/inventory/InventoryButtonAsLink'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { ProductItemType } from './_type'
+import { ProductItemType, SearchParamsType } from './_type'
+import { generateGetProductCondition } from './utils'
 
-export default async function OrderPage() {
+export default async function OrderPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParamsType>
+}) {
+  const serverSearchParams = await searchParams
+  const getProductCondition = generateGetProductCondition({
+    condition: serverSearchParams.condition,
+    keyword: serverSearchParams.keyword,
+    page: serverSearchParams.page,
+    category: serverSearchParams.category,
+  })
+
   const payload = await getPayload({ config })
-  const { docs, totalPages } = await payload.find({
+  const { docs, totalPages, totalDocs } = await payload.find({
     collection: 'product',
     select: {
       id: true,
@@ -28,7 +41,9 @@ export default async function OrderPage() {
       manufacturer: true,
       specification: true,
     },
-    limit: 1,
+    where: getProductCondition?.where,
+    page: serverSearchParams.page ? parseInt(serverSearchParams.page) : 1,
+    limit: 12,
   })
 
   return (
@@ -63,8 +78,16 @@ export default async function OrderPage() {
       {/* 메인 컨텐츠 영역 */}
       <div className="flex w-full">
         <div className="w-[calc((100%-1024px)/2)]"></div>
-        <ProductList totalPages={totalPages} products={docs as unknown as ProductItemType[]} />
-        {/* <SearchResultList /> */}
+        {serverSearchParams.keyword ? (
+          <SearchResultList
+            products={docs as unknown as ProductItemType[]}
+            totalPages={totalPages}
+            condition={serverSearchParams.condition as 'pn' | 'cn'}
+            totalProducts={totalDocs}
+          />
+        ) : (
+          <ProductList totalPages={totalPages} products={docs as unknown as ProductItemType[]} />
+        )}
         <ProductDeatilAsideSection />
       </div>
       <Inventory />

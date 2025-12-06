@@ -15,10 +15,8 @@ export default function ProductListPagination({ totalPages }: { totalPages: numb
       page: String(page),
     }) as SearchParamsType
 
-    router.push(`/order?${query}`)
+    router.push(`/order?${query}`, { scroll: false })
   }
-
-  if (totalPages <= 1) return null
 
   return (
     <div className="w-full flex justify-center">

@@ -1,8 +1,8 @@
 'use client'
-import { button, Form, Input, Select, SelectItem } from '@heroui/react'
+import { Form, Input, Select, SelectItem } from '@heroui/react'
 import clsx from 'clsx'
 import { Search } from 'lucide-react'
-import { generateQueryString } from '@order/utils'
+import { generateQueryStringForSearch } from '@order/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { SearchParamsType } from '@order/_type'
 
@@ -27,7 +27,7 @@ export default function SearchForm() {
     const condition = formData.get('condition') as string
     const keyword = formData.get('keyword') as string
 
-    const query = generateQueryString({
+    const query = generateQueryStringForSearch({
       searchParams,
       condition,
       keyword,
