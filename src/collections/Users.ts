@@ -180,5 +180,43 @@ export const Users: CollectionConfig = {
       relationTo: 'files',
       hasMany: true,
     },
+    {
+      type: 'number',
+      name: 'point',
+      label: '적립금',
+      access: {
+        read: ({ req }) => {
+          return req.user?.role === 'admin'
+        },
+      },
+      admin: {
+        description: '적립금을 입력해주세요',
+        condition: (data, siblingData) => {
+          return siblingData.role === 'client'
+        },
+      },
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return true
+        }
+        if (value < 0) {
+          return '적립금은 0 이상이어야 합니다.'
+        }
+        return true
+      },
+      required: true,
+      defaultValue: 0,
+    },
   ],
+  // hooks: {
+  //   afterRead: [
+  //     async ({ doc }) => {
+  //       if (doc.point == null) {
+  //         doc.point = 0
+  //       }
+
+  //       return doc
+  //     },
+  //   ],
+  // },
 }

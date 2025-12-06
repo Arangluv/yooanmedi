@@ -2,12 +2,14 @@
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { cookies } from 'next/headers'
+import { ProductItemType } from './_type'
 
 export async function getAuthUser() {
   const payload = await getPayload({ config: config })
   const { user } = await payload.auth({
     headers: new Headers({ cookie: (await cookies()).toString() }),
   })
+
   // 로그인하지 않았다면 user === null;
   if (!user) {
     return {
@@ -16,18 +18,24 @@ export async function getAuthUser() {
     }
   }
 
-  const { role, isApproved, username } = user
+  const dto = {
+    role: user.role,
+    isApproved: user.isApproved,
+    username: user.username,
+    hospitalName: user.hospitalName ? user.hospitalName : '관리자',
+    point: user.point,
+  }
 
   // 관리자면 로그인
-  if (role === 'admin') {
+  if (dto.role === 'admin') {
     return {
-      user: { role, isApproved, username },
+      user: dto,
       message: 'success',
     }
   }
 
   // 회원가입 승인여부 검사
-  if (!isApproved) {
+  if (!dto.isApproved) {
     return {
       user: null,
       message: '아직 회원가입이 승인되지 않았습니다',
@@ -35,7 +43,53 @@ export async function getAuthUser() {
   }
 
   return {
-    user: { role, isApproved, username },
+    user: dto,
     message: 'success',
+  }
+}
+
+export async function getProductsCategory() {
+  try {
+    const payload = await getPayload({ config: config })
+    const productsCategory = await payload.find({
+      collection: 'product-category',
+      select: {
+        name: true,
+      },
+      sort: 'createdAt',
+    })
+
+    return productsCategory.docs
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+export async function getBestProducts() {
+  try {
+    const payload = await getPayload({ config: config })
+    const bestProducts = await payload.find({
+      collection: 'product',
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        image: true,
+        cashback_rate: true,
+        manufacturer: true,
+        specification: true,
+      },
+      where: {
+        is_best_product: {
+          equals: true,
+        },
+      },
+    })
+
+    return bestProducts.docs as unknown as ProductItemType[]
+  } catch (error) {
+    console.error(error)
+    return null
   }
 }

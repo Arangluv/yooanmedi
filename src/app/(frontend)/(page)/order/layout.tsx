@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { getAuthUser } from './actions'
 import { TriangleAlert } from 'lucide-react'
+import { InventoryModalProvider, OrderUserInfoProvider } from './_context/order_context'
+import { OrderContextUserType } from './_type'
 
 export default async function OrderLayout({ children }: { children: React.ReactNode }) {
   const { user, message } = await getAuthUser()
@@ -23,5 +25,9 @@ export default async function OrderLayout({ children }: { children: React.ReactN
     )
   }
 
-  return <>{children}</>
+  return (
+    <OrderUserInfoProvider initialUser={user as OrderContextUserType}>
+      <InventoryModalProvider>{children}</InventoryModalProvider>
+    </OrderUserInfoProvider>
+  )
 }

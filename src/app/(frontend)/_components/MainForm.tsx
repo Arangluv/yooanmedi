@@ -15,11 +15,13 @@ import { useMutation } from '@tanstack/react-query'
 import { login } from '@/app/(frontend)/actions'
 import { BrandLogo } from '@/config/Logo'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function MainForm() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [content, setContent] = useState<React.ReactNode>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const { mutate: loginMutation } = useMutation({
     mutationFn: ({ id, password }: { id: string; password: string }) => login(id, password),
@@ -30,7 +32,8 @@ export default function MainForm() {
         onOpen()
         return
       }
-      alert('로그인 성공 - 추후 주문페이지가 완성 시 이동합니다')
+
+      router.push('/order')
     },
     onError: (error) => {
       setIsLoading(false)

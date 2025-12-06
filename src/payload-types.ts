@@ -70,6 +70,9 @@ export interface Config {
     users: User;
     image: Image;
     files: File;
+    product: Product;
+    'product-category': ProductCategory;
+    'point-history': PointHistory;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +82,9 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     image: ImageSelect<false> | ImageSelect<true>;
     files: FilesSelect<false> | FilesSelect<true>;
+    product: ProductSelect<false> | ProductSelect<true>;
+    'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
+    'point-history': PointHistorySelect<false> | PointHistorySelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -167,6 +173,10 @@ export interface User {
    * 증빙서류를 업로드해주세요
    */
   fileList?: (number | File)[] | null;
+  /**
+   * 적립금을 입력해주세요
+   */
+  point?: number | null;
   updatedAt: string;
   createdAt: string;
   /**
@@ -234,6 +244,56 @@ export interface Image {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product".
+ */
+export interface Product {
+  id: number;
+  image: number | Image;
+  name: string;
+  category: number | ProductCategory;
+  insurance_code?: string | null;
+  manufacturer: string;
+  price: number;
+  cashback_rate: number;
+  specification?: string | null;
+  stock: number;
+  delivery_fee: number;
+  /**
+   * 반품가능여부를 선택해주세요 (체크 시 반품가능)
+   */
+  returnable: boolean;
+  /**
+   * 인기 제품 여부를 선택해주세요 (체크 시 인기 제품)
+   */
+  is_best_product: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-category".
+ */
+export interface ProductCategory {
+  id: number;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-history".
+ */
+export interface PointHistory {
+  id: number;
+  user: number | User;
+  type: 'earn' | 'use';
+  balanceAfter?: number | null;
+  reason: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -250,6 +310,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'files';
         value: number | File;
+      } | null)
+    | ({
+        relationTo: 'product';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'product-category';
+        value: number | ProductCategory;
+      } | null)
+    | ({
+        relationTo: 'point-history';
+        value: number | PointHistory;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -308,6 +380,7 @@ export interface UsersSelect<T extends boolean = true> {
   phoneNumber?: T;
   faxNumber?: T;
   fileList?: T;
+  point?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -360,6 +433,47 @@ export interface FilesSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product_select".
+ */
+export interface ProductSelect<T extends boolean = true> {
+  image?: T;
+  name?: T;
+  category?: T;
+  insurance_code?: T;
+  manufacturer?: T;
+  price?: T;
+  cashback_rate?: T;
+  specification?: T;
+  stock?: T;
+  delivery_fee?: T;
+  returnable?: T;
+  is_best_product?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-category_select".
+ */
+export interface ProductCategorySelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-history_select".
+ */
+export interface PointHistorySelect<T extends boolean = true> {
+  user?: T;
+  type?: T;
+  balanceAfter?: T;
+  reason?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
