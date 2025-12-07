@@ -2,7 +2,7 @@
 
 import { useDisclosure } from '@heroui/react'
 import { createContext, useEffect, useState } from 'react'
-import { ProductItemType } from '../_type'
+import { InventoryType, ProductItemType } from '../_type'
 
 type OrderContextUserType = {
   user: {
@@ -97,5 +97,22 @@ export const ProductInfoProvider = ({ children }: { children: React.ReactNode })
     <ProductInfoContext.Provider value={{ clickedProduct, setClickedProduct }}>
       {children}
     </ProductInfoContext.Provider>
+  )
+}
+
+// 장바구니
+
+export const InventoryContext = createContext<InventoryType>({
+  inventory: [],
+  setInventory: () => {},
+})
+
+export const InventoryProvider = ({ children }: { children: React.ReactNode }) => {
+  const [inventory, setInventory] = useState<InventoryType['inventory']>([])
+
+  return (
+    <InventoryContext.Provider value={{ inventory, setInventory }}>
+      {children}{' '}
+    </InventoryContext.Provider>
   )
 }

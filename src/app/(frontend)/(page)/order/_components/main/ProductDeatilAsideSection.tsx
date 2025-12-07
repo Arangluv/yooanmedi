@@ -1,21 +1,27 @@
 'use client'
 
 import Image from 'next/image'
-import TestImage from '@public/order/order_test.webp'
-import { Divider } from '@heroui/react'
+import { Divider, Form } from '@heroui/react'
 import { clsx } from 'clsx'
 import { NumberInput } from '@heroui/react'
-import { ProductInfoContext } from '@order/_context/order_context'
+import { InventoryContext, ProductInfoContext } from '@order/_context/order_context'
 import { useContext } from 'react'
 import { Image as ImageIcon } from 'lucide-react'
 import { ProductItemType } from '../../_type'
 import { formatNumberWithCommas, getPointOnPurchase } from '../../utils'
+import { AddedProductToast, ExistingProductToast } from './ToastComponents'
+import { toast } from 'sonner'
 
 export default function ProductDeatilAsideSection() {
   const { clickedProduct } = useContext(ProductInfoContext)
+  const { inventory, setInventory } = useContext(InventoryContext)
 
   return clickedProduct ? (
-    <SelectedProductDetailSection product={clickedProduct} />
+    <SelectedProductDetailSection
+      product={clickedProduct}
+      inventory={inventory}
+      setInventory={setInventory}
+    />
   ) : (
     <EmptyProductDetailSection />
   )
@@ -35,20 +41,37 @@ function EmptyProductDetailSection() {
             <ImageIcon className="w-6 h-6 text-foreground-200" />
             <span className="text-sm text-foreground-600">상품을 선택해주세요.</span>
           </div>
-          <ProductDetailSection name="상품명" value="" />
-          <ProductDetailSection name="제조사" value="" />
-          <ProductDetailSection name="규격" value="" />
-          <ProductDetailSection name="가격" value="" />
-          <ProductDetailSection name="보험코드" value="" />
-          <ProductDetailSection name="재고" value="" accent="brand" />
+          <ProductDetailEmptySection name="상품명" />
+          <ProductDetailEmptySection name="제조사" />
+          <ProductDetailEmptySection name="규격" />
+          <ProductDetailEmptySection name="가격" />
+          <ProductDetailEmptySection name="보험코드" />
+          <ProductDetailEmptySection name="재고" />
         </div>
       </div>
     </div>
   )
 }
 
-function SelectedProductDetailSection({ product }: { product: ProductItemType }) {
+function SelectedProductDetailSection({
+  product,
+  inventory,
+  setInventory,
+}: {
+  product: ProductItemType
+  inventory: Array<{
+    product: ProductItemType
+    quantity: number
+  }>
+  setInventory: (
+    inventory: Array<{
+      product: ProductItemType
+      quantity: number
+    }>,
+  ) => void
+}) {
   const {
+    id,
     name,
     manufacturer,
     price,
@@ -59,8 +82,6 @@ function SelectedProductDetailSection({ product }: { product: ProductItemType })
     cashback_rate,
     returnable,
   } = product
-  console.log('product')
-  console.log(product)
 
   return (
     <div className="w-[calc((100%-1024px)/2)] px-8 flex flex-col gap-8 fixed top-[148px] right-0">
@@ -72,7 +93,13 @@ function SelectedProductDetailSection({ product }: { product: ProductItemType })
         <span className="font-bold">상품 정보</span>
         <div className="flex flex-col gap-1">
           <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden">
-            <Image src={TestImage} alt="test" className="w-full h-full object-contain" />
+            <Image
+              src={product.image.url}
+              alt={product.image.alt ?? ''}
+              width={150}
+              height={150}
+              className="w-full h-full object-contain"
+            />
           </div>
           <ProductDetailSection name="상품명" value={name} />
           <ProductDetailSection name="제조사" value={manufacturer} />
@@ -93,9 +120,21 @@ function SelectedProductDetailSection({ product }: { product: ProductItemType })
           <ProductPurchaseHistorySection />
           <Divider className="my-2" />
           <ProductPointBenefitSection price={price} rate={cashback_rate} />
-          <ProductQuantityInput />
+          <ProductQuantityInput
+            inventory={inventory}
+            setInventory={setInventory}
+            product={product}
+          />
         </div>
       </div>
+    </div>
+  )
+}
+
+function ProductDetailEmptySection({ name }: { name: string }) {
+  return (
+    <div className="flex gap-2 items-start text-sm text-foreground-600">
+      <span className="text-foreground-700 block w-[100px] flex-shrink-0">{name}</span>
     </div>
   )
 }
@@ -135,9 +174,6 @@ function ProductDetailSection({
 function ProductPointBenefitSection({ price, rate }: { price: number; rate: number }) {
   const willEarnPoint = getPointOnPurchase(price, rate)
 
-  console.log('willEarnPoint')
-  console.log(willEarnPoint)
-
   if (willEarnPoint === '0' || !willEarnPoint) {
     return null
   }
@@ -150,17 +186,61 @@ function ProductPointBenefitSection({ price, rate }: { price: number; rate: numb
   )
 }
 
-function ProductQuantityInput() {
+function ProductQuantityInput({
+  inventory,
+  setInventory,
+  product,
+}: {
+  inventory: Array<{
+    product: ProductItemType
+    quantity: number
+  }>
+  setInventory: (
+    inventory: Array<{
+      product: ProductItemType
+      quantity: number
+    }>,
+  ) => void
+  product: ProductItemType
+}) {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const { quantity } = Object.fromEntries(new FormData(e.target as HTMLFormElement))
+
+    const isUserAdded = inventory.some((item) => item.product.id === product.id)
+
+    if (isUserAdded) {
+      toast.info(<ExistingProductToast />)
+      return
+    } else {
+      const newInventory = [...inventory, { product, quantity: Number(quantity) }]
+      setInventory(newInventory)
+      toast.success(<AddedProductToast count={Number(quantity)} />)
+    }
+  }
+
   return (
-    <div className="flex gap-2 items-start text-sm text-foreground-600 mt-2">
+    <Form className="flex gap-2 items-start text-sm text-foreground-600 mt-2" onSubmit={onSubmit}>
       <span className="text-foreground-700 flex-shrink-0 w-[100px]">주문수량</span>
       <div className="flex items-center">
         <NumberInput
           aria-label="주문수량"
           size="sm"
-          value={1}
           hideStepper
           radius="sm"
+          name="quantity"
+          defaultValue={0}
+          validate={(value) => {
+            if (!value) {
+              return '주문수량을 입력해주세요.'
+            }
+
+            if (value < 1 || value > 999) {
+              return '주문수량은 1 이상 999 이하이어야 합니다.'
+            }
+
+            return true
+          }}
           variant="bordered"
           description="입력 후 Enter를 눌러주세요."
           classNames={{
@@ -169,7 +249,7 @@ function ProductQuantityInput() {
           }}
         />
       </div>
-    </div>
+    </Form>
   )
 }
 

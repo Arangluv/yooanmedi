@@ -2,15 +2,16 @@
 
 import { Badge } from '@heroui/react'
 import { ShoppingCart } from 'lucide-react'
-import { InventoryModalContext } from '@order/_context/order_context'
+import { InventoryContext, InventoryModalContext } from '@order/_context/order_context'
 import { useContext } from 'react'
 
 export default function Inventory() {
   const { onOpen } = useContext(InventoryModalContext)
+  const { inventory } = useContext(InventoryContext)
 
   return (
     <div className="fixed bottom-6 right-8">
-      <Badge content={10} color="danger" placement="top-right" size="lg">
+      <Badge content={inventory.length} color="danger" placement="top-right" size="lg">
         <button
           className="min-w-20 h-16 bg-brand rounded-md flex items-center gap-2 px-4 justify-center hover:bg-brandWeek transition-colors duration-300 cursor-pointer"
           onClick={onOpen}
