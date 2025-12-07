@@ -16,9 +16,6 @@ export default function CategoryNav() {
   })
 
   const onTabClick = (key: string) => {
-    console.log('key')
-    console.log(key)
-
     const query = generateQueryString({
       searchParams,
       category: key,
