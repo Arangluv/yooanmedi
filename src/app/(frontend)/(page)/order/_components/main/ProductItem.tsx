@@ -2,12 +2,28 @@ import Image from 'next/image'
 import { Tooltip } from '@heroui/react'
 import { ShoppingCart } from 'lucide-react'
 import { ProductItemType } from '@order/_type'
-import { ProductInfoContext } from '@order/_context/order_context'
+import { InventoryContext, ProductInfoContext } from '@order/_context/order_context'
 import { formatNumberWithCommas, getPointOnPurchase } from '@order/utils'
 import { useContext } from 'react'
+import { toast } from 'sonner'
+import { ExistingProductToast, AddedProductToast } from './ToastComponents'
 
 export default function ProductItem({ productItem }: { productItem: ProductItemType }) {
   const { setClickedProduct } = useContext(ProductInfoContext)
+  const { inventory, setInventory } = useContext(InventoryContext)
+
+  const handleAddToInventory = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    const isUserAdded = inventory.some((item) => item.product.id === productItem.id)
+    if (isUserAdded) {
+      // toast로 상품이 이미 담겨있습니다. 라고 알림
+      toast.info(<ExistingProductToast />)
+    } else {
+      // 상품을 장바구니에 담기
+      setInventory([...inventory, { product: productItem, quantity: 1 }])
+      toast.success(<AddedProductToast />)
+    }
+  }
 
   return (
     <div className="w-full flex flex-col">
@@ -25,9 +41,10 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
             height={244}
             unoptimized={true}
           />
-          <div
+          <button
             className="w-10 h-10 bg-neutral-100 absolute bottom-2 right-2 rounded-full flex items-center justify-center"
             style={{ boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)' }}
+            onClick={handleAddToInventory}
           >
             <Tooltip
               content="장바구니 담기"
@@ -36,7 +53,7 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
             >
               <ShoppingCart className="w-5 h-5 text-brand" />
             </Tooltip>
-          </div>
+          </button>
         </div>
         <span className="text-xs text-foreground-600">{productItem.manufacturer}</span>
         <span>{productItem.name}</span>

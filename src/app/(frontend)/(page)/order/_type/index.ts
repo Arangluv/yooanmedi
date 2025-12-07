@@ -29,3 +29,16 @@ export type ProductItemType = {
   delivery_fee: number
   returnable: boolean
 }
+
+export type InventoryType = {
+  inventory: Array<{
+    product: ProductItemType
+    quantity: number
+  }>
+  setInventory: (
+    inventory: Array<{
+      product: ProductItemType
+      quantity: number
+    }>,
+  ) => void
+}
