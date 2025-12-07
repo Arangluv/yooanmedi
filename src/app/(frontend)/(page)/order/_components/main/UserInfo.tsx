@@ -3,8 +3,13 @@
 import { OrderUserInfoContext } from '@order/_context/order_context'
 import { useContext } from 'react'
 import { formatNumberWithCommas } from '@order/utils'
+import clsx from 'clsx'
 
-export default function UserInfo() {
+export default function UserInfo({
+  className = 'w-[calc((100%-1024px)/2)] pr-8',
+}: {
+  className?: string
+}) {
   const { user } = useContext(OrderUserInfoContext)
 
   if (!user) {
@@ -12,7 +17,7 @@ export default function UserInfo() {
   }
 
   return (
-    <div className="w-[calc((100%-1024px)/2)] flex h-full justify-end pr-8">
+    <div className={clsx('flex h-full justify-end', className)}>
       <div className="flex flex-col items-end justify-center">
         <span className="text-brandWeek">
           <span className="font-bold mr-1">{user.hospitalName}</span>

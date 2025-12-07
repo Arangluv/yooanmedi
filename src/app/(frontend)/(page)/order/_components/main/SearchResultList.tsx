@@ -17,9 +17,6 @@ export default function SearchResultList({
   condition: 'pn' | 'cn'
   totalProducts: number
 }) {
-  console.log('totalProducts')
-  console.log(totalProducts)
-
   return (
     <section className="w-5xl flex flex-col mt-16 flex-shrink-0">
       {/* 검색결과 타이틀 */}

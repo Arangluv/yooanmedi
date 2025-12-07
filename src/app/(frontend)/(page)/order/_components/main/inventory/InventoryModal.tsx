@@ -18,6 +18,7 @@ import { ProductItemType } from '@order/_type'
 import { Plus, Minus } from 'lucide-react'
 import { toast } from 'sonner'
 import { QuantityChangedToast } from '../ToastComponents'
+import { useRouter } from 'next/navigation'
 export default function InventoryModal() {
   const { isOpen, onOpenChange } = useContext(InventoryModalContext)
   const { inventory, setInventory } = useContext(InventoryContext)
@@ -199,6 +200,8 @@ function ExpectedPriceSection({
 }: {
   inventory: Array<{ product: ProductItemType; quantity: number }>
 }) {
+  const router = useRouter()
+
   // 총 상품금액
   const totalPrice = inventory.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   // 배송비
@@ -232,7 +235,12 @@ function ExpectedPriceSection({
           </div>
         </div>
       </div>
-      <Button className="bg-brand text-white !h-[56px]" size="lg" radius="sm">
+      <Button
+        className="bg-brand text-white !h-[56px]"
+        size="lg"
+        radius="sm"
+        onPress={() => router.push('/order/payments')}
+      >
         총 {inventory?.length ?? 0}개의 상품 구매하기
       </Button>
     </div>

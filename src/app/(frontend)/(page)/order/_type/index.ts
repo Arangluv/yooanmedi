@@ -4,6 +4,9 @@ export type OrderContextUserType = {
   username: string
   hospitalName: string
   point: number
+  email: string
+  phoneNumber: string
+  address: string
 }
 
 export type SearchParamsType = {

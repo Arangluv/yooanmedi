@@ -20,6 +20,9 @@ export async function getAuthUser() {
 
   const dto = {
     role: user.role,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    address: user.address,
     isApproved: user.isApproved,
     username: user.username,
     hospitalName: user.hospitalName ? user.hospitalName : '관리자',
