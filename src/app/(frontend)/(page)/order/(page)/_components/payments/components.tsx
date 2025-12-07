@@ -59,7 +59,7 @@ export function PaymentsListSection() {
   return (
     <div className="w-full flex flex-col gap-2">
       <span className="text-xl font-bold">결제 항목</span>
-      {inventory.length > 1 ? (
+      {inventory.length > 0 ? (
         <div className="w-full flex flex-col p-3 border-1 rounded-lg border-foreground-200 gap-3">
           {inventory.map((item, index) => {
             if (index === inventory.length - 1) {
@@ -82,7 +82,7 @@ export function PaymentsListSection() {
         </div>
       ) : (
         <div className="w-full flex flex-col gap-2 items-center justify-center py-6 bg-neutral-50 rounded-lg">
-          <span className="text-foreground-600 text-sm">구매하실 상품이 없습니다.</span>
+          <span className="text-foreground-600 text-sm">장바구니에 담긴 상품이 없습니다.</span>
           <Link href="/order" className="text-brand text-[15px] font-bold">
             상품 둘러보기
           </Link>

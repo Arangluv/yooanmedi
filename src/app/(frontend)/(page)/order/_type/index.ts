@@ -45,3 +45,24 @@ export type InventoryType = {
     }>,
   ) => void
 }
+
+export type PaymentRegisterDto = {
+  mallId: string
+  payMethodTypeCode: '11' // 결제수단 코드로 유안메디팜은 신용카드로 밖에 결제못한다
+  amount: number
+  shopOrderNo: string // 고유한 주문번호
+  currency: '00' // 통화 코드로 유안메디팜은 원화로 결제한다
+  returnUrl: string
+  deviceTypeCode: 'mobile' | 'pc'
+  clientTypeCode: '00' // 고정값,
+  orderInfo: {
+    goodsName: string
+    customerInfo: {
+      customerId: string
+      customerName: string
+      customerMail: string
+      customerContactNo: string // 단 숫자만 허용
+      customerAddr: string
+    }
+  }
+}

@@ -8,6 +8,12 @@ import { useMutation } from '@tanstack/react-query'
 import { useContext, useEffect, useState } from 'react'
 import { InventoryContext, OrderUserInfoContext } from '@order/_context/order_context'
 import Link from 'next/link'
+import {
+  InventoryType,
+  OrderContextUserType,
+  PaymentRegisterDto,
+  ProductItemType,
+} from '@order/_type'
 
 export default function PaymentsActionSection() {
   const { inventory } = useContext(InventoryContext)
@@ -23,17 +29,32 @@ export default function PaymentsActionSection() {
     setTotalPaymentAmount(totalExpectedPrice - usePoint)
   }, [usePoint, totalExpectedPrice])
 
-  const dto = {
-    mallId: 'T0021766',
+  useEffect(() => {
+    const popupHandler = (event: MessageEvent) => {
+      if (event.data === 'payment-success') {
+        window.location.href = '/order/payments/finish?status=success'
+      } else if (event.data === 'payment-error') {
+        window.location.href = '/order/payments/finish?status=error'
+      }
+    }
+    window.addEventListener('message', popupHandler)
+
+    return () => {
+      window.removeEventListener('message', popupHandler)
+    }
+  }, [])
+  // mallId는 서버에서만 필요하므로 클라이언트사이드에서는 생략된 타입으로 작성
+  const dto: Omit<PaymentRegisterDto, 'mallId'> = {
     payMethodTypeCode: '11',
     currency: '00',
-    amount: 122000,
+    amount: Number(totalPaymentAmount),
     clientTypeCode: '00',
-    returnUrl: 'http://localhost:3000/order/payments/result',
-    deviceTypeCode: 'mobile',
-    shopOrderNo: '20251207test',
+    returnUrl: process.env.NEXT_PUBLIC_SITE_URL + '/api/payments',
+    deviceTypeCode: 'pc',
+    shopOrderNo: String(generateShopOrderNo()),
     orderInfo: {
-      goodsName: '케라시스 데미지 클리닉 단백질 샴푸',
+      goodsName: generateGoodsName(inventory),
+      customerInfo: generateUserInfo(user as OrderContextUserType),
     },
   }
 
@@ -62,9 +83,15 @@ export default function PaymentsActionSection() {
   const { mutate: registerOrderMutation } = useMutation({
     mutationFn: () => registerOrder(dto),
     onSuccess: (data) => {
-      openPaymentPopup(data.authPageUrl as string)
+      if (data?.resCd === '0000') {
+        openPaymentPopup(data.authPageUrl as string)
+      } else {
+        alert('결제창을 불러오는데 실패했습니다. 다시시도해주세요')
+      }
     },
-    onError: (error) => {},
+    onError: (error) => {
+      alert('결제창을 불러오는데 실패했습니다. 다시시도해주세요')
+    },
   })
   if (!user) {
     return null
@@ -150,4 +177,46 @@ export default function PaymentsActionSection() {
       </div>
     </div>
   )
+}
+
+function generateUserInfo(user: OrderContextUserType) {
+  if (!user) {
+    return {
+      customerId: '',
+      customerName: '',
+      customerMail: '',
+      customerContactNo: '',
+      customerAddr: '',
+    }
+  }
+
+  return {
+    customerId: user.username ? user.username : '',
+    customerName: user.hospitalName ? user.hospitalName : '관리자',
+    customerMail: user.email ? user.email : '',
+    customerContactNo: user.phoneNumber ? user.phoneNumber : '',
+    customerAddr: user.address ? user.address : '',
+  }
+}
+
+function generateShopOrderNo() {
+  const now = new Date()
+  const yyyymmdd =
+    now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0')
+  const randomNum = Math.floor(1000000 + Math.random() * 9000000) // 7자리 랜덤 숫자
+  return yyyymmdd + randomNum.toString()
+}
+
+function generateGoodsName(inventory: InventoryType['inventory']) {
+  if (!inventory || inventory.length === 0) {
+    return ''
+  }
+
+  if (inventory.length === 1) {
+    return inventory[0].product.name
+  }
+
+  return inventory[0].product.name + ' 외 ' + (inventory.length - 1) + '개의 상품'
 }

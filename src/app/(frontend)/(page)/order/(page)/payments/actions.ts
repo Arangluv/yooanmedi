@@ -4,11 +4,14 @@
 // POST 요청
 export async function registerOrder(orderInfo: any) {
   try {
-    const TEST_URL = 'https://testpgapi.easypay.co.kr/api/ep9/trades/webpay'
+    const dto = {
+      mallId: process.env.PAYMENTS_MID,
+      ...orderInfo,
+    }
 
-    const res = await fetch(TEST_URL, {
+    const res = await fetch(process.env.PAYMENTS_REGISTER_URL as string, {
       method: 'POST',
-      body: JSON.stringify(orderInfo),
+      body: JSON.stringify(dto),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -21,8 +24,6 @@ export async function registerOrder(orderInfo: any) {
       return null
     }
     const data = await res.json()
-    console.log('결제주문 등록 성공')
-    console.log(data)
     return data
   } catch (error) {
     return null
