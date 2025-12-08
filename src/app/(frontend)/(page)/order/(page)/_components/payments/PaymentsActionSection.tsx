@@ -15,7 +15,7 @@ import {
   ProductItemType,
 } from '@order/_type'
 
-export default function PaymentsActionSection() {
+export default function PaymentsActionSection({ userRequest }: { userRequest: string }) {
   const { inventory } = useContext(InventoryContext)
   const { user } = useContext(OrderUserInfoContext)
   const [usePoint, setUsePoint] = useState(0)
@@ -43,6 +43,55 @@ export default function PaymentsActionSection() {
       window.removeEventListener('message', popupHandler)
     }
   }, [])
+
+  const testOrderList = [
+    {
+      id: 1,
+      quantity: 10,
+    },
+    {
+      id: 10,
+      quantity: 100,
+    },
+    {
+      id: 12,
+      quantity: 123,
+    },
+    {
+      id: 7,
+      quantity: 14,
+    },
+    {
+      id: 6,
+      quantity: 16,
+    },
+    {
+      id: 21,
+      quantity: 15,
+    },
+    {
+      id: 134,
+      quantity: 15,
+    },
+    {
+      id: 14,
+      quantity: 154,
+    },
+    {
+      id: 484,
+      quantity: 3,
+    },
+    {
+      id: 645,
+      quantity: 1123,
+    },
+    {
+      id: 123,
+      quantity: 1123,
+    },
+  ]
+
+  const json = JSON.stringify(testOrderList)
   // mallId는 서버에서만 필요하므로 클라이언트사이드에서는 생략된 타입으로 작성
   const dto: Omit<PaymentRegisterDto, 'mallId'> = {
     payMethodTypeCode: '11',
@@ -55,6 +104,11 @@ export default function PaymentsActionSection() {
     orderInfo: {
       goodsName: generateGoodsName(inventory),
       customerInfo: generateUserInfo(user as OrderContextUserType),
+    },
+    shopValueInfo: {
+      value1: userRequest,
+      value2: json,
+      value3: usePoint.toString(),
     },
   }
 
@@ -86,13 +140,19 @@ export default function PaymentsActionSection() {
       if (data?.resCd === '0000') {
         openPaymentPopup(data.authPageUrl as string)
       } else {
-        alert('결제창을 불러오는데 실패했습니다. 다시시도해주세요')
+        alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요')
       }
     },
     onError: (error) => {
       alert('결제창을 불러오는데 실패했습니다. 다시시도해주세요')
     },
   })
+
+  const handlePointBtnClick = () => {
+    const usedPoint = calculateMaxUsePoint(user?.point ?? 0, totalExpectedPrice)
+    setUsePoint(usedPoint)
+  }
+
   if (!user) {
     return null
   }
@@ -113,32 +173,37 @@ export default function PaymentsActionSection() {
             <span className="text-foreground-600">배송비</span>
             <span className="font-bold">{formatNumberWithCommas(totalDeliveryFee)}원</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-foreground-600">적립금 사용</span>
-            <div className="flex flex-col items-end">
-              <NumberInput
-                size="sm"
-                radius="sm"
-                aria-label="적립금 사용"
-                variant="bordered"
-                isDisabled={user.point === 0 || user.point === null || inventory.length === 0}
-                hideStepper
-                value={usePoint}
-                minValue={0}
-                maxValue={user.point ?? 0}
-                onValueChange={(value) => {
-                  setUsePoint(value)
-                }}
-                description={
-                  <span className="text-[14px] text-brand">
-                    (사용가능 적립금 {formatNumberWithCommas(user.point ?? 0)}원)
-                  </span>
-                }
-                classNames={{
-                  inputWrapper: 'border-1 border-foreground-200 shadow-none h-8',
-                  description: 'flex justify-end',
-                }}
-              />
+          <div className="flex justify-between gap-4">
+            <span className="text-foreground-600 flex-shrink-0">적립금 사용</span>
+            <div className="flex gap-2">
+              <div className="flex flex-col items-start">
+                <NumberInput
+                  size="sm"
+                  radius="sm"
+                  aria-label="적립금 사용"
+                  variant="bordered"
+                  isDisabled={user.point === 0 || user.point === null || inventory.length === 0}
+                  hideStepper
+                  value={usePoint}
+                  minValue={0}
+                  maxValue={calculateMaxUsePoint(user.point ?? 0, totalExpectedPrice)}
+                  onValueChange={(value) => {
+                    setUsePoint(value)
+                  }}
+                  description={
+                    <span className="text-[14px] text-brand">
+                      (사용가능 적립금 {formatNumberWithCommas(user.point ?? 0)}원)
+                    </span>
+                  }
+                  classNames={{
+                    inputWrapper: 'border-1 border-foreground-200 shadow-none h-8',
+                    description: 'flex justify-end',
+                  }}
+                />
+              </div>
+              <Button className="h-8 bg-brand text-white" radius="sm" onPress={handlePointBtnClick}>
+                전액사용
+              </Button>
             </div>
           </div>
         </div>
@@ -168,7 +233,7 @@ export default function PaymentsActionSection() {
         <Button
           size="lg"
           radius="sm"
-          isDisabled={totalPaymentAmount <= 0}
+          isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
           className="bg-brand text-white"
           onPress={() => registerOrderMutation()}
         >
@@ -177,6 +242,29 @@ export default function PaymentsActionSection() {
       </div>
     </div>
   )
+}
+
+function calculateMaxUsePoint(point: number, totalPrice: number) {
+  if (point > totalPrice) {
+    return totalPrice
+  } else {
+    return point
+  }
+}
+
+function isButtonDisabled({
+  totalPaymentAmount,
+  totalExpectedPrice,
+}: {
+  totalPaymentAmount: number
+  totalExpectedPrice: number
+}) {
+  // 최종 결제 금액이 0원이며, 예상 결제금액이 0원 이하인 경우 (장바구니에 물건이 없는 경우)
+  if (totalPaymentAmount <= 0 && totalExpectedPrice <= 0) {
+    return true
+  }
+
+  return false
 }
 
 function generateUserInfo(user: OrderContextUserType) {
@@ -219,4 +307,15 @@ function generateGoodsName(inventory: InventoryType['inventory']) {
   }
 
   return inventory[0].product.name + ' 외 ' + (inventory.length - 1) + '개의 상품'
+}
+
+function generateOrderList(inventory: InventoryType['inventory']) {
+  if (!inventory || inventory.length === 0) {
+    return []
+  }
+
+  return inventory.map((item) => ({
+    id: item.product.id,
+    quantity: item.quantity,
+  }))
 }

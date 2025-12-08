@@ -25,7 +25,7 @@ export default function PaymentsPage() {
             <PaymentsListSection />
           </div>
           <div className="w-[40%]">
-            <PaymentsActionSection />
+            <PaymentsActionSection userRequest={userRequest} />
           </div>
         </div>
       </ContentWrapper>
