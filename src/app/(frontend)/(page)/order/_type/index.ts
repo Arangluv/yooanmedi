@@ -65,4 +65,10 @@ export type PaymentRegisterDto = {
       customerAddr: string
     }
   }
+  shopValueInfo: {
+    value1?: string
+    value2?: string
+    value3?: string
+    // 6까지 추가할 수 있다
+  }
 }
