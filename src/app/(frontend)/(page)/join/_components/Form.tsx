@@ -30,6 +30,7 @@ import { useMutation } from '@tanstack/react-query'
 import { join } from '../actions'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 const inputProps = {
   radius: 'sm',
@@ -684,9 +685,11 @@ function AddressInput({
             WebkitOverflowScrolling: 'touch',
           }}
         >
-          <img
-            src="//t1.daumcdn.net/postcode/resource/images/close.png"
+          <Image
+            src="https://t1.daumcdn.net/postcode/resource/images/close.png"
             id="btnCloseLayer"
+            width={16}
+            height={16}
             style={{
               cursor: 'pointer',
               position: 'absolute',

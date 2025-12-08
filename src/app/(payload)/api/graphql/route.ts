@@ -1,8 +1,18 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
 import config from '@payload-config'
-import { GRAPHQL_POST, REST_OPTIONS } from '@payloadcms/next/routes'
+import { GRAPHQL_POST } from '@payloadcms/next/routes'
+import { NextRequest, NextResponse } from 'next/server'
 
 export const POST = GRAPHQL_POST(config)
 
-export const OPTIONS = REST_OPTIONS(config)
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  })
+}
