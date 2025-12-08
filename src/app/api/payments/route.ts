@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
 
 type PaymentResponseType = {
   resCd: string
@@ -40,9 +38,6 @@ export async function POST(request: NextRequest) {
       const userOrderRequest = shopValue1 as string
       const orderList = JSON.parse(shopValue2 as string)
       const usedPoint = shopValue3 as string
-
-      // sucess callback 실행
-      const payload = await getPayload({ config: config })
 
       console.log('userOrderRequest')
       console.log(userOrderRequest)
