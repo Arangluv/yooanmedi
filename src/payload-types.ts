@@ -248,9 +248,9 @@ export interface Image {
  */
 export interface Product {
   id: number;
-  image: number | Image;
+  image?: (number | null) | Image;
   name: string;
-  category: number | ProductCategory;
+  category?: (number | null) | ProductCategory;
   insurance_code?: string | null;
   manufacturer: string;
   price: number;
