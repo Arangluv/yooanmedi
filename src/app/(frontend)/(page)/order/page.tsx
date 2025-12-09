@@ -1,6 +1,5 @@
 import { BrandLogo } from '@/config/Logo'
 import Link from 'next/link'
-import { v4 as uuidv4 } from 'uuid'
 
 /** components */
 import SearchForm from './_components/main/SearchForm'
