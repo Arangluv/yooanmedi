@@ -239,6 +239,7 @@ function ExpectedPriceSection({
         className="bg-brand text-white !h-[56px]"
         size="lg"
         radius="sm"
+        isDisabled={inventory.length === 0}
         onPress={() => router.push('/order/payments')}
       >
         총 {inventory?.length ?? 0}개의 상품 구매하기

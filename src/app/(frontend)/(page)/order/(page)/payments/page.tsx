@@ -17,8 +17,8 @@ export default function PaymentsPage() {
     <div className="w-full flex flex-col">
       <Navbar />
       <ContentWrapper>
-        <PaymentsTitle />
-        <div className="flex gap-8 mt-6">
+        <PaymentsTitle step="payment" />
+        <div className="flex gap-8 mt-6 min-h-[calc(100vh-469px)]">
           <div className="w-[60%] flex flex-col gap-12">
             <UserInfoSection />
             <DeliveryRequestSection userRequest={userRequest} setUserRequest={setUserRequest} />

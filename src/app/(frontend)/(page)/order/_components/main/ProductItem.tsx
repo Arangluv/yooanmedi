@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Tooltip } from '@heroui/react'
-import { ShoppingCart } from 'lucide-react'
+import { ImageIcon, ShoppingCart } from 'lucide-react'
 import { ProductItemType } from '@order/_type'
 import { InventoryContext, ProductInfoContext } from '@order/_context/order_context'
 import { formatNumberWithCommas, getPointOnPurchase } from '@order/utils'
@@ -33,14 +33,21 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
         onClick={() => setClickedProduct(productItem)}
       >
         <div className="w-full aspect-square bg-neutral-50 rounded-lg overflow-hidden mb-4 border-1 border-foreground-200 relative">
-          <Image
-            src={productItem?.image?.url}
-            alt={productItem?.image?.alt ? productItem.image.alt : ''}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            width={244}
-            height={244}
-            unoptimized={true}
-          />
+          {productItem.image?.url ? (
+            <Image
+              src={productItem.image.url}
+              alt={productItem.image.alt ?? ''}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              width={244}
+              height={244}
+              unoptimized={true}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center gap-1">
+              <ImageIcon className="w-6 h-6 text-foreground-300" strokeWidth={1.5} />
+              <span className="text-sm text-foreground-600">상품 이미지를 준비중입니다.</span>
+            </div>
+          )}
           <button
             className="w-10 h-10 bg-neutral-100 absolute bottom-2 right-2 rounded-full flex items-center justify-center"
             style={{ boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)' }}
