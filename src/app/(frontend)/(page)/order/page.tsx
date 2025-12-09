@@ -64,7 +64,7 @@ export default async function OrderPage({
             <SearchForm />
             <div className="flex gap-4 text-lg">
               <InventoryButtonAsLink />
-              <Link href="/order/history" className="text-foreground-700">
+              <Link href="/order/list" className="text-foreground-700">
                 주문내역확인
               </Link>
             </div>
