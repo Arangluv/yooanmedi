@@ -73,6 +73,9 @@ export interface Config {
     product: Product;
     'product-category': ProductCategory;
     'point-history': PointHistory;
+    'order-status': OrderStatus;
+    'order-pcl': OrderPcl;
+    order: Order;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -85,6 +88,9 @@ export interface Config {
     product: ProductSelect<false> | ProductSelect<true>;
     'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
     'point-history': PointHistorySelect<false> | PointHistorySelect<true>;
+    'order-status': OrderStatusSelect<false> | OrderStatusSelect<true>;
+    'order-pcl': OrderPclSelect<false> | OrderPclSelect<true>;
+    order: OrderSelect<false> | OrderSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -254,6 +260,10 @@ export interface Product {
   insurance_code?: string | null;
   manufacturer: string;
   price: number;
+  /**
+   * 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5)
+   * 최대 1.8까지 입력 가능합니다.
+   */
   cashback_rate: number;
   specification?: string | null;
   stock: number;
@@ -294,6 +304,43 @@ export interface PointHistory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-status".
+ */
+export interface OrderStatus {
+  id: number;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-pcl".
+ */
+export interface OrderPcl {
+  id: number;
+  name: string;
+  InvoiceUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order".
+ */
+export interface Order {
+  id: number;
+  user: number | User;
+  product: number | Product;
+  orderCreatedAt: string;
+  pgCno: string;
+  quantity: number;
+  orderStatus: number | OrderStatus;
+  deliveryCompany?: (number | null) | OrderPcl;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -322,6 +369,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'point-history';
         value: number | PointHistory;
+      } | null)
+    | ({
+        relationTo: 'order-status';
+        value: number | OrderStatus;
+      } | null)
+    | ({
+        relationTo: 'order-pcl';
+        value: number | OrderPcl;
+      } | null)
+    | ({
+        relationTo: 'order';
+        value: number | Order;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -472,6 +531,40 @@ export interface PointHistorySelect<T extends boolean = true> {
   type?: T;
   balanceAfter?: T;
   reason?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-status_select".
+ */
+export interface OrderStatusSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-pcl_select".
+ */
+export interface OrderPclSelect<T extends boolean = true> {
+  name?: T;
+  InvoiceUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order_select".
+ */
+export interface OrderSelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
+  orderCreatedAt?: T;
+  pgCno?: T;
+  quantity?: T;
+  orderStatus?: T;
+  deliveryCompany?: T;
   updatedAt?: T;
   createdAt?: T;
 }

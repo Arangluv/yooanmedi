@@ -17,6 +17,9 @@ import { translations as ko } from '@lib/payload/utils/translation'
 import { Product } from './collections/Product'
 import { ProductCategory } from './collections/ProductCategory'
 import { PointHistory } from './collections/PointHistory'
+import { OrderStatus } from './collections/OrderStatus'
+import { OrderPackageCompany } from './collections/OrderPackageCompany'
+import { Order } from './collections/Order'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -34,7 +37,17 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Image, Files, Product, ProductCategory, PointHistory],
+  collections: [
+    Users,
+    Image,
+    Files,
+    Product,
+    ProductCategory,
+    PointHistory,
+    OrderStatus,
+    OrderPackageCompany,
+    Order,
+  ],
   globals: [PopupSetting, Terms, PrivacyPolicy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

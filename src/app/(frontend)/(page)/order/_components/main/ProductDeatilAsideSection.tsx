@@ -1,11 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import { Divider, Form } from '@heroui/react'
+import { Button, Divider, Form } from '@heroui/react'
 import { clsx } from 'clsx'
 import { NumberInput } from '@heroui/react'
 import { InventoryContext, ProductInfoContext } from '@order/_context/order_context'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Image as ImageIcon } from 'lucide-react'
 import { ProductItemType } from '../../_type'
 import { formatNumberWithCommas, getPointOnPurchase } from '../../utils'
@@ -210,26 +210,56 @@ function ProductQuantityInput({
   ) => void
   product: ProductItemType
 }) {
+  const [value, setValue] = useState<number>(0)
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const { quantity } = Object.fromEntries(new FormData(e.target as HTMLFormElement))
+
+    if (value < 1 || value > 999) {
+      toast.error('주문수량은 1 이상 999 이하이어야 합니다.')
+      setValue(0)
+      return
+    }
 
     const isUserAdded = inventory.some((item) => item.product.id === product.id)
 
     if (isUserAdded) {
       toast.info(<ExistingProductToast />)
+      setValue(0)
       return
     } else {
       const newInventory = [...inventory, { product, quantity: Number(quantity) }]
       setInventory(newInventory)
+      setValue(0)
       toast.success(<AddedProductToast count={Number(quantity)} />)
     }
+  }
+
+  const handlePressBtn = () => {
+    const isUserAdded = inventory.some((item) => item.product.id === product.id)
+
+    if (value < 1 || value > 999) {
+      toast.error('주문수량은 1 이상 999 이하이어야 합니다.')
+      setValue(0)
+      return
+    }
+
+    if (isUserAdded) {
+      toast.info(<ExistingProductToast />)
+      return
+    }
+
+    const newInventory = [...inventory, { product, quantity: value }]
+    setInventory(newInventory)
+    setValue(0)
+    toast.success(<AddedProductToast count={value} />)
   }
 
   return (
     <Form className="flex gap-2 items-start text-sm text-foreground-600 mt-2" onSubmit={onSubmit}>
       <span className="text-foreground-700 flex-shrink-0 w-[100px]">주문수량</span>
-      <div className="flex items-center">
+      <div className="flex items-start w-full gap-2">
         <NumberInput
           aria-label="주문수량"
           size="sm"
@@ -237,6 +267,9 @@ function ProductQuantityInput({
           radius="sm"
           name="quantity"
           defaultValue={0}
+          value={value}
+          // @ts-ignore
+          onChange={(e) => setValue(Number(e.target.value))}
           validate={(value) => {
             if (!value) {
               return '주문수량을 입력해주세요.'
@@ -255,6 +288,9 @@ function ProductQuantityInput({
             description: 'text-sm text-warning',
           }}
         />
+        <Button size="sm" radius="sm" className="bg-brand text-white" onPress={handlePressBtn}>
+          확인
+        </Button>
       </div>
     </Form>
   )
