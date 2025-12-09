@@ -14,8 +14,10 @@ import {
   PaymentRegisterDto,
   ProductItemType,
 } from '@order/_type'
+import { useRouter } from 'next/navigation'
 
 export default function PaymentsActionSection({ userRequest }: { userRequest: string }) {
+  const router = useRouter()
   const { inventory } = useContext(InventoryContext)
   const { user } = useContext(OrderUserInfoContext)
   const [usePoint, setUsePoint] = useState(0)
@@ -31,67 +33,32 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
 
   useEffect(() => {
     const popupHandler = (event: MessageEvent) => {
-      if (event.data === 'payment-success') {
-        window.location.href = '/order/payments/finish?status=success'
-      } else if (event.data === 'payment-error') {
-        window.location.href = '/order/payments/finish?status=error'
+      if (event.data.status === 'success') {
+        const amount = event.data.amount
+        const approvalDate = event.data.approvalDate
+        const shopOrderNo = event.data.shopOrderNo
+
+        router.push(
+          '/order/payments/finish?status=success&amount=' +
+            amount +
+            '&approvalDate=' +
+            approvalDate +
+            '&shopOrderNo=' +
+            shopOrderNo,
+        )
+      } else if (event.data.status === 'error') {
+        router.push('/order/payments/finish?status=error&message=' + event.data.message)
+      } else {
+        alert('결제 주문 등록 실패')
       }
     }
-    window.addEventListener('message', popupHandler)
 
+    window.addEventListener('message', popupHandler)
     return () => {
       window.removeEventListener('message', popupHandler)
     }
   }, [])
 
-  const testOrderList = [
-    {
-      id: 1,
-      quantity: 10,
-    },
-    {
-      id: 10,
-      quantity: 100,
-    },
-    {
-      id: 12,
-      quantity: 123,
-    },
-    {
-      id: 7,
-      quantity: 14,
-    },
-    {
-      id: 6,
-      quantity: 16,
-    },
-    {
-      id: 21,
-      quantity: 15,
-    },
-    {
-      id: 134,
-      quantity: 15,
-    },
-    {
-      id: 14,
-      quantity: 154,
-    },
-    {
-      id: 484,
-      quantity: 3,
-    },
-    {
-      id: 645,
-      quantity: 1123,
-    },
-    {
-      id: 123,
-      quantity: 1123,
-    },
-  ]
-
-  const json = JSON.stringify(testOrderList)
   // mallId는 서버에서만 필요하므로 클라이언트사이드에서는 생략된 타입으로 작성
   const dto: Omit<PaymentRegisterDto, 'mallId'> = {
     payMethodTypeCode: '11',
@@ -107,7 +74,7 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
     },
     shopValueInfo: {
       value1: userRequest,
-      value2: json,
+      value2: generateOrderList(inventory) as string,
       value3: usePoint.toString(),
     },
   }
@@ -314,8 +281,12 @@ function generateOrderList(inventory: InventoryType['inventory']) {
     return []
   }
 
-  return inventory.map((item) => ({
-    id: item.product.id,
-    quantity: item.quantity,
-  }))
+  const orderList = JSON.stringify(
+    inventory.map((item) => ({
+      id: item.product.id,
+      quantity: item.quantity,
+    })),
+  )
+
+  return orderList ? orderList : ''
 }

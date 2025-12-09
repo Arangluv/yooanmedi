@@ -1,4 +1,5 @@
 import { SearchParamsType } from '@order/_type'
+import { v4 as uuidv4 } from 'uuid'
 
 export const formatNumberWithCommas = (number: number) => {
   if (!number) return '0'
@@ -112,8 +113,17 @@ export const generateGetProductCondition = (params: { [key: string]: any }) => {
     where: {
       ...(searchCondition ? searchCondition : {}),
       ...(category ? { category: { equals: category } } : {}),
+      stock: {
+        greater_than: 0,
+      },
     } as const,
   }
 
   return conditionObject
+}
+
+export const generateRandomShopTransactionId = () => {
+  const uuid = uuidv4()
+
+  return uuid.split('-').join('').toUpperCase()
 }

@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { CollectionConfig, CustomComponent, EditConfig } from 'payload'
 
 export const Product: CollectionConfig = {
   slug: 'product',
@@ -9,6 +9,9 @@ export const Product: CollectionConfig = {
   admin: {
     group: '홈페이지 컨텐츠',
     defaultColumns: ['name', 'category', 'price', 'is_best_product'],
+    components: {
+      beforeListTable: ['@collections/components/product/ProductListTest'] as CustomComponent[],
+    },
   },
   fields: [
     {
@@ -16,7 +19,6 @@ export const Product: CollectionConfig = {
       type: 'upload',
       label: '제품이미지',
       relationTo: 'image',
-      required: true,
     },
     {
       name: 'name',
@@ -29,7 +31,6 @@ export const Product: CollectionConfig = {
       type: 'relationship',
       label: '카테고리',
       relationTo: 'product-category',
-      required: true,
     },
     {
       name: 'insurance_code',

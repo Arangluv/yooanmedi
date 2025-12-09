@@ -91,6 +91,9 @@ export async function getBestProducts() {
         is_best_product: {
           equals: true,
         },
+        stock: {
+          greater_than: 0,
+        },
       },
     })
 

@@ -93,13 +93,20 @@ function SelectedProductDetailSection({
         <span className="font-bold">상품 정보</span>
         <div className="flex flex-col gap-1">
           <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden">
-            <Image
-              src={product.image.url}
-              alt={product.image.alt ?? ''}
-              width={150}
-              height={150}
-              className="w-full h-full object-contain"
-            />
+            {product.image?.url ? (
+              <Image
+                src={product.image.url}
+                alt={product.image.alt ?? ''}
+                width={150}
+                height={150}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center gap-1">
+                <ImageIcon className="w-6 h-6 text-foreground-300" strokeWidth={1.5} />
+                <span className="text-sm text-foreground-600">상품 이미지를 준비중입니다.</span>
+              </div>
+            )}
           </div>
           <ProductDetailSection name="상품명" value={name} />
           <ProductDetailSection name="제조사" value={manufacturer} />
