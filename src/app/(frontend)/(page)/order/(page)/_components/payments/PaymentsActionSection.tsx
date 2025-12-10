@@ -76,6 +76,7 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
       value1: userRequest,
       value2: generateOrderList(inventory) as string,
       value3: usePoint.toString(),
+      value4: user?.id?.toString() ?? '',
     },
   }
 

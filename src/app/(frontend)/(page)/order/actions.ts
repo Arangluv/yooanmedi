@@ -19,6 +19,7 @@ export async function getAuthUser() {
   }
 
   const dto = {
+    id: user.id,
     role: user.role,
     email: user.email,
     phoneNumber: user.phoneNumber,

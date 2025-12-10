@@ -296,7 +296,7 @@ export interface ProductCategory {
 export interface PointHistory {
   id: number;
   user: number | User;
-  type: 'earn' | 'use';
+  type: 'earn' | 'use' | 'cancel';
   balanceAfter?: number | null;
   reason: string;
   updatedAt: string;
@@ -335,6 +335,7 @@ export interface Order {
   pgCno: string;
   quantity: number;
   orderStatus: number | OrderStatus;
+  orderRequest?: string | null;
   deliveryCompany?: (number | null) | OrderPcl;
   updatedAt: string;
   createdAt: string;
@@ -564,6 +565,7 @@ export interface OrderSelect<T extends boolean = true> {
   pgCno?: T;
   quantity?: T;
   orderStatus?: T;
+  orderRequest?: T;
   deliveryCompany?: T;
   updatedAt?: T;
   createdAt?: T;

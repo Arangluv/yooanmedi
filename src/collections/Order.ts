@@ -68,6 +68,11 @@ export const Order: CollectionConfig = {
       required: true,
     },
     {
+      name: 'orderRequest',
+      type: 'text',
+      label: '주문요청사항',
+    },
+    {
       name: 'deliveryCompany',
       type: 'relationship',
       label: '택배사',

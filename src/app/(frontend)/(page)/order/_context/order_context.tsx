@@ -14,6 +14,7 @@ type OrderContextUserType = {
     email: string
     phoneNumber: string
     address: string
+    id: number
   } | null
   setUser: (
     user: {
@@ -25,6 +26,7 @@ type OrderContextUserType = {
       email: string
       phoneNumber: string
       address: string
+      id: number
     } | null,
   ) => void
 }

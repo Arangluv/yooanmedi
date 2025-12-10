@@ -208,15 +208,4 @@ export const Users: CollectionConfig = {
       defaultValue: 0,
     },
   ],
-  // hooks: {
-  //   afterRead: [
-  //     async ({ doc }) => {
-  //       if (doc.point == null) {
-  //         doc.point = 0
-  //       }
-
-  //       return doc
-  //     },
-  //   ],
-  // },
 }
