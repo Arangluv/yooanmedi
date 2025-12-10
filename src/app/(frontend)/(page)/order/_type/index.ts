@@ -7,6 +7,7 @@ export type OrderContextUserType = {
   email: string
   phoneNumber: string
   address: string
+  id: number
 }
 
 export type SearchParamsType = {
@@ -69,6 +70,7 @@ export type PaymentRegisterDto = {
     value1?: string
     value2?: string
     value3?: string
+    value4?: string
     // 6까지 추가할 수 있다
   }
 }

@@ -18,6 +18,7 @@
     "@heroui/react": "^2.8.2",
     "@heroui/system": "^2.4.23",
     "@heroui/theme": "^2.4.23",
+    "@internationalized/date": "^3.10.0",
     "@payloadcms/db-postgres": "3.51.0",
     "@payloadcms/next": "3.51.0",
     "@payloadcms/payload-cloud": "3.51.0",

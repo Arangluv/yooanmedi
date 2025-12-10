@@ -6,6 +6,9 @@ export const OrderStatus: CollectionConfig = {
     singular: '주문 상태',
     plural: '주문 상태',
   },
+  access: {
+    delete: () => false,
+  },
   admin: {
     group: '홈페이지 컨텐츠',
     useAsTitle: 'name',
