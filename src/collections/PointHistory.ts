@@ -30,6 +30,10 @@ export const PointHistory: CollectionConfig = {
           label: '차감',
           value: 'use',
         },
+        {
+          label: '취소',
+          value: 'cancel',
+        },
       ],
       required: true,
     },
@@ -46,36 +50,4 @@ export const PointHistory: CollectionConfig = {
       label: '사유 (예: 주문 #1234 적립)',
     },
   ],
-  hooks: {
-    afterChange: [
-      async ({ doc, operation, req }) => {
-        if (operation !== 'create') return
-
-        const payload = req.payload
-
-        // 기존 user 조회
-        const user: any = await payload.findByID({
-          collection: 'users',
-          id: doc.user,
-        })
-
-        const prevBalance = user.pointBalance ?? 0
-        const newBalance = doc.type === 'earn' ? prevBalance + doc.amount : prevBalance - doc.amount
-
-        // user 업데이트
-        await payload.update({
-          collection: 'users',
-          id: doc.user,
-          data: { point: newBalance },
-        })
-
-        // history 업데이트 (balanceAfter 저장)
-        await payload.update({
-          collection: 'point-history',
-          id: doc.id,
-          data: { balanceAfter: newBalance },
-        })
-      },
-    ],
-  },
 }

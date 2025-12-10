@@ -5,6 +5,8 @@ import Navbar from '@order/(page)/_components/Navbar'
 import PaymentsTitle from '@order/(page)/_components/PaymentsTitle'
 import Link from 'next/link'
 import { CircleAlert, CircleCheckBig } from 'lucide-react'
+import moment from 'moment'
+import { formatNumberWithCommas } from '@order/utils'
 
 export default function PaymentsFinishPage() {
   const searchParams = useSearchParams()
@@ -51,7 +53,7 @@ function OrderFailedContent({ message }: { message: string }) {
       <span>사유 : {message}</span>
       <Link
         href="/order"
-        className="text-brand hover:bg-brandWeek transition-colors duration-300 text-[15px] px-4 py-2 rounded-md bg-brand text-white mt-8"
+        className="text-hover:bg-brandWeek transition-colors duration-300 text-[15px] px-4 py-2 rounded-md bg-brand text-white mt-8"
       >
         홈으로 돌아가기
       </Link>
@@ -81,11 +83,15 @@ function OrderSuccessContent({
         </div>
         <div className="w-full flex items-center justify-between">
           <span className="text-foreground-600">결제 일시 :</span>
-          <span>{approvalDate}</span>
+          <span>
+            {approvalDate
+              ? moment(approvalDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD HH:mm:ss')
+              : ''}
+          </span>
         </div>
         <div className="w-full flex items-center justify-between">
           <span className="text-foreground-600">결제 금액 :</span>
-          <span>{amount}</span>
+          <span className="font-bold">{formatNumberWithCommas(Number(amount))}원</span>
         </div>
       </div>
       <Link
