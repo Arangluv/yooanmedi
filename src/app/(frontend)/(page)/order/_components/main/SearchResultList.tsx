@@ -9,10 +9,12 @@ import { SearchX, Search, CircleArrowRight } from 'lucide-react'
 export default function SearchResultList({
   products,
   totalPages,
+  keyword,
   condition,
   totalProducts,
 }: {
   products: ProductItemType[]
+  keyword: string
   totalPages: number
   condition: 'pn' | 'cn'
   totalProducts: number
@@ -42,7 +44,7 @@ export default function SearchResultList({
             </span>
             <span>으로 검색한</span>
           </div>
-          <span className="text-brandWeek font-bold">"ㅁㅁㅁ"</span>에 대한 검색결과
+          <span className="text-brandWeek font-bold">"{keyword}"</span>에 대한 검색결과
         </div>
         <div>
           <span className="text-[13px] text-foreground-600">

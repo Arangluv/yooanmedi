@@ -88,6 +88,7 @@ export default async function OrderPage({
             totalPages={totalPages}
             condition={serverSearchParams.condition as 'pn' | 'cn'}
             totalProducts={totalDocs}
+            keyword={serverSearchParams.keyword ?? ''}
           />
         ) : (
           <ProductList totalPages={totalPages} products={docs as unknown as ProductItemType[]} />

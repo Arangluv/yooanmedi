@@ -18,7 +18,6 @@ import { Product } from './collections/Product'
 import { ProductCategory } from './collections/ProductCategory'
 import { PointHistory } from './collections/PointHistory'
 import { OrderStatus } from './collections/OrderStatus'
-import { OrderPackageCompany } from './collections/OrderPackageCompany'
 import { Order } from './collections/Order'
 
 const filename = fileURLToPath(import.meta.url)
@@ -37,17 +36,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [
-    Users,
-    Image,
-    Files,
-    Product,
-    ProductCategory,
-    PointHistory,
-    OrderStatus,
-    OrderPackageCompany,
-    Order,
-  ],
+  collections: [Users, Image, Files, Product, ProductCategory, PointHistory, OrderStatus, Order],
   globals: [PopupSetting, Terms, PrivacyPolicy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

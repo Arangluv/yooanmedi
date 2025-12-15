@@ -257,7 +257,11 @@ function ProductQuantityInput({
   }
 
   return (
-    <Form className="flex gap-2 items-start text-sm text-foreground-600 mt-2" onSubmit={onSubmit}>
+    <Form
+      className="flex gap-2 items-start text-sm text-foreground-600 mt-2"
+      onSubmit={onSubmit}
+      validationBehavior="native"
+    >
       <span className="text-foreground-700 flex-shrink-0 w-[100px]">주문수량</span>
       <div className="flex items-start w-full gap-2">
         <NumberInput
@@ -286,6 +290,7 @@ function ProductQuantityInput({
           classNames={{
             inputWrapper: 'h-8 border-[1px]',
             description: 'text-sm text-warning',
+            input: 'text-right',
           }}
         />
         <Button size="sm" radius="sm" className="bg-brand text-white" onPress={handlePressBtn}>
