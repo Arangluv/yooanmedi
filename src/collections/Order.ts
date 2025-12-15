@@ -72,11 +72,5 @@ export const Order: CollectionConfig = {
       type: 'text',
       label: '주문요청사항',
     },
-    {
-      name: 'deliveryCompany',
-      type: 'relationship',
-      label: '택배사',
-      relationTo: 'order-pcl',
-    },
   ],
 }

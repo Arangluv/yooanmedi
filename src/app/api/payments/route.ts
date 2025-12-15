@@ -39,8 +39,6 @@ export async function POST(request: NextRequest) {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
 
-  console.log('dbTransactionID', dbTransactionID)
-
   try {
     let data = {} as PaymentResponseType
     const formData = await request.formData()
@@ -146,6 +144,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// 결제 승인요청
 const approvePayment = async ({
   authorizationId,
   shopOrderNo,
@@ -180,6 +179,7 @@ const approvePayment = async ({
   return approveData
 }
 
+// 주문 리스트 생성
 const createOrderList = async ({
   payload,
   orderList,
@@ -207,6 +207,7 @@ const createOrderList = async ({
       })
 
       pointAmount += (product.cashback_rate * order.quantity * product.price) / 100
+      
       return await payload.create({
         collection: 'order',
         data: {

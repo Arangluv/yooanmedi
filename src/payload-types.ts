@@ -74,7 +74,6 @@ export interface Config {
     'product-category': ProductCategory;
     'point-history': PointHistory;
     'order-status': OrderStatus;
-    'order-pcl': OrderPcl;
     order: Order;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -89,7 +88,6 @@ export interface Config {
     'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
     'point-history': PointHistorySelect<false> | PointHistorySelect<true>;
     'order-status': OrderStatusSelect<false> | OrderStatusSelect<true>;
-    'order-pcl': OrderPclSelect<false> | OrderPclSelect<true>;
     order: OrderSelect<false> | OrderSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -314,17 +312,6 @@ export interface OrderStatus {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order-pcl".
- */
-export interface OrderPcl {
-  id: number;
-  name: string;
-  InvoiceUrl?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "order".
  */
 export interface Order {
@@ -336,7 +323,6 @@ export interface Order {
   quantity: number;
   orderStatus: number | OrderStatus;
   orderRequest?: string | null;
-  deliveryCompany?: (number | null) | OrderPcl;
   updatedAt: string;
   createdAt: string;
 }
@@ -374,10 +360,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'order-status';
         value: number | OrderStatus;
-      } | null)
-    | ({
-        relationTo: 'order-pcl';
-        value: number | OrderPcl;
       } | null)
     | ({
         relationTo: 'order';
@@ -546,16 +528,6 @@ export interface OrderStatusSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order-pcl_select".
- */
-export interface OrderPclSelect<T extends boolean = true> {
-  name?: T;
-  InvoiceUrl?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "order_select".
  */
 export interface OrderSelect<T extends boolean = true> {
@@ -566,7 +538,6 @@ export interface OrderSelect<T extends boolean = true> {
   quantity?: T;
   orderStatus?: T;
   orderRequest?: T;
-  deliveryCompany?: T;
   updatedAt?: T;
   createdAt?: T;
 }
