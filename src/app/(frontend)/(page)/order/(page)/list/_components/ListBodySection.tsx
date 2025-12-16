@@ -29,9 +29,6 @@ export type OrderListType = {
 }
 
 export function ListBodySection({ data }: { data: OrderListType[] }) {
-  console.log('data')
-  console.log(data)
-
   return (
     <>
       {data.map((item: OrderListType, index: number) => {
@@ -114,7 +111,11 @@ function OrderCancelButton({ id }: { id: number }) {
   }
 
   const handleCancel = () => {
-    alert('주문취소 로직을 넣어주세요')
+    const isOk = confirm('주문을 취소하시겠습니까?')
+
+    if (isOk) {
+      alert('주문취소 로직을 넣어주세요')
+    }
   }
 
   return (

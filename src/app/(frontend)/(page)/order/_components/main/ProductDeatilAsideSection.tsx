@@ -4,23 +4,32 @@ import Image from 'next/image'
 import { Button, Divider, Form } from '@heroui/react'
 import { clsx } from 'clsx'
 import { NumberInput } from '@heroui/react'
-import { InventoryContext, ProductInfoContext } from '@order/_context/order_context'
+import {
+  InventoryContext,
+  OrderUserInfoContext,
+  ProductInfoContext,
+} from '@order/_context/order_context'
 import { useContext, useState } from 'react'
 import { Image as ImageIcon } from 'lucide-react'
 import { ProductItemType } from '../../_type'
 import { formatNumberWithCommas, getPointOnPurchase } from '../../utils'
 import { AddedProductToast, ExistingProductToast } from './ToastComponents'
 import { toast } from 'sonner'
+import { getCurrentUserOrderHistory } from '../../actions'
+import { useQuery } from '@tanstack/react-query'
+import moment from 'moment'
 
 export default function ProductDeatilAsideSection() {
   const { clickedProduct } = useContext(ProductInfoContext)
   const { inventory, setInventory } = useContext(InventoryContext)
+  const { user } = useContext(OrderUserInfoContext)
 
   return clickedProduct ? (
     <SelectedProductDetailSection
       product={clickedProduct}
       inventory={inventory}
       setInventory={setInventory}
+      user={user}
     />
   ) : (
     <EmptyProductDetailSection />
@@ -57,6 +66,7 @@ function SelectedProductDetailSection({
   product,
   inventory,
   setInventory,
+  user,
 }: {
   product: ProductItemType
   inventory: Array<{
@@ -69,6 +79,7 @@ function SelectedProductDetailSection({
       quantity: number
     }>,
   ) => void
+  user: any
 }) {
   const {
     id,
@@ -124,7 +135,7 @@ function SelectedProductDetailSection({
             value={returnable ? '반품 가능' : '반품 불가능'}
             accent={returnable ? 'brand' : 'danger'}
           />
-          <ProductPurchaseHistorySection />
+          <ProductPurchaseHistorySection prod_id={id} user_id={user.id} />
           <Divider className="my-2" />
           <ProductPointBenefitSection price={price} rate={cashback_rate} />
           <ProductQuantityInput
@@ -301,7 +312,16 @@ function ProductQuantityInput({
   )
 }
 
-function ProductPurchaseHistorySection() {
+function ProductPurchaseHistorySection({ prod_id, user_id }: { prod_id: number; user_id: number }) {
+  const { data } = useQuery({
+    queryKey: ['order-history', prod_id, user_id],
+    queryFn: () => getCurrentUserOrderHistory({ prod_id, user_id }),
+  })
+
+  if (!data || data.length === 0) {
+    return null
+  }
+
   return (
     <div className="flex gap-2 items-start text-sm text-foreground-600">
       <span className="text-foreground-700 flex-shrink-0 w-[100px]">최근 구매내역</span>
@@ -314,21 +334,16 @@ function ProductPurchaseHistorySection() {
           </tr>
         </thead>
         <tbody>
-          <tr className="text-xs border-1 border-foreground-200">
-            <td className="text-center py-1 border-r-1 border-foreground-200">2025-12-05</td>
-            <td className="text-center border-r-1 border-foreground-200">10</td>
-            <td className="text-center">106,000원</td>
-          </tr>
-          <tr className="text-xs border-1 border-foreground-200">
-            <td className="text-center py-1 border-r-1 border-foreground-200">2025-12-05</td>
-            <td className="text-center border-r-1 border-foreground-200">10</td>
-            <td className="text-center">106,000원</td>
-          </tr>
-          <tr className="text-xs border-1 border-foreground-200">
-            <td className="text-center py-1 border-r-1 border-foreground-200">2025-12-05</td>
-            <td className="text-center border-r-1 border-foreground-200">10</td>
-            <td className="text-center">106,000원</td>
-          </tr>
+          {data?.map((item) => (
+            <tr key={item.id} className="text-xs border-1 border-foreground-200">
+              <td className="text-center py-1 border-r-1 border-foreground-200">
+                {moment(item.orderCreatedAt).format('YYYY-MM-DD')}
+              </td>
+              <td className="text-center border-r-1 border-foreground-200">{item.quantity}</td>
+              {/* @ts-ignore */}
+              <td className="text-center">{formatNumberWithCommas(item.product.price)}원</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
