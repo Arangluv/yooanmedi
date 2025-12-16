@@ -6,9 +6,9 @@ export const Order: CollectionConfig = {
     singular: '주문 내역',
     plural: '주문 내역',
   },
-  access: {
-    delete: () => false,
-  },
+  // access: {
+  //   delete: () => false,
+  // },
   admin: {
     group: '홈페이지 컨텐츠',
   },
@@ -71,6 +71,15 @@ export const Order: CollectionConfig = {
       name: 'orderRequest',
       type: 'text',
       label: '주문요청사항',
+    },
+    {
+      name: 'pointForTransation',
+      type: 'relationship',
+      label: '환불 포인트 관리',
+      relationTo: 'point-for-transation',
+      admin: {
+        readOnly: true,
+      },
     },
   ],
 }

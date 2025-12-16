@@ -104,3 +104,38 @@ export async function getBestProducts() {
     return null
   }
 }
+
+export async function getCurrentUserOrderHistory({
+  prod_id,
+  user_id,
+}: {
+  prod_id: number
+  user_id: number
+}) {
+  const payload = await getPayload({ config: config })
+  const orderHistory = await payload.find({
+    collection: 'order',
+    where: {
+      user: {
+        equals: user_id,
+      },
+      product: {
+        equals: prod_id,
+      },
+    },
+    select: {
+      id: true,
+      orderCreatedAt: true,
+      quantity: true,
+      product: true,
+    },
+    populate: {
+      product: {
+        price: true,
+      },
+    },
+    limit: 3,
+  })
+
+  return orderHistory.docs
+}

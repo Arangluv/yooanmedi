@@ -95,19 +95,41 @@ export async function POST(request: NextRequest) {
       const usedPoint = shopValue3 as string
       const userId = shopValue4 as string
 
+      console.log('유저 사용 포인트')
+      console.log(usedPoint)
+
       const user = await payload.findByID({
         collection: 'users',
         id: Number(userId),
       })
 
+      if (!user) {
+        throw new Error('유저 정보 없음', { cause: { code: 'USER_NOT_FOUND' } })
+      }
+
       const approveData = await approvePayment({ authorizationId, shopOrderNo })
 
+      // 유저가 거래 취소 시 환불할 적립금을 관리하기 위해 사용
+      // 얼마나 포인트를 사용했는지를 저장
+      // 0 이상일 경우 환불 처리 -> 취소 로직에서
+      const pointForTransation = await payload.create({
+        collection: 'point-for-transation',
+        select: {},
+        data: {
+          user: Number(userId),
+          usedPointAmount: Number(usedPoint),
+          transactionPgCno: approveData.pgCno,
+        },
+      })
+
+      // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
       const pointAmount = await createOrderList({
         payload,
         orderList,
         userId,
         userOrderRequest,
         approveData,
+        pointForTransationId: pointForTransation.id,
       })
 
       // 구매 적립금 적립
@@ -117,38 +139,39 @@ export async function POST(request: NextRequest) {
           data: {
             user: Number(userId),
             type: 'earn',
-            reason: `상품구매적립 #${approveData.shopOrderNo}`,
+            reason: `상품구매적립 - 상품주문번호 : ${approveData.shopOrderNo}`,
             balanceAfter: (user.point ?? 0) + pointAmount,
           },
         })
       }
 
       // 사용 적립금이 있다면 적립금 차감
-      if (usedPoint) {
+      if (Number(usedPoint) > 0) {
         await payload.create({
           collection: 'point-history',
           data: {
             user: Number(userId),
             type: 'use',
-            reason: `상품구매차감 #${approveData.shopOrderNo}`,
+            reason: `적립금 사용 차감 - 상품주문번호 : ${approveData.shopOrderNo}`,
             balanceAfter: (user.point ?? 0) - Number(usedPoint),
           },
         })
       }
 
       const userChangePoint = (user.point ?? 0) + pointAmount - Number(usedPoint)
+      const roundedUserChangePoint = Math.floor(userChangePoint)
 
-      if (userChangePoint) {
+      if (roundedUserChangePoint) {
         await payload.update({
           collection: 'users',
           id: Number(userId),
           data: {
-            point: userChangePoint,
+            point: roundedUserChangePoint,
           },
         })
       }
 
-      // 리다이렉트
+      // // 리다이렉트
       const url = request.nextUrl.clone()
       url.pathname = '/order/payments/result'
       url.searchParams.set('status', 'success')
@@ -164,11 +187,9 @@ export async function POST(request: NextRequest) {
       throw new Error('결제 실패', { cause: { code: data.resCd } })
     }
   } catch (error: any) {
-    console.log('결제 콜백 처리 에러')
     console.log(error)
 
     // payload에서 에러가 터지면 여기서도 이제 주문취소를 해야함
-
     const url = request.nextUrl.clone()
     url.pathname = '/order/payments/result'
     url.searchParams.set('status', 'error')
@@ -222,12 +243,14 @@ const createOrderList = async ({
   userId,
   userOrderRequest,
   approveData,
+  pointForTransationId,
 }: {
   payload: BasePayload
   orderList: any[]
   userId: string
   userOrderRequest: string
   approveData: PaymentApproveResponseDto
+  pointForTransationId: number
 }) => {
   let pointAmount = 0
 
@@ -243,7 +266,7 @@ const createOrderList = async ({
       })
 
       pointAmount += (product.cashback_rate * order.quantity * product.price) / 100
-      
+
       return await payload.create({
         collection: 'order',
         data: {
@@ -267,5 +290,5 @@ const createOrderList = async ({
     }),
   )
 
-  return pointAmount
+  return Math.floor(pointAmount)
 }
