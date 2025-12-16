@@ -75,6 +75,7 @@ export interface Config {
     'point-history': PointHistory;
     'order-status': OrderStatus;
     order: Order;
+    'point-for-transation': PointForTransation;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -89,6 +90,7 @@ export interface Config {
     'point-history': PointHistorySelect<false> | PointHistorySelect<true>;
     'order-status': OrderStatusSelect<false> | OrderStatusSelect<true>;
     order: OrderSelect<false> | OrderSelect<true>;
+    'point-for-transation': PointForTransationSelect<false> | PointForTransationSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -323,6 +325,19 @@ export interface Order {
   quantity: number;
   orderStatus: number | OrderStatus;
   orderRequest?: string | null;
+  pointForTransation?: (number | null) | PointForTransation;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-for-transation".
+ */
+export interface PointForTransation {
+  id: number;
+  user: number | User;
+  usedPointAmount: number;
+  transactionPgCno: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -364,6 +379,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'order';
         value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'point-for-transation';
+        value: number | PointForTransation;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -538,6 +557,18 @@ export interface OrderSelect<T extends boolean = true> {
   quantity?: T;
   orderStatus?: T;
   orderRequest?: T;
+  pointForTransation?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-for-transation_select".
+ */
+export interface PointForTransationSelect<T extends boolean = true> {
+  user?: T;
+  usedPointAmount?: T;
+  transactionPgCno?: T;
   updatedAt?: T;
   createdAt?: T;
 }
