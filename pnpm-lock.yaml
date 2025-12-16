@@ -44,6 +44,9 @@ importers:
       '@react-aria/i18n':
         specifier: 3.12.13
         version: 3.12.13(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@react-types/datepicker':
+        specifier: ^3.13.2
+        version: 3.13.2(react@19.2.1)
       '@tanstack/react-query':
         specifier: ^5.90.10
         version: 5.90.10(react@19.2.1)
