@@ -32,7 +32,7 @@ export default function Footer() {
           {/* left 영역 */}
           <div className="flex flex-col gap-1 w-full">
             <div className="flex gap-3 text-[13px] text-foreground-600">
-              <span>회사 : 유안메디팜</span>
+              <span>회사 : (주)유안메디팜</span>
               <span>대표 : 심광규</span>
             </div>
             <div className="flex gap-3 text-[13px] text-foreground-600">
