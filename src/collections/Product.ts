@@ -9,6 +9,7 @@ export const Product: CollectionConfig = {
   admin: {
     group: '홈페이지 컨텐츠',
     defaultColumns: ['name', 'category', 'price', 'is_best_product'],
+    useAsTitle: 'name',
     components: {
       beforeListTable: ['@collections/components/product/ProductListTest'] as CustomComponent[],
     },

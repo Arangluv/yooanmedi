@@ -95,9 +95,6 @@ export async function POST(request: NextRequest) {
       const usedPoint = shopValue3 as string
       const userId = shopValue4 as string
 
-      console.log('유저 사용 포인트')
-      console.log(usedPoint)
-
       const user = await payload.findByID({
         collection: 'users',
         id: Number(userId),
@@ -132,35 +129,38 @@ export async function POST(request: NextRequest) {
         pointForTransationId: pointForTransation.id,
       })
 
-      // 구매 적립금 적립
-      if (pointAmount > 0) {
-        await payload.create({
-          collection: 'point-history',
-          data: {
-            user: Number(userId),
-            type: 'earn',
-            reason: `상품구매적립 - 상품주문번호 : ${approveData.shopOrderNo}`,
-            balanceAfter: (user.point ?? 0) + pointAmount,
-          },
-        })
-      }
-
+      let userPoint = Number(user.point ?? 0)
       // 사용 적립금이 있다면 적립금 차감
       if (Number(usedPoint) > 0) {
+        userPoint -= Number(usedPoint)
+
         await payload.create({
           collection: 'point-history',
           data: {
             user: Number(userId),
             type: 'use',
             reason: `적립금 사용 차감 - 상품주문번호 : ${approveData.shopOrderNo}`,
-            balanceAfter: (user.point ?? 0) - Number(usedPoint),
+            balanceAfter: userPoint,
           },
         })
       }
 
-      const userChangePoint = (user.point ?? 0) + pointAmount - Number(usedPoint)
-      const roundedUserChangePoint = Math.floor(userChangePoint)
+      // 구매 적립금 적립
+      if (pointAmount > 0) {
+        userPoint += pointAmount
 
+        await payload.create({
+          collection: 'point-history',
+          data: {
+            user: Number(userId),
+            type: 'earn',
+            reason: `상품구매적립 - 상품주문번호 : ${approveData.shopOrderNo}`,
+            balanceAfter: userPoint,
+          },
+        })
+      }
+
+      const roundedUserChangePoint = Math.floor(userPoint)
       if (roundedUserChangePoint) {
         await payload.update({
           collection: 'users',
