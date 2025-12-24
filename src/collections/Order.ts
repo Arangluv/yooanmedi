@@ -10,6 +10,7 @@ export const Order: CollectionConfig = {
   //   delete: () => false,
   // },
   admin: {
+    defaultColumns: ['user', 'product', 'orderStatus', 'orderRequest', 'pgCno'],
     group: '홈페이지 컨텐츠',
   },
   fields: [
