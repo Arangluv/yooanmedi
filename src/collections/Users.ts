@@ -8,7 +8,7 @@ export const Users: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['username', 'hospitalName', 'phoneNumber', 'role'],
-    useAsTitle: 'email',
+    useAsTitle: 'hospitalName',
     group: '홈페이지 설정',
   },
   auth: {

@@ -4,6 +4,9 @@ import moment from 'moment'
 import { formatNumberWithCommas } from '@order/utils'
 import clsx from 'clsx'
 import { Button } from '@heroui/react'
+import { useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { cancelOrder } from '../actions'
 
 export type OrderListType = {
   id: number
@@ -29,6 +32,9 @@ export type OrderListType = {
 }
 
 export function ListBodySection({ data }: { data: OrderListType[] }) {
+  console.log('data')
+  console.log(data)
+
   return (
     <>
       {data.map((item: OrderListType, index: number) => {
@@ -48,7 +54,7 @@ export function ListBodySection({ data }: { data: OrderListType[] }) {
             </td>
             <td className="text-center">
               <div className="mx-auto w-fit">
-                <OrderCancelButton id={item.orderStatus.id} />
+                <OrderCancelButton orderId={item.id} id={item.orderStatus.id} />
               </div>
             </td>
           </tr>
@@ -102,7 +108,17 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
   )
 }
 
-function OrderCancelButton({ id }: { id: number }) {
+function OrderCancelButton({ orderId, id }: { orderId: number; id: number }) {
+  const { mutate: cancelOrderMutation } = useMutation({
+    mutationFn: ({ orderId }: { orderId: number }) => cancelOrder({ orderId }),
+    onSuccess: () => {
+      toast.success('주문취소가 완료되었습니다.')
+    },
+    onError: () => {
+      toast.error('주문취소에 실패했습니다.')
+    },
+  })
+
   const status = {
     1: false,
     2: true,
@@ -110,11 +126,11 @@ function OrderCancelButton({ id }: { id: number }) {
     4: true,
   }
 
-  const handleCancel = () => {
+  const handleCancel = ({ orderId }: { orderId: number }) => {
     const isOk = confirm('주문을 취소하시겠습니까?')
 
     if (isOk) {
-      alert('주문취소 로직을 넣어주세요')
+      cancelOrderMutation({ orderId })
     }
   }
 
@@ -123,7 +139,7 @@ function OrderCancelButton({ id }: { id: number }) {
       <Button
         size="sm"
         radius="sm"
-        onPress={handleCancel}
+        onPress={() => handleCancel({ orderId: orderId })}
         isDisabled={status[id as keyof typeof status]}
         className="bg-danger-500 text-white rounded-md text-xs !w-fit !max-w-fit !py-1 !px-2"
       >
