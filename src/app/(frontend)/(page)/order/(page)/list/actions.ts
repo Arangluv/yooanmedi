@@ -88,6 +88,7 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
   try {
+    let userPoint = null
     const order = await payload.findByID({
       collection: 'order',
       id: orderId,
@@ -106,6 +107,9 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
       },
     })
     const { pgCno, product, user, quantity } = order
+    // user point 초기화
+    // @ts-ignore
+    userPoint = user.point ?? 0
     // step 1 - 주문취소 상태로 변경
     await payload.update({
       collection: 'order',
@@ -121,8 +125,7 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
       // @ts-ignore
       const refundAmount = Math.floor((product.cashback_rate * quantity * product.price) / 100)
       // @ts-ignore
-      const userPoint = user.point ?? 0
-      const afterTotalPoint = userPoint + refundAmount
+      userPoint -= refundAmount
 
       await payload.create({
         collection: 'point-history',
@@ -130,7 +133,7 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
           // @ts-ignore
           user: Number(user.id),
           type: 'cancel',
-          balanceAfter: afterTotalPoint,
+          balanceAfter: userPoint,
           reason: `주문취소 - PG 주문번호 : ${pgCno}`,
         },
       })
@@ -140,7 +143,7 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
         // @ts-ignore
         id: Number(user.id),
         data: {
-          point: afterTotalPoint,
+          point: userPoint,
         },
       })
     }
@@ -163,7 +166,7 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
         id: Number(user.id),
         data: {
           // @ts-ignore
-          point: user.point + pointForTransationList[0].usedPointAmount,
+          point: userPoint + pointForTransationList[0].usedPointAmount,
         },
       })
 
@@ -174,7 +177,7 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
           user: Number(user.id),
           type: 'cancel',
           // @ts-ignore
-          balanceAfter: user.point + pointForTransationList[0].usedPointAmount,
+          balanceAfter: userPoint + pointForTransationList[0].usedPointAmount,
           reason: `유저 사용 적립금 환불 - PG 주문번호 : ${pgCno}`,
         },
       })
@@ -191,7 +194,6 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
 
     // step 4 - 주문 취소 실행
 
-    
     await payload.db.commitTransaction(dbTransactionID as string)
   } catch (error) {
     await payload.db.rollbackTransaction(dbTransactionID as string)

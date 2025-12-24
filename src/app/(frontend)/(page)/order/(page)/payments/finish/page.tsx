@@ -95,7 +95,7 @@ function OrderSuccessContent({
         </div>
       </div>
       <Link
-        href="/order"
+        href="/order/list"
         className="text-white bg-brand w-1/2 h-12 flex items-center justify-center rounded-md hover:bg-brandWeek transition-colors duration-300"
       >
         주문내역 확인하기
