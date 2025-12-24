@@ -205,10 +205,7 @@ function ExpectedPriceSection({
   // 총 상품금액
   const totalPrice = inventory.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   // 배송비
-  const totalDeliveryFee = inventory.reduce(
-    (acc, item) => acc + item.product.delivery_fee * item.quantity,
-    0,
-  )
+  const totalDeliveryFee = inventory.reduce((acc, item) => acc + item.product.delivery_fee, 0)
   // 예상 결제금액
   const totalExpectedPrice = totalPrice + totalDeliveryFee
 
