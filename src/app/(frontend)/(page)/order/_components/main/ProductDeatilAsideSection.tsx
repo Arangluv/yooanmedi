@@ -91,6 +91,7 @@ function SelectedProductDetailSection({
     stock,
     delivery_fee,
     cashback_rate,
+    cashback_rate_for_bank,
     returnable,
   } = product
 
@@ -137,7 +138,11 @@ function SelectedProductDetailSection({
           />
           <ProductPurchaseHistorySection prod_id={id} user_id={user.id} />
           <Divider className="my-2" />
-          <ProductPointBenefitSection price={price} rate={cashback_rate} />
+          <ProductPointBenefitSection
+            price={price}
+            rate={cashback_rate}
+            rate_for_bank={cashback_rate_for_bank}
+          />
           <ProductQuantityInput
             inventory={inventory}
             setInventory={setInventory}
@@ -189,8 +194,17 @@ function ProductDetailSection({
   )
 }
 
-function ProductPointBenefitSection({ price, rate }: { price: number; rate: number }) {
+function ProductPointBenefitSection({
+  price,
+  rate,
+  rate_for_bank,
+}: {
+  price: number
+  rate: number
+  rate_for_bank: number
+}) {
   const willEarnPoint = getPointOnPurchase(price, rate)
+  const willEarnPointForBank = getPointOnPurchase(price, rate_for_bank)
 
   if (willEarnPoint === '0' || !willEarnPoint) {
     return null
@@ -199,7 +213,18 @@ function ProductPointBenefitSection({ price, rate }: { price: number; rate: numb
   return (
     <div className="flex gap-2 items-start text-sm text-foreground-600">
       <span className="text-foreground-700 block w-[100px] flex-shrink-0">결제혜택</span>
-      <span className="text-brandWeek font-bold">적립금 {willEarnPoint}원</span>
+      <div className="flex flex-col gap-1">
+        {Number(willEarnPoint) > 0 && (
+          <span className="text-brandWeek">
+            카드 결제시 <span className="font-bold">{willEarnPoint}원</span> 적립
+          </span>
+        )}
+        {Number(willEarnPointForBank) > 0 && (
+          <span className="text-brandWeek">
+            무통장 입금시 <span className="font-bold">{willEarnPointForBank}원</span> 적립
+          </span>
+        )}
+      </div>
     </div>
   )
 }

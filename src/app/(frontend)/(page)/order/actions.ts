@@ -81,6 +81,7 @@ export async function getBestProducts() {
         price: true,
         image: true,
         cashback_rate: true,
+        cashback_rate_for_bank: true,
         manufacturer: true,
         specification: true,
         insurance_code: true,

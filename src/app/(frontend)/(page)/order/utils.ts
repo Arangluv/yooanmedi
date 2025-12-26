@@ -86,6 +86,21 @@ export const getPointOnPurchase = (price: number, cashback_rate: number) => {
   return formatNumberWithCommas(point)
 }
 
+export const getMaxPointOnPurchase = ({
+  price,
+  cashback_rate,
+  cashback_rate_for_bank,
+}: {
+  price: number
+  cashback_rate: number
+  cashback_rate_for_bank: number
+}) => {
+  const cardPoint = Math.floor(price * (cashback_rate / 100))
+  const bankPoint = Math.floor(price * (cashback_rate_for_bank / 100))
+
+  return formatNumberWithCommas(Math.max(cardPoint, bankPoint))
+}
+
 export const generateGetProductCondition = (params: { [key: string]: any }) => {
   const condition = params.condition ? params.condition : null
   const keyword = params.keyword ? params.keyword : null
