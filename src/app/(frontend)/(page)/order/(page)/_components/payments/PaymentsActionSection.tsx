@@ -15,6 +15,7 @@ import {
   ProductItemType,
 } from '@order/_type'
 import { useRouter } from 'next/navigation'
+import PaymentsBankTransferButton from './PaymentsBankTransferButton'
 
 export default function PaymentsActionSection({ userRequest }: { userRequest: string }) {
   const router = useRouter()
@@ -60,7 +61,7 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
   }, [])
 
   // mallId는 서버에서만 필요하므로 클라이언트사이드에서는 생략된 타입으로 작성
-  const dto: Omit<PaymentRegisterDto, 'mallId'> = {
+  const dto: Omit<PaymentRegisterDto, 'mallId' | 'paymentsMethod'> = {
     payMethodTypeCode: '11',
     currency: '00',
     amount: Number(totalPaymentAmount),
@@ -77,6 +78,7 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
       value2: generateOrderList(inventory) as string,
       value3: usePoint.toString(),
       value4: user?.id?.toString() ?? '',
+      value5: 'creditCard' as const,
     },
   }
 
@@ -121,8 +123,20 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
     setUsePoint(usedPoint)
   }
 
-  const handleBankBtnClick = () => {
-    alert('무통장 입금 결제 준비중입니다. 조금만 기다려주세요.')
+  const bankTransferDto = {
+    amount: Number(totalPaymentAmount),
+    shopOrderNo: String(generateShopOrderNo()),
+    orderInfo: {
+      goodsName: generateGoodsName(inventory),
+      customerInfo: generateUserInfo(user as OrderContextUserType),
+    },
+    shopValueInfo: {
+      value1: userRequest,
+      value2: generateOrderList(inventory) as string,
+      value3: usePoint.toString(),
+      value4: user?.id?.toString() ?? '',
+      value5: 'bankTransfer' as const,
+    },
   }
 
   if (!user) {
@@ -141,15 +155,12 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
             <span className="text-foreground-600">총 금액</span>
             <span className="font-bold">{formatNumberWithCommas(totalPrice)}원</span>
           </div>
-          {/* 이 부분 */}
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-600">총 적립금액</span>
-            <span className="font-bold">{formatNumberWithCommas(totalPrice)}원</span>
-          </div>
           <div className="flex items-center justify-between">
             <span className="text-foreground-600">배송비</span>
             <span className="font-bold">{formatNumberWithCommas(totalDeliveryFee)}원</span>
           </div>
+          {/* 이 부분 */}
+          <TotalGetPoint inventory={inventory} />
           <div className="flex justify-between gap-4">
             <span className="text-foreground-600 flex-shrink-0">적립금 사용</span>
             <div className="flex gap-2">
@@ -208,15 +219,10 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
           위 주문 내용을 확인하였으며 회원 본인은 개인정보 이용 및 서비스 이용약관에 동의합니다.
         </p>
         <div className="flex items-center gap-2">
-          <Button
-            size="lg"
-            radius="sm"
+          <PaymentsBankTransferButton
+            bankTransferDto={bankTransferDto}
             isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
-            className="bg-brand text-white w-full"
-            onPress={handleBankBtnClick}
-          >
-            무통장 입금
-          </Button>
+          />
           <Button
             size="lg"
             radius="sm"
@@ -226,6 +232,39 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
           >
             카드결제
           </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+function TotalGetPoint({ inventory }: { inventory: InventoryType['inventory'] }) {
+  // CASE1 - 카드 결제 시
+  const totalGetPointUseCard = inventory.reduce((acc, item) => {
+    return acc + Math.floor((item.product.cashback_rate * item.product.price * item.quantity) / 100)
+  }, 0)
+  // CASE2 - 무통장 입금 시
+  const totalGetPointUseBank = inventory.reduce((acc, item) => {
+    return (
+      acc +
+      Math.floor((item.product.cashback_rate_for_bank * item.product.price * item.quantity) / 100)
+    )
+  }, 0)
+
+  return (
+    <div className="flex items-start justify-between my-1">
+      <span className="text-foreground-600">총 적립금액</span>
+      <div className="flex flex-col gap2">
+        <div className="flex gap-1 items-center justify-end">
+          <span className="text-[15px] text-foreground-600">카드결제 시 </span>
+          <span className="font-bold text-brand">
+            {formatNumberWithCommas(totalGetPointUseCard)}원
+          </span>
+        </div>
+        <div className="flex gap-1 items-center justify-end">
+          <span className="text-[15px] text-foreground-600">무통장 입금 시 </span>
+          <span className="font-bold text-brand">
+            {formatNumberWithCommas(totalGetPointUseBank)}원
+          </span>
         </div>
       </div>
     </div>

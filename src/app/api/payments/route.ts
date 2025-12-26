@@ -52,8 +52,17 @@ export async function POST(request: NextRequest) {
       // shopValue2: 주문상품리스트
       // shopValue3: 사용 적립금
       // shopValue4: 유저ID(고유)
+      // shopValue5: 결제 방법 -> creditCard | bankTransfer
 
-      const { authorizationId, shopOrderNo, shopValue1, shopValue2, shopValue3, shopValue4 } = data
+      const {
+        authorizationId,
+        shopOrderNo,
+        shopValue1,
+        shopValue2,
+        shopValue3,
+        shopValue4,
+        shopValue5,
+      } = data
       const userOrderRequest = shopValue1 as string
       const orderList = JSON.parse(shopValue2 as string)
       const usedPoint = shopValue3 as string
@@ -70,9 +79,9 @@ export async function POST(request: NextRequest) {
 
       const approveData = await approvePayment({ authorizationId, shopOrderNo })
 
-      // 유저가 거래 취소 시 환불할 적립금을 관리하기 위해 사용
-      // 얼마나 포인트를 사용했는지를 저장
-      // 0 이상일 경우 환불 처리 -> 취소 로직에서
+      // // 유저가 거래 취소 시 환불할 적립금을 관리하기 위해 사용
+      // // 얼마나 포인트를 사용했는지를 저장
+      // // 0 이상일 경우 환불 처리 -> 취소 로직에서
       const pointForTransation = await payload.create({
         collection: 'point-for-transation',
         select: {},
@@ -91,6 +100,7 @@ export async function POST(request: NextRequest) {
         userOrderRequest,
         approveData,
         pointForTransationId: pointForTransation.id,
+        paymentsMethod: shopValue5 as 'creditCard' | 'bankTransfer',
       })
 
       let userPoint = Number(user.point ?? 0)
@@ -208,6 +218,7 @@ const createOrderList = async ({
   userOrderRequest,
   approveData,
   pointForTransationId,
+  paymentsMethod,
 }: {
   payload: BasePayload
   orderList: any[]
@@ -215,6 +226,7 @@ const createOrderList = async ({
   userOrderRequest: string
   approveData: PaymentApproveResponseDto
   pointForTransationId: number
+  paymentsMethod: 'creditCard' | 'bankTransfer'
 }) => {
   let pointAmount = 0
 
@@ -241,14 +253,16 @@ const createOrderList = async ({
             approveData.paymentInfo.approvalDate,
             'YYYYMMDDHHmmss',
           ).toISOString(),
+          pointForTransation: pointForTransationId,
+          paymentsMethod: paymentsMethod,
+          pgCno: approveData.pgCno,
+          orderStatus: 1,
+          orderRequest: userOrderRequest,
           // 실패케이스를 만들때  -> approveData.paymentInfo.approvalDate, 이것만 사용하기
           // orderCreatedAt: moment(
           //   approveData.paymentInfo.approvalDate,
           //   'YYYYMMDDHHmmss',
           // ).toISOString(),
-          pgCno: approveData.pgCno,
-          orderStatus: 1,
-          orderRequest: userOrderRequest,
         },
       })
     }),

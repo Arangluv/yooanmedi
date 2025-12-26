@@ -57,6 +57,7 @@ export type PaymentRegisterDto = {
   returnUrl: string
   deviceTypeCode: 'mobile' | 'pc'
   clientTypeCode: '00' // 고정값,
+  paymentsMethod: 'creditCard' | 'bankTransfer'
   orderInfo: {
     goodsName: string
     customerInfo: {
@@ -72,6 +73,7 @@ export type PaymentRegisterDto = {
     value2?: string
     value3?: string
     value4?: string
+    value5?: 'creditCard' | 'bankTransfer'
     // 6까지 추가할 수 있다
   }
 }

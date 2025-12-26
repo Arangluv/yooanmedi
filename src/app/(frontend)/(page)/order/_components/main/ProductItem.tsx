@@ -25,9 +25,6 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
     }
   }
 
-  console.log('productItem')
-  console.log(productItem)
-
   return (
     <div className="w-full flex flex-col">
       {/* 상품 이미지 :: todo -> 클릭 시 장바구니 이동 */}

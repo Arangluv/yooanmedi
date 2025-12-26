@@ -326,7 +326,8 @@ export interface Order {
   user: number | User;
   product: number | Product;
   orderCreatedAt: string;
-  pgCno: string;
+  paymentsMethod: 'creditCard' | 'bankTransfer';
+  pgCno?: string | null;
   quantity: number;
   orderStatus: number | OrderStatus;
   orderRequest?: string | null;
@@ -342,7 +343,7 @@ export interface PointForTransation {
   id: number;
   user: number | User;
   usedPointAmount: number;
-  transactionPgCno: string;
+  transactionPgCno?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -559,6 +560,7 @@ export interface OrderSelect<T extends boolean = true> {
   user?: T;
   product?: T;
   orderCreatedAt?: T;
+  paymentsMethod?: T;
   pgCno?: T;
   quantity?: T;
   orderStatus?: T;
