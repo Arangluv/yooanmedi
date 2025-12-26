@@ -1,7 +1,7 @@
 'use client'
 
 import { Divider, Textarea } from '@heroui/react'
-import { formatNumberWithCommas, getPointOnPurchase } from '@order/utils'
+import { formatNumberWithCommas, getMaxPointOnPurchase, getPointOnPurchase } from '@order/utils'
 import { InventoryContext, OrderUserInfoContext } from '@order/_context/order_context'
 import { Fragment, useContext } from 'react'
 import { ProductItemType } from '@order/_type'
@@ -121,7 +121,13 @@ function PaymentsListItem({ product, quantity }: { product: ProductItemType; qua
           <span>{product.returnable ? '반품가능' : '반품불가'}</span>
         </div>
         <span className="text-[13px] text-brand">
-          구매 시 적립금 {getPointOnPurchase(product.price, product.cashback_rate)}원
+          구매 시 최대 적립금{' '}
+          {getMaxPointOnPurchase({
+            price: product.price,
+            cashback_rate: product.cashback_rate,
+            cashback_rate_for_bank: product.cashback_rate_for_bank,
+          })}
+          원
         </span>
       </div>
     </div>
