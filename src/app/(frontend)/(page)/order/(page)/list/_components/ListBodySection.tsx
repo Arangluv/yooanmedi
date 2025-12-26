@@ -32,9 +32,6 @@ export type OrderListType = {
 }
 
 export function ListBodySection({ data }: { data: OrderListType[] }) {
-  console.log('data')
-  console.log(data)
-
   return (
     <>
       {data.map((item: OrderListType, index: number) => {
