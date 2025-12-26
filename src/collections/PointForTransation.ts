@@ -23,11 +23,11 @@ export const PointForTransation: CollectionConfig = {
       label: '사용 적립금',
       required: true,
     },
+    // 카드 결제시에만 사용하는 필드
     {
       name: 'transactionPgCno',
       type: 'text',
       label: '거래 번호',
-      required: true,
       admin: {
         readOnly: true,
       },

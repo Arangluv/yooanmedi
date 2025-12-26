@@ -34,13 +34,31 @@ export const Order: CollectionConfig = {
       label: '주문일시',
       required: true,
     },
+    {
+      name: 'paymentsMethod',
+      type: 'select',
+      label: '결제 방법',
+      admin: {
+        readOnly: true,
+      },
+      options: [
+        {
+          label: '신용카드',
+          value: 'creditCard',
+        },
+        {
+          label: '무통장입금',
+          value: 'bankTransfer',
+        },
+      ],
+      required: true,
+    },
     // 추후 msgAuthValue 만들때 pgCno와 랜덤으로 만든 transactionId를 해시해서 넘겨야함
     // https://developer.easypay.co.kr/change-inquiry/cancellationRequest 해당페이지 각주 확인
     {
       name: 'pgCno',
       type: 'text',
       label: 'PG 주문번호',
-      required: true,
       admin: {
         readOnly: true,
       },

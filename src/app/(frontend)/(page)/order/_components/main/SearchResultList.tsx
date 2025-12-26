@@ -70,7 +70,7 @@ export default function SearchResultList({
 
 function SearchEmptyResult() {
   return (
-    <div className="w-full h-[300px] flex flex-col items-center justify-center gap-4 bg-neutral-50 rounded-lg p-4">
+    <div className="w-full h-[300px] flex flex-col items-center justify-center gap-4 bg-neutral-50 rounded-lg p-4 mb-8">
       <SearchX className="w-[100px] h-[100px] text-foreground-200" strokeWidth={1.5} />
       <span className="text-foreground-700 text-2xl font-bold leading-none">
         검색 결과가 없습니다.
