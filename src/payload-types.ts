@@ -261,10 +261,15 @@ export interface Product {
   manufacturer: string;
   price: number;
   /**
-   * 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5)
+   * 카드 결제 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5)
    * 최대 1.8까지 입력 가능합니다.
    */
   cashback_rate: number;
+  /**
+   * 무통장 입금 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5)
+   * 최대 1.8까지 입력 가능합니다.
+   */
+  cashback_rate_for_bank: number;
   specification?: string | null;
   stock: number;
   delivery_fee: number;
@@ -507,6 +512,7 @@ export interface ProductSelect<T extends boolean = true> {
   manufacturer?: T;
   price?: T;
   cashback_rate?: T;
+  cashback_rate_for_bank?: T;
   specification?: T;
   stock?: T;
   delivery_fee?: T;

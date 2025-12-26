@@ -121,6 +121,10 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
     setUsePoint(usedPoint)
   }
 
+  const handleBankBtnClick = () => {
+    alert('무통장 입금 결제 준비중입니다. 조금만 기다려주세요.')
+  }
+
   if (!user) {
     return null
   }
@@ -135,6 +139,11 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <span className="text-foreground-600">총 금액</span>
+            <span className="font-bold">{formatNumberWithCommas(totalPrice)}원</span>
+          </div>
+          {/* 이 부분 */}
+          <div className="flex items-center justify-between">
+            <span className="text-foreground-600">총 적립금액</span>
             <span className="font-bold">{formatNumberWithCommas(totalPrice)}원</span>
           </div>
           <div className="flex items-center justify-between">
@@ -198,15 +207,26 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
         <p className="text-foreground-600 text-sm">
           위 주문 내용을 확인하였으며 회원 본인은 개인정보 이용 및 서비스 이용약관에 동의합니다.
         </p>
-        <Button
-          size="lg"
-          radius="sm"
-          isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
-          className="bg-brand text-white"
-          onPress={() => registerOrderMutation()}
-        >
-          주문하기
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="lg"
+            radius="sm"
+            isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
+            className="bg-brand text-white w-full"
+            onPress={handleBankBtnClick}
+          >
+            무통장 입금
+          </Button>
+          <Button
+            size="lg"
+            radius="sm"
+            isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
+            className="bg-brand text-white w-full"
+            onPress={() => registerOrderMutation()}
+          >
+            카드결제
+          </Button>
+        </div>
       </div>
     </div>
   )

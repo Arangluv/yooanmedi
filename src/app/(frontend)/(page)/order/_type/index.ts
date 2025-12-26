@@ -28,6 +28,7 @@ export type ProductItemType = {
     alt: string | null
   }
   cashback_rate: number
+  cashback_rate_for_bank: number
   insurance_code: string | null | undefined
   stock: number
   delivery_fee: number

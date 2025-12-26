@@ -3,7 +3,7 @@ import { Tooltip } from '@heroui/react'
 import { ImageIcon, ShoppingCart } from 'lucide-react'
 import { ProductItemType } from '@order/_type'
 import { InventoryContext, ProductInfoContext } from '@order/_context/order_context'
-import { formatNumberWithCommas, getPointOnPurchase } from '@order/utils'
+import { formatNumberWithCommas, getMaxPointOnPurchase } from '@order/utils'
 import { useContext } from 'react'
 import { toast } from 'sonner'
 import { ExistingProductToast, AddedProductToast } from './ToastComponents'
@@ -24,6 +24,9 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
       toast.success(<AddedProductToast />)
     }
   }
+
+  console.log('productItem')
+  console.log(productItem)
 
   return (
     <div className="w-full flex flex-col">
@@ -71,7 +74,13 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
         </span>
         {productItem.cashback_rate > 0 && (
           <span className="text-sm text-brandWeek">
-            구매 시 적립금 {getPointOnPurchase(productItem.price, productItem.cashback_rate)}원
+            구매 시 최대 적립금{' '}
+            {getMaxPointOnPurchase({
+              price: productItem.price,
+              cashback_rate: productItem.cashback_rate,
+              cashback_rate_for_bank: productItem.cashback_rate_for_bank,
+            })}
+            원
           </span>
         )}
       </div>

@@ -62,27 +62,56 @@ export const Product: CollectionConfig = {
       },
     },
     {
-      name: 'cashback_rate',
-      type: 'number',
-      label: '적립금 비율',
-      admin: {
-        description: `적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5) \n최대 1.8까지 입력 가능합니다.`,
-      },
-      defaultValue: 0,
-      required: true,
-      validate: (value: number | null | undefined) => {
-        if (value === null || value === undefined) {
-          return true
-        }
+      type: 'row',
+      fields: [
+        {
+          name: 'cashback_rate',
+          type: 'number',
+          label: '카드결제 적립금 비율',
+          admin: {
+            description: `카드 결제 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5) \n최대 1.8까지 입력 가능합니다.`,
+          },
+          defaultValue: 0,
+          required: true,
+          validate: (value: number | null | undefined) => {
+            if (value === null || value === undefined) {
+              return true
+            }
 
-        if (value < 0) {
-          return '적립금 비율은 0 이상이어야 합니다.'
-        }
-        if (value > 1.8) {
-          return '적립금 비율은 1.8 이하이어야 합니다.'
-        }
-        return true
-      },
+            if (value < 0) {
+              return '적립금 비율은 0 이상이어야 합니다.'
+            }
+            if (value > 1.8) {
+              return '적립금 비율은 1.8 이하이어야 합니다.'
+            }
+            return true
+          },
+        },
+        {
+          name: 'cashback_rate_for_bank',
+          type: 'number',
+          label: '무통장 입금 적립금 비율',
+          admin: {
+            description:
+              '무통장 입금 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5) \n최대 1.8까지 입력 가능합니다.',
+          },
+          defaultValue: 0,
+          validate: (value: number | null | undefined) => {
+            if (value === null || value === undefined) {
+              return true
+            }
+
+            if (value < 0) {
+              return '적립금 비율은 0 이상이어야 합니다.'
+            }
+            if (value > 1.8) {
+              return '적립금 비율은 1.8 이하이어야 합니다.'
+            }
+            return true
+          },
+          required: true,
+        },
+      ],
     },
     {
       name: 'specification',
