@@ -34,43 +34,6 @@ type PaymentApproveResponseDto = {
     approvalDate: string
   }
 }
-
-// 결제 승인 시
-// {
-//   resCd: '0000',
-//   resMsg: 'MPI결제 정상',
-//   mallId: 'T0021766',
-//   pgCno: '25120911141310005210',
-//   shopTransactionId: '0B330439B1514A3BB374A235EDCC7CCD',
-//   shopOrderNo: '202512098342820',
-//   amount: 0,
-//   transactionDate: '20251209111448',
-//   statusCode: 'TS03',
-//   statusMessage: '매입요청',
-//   msgAuthValue: 'af998b4833f679fa154a091f98953e92fc95fd20e66b3828e019eaf6836f02eb',
-//   escrowUsed: 'N',
-//   paymentInfo: {
-//     payMethodTypeCode: '11',
-//     approvalNo: '21832774',
-//     approvalDate: '20251209111448',
-//     cardInfo: {
-//       cardNo: '48548077****937*',
-//       issuerCode: '049',
-//       issuerName: 'TestCard',
-//       acquirerCode: '026',
-//       acquirerName: 'TestCard',
-//       installmentMonth: 0,
-//       freeInstallmentTypeCode: '00',
-//       cardGubun: 'N',
-//       cardBizGubun: 'P',
-//       partCancelUsed: 'Y',
-//       vanSno: '274740235130',
-//       vanTid: '0700091',
-//       pntAmount: '0'
-//     }
-//   }
-// }
-
 export async function POST(request: NextRequest) {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
@@ -115,19 +78,6 @@ export async function POST(request: NextRequest) {
 
       const approveData = await approvePayment({ authorizationId, shopOrderNo })
 
-      // // 유저가 거래 취소 시 환불할 적립금을 관리하기 위해 사용
-      // // 얼마나 포인트를 사용했는지를 저장
-      // // 0 이상일 경우 환불 처리 -> 취소 로직에서
-      const pointForTransation = await payload.create({
-        collection: 'point-for-transation',
-        select: {},
-        data: {
-          user: Number(userId),
-          usedPointAmount: Number(usedPoint),
-          transactionPgCno: approveData.pgCno,
-        },
-      })
-
       // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
       const pointAmount = await createOrderList({
         payload,
@@ -135,7 +85,7 @@ export async function POST(request: NextRequest) {
         userId,
         userOrderRequest,
         approveData,
-        pointForTransationId: pointForTransation.id,
+        usedPoint: Number(usedPoint),
         paymentsMethod: shopValue5 as 'creditCard' | 'bankTransfer',
       })
 
@@ -198,7 +148,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: any) {
     console.log(error)
-
     // payload에서 에러가 터지면 여기서도 이제 주문취소를 해야함
     const url = request.nextUrl.clone()
     url.pathname = '/order/payments/result'
@@ -253,7 +202,7 @@ const createOrderList = async ({
   userId,
   userOrderRequest,
   approveData,
-  pointForTransationId,
+  usedPoint,
   paymentsMethod,
 }: {
   payload: BasePayload
@@ -261,13 +210,19 @@ const createOrderList = async ({
   userId: string
   userOrderRequest: string
   approveData: PaymentApproveResponseDto
-  pointForTransationId: number
+  usedPoint: number
   paymentsMethod: 'creditCard' | 'bankTransfer'
 }) => {
   let pointAmount = 0
+  const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
+  const refuntPointRemain = usedPoint > 0 ? usedPoint % orderList.length : 0
+  const refundPointArr = Array.from({ length: orderList.length }, () => refundPoint)
+  if (refuntPointRemain > 0) {
+    refundPointArr[orderList.length - 1] += refuntPointRemain
+  }
 
   await Promise.all(
-    orderList.map(async (order: any) => {
+    orderList.map(async (order: any, idx: number) => {
       const product = await payload.findByID({
         collection: 'product',
         id: order.id,
@@ -289,7 +244,7 @@ const createOrderList = async ({
             approveData.paymentInfo.approvalDate,
             'YYYYMMDDHHmmss',
           ).toISOString(),
-          pointForTransation: pointForTransationId,
+          refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: approveData.pgCno,
           orderStatus: 1,
