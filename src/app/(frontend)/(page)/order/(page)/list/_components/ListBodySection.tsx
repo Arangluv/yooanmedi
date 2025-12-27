@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { Button } from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { cancelOrder } from '../actions'
+import { cancelOrderForCard, cancelOrderForBankTransfer } from '../actions'
 
 export type OrderListType = {
   id: number
@@ -21,6 +21,7 @@ export type OrderListType = {
     specification: string
     price: number
   }
+  paymentsMethod: 'creditCard' | 'bankTransfer'
   quantity: number
   orderCreatedAt: string
   pgCno: string
@@ -51,7 +52,11 @@ export function ListBodySection({ data }: { data: OrderListType[] }) {
             </td>
             <td className="text-center">
               <div className="mx-auto w-fit">
-                <OrderCancelButton orderId={item.id} id={item.orderStatus.id} />
+                {item.paymentsMethod === 'creditCard' ? (
+                  <OrderCancelButtonForCard orderId={item.id} id={item.orderStatus.id} />
+                ) : (
+                  <OrderCancelButtonForBankTransfer orderId={item.id} id={item.orderStatus.id} />
+                )}
               </div>
             </td>
           </tr>
@@ -80,6 +85,7 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
   //   2: '배송시작',
   //   3: '배송완료',
   //   4: '주문취소',
+  //   5: '결제대기',
   // }
 
   const bgColorMap = {
@@ -87,6 +93,7 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
     2: 'bg-primary-50',
     3: 'bg-success-50',
     4: 'bg-danger-50',
+    5: 'bg-neutral-200',
   }
 
   const textColorMap = {
@@ -94,6 +101,7 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
     2: 'text-primary-600',
     3: 'text-success-600',
     4: 'text-danger-500',
+    5: 'text-foreground-700',
   }
   const bgColor = bgColorMap[id as keyof typeof bgColorMap]
   const textColor = textColorMap[id as keyof typeof textColorMap]
@@ -105,9 +113,9 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
   )
 }
 
-function OrderCancelButton({ orderId, id }: { orderId: number; id: number }) {
+function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number }) {
   const { mutate: cancelOrderMutation } = useMutation({
-    mutationFn: ({ orderId }: { orderId: number }) => cancelOrder({ orderId }),
+    mutationFn: ({ orderId }: { orderId: number }) => cancelOrderForCard({ orderId }),
     onSuccess: () => {
       toast.success('주문취소가 완료되었습니다.')
     },
@@ -121,6 +129,48 @@ function OrderCancelButton({ orderId, id }: { orderId: number; id: number }) {
     2: true,
     3: true,
     4: true,
+  }
+
+  const handleCancel = ({ orderId }: { orderId: number }) => {
+    const isOk = confirm('주문을 취소하시겠습니까?')
+
+    if (isOk) {
+      cancelOrderMutation({ orderId })
+    }
+  }
+
+  return (
+    <div className="mx-auto w-fit">
+      <Button
+        size="sm"
+        radius="sm"
+        onPress={() => handleCancel({ orderId: orderId })}
+        isDisabled={status[id as keyof typeof status]}
+        className="bg-danger-500 text-white rounded-md text-xs !w-fit !max-w-fit !py-1 !px-2"
+      >
+        주문취소
+      </Button>
+    </div>
+  )
+}
+
+function OrderCancelButtonForBankTransfer({ orderId, id }: { orderId: number; id: number }) {
+  const { mutate: cancelOrderMutation } = useMutation({
+    mutationFn: ({ orderId }: { orderId: number }) => cancelOrderForBankTransfer({ orderId }),
+    onSuccess: () => {
+      toast.success('주문취소가 완료되었습니다.')
+    },
+    onError: () => {
+      toast.error('주문취소에 실패했습니다.')
+    },
+  })
+
+  const status = {
+    1: false,
+    2: true,
+    3: true,
+    4: true,
+    5: false,
   }
 
   const handleCancel = ({ orderId }: { orderId: number }) => {

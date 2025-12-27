@@ -44,7 +44,11 @@ export default function PaymentsBankTransferButton({
   const router = useRouter()
   const { mutate: createBankTransferOrderMutation, isPending } = useMutation({
     mutationFn: () => createBankTransferOrder(bankTransferDto),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.error) {
+        alert(data.message)
+        return
+      }
       onOpen()
     },
     onError: () => {

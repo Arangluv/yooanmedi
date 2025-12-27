@@ -62,6 +62,7 @@ export async function getOrderList({
       deliveryCompany: true,
       orderCreatedAt: true,
       orderStatus: true,
+      paymentsMethod: true,
       pgCno: true,
       quantity: true,
       product: true,
@@ -84,12 +85,32 @@ export async function getOrderList({
   return data.docs
 }
 
-export async function cancelOrder({ orderId }: { orderId: number }) {
+type CancelCardProductType = {
+  id: number
+  price: number
+  cashback_rate: number
+}
+
+type CancelCardUserType = {
+  id: number
+  point: number
+}
+
+type CancelCardOrderType = {
+  id: number
+  product: CancelCardProductType
+  user: CancelCardUserType
+  quantity: number
+  refundUsedPointAmount: number
+  pgCno: string
+}
+
+export async function cancelOrderForCard({ orderId }: { orderId: number }) {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
   try {
     let userPoint = null
-    const order = await payload.findByID({
+    const order = (await payload.findByID({
       collection: 'order',
       id: orderId,
       select: {
@@ -97,6 +118,7 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
         product: true,
         user: true,
         quantity: true,
+        refundUsedPointAmount: true,
       },
       populate: {
         product: {
@@ -105,10 +127,9 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
         },
         users: { point: true },
       },
-    })
-    const { pgCno, product, user, quantity } = order
+    })) as CancelCardOrderType
+    const { pgCno, product, user, quantity, refundUsedPointAmount } = order
     // user point 초기화
-    // @ts-ignore
     userPoint = user.point ?? 0
     // step 1 - 주문취소 상태로 변경
     await payload.update({
@@ -120,11 +141,8 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
     })
 
     // step 2- 적립금 차감 계산
-    // @ts-ignore
     if (product.cashback_rate > 0) {
-      // @ts-ignore
       const refundAmount = Math.floor((product.cashback_rate * quantity * product.price) / 100)
-      // @ts-ignore
       userPoint -= refundAmount
 
       await payload.create({
@@ -140,7 +158,6 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
 
       await payload.update({
         collection: 'users',
-        // @ts-ignore
         id: Number(user.id),
         data: {
           point: userPoint,
@@ -149,45 +166,26 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
     }
 
     // step 3 - 유저가 사용한 적립금 환불 계산
-    const { docs: pointForTransationList } = await payload.find({
-      collection: 'point-for-transation',
-      where: {
-        transactionPgCno: {
-          equals: pgCno,
-        },
-      },
-    })
+    if (refundUsedPointAmount > 0) {
+      // 유저가 사용한 적립금
 
-    if (pointForTransationList.length > 0 && pointForTransationList[0].usedPointAmount > 0) {
-      // user point 변경
-      await payload.update({
-        collection: 'users',
-        // @ts-ignore
-        id: Number(user.id),
-        data: {
-          // @ts-ignore
-          point: userPoint + pointForTransationList[0].usedPointAmount,
-        },
-      })
-
+      // 적립금 환불 기록 추가
       await payload.create({
         collection: 'point-history',
         data: {
-          // @ts-ignore
           user: Number(user.id),
           type: 'cancel',
-          // @ts-ignore
-          balanceAfter: userPoint + pointForTransationList[0].usedPointAmount,
+          balanceAfter: userPoint + refundUsedPointAmount,
           reason: `유저 사용 적립금 환불 - PG 주문번호 : ${pgCno}`,
         },
       })
 
-      // 사용한 적립금을 0으로 변경
+      // 유저 적립금 수정
       await payload.update({
-        collection: 'point-for-transation',
-        id: pointForTransationList[0].id,
+        collection: 'users',
+        id: Number(user.id),
         data: {
-          usedPointAmount: 0,
+          point: userPoint + refundUsedPointAmount,
         },
       })
     }
@@ -202,4 +200,113 @@ export async function cancelOrder({ orderId }: { orderId: number }) {
   }
 
   return null
+}
+
+type CancelBankTransferProductType = {
+  id: number
+  price: number
+  cashback_rate_for_bank: number
+}
+
+type CancelBankTransferUserType = {
+  id: number
+  point: number
+}
+
+type CancelBankTransferOrderType = {
+  id: number
+  product: CancelBankTransferProductType
+  user: CancelBankTransferUserType
+  quantity: number
+  refundUsedPointAmount: number
+}
+
+export async function cancelOrderForBankTransfer({ orderId }: { orderId: number }): Promise<void> {
+  const payload = await getPayload({ config: config })
+  const dbTransactionID = await payload.db.beginTransaction()
+  try {
+    const order = (await payload.findByID({
+      collection: 'order',
+      id: orderId,
+      select: {
+        product: true,
+        user: true,
+        quantity: true,
+        refundUsedPointAmount: true,
+      },
+      populate: {
+        product: {
+          price: true,
+          cashback_rate_for_bank: true,
+        },
+        users: { point: true },
+      },
+    })) as CancelBankTransferOrderType
+    const { product, user, quantity } = order
+    let userPoint = user.point
+
+    // // step 1 - 주문취소 상태로 변경
+    await payload.update({
+      collection: 'order',
+      id: orderId,
+      data: {
+        orderStatus: 4,
+      },
+    })
+
+    // step 2 - 상품을 구매했을 때 적립된 적립금 차감
+    if (product.cashback_rate_for_bank > 0) {
+      const refundAmount = Math.floor(
+        (product.cashback_rate_for_bank * quantity * product.price) / 100,
+      )
+      userPoint -= refundAmount
+
+      await payload.create({
+        collection: 'point-history',
+        data: {
+          user: Number(user.id),
+          type: 'cancel',
+          balanceAfter: userPoint,
+          reason: `주문취소 - 무통장 입금 주문번호 : ${order.id}`,
+        },
+      })
+
+      await payload.update({
+        collection: 'users',
+        id: Number(user.id),
+        data: {
+          point: userPoint,
+        },
+      })
+    }
+
+    // step 3 - 유저가 사용한 적립금 환불 계산
+    if (order.refundUsedPointAmount > 0) {
+      // 유저가 사용한 적립금
+
+      // 적립금 환불 기록 추가
+      await payload.create({
+        collection: 'point-history',
+        data: {
+          user: Number(user.id),
+          type: 'cancel',
+          balanceAfter: userPoint + order.refundUsedPointAmount,
+          reason: `유저 사용 적립금 환불 - 무통장 입금 주문번호 : ${order.id}`,
+        },
+      })
+
+      // 유저 적립금 수정
+      await payload.update({
+        collection: 'users',
+        id: Number(user.id),
+        data: {
+          point: userPoint + order.refundUsedPointAmount,
+        },
+      })
+    }
+  } catch (error) {
+    await payload.db.rollbackTransaction(dbTransactionID as string)
+    console.error(error)
+    throw new Error('주문취소에 실패했습니다.')
+  }
 }

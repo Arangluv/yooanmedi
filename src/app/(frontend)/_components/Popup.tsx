@@ -29,7 +29,7 @@ export default function Popup({ popup }: { popup: any }) {
     setIsOpen(false)
   }
 
-  if (!isOpen || !isLoaded) return null
+  if (!isOpen || !isLoaded || !popup.popupItems.length) return null
 
   return (
     <div className="fixed inset-0 w-full h-full bg-black/20 flex flex-col items-center justify-center z-50">

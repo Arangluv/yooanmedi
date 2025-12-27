@@ -79,19 +79,6 @@ export async function POST(request: NextRequest) {
 
       const approveData = await approvePayment({ authorizationId, shopOrderNo })
 
-      // // 유저가 거래 취소 시 환불할 적립금을 관리하기 위해 사용
-      // // 얼마나 포인트를 사용했는지를 저장
-      // // 0 이상일 경우 환불 처리 -> 취소 로직에서
-      const pointForTransation = await payload.create({
-        collection: 'point-for-transation',
-        select: {},
-        data: {
-          user: Number(userId),
-          usedPointAmount: Number(usedPoint),
-          transactionPgCno: approveData.pgCno,
-        },
-      })
-
       // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
       const pointAmount = await createOrderList({
         payload,
@@ -99,7 +86,7 @@ export async function POST(request: NextRequest) {
         userId,
         userOrderRequest,
         approveData,
-        pointForTransationId: pointForTransation.id,
+        usedPoint: Number(usedPoint),
         paymentsMethod: shopValue5 as 'creditCard' | 'bankTransfer',
       })
 
@@ -162,7 +149,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: any) {
     console.log(error)
-
     // payload에서 에러가 터지면 여기서도 이제 주문취소를 해야함
     const url = request.nextUrl.clone()
     url.pathname = '/order/payments/result'
@@ -217,7 +203,7 @@ const createOrderList = async ({
   userId,
   userOrderRequest,
   approveData,
-  pointForTransationId,
+  usedPoint,
   paymentsMethod,
 }: {
   payload: BasePayload
@@ -225,13 +211,19 @@ const createOrderList = async ({
   userId: string
   userOrderRequest: string
   approveData: PaymentApproveResponseDto
-  pointForTransationId: number
+  usedPoint: number
   paymentsMethod: 'creditCard' | 'bankTransfer'
 }) => {
   let pointAmount = 0
+  const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
+  const refuntPointRemain = usedPoint > 0 ? usedPoint % orderList.length : 0
+  const refundPointArr = Array.from({ length: orderList.length }, () => refundPoint)
+  if (refuntPointRemain > 0) {
+    refundPointArr[orderList.length - 1] += refuntPointRemain
+  }
 
   await Promise.all(
-    orderList.map(async (order: any) => {
+    orderList.map(async (order: any, idx: number) => {
       const product = await payload.findByID({
         collection: 'product',
         id: order.id,
@@ -253,7 +245,7 @@ const createOrderList = async ({
             approveData.paymentInfo.approvalDate,
             'YYYYMMDDHHmmss',
           ).toISOString(),
-          pointForTransation: pointForTransationId,
+          refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: approveData.pgCno,
           orderStatus: 1,
