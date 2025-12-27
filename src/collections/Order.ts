@@ -92,10 +92,9 @@ export const Order: CollectionConfig = {
       label: '주문요청사항',
     },
     {
-      name: 'pointForTransation',
-      type: 'relationship',
-      label: '환불 포인트 관리',
-      relationTo: 'point-for-transation',
+      name: 'refundUsedPointAmount',
+      type: 'number',
+      label: '취소 시 환불 적립금',
       admin: {
         readOnly: true,
       },

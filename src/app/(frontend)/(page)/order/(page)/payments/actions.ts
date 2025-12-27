@@ -72,13 +72,11 @@ type BankTransferDto = {
 //     value5: 'bankTransfer'
 //   }
 // }
+
 export async function createBankTransferOrder(bankTransferDto: BankTransferDto) {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
   try {
-    console.log('bankTransferDto')
-    console.log(bankTransferDto)
-
     const { amount, shopOrderNo, shopValueInfo } = bankTransferDto
     const {
       value1: userOrderRequest,
@@ -93,25 +91,14 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
       id: Number(userId),
     })
 
-    // // 유저가 거래 취소 시 환불할 적립금을 관리하기 위해 사용
-    // // 얼마나 포인트를 사용했는지를 저장
-    // // 0 이상일 경우 환불 처리 -> 취소 로직에서
-    const pointForTransation = await payload.create({
-      collection: 'point-for-transation',
-      select: {},
-      data: {
-        user: Number(userId),
-        usedPointAmount: Number(usedPoint),
-      },
-    })
-
+    console.log('usedPoint', usedPoint)
     // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
     const pointAmount = await createOrderList({
       payload,
       orderList: JSON.parse(orderList as string),
       userId,
       userOrderRequest,
-      pointForTransationId: pointForTransation.id,
+      usedPoint: Number(usedPoint),
       paymentsMethod: 'bankTransfer' as const,
     })
 
@@ -163,6 +150,8 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
       message: '무통장 입금 주문을 생성하였습니다.',
     }
   } catch (error) {
+    console.log('error')
+    console.log(error)
     await payload.db.rollbackTransaction(dbTransactionID as string)
     return {
       error: true,
@@ -177,20 +166,27 @@ const createOrderList = async ({
   orderList,
   userId,
   userOrderRequest,
-  pointForTransationId,
+  usedPoint,
   paymentsMethod,
 }: {
   payload: BasePayload
   orderList: any[]
   userId: string
   userOrderRequest: string
-  pointForTransationId: number
+  usedPoint: number
   paymentsMethod: 'creditCard' | 'bankTransfer'
 }) => {
   let pointAmount = 0
+  const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
+  const refuntPointRemain = usedPoint > 0 ? usedPoint % orderList.length : 0
+
+  const refundPointArr = Array.from({ length: orderList.length }, () => refundPoint)
+  if (refuntPointRemain > 0) {
+    refundPointArr[orderList.length - 1] += refuntPointRemain
+  }
 
   await Promise.all(
-    orderList.map(async (order: any) => {
+    orderList.map(async (order: any, idx: number) => {
       const product = await payload.findByID({
         collection: 'product',
         id: order.id,
@@ -201,7 +197,6 @@ const createOrderList = async ({
       })
 
       pointAmount += (product.cashback_rate_for_bank * order.quantity * product.price) / 100
-
       return await payload.create({
         collection: 'order',
         data: {
@@ -209,7 +204,7 @@ const createOrderList = async ({
           product: order.id,
           quantity: order.quantity,
           orderCreatedAt: moment(new Date().toISOString(), 'YYYYMMDDHHmmss').toISOString(),
-          pointForTransation: pointForTransationId,
+          refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: null,
           orderStatus: 5,
