@@ -14,6 +14,7 @@ import { useSearchParams } from 'next/navigation'
 import ListFilterSection from './_components/ListFilterSection'
 import { OrderListType } from './_components/ListBodySection'
 import { ListBodySection, ListEmptyBody } from './_components/ListBodySection'
+import OrderListExportButton from './_components/OrderListExportButton'
 
 type FilterdDateType = {
   weekly: {
@@ -145,7 +146,10 @@ function ListTitle() {
 function ListTableSection({ data }: { data: OrderListType[] | undefined }) {
   return (
     <div className="flex flex-col w-full gap-4 mt-8">
-      <span className="text-xl font-bold">주문내역</span>
+      <div className="flex items-center justify-between">
+        <span className="text-xl font-bold">주문내역</span>
+        <OrderListExportButton data={data as OrderListType[]} />
+      </div>
       <table>
         <thead>
           <tr className="bg-neutral-100 font-normal text-foreground-700 text-sm">
