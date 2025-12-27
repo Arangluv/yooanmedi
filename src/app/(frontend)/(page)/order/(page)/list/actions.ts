@@ -3,6 +3,8 @@
 import { getPayload, Where } from 'payload'
 import config from '@/payload.config'
 import moment from 'moment'
+import { generateRandomShopTransactionId } from '@order/utils'
+import crypto from 'crypto'
 
 export async function getOrderList({
   userId,
@@ -191,6 +193,72 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
     }
 
     // step 4 - 주문 취소 실행
+    const amount = quantity * product.price
+    const shopTransactionId = generateRandomShopTransactionId()
+    const authMsg = `${pgCno}|${shopTransactionId}`
+    const hashedAuthMsg = crypto
+      .createHmac('sha256', process.env.PAYMENTS_MSG_AUTH_VALUE as string)
+      .update(authMsg)
+      .digest('hex')
+
+    console.log('hashedAuthMsg')
+    console.log(hashedAuthMsg)
+
+    const paymentsCancelDto = {
+      mallId: process.env.PAYMENTS_MID,
+      shopTransactionId: shopTransactionId,
+      pgCno: pgCno,
+      reviseTypeCode: '32', // 32: 부분취소, 40: 전체취소
+      amount: amount,
+      cancelReqDate: moment().format('YYYYMMDD'),
+      msgAuthValue: hashedAuthMsg,
+    }
+
+    console.log(paymentsCancelDto)
+
+    const response = await fetch(process.env.PAYMENTS_CANCEL_URL as string, {
+      method: 'POST',
+      body: JSON.stringify(paymentsCancelDto),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
+    }
+    const result = await response.json()
+    if (result.resCd !== '0000') {
+      console.log('result')
+      console.log(result)
+      throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
+    }
+    console.log('result')
+    console.log(result)
+    // {
+    //   resCd: '0000',
+    //   resMsg: '정상처리',
+    //   mallId: 'T0021766',
+    //   shopTransactionId: '4CC44FEA352B461890F6E465C5BB20BB',
+    //   shopOrderNo: '202512277159069',
+    //   oriPgCno: '25122722034810122119',
+    //   cancelPgCno: '25122722044210122121',
+    //   transactionDate: '20251227220442',
+    //   cancelAmount: 21563,
+    //   remainAmount: 0,
+    //   statusCode: 'TS06',
+    //   statusMessage: '부분매입취소',
+    //   escrowUsed: 'N',
+    //   reviseInfo: {
+    //     payMethodTypeCode: '11',
+    //     approvalNo: '',
+    //     approvalDate: '20251227220442',
+    //     cardInfo: { couponAmount: 0 },
+    //     refundInfo: { refundDate: '', depositPgCno: '' },
+    //     cashReceiptInfo: { resCd: '', resMsg: '', approvalNo: '', cancelDate: '' }
+    //   }
+    // }
 
     await payload.db.commitTransaction(dbTransactionID as string)
   } catch (error) {
