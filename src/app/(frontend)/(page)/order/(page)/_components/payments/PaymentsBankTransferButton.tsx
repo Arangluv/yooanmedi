@@ -49,6 +49,7 @@ export default function PaymentsBankTransferButton({
         alert(data.message)
         return
       }
+      router.refresh()
       onOpen()
     },
     onError: () => {

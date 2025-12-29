@@ -17,7 +17,12 @@ export const PopupSetting: GlobalConfig = {
     {
       type: 'array',
       name: 'popupItems',
-      label: '팝업 아이템',
+      label: '팝업 컨텐츠',
+      admin: {
+        components: {
+          RowLabel: '@/collections/components/common/ArrayLabel',
+        },
+      },
       fields: [
         {
           name: 'isOnlyImage',

@@ -4,9 +4,10 @@ import moment from 'moment'
 import { formatNumberWithCommas } from '@order/utils'
 import clsx from 'clsx'
 import { Button } from '@heroui/react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { cancelOrderForCard, cancelOrderForBankTransfer } from '../actions'
+import { useRouter } from 'next/navigation'
 
 export type OrderListType = {
   id: number
@@ -114,10 +115,18 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
 }
 
 function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number }) {
+  const queryClient = useQueryClient()
+  const router = useRouter()
   const { mutate: cancelOrderMutation } = useMutation({
     mutationFn: ({ orderId }: { orderId: number }) => cancelOrderForCard({ orderId }),
-    onSuccess: () => {
-      toast.success('주문취소가 완료되었습니다.')
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast.success(data?.message ?? '주문취소가 완료되었습니다.')
+      } else {
+        toast.error(data?.message ?? '주문취소에 실패했습니다.')
+      }
+      queryClient.invalidateQueries({ queryKey: ['order-list'] })
+      router.refresh()
     },
     onError: () => {
       toast.error('주문취소에 실패했습니다.')
@@ -155,10 +164,19 @@ function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number
 }
 
 function OrderCancelButtonForBankTransfer({ orderId, id }: { orderId: number; id: number }) {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const { mutate: cancelOrderMutation } = useMutation({
     mutationFn: ({ orderId }: { orderId: number }) => cancelOrderForBankTransfer({ orderId }),
-    onSuccess: () => {
-      toast.success('주문취소가 완료되었습니다.')
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast.success(data?.message ?? '주문취소가 완료되었습니다.')
+      } else {
+        toast.error(data?.message ?? '주문취소에 실패했습니다.')
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['order-list'] })
+      router.refresh()
     },
     onError: () => {
       toast.error('주문취소에 실패했습니다.')
