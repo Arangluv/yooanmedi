@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { BasePayload, CollectionConfig } from 'payload'
 
 export const Order: CollectionConfig = {
   slug: 'order',
@@ -10,7 +10,7 @@ export const Order: CollectionConfig = {
   //   delete: () => false,
   // },
   admin: {
-    defaultColumns: ['user', 'product', 'orderStatus', 'orderRequest', 'pgCno'],
+    defaultColumns: ['user', 'product', 'orderStatus', 'orderRequest', 'paymentsMethod'],
     group: '홈페이지 컨텐츠',
   },
   fields: [
@@ -20,6 +20,9 @@ export const Order: CollectionConfig = {
       label: '유저',
       relationTo: 'users',
       required: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'product',
@@ -27,12 +30,18 @@ export const Order: CollectionConfig = {
       label: '상품',
       relationTo: 'product',
       required: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'orderCreatedAt',
       type: 'date',
       label: '주문일시',
       required: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'paymentsMethod',
@@ -69,6 +78,9 @@ export const Order: CollectionConfig = {
       label: '수량',
       required: true,
       defaultValue: 1,
+      admin: {
+        readOnly: true,
+      },
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
           return true
@@ -90,6 +102,9 @@ export const Order: CollectionConfig = {
       name: 'orderRequest',
       type: 'text',
       label: '주문요청사항',
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'refundUsedPointAmount',
@@ -100,4 +115,13 @@ export const Order: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [
+      async ({ doc, req }) => {
+        const payload = req.payload as BasePayload
+        console.log(doc)
+        console.log('afterChange')
+      },
+    ],
+  },
 }

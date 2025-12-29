@@ -1,20 +1,29 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Navbar from '@order/(page)/_components/Navbar'
 import PaymentsTitle from '@order/(page)/_components/PaymentsTitle'
 import Link from 'next/link'
 import { CircleAlert, CircleCheckBig } from 'lucide-react'
 import moment from 'moment'
 import { formatNumberWithCommas } from '@order/utils'
+import { useEffect } from 'react'
 
 export default function PaymentsFinishPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+
   const status = searchParams.get('status')
   const message = searchParams.get('message')
   const amount = searchParams.get('amount')
   const approvalDate = searchParams.get('approvalDate')
   const shopOrderNo = searchParams.get('shopOrderNo')
+
+  useEffect(() => {
+    if (status === 'success') {
+      router.refresh()
+    }
+  }, [status])
 
   return (
     <div className="w-full flex flex-col">

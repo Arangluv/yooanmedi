@@ -274,11 +274,11 @@ export interface Product {
   /**
    * 반품가능여부를 선택해주세요 (체크 시 반품가능)
    */
-  returnable: boolean;
+  returnable?: boolean | null;
   /**
    * 인기 제품 여부를 선택해주세요 (체크 시 인기 제품)
    */
-  is_best_product: boolean;
+  is_best_product?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }

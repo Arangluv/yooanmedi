@@ -91,7 +91,6 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
       id: Number(userId),
     })
 
-    console.log('usedPoint', usedPoint)
     // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
     const pointAmount = await createOrderList({
       payload,
