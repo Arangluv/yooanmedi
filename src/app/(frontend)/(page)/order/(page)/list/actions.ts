@@ -320,31 +320,31 @@ export async function cancelOrderForBankTransfer({
       },
     })
 
-    // step 2 - 상품을 구매했을 때 적립된 적립금 차감
-    if (product.cashback_rate_for_bank > 0) {
-      const refundAmount = Math.floor(
-        (product.cashback_rate_for_bank * quantity * product.price) / 100,
-      )
-      userPoint -= refundAmount
+    // step 2 - 상품을 구매했을 때 적립된 적립금 차감 -> payload Hooks에서 처리
+    // if (product.cashback_rate_for_bank > 0) {
+    //   const refundAmount = Math.floor(
+    //     (product.cashback_rate_for_bank * quantity * product.price) / 100,
+    //   )
+    //   userPoint -= refundAmount
 
-      await payload.create({
-        collection: 'point-history',
-        data: {
-          user: Number(user.id),
-          type: 'cancel',
-          balanceAfter: userPoint,
-          reason: `주문취소 - 무통장 입금 주문번호 : ${order.id}`,
-        },
-      })
+    //   await payload.create({
+    //     collection: 'point-history',
+    //     data: {
+    //       user: Number(user.id),
+    //       type: 'cancel',
+    //       balanceAfter: userPoint,
+    //       reason: `주문취소 - 무통장 입금 주문번호 : ${order.id}`,
+    //     },
+    //   })
 
-      await payload.update({
-        collection: 'users',
-        id: Number(user.id),
-        data: {
-          point: userPoint,
-        },
-      })
-    }
+    //   await payload.update({
+    //     collection: 'users',
+    //     id: Number(user.id),
+    //     data: {
+    //       point: userPoint,
+    //     },
+    //   })
+    // }
 
     // step 3 - 유저가 사용한 적립금 환불 계산
     if (order.refundUsedPointAmount > 0) {
