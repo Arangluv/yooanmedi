@@ -201,9 +201,6 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       .update(authMsg)
       .digest('hex')
 
-    console.log('hashedAuthMsg')
-    console.log(hashedAuthMsg)
-
     const paymentsCancelDto = {
       mallId: process.env.PAYMENTS_MID,
       shopTransactionId: shopTransactionId,
@@ -213,8 +210,6 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       cancelReqDate: moment().format('YYYYMMDD'),
       msgAuthValue: hashedAuthMsg,
     }
-
-    console.log(paymentsCancelDto)
 
     const response = await fetch(process.env.PAYMENTS_CANCEL_URL as string, {
       method: 'POST',
@@ -226,6 +221,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
 
     if (!response.ok) {
       const errorData = await response.json()
+      console.log(errorData)
       throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
     }
     const result = await response.json()
@@ -234,8 +230,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       console.log(result)
       throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
     }
-    console.log('result')
-    console.log(result)
+
     // {
     //   resCd: '0000',
     //   resMsg: '정상처리',
@@ -261,13 +256,12 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
     // }
 
     await payload.db.commitTransaction(dbTransactionID as string)
+    return { success: true, message: '주문취소가 완료되었습니다.' }
   } catch (error) {
     await payload.db.rollbackTransaction(dbTransactionID as string)
     console.error(error)
-    throw new Error('주문취소에 실패했습니다.')
+    return { success: false, message: '주문취소에 실패했습니다.' }
   }
-
-  return null
 }
 
 type CancelBankTransferProductType = {
@@ -289,7 +283,11 @@ type CancelBankTransferOrderType = {
   refundUsedPointAmount: number
 }
 
-export async function cancelOrderForBankTransfer({ orderId }: { orderId: number }): Promise<void> {
+export async function cancelOrderForBankTransfer({
+  orderId,
+}: {
+  orderId: number
+}): Promise<{ success: boolean; message: string }> {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
   try {
@@ -372,9 +370,10 @@ export async function cancelOrderForBankTransfer({ orderId }: { orderId: number 
         },
       })
     }
+    return { success: true, message: '주문취소가 완료되었습니다.' }
   } catch (error) {
     await payload.db.rollbackTransaction(dbTransactionID as string)
     console.error(error)
-    throw new Error('주문취소에 실패했습니다.')
+    return { success: false, message: '주문취소에 실패했습니다.' }
   }
 }

@@ -155,7 +155,6 @@ export const Product: CollectionConfig = {
       name: 'returnable',
       type: 'checkbox',
       label: '반품가능여부',
-      required: true,
       defaultValue: false,
       admin: {
         description: '반품가능여부를 선택해주세요 (체크 시 반품가능)',
@@ -165,7 +164,6 @@ export const Product: CollectionConfig = {
       name: 'is_best_product',
       type: 'checkbox',
       label: '인기 제품 여부',
-      required: true,
       defaultValue: false,
       admin: {
         description: '인기 제품 여부를 선택해주세요 (체크 시 인기 제품)',

@@ -47,8 +47,10 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
             '&shopOrderNo=' +
             shopOrderNo,
         )
+        router.refresh()
       } else if (event.data.status === 'error') {
         router.push('/order/payments/finish?status=error&message=' + event.data.message)
+        router.refresh()
       } else {
         alert('결제 주문 등록 실패')
       }
