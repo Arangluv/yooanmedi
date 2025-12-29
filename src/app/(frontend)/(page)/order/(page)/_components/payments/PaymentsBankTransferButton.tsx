@@ -94,6 +94,9 @@ export default function PaymentsBankTransferButton({
               <p>
                 <span className="font-bold">입금 확인 후 주문처리가 완료</span>됩니다.
               </p>
+              <p>
+                <span className="font-bold">적립금은 입금 확인 후 적립됩니다.</span>
+              </p>
               <div className="bg-neutral-50  flex flex-col my-4 p-4 rounded-md">
                 <span className="flex gap-1 items-center mb-3">
                   <Info className="w-4 h-4" />
