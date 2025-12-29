@@ -20,6 +20,7 @@ export async function registerProduct(dto: RegisterProductDto[]) {
           ...item,
           price: 0,
           cashback_rate: 0,
+          cashback_rate_for_bank: 0,
           stock: 999,
           delivery_fee: 0,
           returnable: false,
