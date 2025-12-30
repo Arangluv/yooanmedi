@@ -62,8 +62,6 @@ export const Order: CollectionConfig = {
       ],
       required: true,
     },
-    // 추후 msgAuthValue 만들때 pgCno와 랜덤으로 만든 transactionId를 해시해서 넘겨야함
-    // https://developer.easypay.co.kr/change-inquiry/cancellationRequest 해당페이지 각주 확인
     {
       name: 'pgCno',
       type: 'text',
