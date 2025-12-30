@@ -144,6 +144,7 @@ export const Order: CollectionConfig = {
             data: {
               point: Number(user.point ?? 0) + userGetPoint,
             },
+            req: { transactionID: req.transactionID as string },
           })
           await payload.create({
             collection: 'point-history',
@@ -153,12 +154,12 @@ export const Order: CollectionConfig = {
               reason: `무통장 입금완료`,
               balanceAfter: Number(user.point ?? 0) + userGetPoint,
             },
+            req: { transactionID: req.transactionID as string },
           })
         }
       },
       async ({ doc, req, operation, previousDoc }) => {
         const payload = req.payload as BasePayload
-        // const { user: userId, product: productId, quantity, paymentsMethod, orderStatus } = doc
         const userId = typeof doc.user === 'number' ? doc.user : doc.user.id
         const productId = typeof doc.product === 'number' ? doc.product : doc.product.id
         const quantity = doc.quantity
@@ -191,6 +192,7 @@ export const Order: CollectionConfig = {
             data: {
               point: Number(user.point ?? 0) - userGetPoint,
             },
+            req: { transactionID: req.transactionID as string },
           })
           await payload.create({
             collection: 'point-history',
@@ -200,6 +202,7 @@ export const Order: CollectionConfig = {
               balanceAfter: Number(user.point ?? 0) - userGetPoint,
               reason: `무통장 입금취소`,
             },
+            req: { transactionID: req.transactionID as string },
           })
         }
       },

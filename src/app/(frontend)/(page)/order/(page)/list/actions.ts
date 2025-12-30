@@ -140,6 +140,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       data: {
         orderStatus: 4,
       },
+      req: { transactionID: dbTransactionID as string },
     })
 
     // step 2- 적립금 차감 계산
@@ -156,6 +157,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
           balanceAfter: userPoint,
           reason: `주문취소 - PG 주문번호 : ${pgCno}`,
         },
+        req: { transactionID: dbTransactionID as string },
       })
 
       await payload.update({
@@ -164,6 +166,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
         data: {
           point: userPoint,
         },
+        req: { transactionID: dbTransactionID as string },
       })
     }
 
@@ -180,6 +183,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
           balanceAfter: userPoint + refundUsedPointAmount,
           reason: `유저 사용 적립금 환불 - PG 주문번호 : ${pgCno}`,
         },
+        req: { transactionID: dbTransactionID as string },
       })
 
       // 유저 적립금 수정
@@ -189,6 +193,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
         data: {
           point: userPoint + refundUsedPointAmount,
         },
+        req: { transactionID: dbTransactionID as string },
       })
     }
 
@@ -209,6 +214,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       amount: amount,
       cancelReqDate: moment().format('YYYYMMDD'),
       msgAuthValue: hashedAuthMsg,
+      // basketUsed: 'Y',
     }
 
     const response = await fetch(process.env.PAYMENTS_CANCEL_URL as string, {
@@ -224,6 +230,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       console.log(errorData)
       throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
     }
+
     const result = await response.json()
     if (result.resCd !== '0000') {
       console.log('result')
@@ -318,6 +325,7 @@ export async function cancelOrderForBankTransfer({
       data: {
         orderStatus: 4,
       },
+      req: { transactionID: dbTransactionID as string },
     })
 
     // step 2 - 상품을 구매했을 때 적립된 적립금 차감 -> payload Hooks에서 처리
@@ -359,6 +367,7 @@ export async function cancelOrderForBankTransfer({
           balanceAfter: userPoint + order.refundUsedPointAmount,
           reason: `유저 사용 적립금 환불 - 무통장 입금 주문번호 : ${order.id}`,
         },
+        req: { transactionID: dbTransactionID as string },
       })
 
       // 유저 적립금 수정
@@ -368,6 +377,7 @@ export async function cancelOrderForBankTransfer({
         data: {
           point: userPoint + order.refundUsedPointAmount,
         },
+        req: { transactionID: dbTransactionID as string },
       })
     }
     return { success: true, message: '주문취소가 완료되었습니다.' }
