@@ -103,6 +103,7 @@ export async function POST(request: NextRequest) {
             reason: `적립금 사용 차감 - 상품주문번호 : ${approveData.shopOrderNo}`,
             balanceAfter: userPoint,
           },
+          req: { transactionID: dbTransactionID as string },
         })
       }
 
@@ -118,6 +119,7 @@ export async function POST(request: NextRequest) {
             reason: `상품구매적립 - 상품주문번호 : ${approveData.shopOrderNo}`,
             balanceAfter: userPoint,
           },
+          req: { transactionID: dbTransactionID as string },
         })
       }
 
@@ -129,9 +131,9 @@ export async function POST(request: NextRequest) {
           data: {
             point: roundedUserChangePoint,
           },
+          req: { transactionID: dbTransactionID as string },
         })
       }
-
       // // 리다이렉트
       const url = request.nextUrl.clone()
       url.pathname = '/order/payments/result'
@@ -142,7 +144,6 @@ export async function POST(request: NextRequest) {
 
       // 트랜잭션 커밋
       await payload.db.commitTransaction(dbTransactionID as string)
-
       return NextResponse.redirect(url, { status: 302 })
     } else {
       throw new Error('결제 실패', { cause: { code: data.resCd } })
