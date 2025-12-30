@@ -88,6 +88,7 @@ export async function POST(request: NextRequest) {
         approveData,
         usedPoint: Number(usedPoint),
         paymentsMethod: shopValue5 as 'creditCard' | 'bankTransfer',
+        transactionID: dbTransactionID as string,
       })
 
       let userPoint = Number(user.point ?? 0)
@@ -205,6 +206,7 @@ const createOrderList = async ({
   approveData,
   usedPoint,
   paymentsMethod,
+  transactionID,
 }: {
   payload: BasePayload
   orderList: any[]
@@ -213,6 +215,7 @@ const createOrderList = async ({
   approveData: PaymentApproveResponseDto
   usedPoint: number
   paymentsMethod: 'creditCard' | 'bankTransfer'
+  transactionID: string
 }) => {
   let pointAmount = 0
   const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
@@ -256,6 +259,7 @@ const createOrderList = async ({
           //   'YYYYMMDDHHmmss',
           // ).toISOString(),
         },
+        req: { transactionID: transactionID as string },
       })
     }),
   )

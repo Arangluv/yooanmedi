@@ -99,6 +99,7 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
       userOrderRequest,
       usedPoint: Number(usedPoint),
       paymentsMethod: 'bankTransfer' as const,
+      transactionID: dbTransactionID as string,
     })
 
     let userPoint = Number(user.point ?? 0)
@@ -114,6 +115,7 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
           reason: `적립금 사용 차감 - 상품주문번호 : ${shopOrderNo}`,
           balanceAfter: userPoint,
         },
+        req: { transactionID: dbTransactionID as string },
       })
     }
 
@@ -140,6 +142,7 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
         data: {
           point: roundedUserChangePoint,
         },
+        req: { transactionID: dbTransactionID as string },
       })
     }
 
@@ -167,6 +170,7 @@ const createOrderList = async ({
   userOrderRequest,
   usedPoint,
   paymentsMethod,
+  transactionID,
 }: {
   payload: BasePayload
   orderList: any[]
@@ -174,6 +178,7 @@ const createOrderList = async ({
   userOrderRequest: string
   usedPoint: number
   paymentsMethod: 'creditCard' | 'bankTransfer'
+  transactionID: string
 }) => {
   let pointAmount = 0
   const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
@@ -209,6 +214,7 @@ const createOrderList = async ({
           orderStatus: 5,
           orderRequest: userOrderRequest,
         },
+        req: { transactionID: transactionID as string },
       })
     }),
   )
