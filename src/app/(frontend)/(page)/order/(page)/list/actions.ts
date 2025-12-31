@@ -380,6 +380,8 @@ export async function cancelOrderForBankTransfer({
         req: { transactionID: dbTransactionID as string },
       })
     }
+
+    await payload.db.commitTransaction(dbTransactionID as string)
     return { success: true, message: '주문취소가 완료되었습니다.' }
   } catch (error) {
     await payload.db.rollbackTransaction(dbTransactionID as string)
