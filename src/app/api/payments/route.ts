@@ -190,6 +190,8 @@ const approvePayment = async ({
 
   if (!res.ok) {
     const errorData = await res.json()
+    console.log('errorData')
+    console.log(errorData)
     throw new Error('결제 승인요청 실패', { cause: { code: errorData.resCd } })
   }
 
