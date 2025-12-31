@@ -1,5 +1,6 @@
 import { BrandLogo } from '@/config/Logo'
 import JoinForm from './_components/Form'
+import Link from 'next/link'
 
 export default function JoinPage() {
   return (
@@ -7,9 +8,9 @@ export default function JoinPage() {
       <div className="w-full max-w-2xl flex flex-col">
         {/* Header */}
         <div className="flex flex-col gap-4 justify-center items-center mb-8">
-          <div className="w-full flex justify-center">
+          <Link href="/" prefetch={false} className="w-full flex justify-center">
             <BrandLogo width={140} height={40} className="w-[140px] h-[40px]" />
-          </div>
+          </Link>
           <h1 className="text-3xl font-bold text-foreground-900">회원가입</h1>
         </div>
         {/* Form */}
