@@ -235,8 +235,6 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
 
     const result = await response.json()
     if (result.resCd !== '0000') {
-      console.log('result')
-      console.log(result)
       throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
     }
 

@@ -12,7 +12,7 @@ export const OrderStatus: CollectionConfig = {
   admin: {
     group: '홈페이지 컨텐츠',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'createdAt'],
+    defaultColumns: ['id', 'name', 'createdAt'],
   },
   fields: [
     {

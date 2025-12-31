@@ -1,0 +1,29 @@
+name: Keep Supabase Awake(Client Only)
+
+on:
+  schedule:
+    - cron: '0 */24 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  keepalive:
+    if: github.repository != 'Arangluv/yooanmedi' # agency repo에서는 실행 안함
+    runs-on: ubuntu-latest
+    env:
+      KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
+    steps:
+      - name: 'Ping client'
+        run: |
+          echo "Current repository: $GITHUB_REPOSITORY"
+          echo "Pinging client..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$KEEPALIVE_URL")
+          echo "HTTP 상태 코드: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "❌ Client did not respond with 200 OK."
+            exit 1
+          else
+            echo "✅ Client is awake."
+          fi

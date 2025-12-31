@@ -78,9 +78,6 @@ export async function POST(request: NextRequest) {
 
       const approveData = await approvePayment({ authorizationId, shopOrderNo })
 
-      console.log('approveData')
-      console.log(approveData)
-
       // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
       const pointAmount = await createOrderList({
         payload,
@@ -138,9 +135,6 @@ export async function POST(request: NextRequest) {
         })
       }
       // // 리다이렉트
-      console.log('approveData')
-      console.log(approveData)
-
       const url = request.nextUrl.clone()
       url.pathname = '/order/payments/result'
       url.searchParams.set('status', 'success')
