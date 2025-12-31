@@ -90,9 +90,10 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
       collection: 'users',
       id: Number(userId),
     })
+    console.log('orderList', orderList)
 
     // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
-    const pointAmount = await createOrderList({
+    await createOrderList({
       payload,
       orderList: JSON.parse(orderList as string),
       userId,
@@ -153,7 +154,8 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
     }
   } catch (error) {
     console.log('error')
-    console.log(error)
+    // @ts-ignore
+    console.log(error?.data)
     await payload.db.rollbackTransaction(dbTransactionID as string)
     return {
       error: true,
