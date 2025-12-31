@@ -93,9 +93,19 @@ export async function join(formData: FormData) {
       //   collection: 'users',
       //   errors: [ { message: '해당 이메일은 이미 등록되어 있습니다', path: 'email' } ]
       // }
+      console.log('error')
+      console.log(error.data)
 
       if (error.data.errors[0].path === 'user_id') {
         return { success: false, message: '이미 사용중인 아이디입니다.' }
+      }
+
+      if (error.data.errors[0].path === 'businessNumber') {
+        return { success: false, message: '이미 사용중인 사업자등록번호입니다.' }
+      }
+
+      if (error.data.errors[0].path === 'nursingNumber') {
+        return { success: false, message: '이미 사용중인 요양기관번호입니다.' }
       }
 
       const errorMessage = error.data.errors[0].message

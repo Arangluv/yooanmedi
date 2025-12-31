@@ -95,6 +95,23 @@ export const Order: CollectionConfig = {
       label: '주문상태',
       relationTo: 'order-status',
       required: true,
+      filterOptions: ({ data }) => {
+        // 현재 문서의 orderStatus가 결제대기(id: 5)인 경우
+        const currentOrderStatus =
+          typeof data?.orderStatus === 'number' ? data.orderStatus : data?.orderStatus?.id
+
+        if (currentOrderStatus === 5) {
+          // 상품준비(id: 1)만 반환
+          return {
+            id: {
+              equals: 1,
+            },
+          }
+        }
+
+        // 그 외의 경우 모든 옵션 표시
+        return true
+      },
     },
     {
       name: 'orderRequest',
