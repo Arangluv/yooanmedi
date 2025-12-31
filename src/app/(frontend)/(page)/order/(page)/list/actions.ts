@@ -91,6 +91,7 @@ type CancelCardProductType = {
   id: number
   price: number
   cashback_rate: number
+  delivery_fee: number
 }
 
 type CancelCardUserType = {
@@ -126,6 +127,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
         product: {
           price: true,
           cashback_rate: true,
+          delivery_fee: true,
         },
         users: { point: true },
       },
@@ -198,7 +200,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
     }
 
     // step 4 - 주문 취소 실행
-    const amount = quantity * product.price
+    const amount = quantity * product.price + (product.delivery_fee ?? 0)
     const shopTransactionId = generateRandomShopTransactionId()
     const authMsg = `${pgCno}|${shopTransactionId}`
     const hashedAuthMsg = crypto
