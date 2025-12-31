@@ -231,7 +231,7 @@ export interface File {
 export interface Image {
   id: number;
   /**
-   * 이미지 설명에 해당되는 부분으로 필수는 아니지만 SEO가 중요하다면 설정해주세요
+   * 필수x, 이미지 설명을 입력해주세요. ex) 제품명
    */
   alt?: string | null;
   updatedAt: string;

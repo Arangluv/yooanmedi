@@ -52,7 +52,7 @@ export const Product: CollectionConfig = {
       required: true,
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
-          return true
+          return '가격을 입력해주세요'
         }
 
         if (value < 0) {
@@ -75,7 +75,7 @@ export const Product: CollectionConfig = {
           required: true,
           validate: (value: number | null | undefined) => {
             if (value === null || value === undefined) {
-              return true
+              return '카드 결제 적립금 비율을 입력해주세요'
             }
 
             if (value < 0) {
@@ -98,7 +98,7 @@ export const Product: CollectionConfig = {
           defaultValue: 0,
           validate: (value: number | null | undefined) => {
             if (value === null || value === undefined) {
-              return true
+              return '무통장 입금 적립금 비율을 입력해주세요'
             }
 
             if (value < 0) {
@@ -124,7 +124,7 @@ export const Product: CollectionConfig = {
       label: '재고',
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
-          return true
+          return '재고를 입력해주세요'
         }
 
         if (value < 0) {
@@ -142,7 +142,7 @@ export const Product: CollectionConfig = {
       required: true,
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
-          return true
+          return '배송비를 입력해주세요'
         }
 
         if (value < 0) {
@@ -170,20 +170,4 @@ export const Product: CollectionConfig = {
       },
     },
   ],
-  hooks: {
-    afterRead: [
-      async ({ doc, req }) => {
-        if (!doc.is_best_product) {
-          return {
-            ...doc,
-            is_best_product: false,
-          }
-        }
-        return {
-          ...doc,
-          is_best_product: true,
-        }
-      },
-    ],
-  },
 }

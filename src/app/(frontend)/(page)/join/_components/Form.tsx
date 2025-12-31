@@ -211,6 +211,7 @@ export default function JoinForm() {
       setIsLoading(false)
       return
     }
+
     joinMutation(formData)
   }
 

@@ -62,11 +62,23 @@ function AllProductSection({ data }: { data: ProductItemType[] }) {
         <span className="text-brand">전체상품</span> 살펴보기
       </h2>
       {/* 인기상품 리스트 섹션 */}
-      <div className="grid grid-cols-4 gap-x-4 gap-y-8">
-        {data.map((item) => (
-          <ProductItem key={item.id} productItem={item} />
-        ))}
-      </div>
+      {data.length > 0 ? (
+        <div className="grid grid-cols-4 gap-x-4 gap-y-8">
+          {data.map((item) => (
+            <ProductItem key={item.id} productItem={item} />
+          ))}
+        </div>
+      ) : (
+        <EmptyAllProductSection />
+      )}
+    </div>
+  )
+}
+
+function EmptyAllProductSection() {
+  return (
+    <div className="w-full h-[260px] flex justify-center items-center border border-dotted border-foreground-200 rounded-lg">
+      <span className="text-foreground-600">현재 등록된 상품이 없습니다.</span>
     </div>
   )
 }
