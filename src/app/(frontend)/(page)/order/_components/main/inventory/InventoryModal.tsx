@@ -212,7 +212,7 @@ function ExpectedPriceSection({
   return (
     <div className="flex flex-col">
       <div className="w-full h-[1px] bg-foreground-200"></div>
-      <div className="flex flex-col gap-6 mt-3 bg-neutral-50 p-4">
+      <div className="flex flex-col gap-6 bg-neutral-50 p-4 my-4">
         <span className="text-lg font-bold">주문 예상금액</span>
         <div className="flex flex-col gap-2">
           <div className="flex justify-between">

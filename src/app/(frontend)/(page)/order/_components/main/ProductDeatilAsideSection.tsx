@@ -206,7 +206,10 @@ function ProductPointBenefitSection({
   const willEarnPoint = getPointOnPurchase(price, rate)
   const willEarnPointForBank = getPointOnPurchase(price, rate_for_bank)
 
-  if (willEarnPoint === '0' || !willEarnPoint) {
+  if (
+    (willEarnPoint === '0' && willEarnPointForBank === '0') ||
+    (!willEarnPoint && !willEarnPointForBank)
+  ) {
     return null
   }
 

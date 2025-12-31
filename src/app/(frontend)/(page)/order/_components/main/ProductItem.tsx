@@ -69,7 +69,7 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
           <span>{formatNumberWithCommas(productItem.price)}</span>
           <span className="font-normal">원</span>
         </span>
-        {productItem.cashback_rate > 0 && (
+        {(productItem.cashback_rate > 0 || productItem.cashback_rate_for_bank > 0) && (
           <span className="text-sm text-brandWeek">
             구매 시 최대 적립금{' '}
             {getMaxPointOnPurchase({

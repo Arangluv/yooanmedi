@@ -98,6 +98,11 @@ export const getMaxPointOnPurchase = ({
   const cardPoint = Math.floor(price * (cashback_rate / 100))
   const bankPoint = Math.floor(price * (cashback_rate_for_bank / 100))
 
+  console.log("cardPoint")
+  console.log(cardPoint)
+  console.log("bankPoint")
+  console.log(bankPoint)
+
   return formatNumberWithCommas(Math.max(cardPoint, bankPoint))
 }
 
