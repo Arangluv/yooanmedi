@@ -27,8 +27,7 @@ export const Image: CollectionConfig = {
       label: '이미지 설명',
       type: 'text',
       admin: {
-        description:
-          '이미지 설명에 해당되는 부분으로 필수는 아니지만 SEO가 중요하다면 설정해주세요',
+        description: '필수x, 이미지 설명을 입력해주세요. ex) 제품명',
       },
     },
   ],

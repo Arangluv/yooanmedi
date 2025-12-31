@@ -226,8 +226,8 @@ function ChangePasswordStep({
     <Form className="w-full flex flex-col gap-6" onSubmit={onSubmit} validationErrors={errors}>
       <Input
         name="password"
-        label="비밀번호"
-        placeholder="비밀번호를 입력해주세요."
+        label="새 비밀번호"
+        placeholder="새 비밀번호를 입력해주세요."
         type="password"
         {...inputProps}
         onValueChange={(value) => {

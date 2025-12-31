@@ -7,6 +7,7 @@ import { Fragment, useContext } from 'react'
 import { ProductItemType } from '@order/_type'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Image as ImageIcon } from 'lucide-react'
 
 export function UserInfoSection() {
   const { user } = useContext(OrderUserInfoContext)
@@ -100,15 +101,19 @@ function PaymentsListItem({ product, quantity }: { product: ProductItemType; qua
   return (
     <div className="flex gap-4 items-center">
       {/* 이미지 */}
-      <div className="w-16 h-16 bg-neutral-100 rounded-sm overflow-hidden border-1 border-foreground-200">
-        <Image
-          src={product.image.url}
-          alt={product.image.alt ?? ''}
-          width={64}
-          height={64}
-          className="w-full h-full object-cover"
-          unoptimized={true}
-        />
+      <div className="w-16 h-16 bg-neutral-50 rounded-sm overflow-hidden border-1 border-foreground-200 flex items-center justify-center">
+        {product.image?.url ? (
+          <Image
+            src={product.image.url}
+            alt={product.image.alt ?? ''}
+            width={64}
+            height={64}
+            className="w-full h-full object-cover"
+            unoptimized={true}
+          />
+        ) : (
+          <ImageIcon className="w-6 h-6 text-foreground-300" strokeWidth={1.5} />
+        )}
       </div>
       {/* 상품 정보 */}
       <div className="flex flex-col">

@@ -123,6 +123,7 @@ export const Users: CollectionConfig = {
       type: 'text',
       name: 'businessNumber',
       label: '사업자등록번호',
+      unique: true,
       admin: {
         description: '사업자등록번호를 입력해주세요',
         condition: (data, siblingData) => {
@@ -135,6 +136,7 @@ export const Users: CollectionConfig = {
       type: 'text',
       name: 'nursingNumber',
       label: '요양기관번호',
+      unique: true,
       admin: {
         description: '요양기관번호를 입력해주세요',
         condition: (data, siblingData) => {
