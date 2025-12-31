@@ -79,6 +79,9 @@ export async function POST(request: NextRequest) {
 
       const approveData = await approvePayment({ authorizationId, shopOrderNo })
 
+      console.log('approveData')
+      console.log(approveData)
+
       // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
       const pointAmount = await createOrderList({
         payload,
@@ -136,11 +139,14 @@ export async function POST(request: NextRequest) {
         })
       }
       // // 리다이렉트
+      console.log('approveData')
+      console.log(approveData)
+
       const url = request.nextUrl.clone()
       url.pathname = '/order/payments/result'
       url.searchParams.set('status', 'success')
       url.searchParams.set('approvalDate', approveData.paymentInfo.approvalDate)
-      url.searchParams.set('amount', approveData.amount.toString())
+      url.searchParams.set('amount', approveData?.amount.toString())
       url.searchParams.set('shopOrderNo', approveData.shopOrderNo)
 
       // 트랜잭션 커밋
@@ -190,8 +196,6 @@ const approvePayment = async ({
 
   if (!res.ok) {
     const errorData = await res.json()
-    console.log('errorData')
-    console.log(errorData)
     throw new Error('결제 승인요청 실패', { cause: { code: errorData.resCd } })
   }
 
