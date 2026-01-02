@@ -198,7 +198,7 @@ const approvePayment = async ({
   return approveData
 }
 
-// 주문 리스트 생성
+
 const createOrderList = async ({
   payload,
   orderList,
@@ -219,25 +219,65 @@ const createOrderList = async ({
   transactionID: string
 }) => {
   let pointAmount = 0
-  const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
-  const refuntPointRemain = usedPoint > 0 ? usedPoint % orderList.length : 0
-  const refundPointArr = Array.from({ length: orderList.length }, () => refundPoint)
-  if (refuntPointRemain > 0) {
-    refundPointArr[orderList.length - 1] += refuntPointRemain
-  }
-
-  await Promise.all(
-    orderList.map(async (order: any, idx: number) => {
+  
+  // 먼저 모든 제품 정보를 가져와서 최대 환불 가능 포인트 계산
+  const productsWithMaxRefund = await Promise.all(
+    orderList.map(async (order: any) => {
       const product = await payload.findByID({
         collection: 'product',
         id: order.id,
         select: {
           cashback_rate: true,
           price: true,
+          delivery_fee: true,
         },
       })
+      
+      const maxRefund = product.price * order.quantity + product.delivery_fee
+      
+      return {
+        order,
+        product,
+        maxRefund,
+      }
+    }),
+  )
 
-      pointAmount += (product.cashback_rate * order.quantity * product.price) / 100
+
+  // 각 제품에 환불 포인트 분배 (균등 분배를 기본으로 하되, 최대 환불 금액 제한)
+  const refundPointArr: number[] = []
+  const baseRefundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
+  
+  // 1단계: 각 제품에 균등 분배 시도 (maxRefund 제한 적용)
+  for (let i = 0; i < productsWithMaxRefund.length; i++) {
+    const { maxRefund } = productsWithMaxRefund[i]
+    // 균등 분배 금액과 최대 환불 금액 중 작은 값으로 할당
+    const allocatedPoint = Math.min(baseRefundPoint, maxRefund)
+    refundPointArr.push(allocatedPoint)
+  }
+  
+  // 2단계: 할당된 포인트 총합 계산
+  const totalAllocated = refundPointArr.reduce((sum, point) => sum + point, 0)
+  let remainingPoint = usedPoint - totalAllocated
+  
+  // 3단계: 남은 포인트를 순차적으로 재분배 (maxRefund를 초과하지 않도록)
+  for (let i = 0; i < productsWithMaxRefund.length && remainingPoint > 0; i++) {
+    const { maxRefund } = productsWithMaxRefund[i]
+    const currentAllocated = refundPointArr[i]
+    const availableSpace = maxRefund - currentAllocated
+    
+    if (availableSpace > 0) {
+      const additionalPoint = Math.min(remainingPoint, availableSpace)
+      refundPointArr[i] += additionalPoint
+      remainingPoint -= additionalPoint
+    }
+  }
+
+
+  // 주문 생성
+  await Promise.all(
+    productsWithMaxRefund.map(async ({ order, product }, idx: number) => {
+      pointAmount += (product.cashback_rate * (product.price * order.quantity)) / 100
 
       return await payload.create({
         collection: 'order',
@@ -255,11 +295,6 @@ const createOrderList = async ({
           pgCno: approveData.pgCno,
           orderStatus: 1,
           orderRequest: userOrderRequest,
-          // 실패케이스를 만들때  -> approveData.paymentInfo.approvalDate, 이것만 사용하기
-          // orderCreatedAt: moment(
-          //   approveData.paymentInfo.approvalDate,
-          //   'YYYYMMDDHHmmss',
-          // ).toISOString(),
         },
         req: { transactionID: transactionID as string },
       })
@@ -268,3 +303,74 @@ const createOrderList = async ({
 
   return Math.floor(pointAmount)
 }
+// const createOrderList = async ({
+//   payload,
+//   orderList,
+//   userId,
+//   userOrderRequest,
+//   approveData,
+//   usedPoint,
+//   paymentsMethod,
+//   transactionID,
+// }: {
+//   payload: BasePayload
+//   orderList: any[]
+//   userId: string
+//   userOrderRequest: string
+//   approveData: PaymentApproveResponseDto
+//   usedPoint: number
+//   paymentsMethod: 'creditCard' | 'bankTransfer'
+//   transactionID: string
+// }) => {
+//   let pointAmount = 0
+//   const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
+//   const refuntPointRemain = usedPoint > 0 ? usedPoint % orderList.length : 0
+//   const refundPointArr = Array.from({ length: orderList.length }, () => refundPoint)
+//   if (refuntPointRemain > 0) {
+//     refundPointArr[orderList.length - 1] += refuntPointRemain
+//   }
+
+//   await Promise.all(
+//     orderList.map(async (order: any, idx: number) => {
+//       const product = await payload.findByID({
+//         collection: 'product',
+//         id: order.id,
+//         select: {
+//           cashback_rate: true,
+//           price: true,
+//           delivery_fee: true,
+//         },
+//       })
+      
+
+//       pointAmount += (product.cashback_rate * (product.price * order.quantity)) / 100
+
+//       return await payload.create({
+//         collection: 'order',
+//         data: {
+//           user: Number(userId),
+//           product: order.id,
+//           quantity: order.quantity,
+//           orderCreatedAt: moment.tz(
+//             approveData.paymentInfo.approvalDate,
+//             'YYYYMMDDHHmmss',
+//             'Asia/Seoul',
+//           ).toISOString(),
+//           refundUsedPointAmount: refundPointArr[idx],
+//           paymentsMethod: paymentsMethod,
+//           pgCno: approveData.pgCno,
+//           orderStatus: 1,
+//           orderRequest: userOrderRequest,
+//           // 실패케이스를 만들때  -> approveData.paymentInfo.approvalDate, 이것만 사용하기
+//           // orderCreatedAt: moment(
+//           //   approveData.paymentInfo.approvalDate,
+//           //   'YYYYMMDDHHmmss',
+//           // ).toISOString(),
+//         },
+//         req: { transactionID: transactionID as string },
+//       })
+//     }),
+//   )
+
+//   return Math.floor(pointAmount)
+// }
