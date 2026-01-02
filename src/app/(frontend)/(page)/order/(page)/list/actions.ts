@@ -340,14 +340,14 @@ export async function cancelOrderForBankTransfer({
     // step 3 - 유저가 사용한 적립금 환불 계산
     if (order.refundUsedPointAmount > 0) {
       // 유저가 사용한 적립금
-
+      userPoint += order.refundUsedPointAmount
       // 적립금 환불 기록 추가
       await payload.create({
         collection: 'point-history',
         data: {
           user: Number(user.id),
           type: 'cancel',
-          balanceAfter: userPoint + order.refundUsedPointAmount,
+          balanceAfter: userPoint,
           reason: `유저 사용 적립금 환불 - 무통장 입금 주문번호 : ${order.id}`,
         },
         req: { transactionID: dbTransactionID as string },
@@ -358,11 +358,12 @@ export async function cancelOrderForBankTransfer({
         collection: 'users',
         id: Number(user.id),
         data: {
-          point: userPoint + order.refundUsedPointAmount,
+          point: userPoint,
         },
         req: { transactionID: dbTransactionID as string },
       })
     }
+
 
     await payload.db.commitTransaction(dbTransactionID as string)
 
