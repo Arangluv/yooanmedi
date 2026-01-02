@@ -117,6 +117,15 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
         },
         req: { transactionID: dbTransactionID as string },
       })
+
+      await payload.update({
+        collection: 'users',
+        id: Number(userId),
+        data: {
+          point: userPoint,
+        },
+        req: { transactionID: dbTransactionID as string },
+      })
     }
 
     // // 구매 적립금 적립 -> payload Hooks에서 처리
