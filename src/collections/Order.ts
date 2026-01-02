@@ -188,60 +188,6 @@ export const Order: CollectionConfig = {
           throw new APIError("업데이트 중 오류가 발생했습니다")
         }
       },
-      // async ({ doc, req, operation, previousDoc }) => {
-      //   try {
-      //     const payload = req.payload as BasePayload
-      //     const userId = typeof doc.user === 'number' ? doc.user : doc.user.id
-      //     const productId = typeof doc.product === 'number' ? doc.product : doc.product.id
-      //     const quantity = doc.quantity
-      //     const paymentsMethod = doc.paymentsMethod
-      //     const orderStatus =
-      //       typeof doc.orderStatus === 'number' ? doc.orderStatus : doc.orderStatus.id
-      //     // 결제방법이 무통장, 상품준비단계에서 > 취소단계로 변경시 적립금 차감
-      //     if (
-      //       operation === 'update' &&
-      //       paymentsMethod === 'bankTransfer' &&
-      //       previousDoc?.orderStatus === 1 &&
-      //       orderStatus === 4
-      //     ) {
-      //       const user = await payload.findByID({
-      //         collection: 'users',
-      //         id: userId,
-      //       })
-      //       const product = await payload.findByID({
-      //         collection: 'product',
-      //         id: productId,
-      //       })
-      //       const userGetPoint = Math.floor(
-      //         (product.cashback_rate_for_bank * quantity * product.price) / 100,
-      //       )
-          
-      //       const newPoint = Number(user.point ?? 0) - userGetPoint
-      //       await payload.update({
-      //         collection: 'users',
-      //         id: userId,
-      //         data: {
-      //           point: newPoint,
-      //         },
-      //         req: { transactionID: req.transactionID as string },
-      //       })
-      //       await payload.create({
-      //         collection: 'point-history',
-      //         data: {
-      //           user: user.id,
-      //           type: 'cancel',
-      //           balanceAfter: newPoint,
-      //           reason: `무통장 입금취소`,
-      //         },
-      //         req: { transactionID: req.transactionID as string },
-      //       })
-      //     }
-      //   } catch (error) {
-      //     console.log("error")
-      //     console.log(error)
-      //     throw new APIError("업데이트 중 오류가 발생했습니다")
-      //   }
-      // },
     ],
   },
 }

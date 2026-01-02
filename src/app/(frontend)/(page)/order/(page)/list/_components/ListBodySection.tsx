@@ -8,6 +8,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { cancelOrderForCard, cancelOrderForBankTransfer } from '../actions'
 import { useRouter } from 'next/navigation'
+import { OrderUserInfoContext } from '@order/_context/order_context'
+import { useContext } from 'react'
 
 export type OrderListType = {
   id: number
@@ -34,9 +36,6 @@ export type OrderListType = {
 }
 
 export function ListBodySection({ data }: { data: OrderListType[] }) {
-  console.log('data')
-  console.log(data)
-
   return (
     <>
       {data.map((item: OrderListType, index: number) => {
@@ -123,7 +122,8 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
 
 function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number }) {
   const queryClient = useQueryClient()
-  const router = useRouter()
+  const { user, setUser } = useContext(OrderUserInfoContext)
+
   const { mutate: cancelOrderMutation } = useMutation({
     mutationFn: ({ orderId }: { orderId: number }) => cancelOrderForCard({ orderId }),
     onSuccess: (data) => {
@@ -132,8 +132,16 @@ function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number
       } else {
         toast.error(data?.message ?? '주문취소에 실패했습니다.')
       }
-      queryClient.invalidateQueries({ queryKey: ['order-list'] })
-      router.refresh()
+
+      queryClient.invalidateQueries({
+        queryKey: ['order-list'],
+        exact: false,
+        refetchType: 'all',
+      })
+
+      if (user) {
+        setUser({ ...user, point: data?.userPoint ?? 0 })
+      }
     },
     onError: () => {
       toast.error('주문취소에 실패했습니다.')
@@ -179,20 +187,26 @@ function OrderCancelButtonForBankTransfer({
   id: number
   orderStatus: number
 }) {
-  const router = useRouter()
   const queryClient = useQueryClient()
+  const { user, setUser } = useContext(OrderUserInfoContext)
   const { mutate: cancelOrderMutation } = useMutation({
     mutationFn: ({ orderId, orderStatus }: { orderId: number; orderStatus: number }) =>
       cancelOrderForBankTransfer({ orderId, orderStatus }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data?.success) {
         toast.success(data?.message ?? '주문취소가 완료되었습니다.')
       } else {
         toast.error(data?.message ?? '주문취소에 실패했습니다.')
       }
 
-      queryClient.invalidateQueries({ queryKey: ['order-list'] })
-      router.refresh()
+      if (user) {
+        setUser({ ...user, point: data?.userPoint ?? 0 })
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: ['order-list'],
+        exact: false,
+      })
     },
     onError: () => {
       toast.error('주문취소에 실패했습니다.')

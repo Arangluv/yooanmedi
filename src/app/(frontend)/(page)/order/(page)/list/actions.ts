@@ -111,7 +111,7 @@ type CancelCardOrderType = {
   pgCno: string
 }
 
-export async function cancelOrderForCard({ orderId }: { orderId: number }) {
+export async function cancelOrderForCard({ orderId }: { orderId: number }): Promise<{ success: boolean; message: string; userPoint?: number }> {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
   try {
@@ -178,14 +178,14 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
     // step 3 - 유저가 사용한 적립금 환불 계산
     if (refundUsedPointAmount > 0) {
       // 유저가 사용한 적립금
-
       // 적립금 환불 기록 추가
+      userPoint +=  refundUsedPointAmount
       await payload.create({
         collection: 'point-history',
         data: {
           user: Number(user.id),
           type: 'cancel',
-          balanceAfter: userPoint + refundUsedPointAmount,
+          balanceAfter: userPoint,
           reason: `유저 사용 적립금 환불 - PG 주문번호 : ${pgCno}`,
         },
         req: { transactionID: dbTransactionID as string },
@@ -196,7 +196,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
         collection: 'users',
         id: Number(user.id),
         data: {
-          point: userPoint + refundUsedPointAmount,
+          point: userPoint,
         },
         req: { transactionID: dbTransactionID as string },
       })
@@ -211,62 +211,40 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       .update(authMsg)
       .digest('hex')
 
-    const paymentsCancelDto = {
-      mallId: process.env.PAYMENTS_MID,
-      shopTransactionId: shopTransactionId,
-      pgCno: pgCno,
-      reviseTypeCode: '32', // 32: 부분취소, 40: 전체취소
-      amount: amount,
-      cancelReqDate: moment.tz('Asia/Seoul').format('YYYYMMDD'),
-      msgAuthValue: hashedAuthMsg,
+    if (amount > 0) {
+      const paymentsCancelDto = {
+        mallId: process.env.PAYMENTS_MID,
+        shopTransactionId: shopTransactionId,
+        pgCno: pgCno,
+        reviseTypeCode: '32', // 32: 부분취소, 40: 전체취소
+        amount: amount,
+        cancelReqDate: moment.tz('Asia/Seoul').format('YYYYMMDD'),
+        msgAuthValue: hashedAuthMsg,
+      }
+  
+      const response = await fetch(process.env.PAYMENTS_CANCEL_URL as string, {
+        method: 'POST',
+        body: JSON.stringify(paymentsCancelDto),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+  
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.log(errorData)
+        throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
+      }
+  
+      const result = await response.json()
+      if (result.resCd !== '0000') {
+        console.log(result)
+        throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
+      }
     }
-
-    const response = await fetch(process.env.PAYMENTS_CANCEL_URL as string, {
-      method: 'POST',
-      body: JSON.stringify(paymentsCancelDto),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.log(errorData)
-      throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
-    }
-
-    const result = await response.json()
-    if (result.resCd !== '0000') {
-      console.log(result)
-      throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
-    }
-
-    // {
-    //   resCd: '0000',
-    //   resMsg: '정상처리',
-    //   mallId: 'T0021766',
-    //   shopTransactionId: '4CC44FEA352B461890F6E465C5BB20BB',
-    //   shopOrderNo: '202512277159069',
-    //   oriPgCno: '25122722034810122119',
-    //   cancelPgCno: '25122722044210122121',
-    //   transactionDate: '20251227220442',
-    //   cancelAmount: 21563,
-    //   remainAmount: 0,
-    //   statusCode: 'TS06',
-    //   statusMessage: '부분매입취소',
-    //   escrowUsed: 'N',
-    //   reviseInfo: {
-    //     payMethodTypeCode: '11',
-    //     approvalNo: '',
-    //     approvalDate: '20251227220442',
-    //     cardInfo: { couponAmount: 0 },
-    //     refundInfo: { refundDate: '', depositPgCno: '' },
-    //     cashReceiptInfo: { resCd: '', resMsg: '', approvalNo: '', cancelDate: '' }
-    //   }
-    // }
 
     await payload.db.commitTransaction(dbTransactionID as string)
-    return { success: true, message: '주문취소가 완료되었습니다.' }
+    return { success: true, message: '주문취소가 완료되었습니다.', userPoint: userPoint }
   } catch (error) {
     await payload.db.rollbackTransaction(dbTransactionID as string)
     console.error(error)
@@ -299,7 +277,7 @@ export async function cancelOrderForBankTransfer({
 }: {
   orderId: number
   orderStatus: number
-}): Promise<{ success: boolean; message: string }> {
+}): Promise<{ success: boolean; message: string; userPoint?: number }> {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
   try {
@@ -322,9 +300,6 @@ export async function cancelOrderForBankTransfer({
     })) as CancelBankTransferOrderType
     const { product, user, quantity } = order
     let userPoint = user.point
-
-    console.log("orderStatus")
-    console.log(orderStatus)
 
     // step 1 - 주문취소 상태로 변경
     await payload.update({
@@ -390,7 +365,8 @@ export async function cancelOrderForBankTransfer({
     }
 
     await payload.db.commitTransaction(dbTransactionID as string)
-    return { success: true, message: '주문취소가 완료되었습니다.' }
+
+    return { success: true, message: '주문취소가 완료되었습니다.', userPoint: userPoint ?? 0 }
   } catch (error) {
     // await payload.db.rollbackTransaction(dbTransactionID as string)
     console.error(error)
