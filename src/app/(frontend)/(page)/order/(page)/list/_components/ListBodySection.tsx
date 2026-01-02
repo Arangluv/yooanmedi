@@ -34,6 +34,9 @@ export type OrderListType = {
 }
 
 export function ListBodySection({ data }: { data: OrderListType[] }) {
+  console.log('data')
+  console.log(data)
+
   return (
     <>
       {data.map((item: OrderListType, index: number) => {
@@ -56,7 +59,11 @@ export function ListBodySection({ data }: { data: OrderListType[] }) {
                 {item.paymentsMethod === 'creditCard' ? (
                   <OrderCancelButtonForCard orderId={item.id} id={item.orderStatus.id} />
                 ) : (
-                  <OrderCancelButtonForBankTransfer orderId={item.id} id={item.orderStatus.id} />
+                  <OrderCancelButtonForBankTransfer
+                    orderId={item.id}
+                    id={item.orderStatus.id}
+                    orderStatus={item.orderStatus.id}
+                  />
                 )}
               </div>
             </td>
@@ -163,11 +170,20 @@ function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number
   )
 }
 
-function OrderCancelButtonForBankTransfer({ orderId, id }: { orderId: number; id: number }) {
+function OrderCancelButtonForBankTransfer({
+  orderId,
+  id,
+  orderStatus,
+}: {
+  orderId: number
+  id: number
+  orderStatus: number
+}) {
   const router = useRouter()
   const queryClient = useQueryClient()
   const { mutate: cancelOrderMutation } = useMutation({
-    mutationFn: ({ orderId }: { orderId: number }) => cancelOrderForBankTransfer({ orderId }),
+    mutationFn: ({ orderId, orderStatus }: { orderId: number; orderStatus: number }) =>
+      cancelOrderForBankTransfer({ orderId, orderStatus }),
     onSuccess: (data) => {
       if (data?.success) {
         toast.success(data?.message ?? '주문취소가 완료되었습니다.')
@@ -191,11 +207,11 @@ function OrderCancelButtonForBankTransfer({ orderId, id }: { orderId: number; id
     5: false,
   }
 
-  const handleCancel = ({ orderId }: { orderId: number }) => {
+  const handleCancel = ({ orderId, orderStatus }: { orderId: number; orderStatus: number }) => {
     const isOk = confirm('주문을 취소하시겠습니까?')
 
     if (isOk) {
-      cancelOrderMutation({ orderId })
+      cancelOrderMutation({ orderId, orderStatus })
     }
   }
 
@@ -204,7 +220,7 @@ function OrderCancelButtonForBankTransfer({ orderId, id }: { orderId: number; id
       <Button
         size="sm"
         radius="sm"
-        onPress={() => handleCancel({ orderId: orderId })}
+        onPress={() => handleCancel({ orderId: orderId, orderStatus: orderStatus })}
         isDisabled={status[id as keyof typeof status]}
         className="bg-danger-500 text-white rounded-md text-xs !w-fit !max-w-fit !py-1 !px-2"
       >
