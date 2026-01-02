@@ -207,7 +207,7 @@ const createOrderList = async ({
           user: Number(userId),
           product: order.id,
           quantity: order.quantity,
-          orderCreatedAt: moment.tz('Asia/Seoul').format('YYYYMMDDHHmmss'),
+          orderCreatedAt: moment.tz('Asia/Seoul').toISOString(),
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: null,
