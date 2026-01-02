@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { generateRandomShopTransactionId } from '@order/utils'
 import { BasePayload, getPayload } from 'payload'
 import config from '@/payload.config'
@@ -244,9 +244,10 @@ const createOrderList = async ({
           user: Number(userId),
           product: order.id,
           quantity: order.quantity,
-          orderCreatedAt: moment(
+          orderCreatedAt: moment.tz(
             approveData.paymentInfo.approvalDate,
             'YYYYMMDDHHmmss',
+            'Asia/Seoul',
           ).toISOString(),
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
