@@ -26,6 +26,9 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
+    timezones: {
+      defaultTimezone: 'Asia/Seoul',
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

@@ -19,7 +19,7 @@ export async function getOrderList({
 }) {
   const payload = await getPayload({ config: config })
   const startDate = new Date(start).toISOString()
-  const endDate = moment(end).endOf('day').toISOString()
+  const endDate = moment.utc(end).endOf('day').toISOString()
 
   let productIds: string[] | undefined
   if (productName && productName.trim() !== '') {
@@ -29,8 +29,9 @@ export async function getOrderList({
         name: {
           contains: productName,
         },
+        
       },
-      limit: 1000, // 충분히 큰 값으로 설정
+      limit: 0,
     })
     productIds = products.docs.map((doc) => doc.id.toString())
 
@@ -81,7 +82,13 @@ export async function getOrderList({
         username: true,
       },
     },
+    limit: 0,
+    sort: "-orderCreatedAt",
     where: where,
+  })
+  const test = await payload.findByID({
+    collection: "order",
+    id: 13,
   })
 
   return data.docs
@@ -200,7 +207,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
     }
 
     // step 4 - 주문 취소 실행
-    const amount = quantity * product.price + (product.delivery_fee ?? 0)
+    const amount = quantity * product.price + (product.delivery_fee ?? 0) - refundUsedPointAmount
     const shopTransactionId = generateRandomShopTransactionId()
     const authMsg = `${pgCno}|${shopTransactionId}`
     const hashedAuthMsg = crypto
@@ -214,9 +221,8 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
       pgCno: pgCno,
       reviseTypeCode: '32', // 32: 부분취소, 40: 전체취소
       amount: amount,
-      cancelReqDate: moment().format('YYYYMMDD'),
+      cancelReqDate: moment.tz('Asia/Seoul').format('YYYYMMDD'),
       msgAuthValue: hashedAuthMsg,
-      // basketUsed: 'Y',
     }
 
     const response = await fetch(process.env.PAYMENTS_CANCEL_URL as string, {
@@ -235,6 +241,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }) {
 
     const result = await response.json()
     if (result.resCd !== '0000') {
+      console.log(result)
       throw new Error('주문취소에 실패했습니다. 다시 시도해주세요.')
     }
 
