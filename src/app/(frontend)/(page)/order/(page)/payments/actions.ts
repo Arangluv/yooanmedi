@@ -2,7 +2,7 @@
 
 import { BasePayload, getPayload } from 'payload'
 import config from '@/payload.config'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 // 결제주문 등록 API -> 임시 테스트
 // POST 요청
@@ -23,7 +23,6 @@ export async function registerOrder(orderInfo: any) {
 
     if (!res.ok) {
       const errorData = await res.json()
-      console.log('결제주문 등록시 에러가 발생')
       console.log(errorData)
       return null
     }
@@ -185,7 +184,6 @@ const createOrderList = async ({
   let pointAmount = 0
   const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
   const refuntPointRemain = usedPoint > 0 ? usedPoint % orderList.length : 0
-
   const refundPointArr = Array.from({ length: orderList.length }, () => refundPoint)
   if (refuntPointRemain > 0) {
     refundPointArr[orderList.length - 1] += refuntPointRemain
@@ -209,7 +207,7 @@ const createOrderList = async ({
           user: Number(userId),
           product: order.id,
           quantity: order.quantity,
-          orderCreatedAt: moment(new Date().toISOString(), 'YYYYMMDDHHmmss').toISOString(),
+          orderCreatedAt: moment.tz('Asia/Seoul').format('YYYYMMDDHHmmss'),
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: null,
