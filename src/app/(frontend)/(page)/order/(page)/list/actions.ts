@@ -2,7 +2,7 @@
 
 import { getPayload, Where } from 'payload'
 import config from '@/payload.config'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { generateRandomShopTransactionId } from '@order/utils'
 import crypto from 'crypto'
 
@@ -19,7 +19,12 @@ export async function getOrderList({
 }) {
   const payload = await getPayload({ config: config })
   const startDate = new Date(start).toISOString()
-  const endDate = moment.utc(end).endOf('day').toISOString()
+  const endDate = moment().endOf('day').toISOString()
+
+  console.log("startDate")
+  console.log(startDate)
+  console.log("endDate")
+  console.log(endDate)
 
   let productIds: string[] | undefined
   if (productName && productName.trim() !== '') {
@@ -85,10 +90,6 @@ export async function getOrderList({
     limit: 0,
     sort: "-orderCreatedAt",
     where: where,
-  })
-  const test = await payload.findByID({
-    collection: "order",
-    id: 13,
   })
 
   return data.docs
