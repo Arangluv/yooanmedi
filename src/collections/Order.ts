@@ -1,4 +1,4 @@
-import { BasePayload, CollectionConfig } from 'payload'
+import { APIError, BasePayload, CollectionConfig } from 'payload'
 
 export const Order: CollectionConfig = {
   slug: 'order',
@@ -137,94 +137,111 @@ export const Order: CollectionConfig = {
   hooks: {
     afterChange: [
       async ({ doc, req, operation, previousDoc }) => {
-        const payload = req.payload as BasePayload
-        const { user: userId, product: productId, quantity, paymentsMethod, orderStatus } = doc
         // 결제 방법이 무통장 입금이고, 주문상태가 결제대기 > 상품준비
-        if (
-          operation === 'update' &&
-          paymentsMethod === 'bankTransfer' &&
-          previousDoc?.orderStatus === 5 && // 이전 주문 상태가 결제대기
-          orderStatus === 1 // 현재 주문 상태가 상품준비
-        ) {
-          const product = await payload.findByID({
-            collection: 'product',
-            id: productId,
-          })
-          const userGetPoint = Math.floor(
-            (product.cashback_rate_for_bank * quantity * product.price) / 100,
-          )
-          const user = await payload.findByID({
-            collection: 'users',
-            id: userId,
-          })
-          await payload.update({
-            collection: 'users',
-            id: userId,
-            data: {
-              point: Number(user.point ?? 0) + userGetPoint,
-            },
-            req: { transactionID: req.transactionID as string },
-          })
-          await payload.create({
-            collection: 'point-history',
-            data: {
-              user: userId,
-              type: 'earn',
-              reason: `무통장 입금완료`,
-              balanceAfter: Number(user.point ?? 0) + userGetPoint,
-            },
-            req: { transactionID: req.transactionID as string },
-          })
+        try {
+          const payload = req.payload as BasePayload
+          const userId = typeof doc.user === 'number' ? doc.user : doc.user.id
+          const productId = typeof doc.product === 'number' ? doc.product : doc.product.id
+          const quantity = doc.quantity
+          const paymentsMethod = doc.paymentsMethod
+          const orderStatus =
+            typeof doc.orderStatus === 'number' ? doc.orderStatus : doc.orderStatus.id
+          // 결제방법이 무통장, 상품준비단계에서 > 취소단계로 변경시 적립금 차감
+          if (
+            operation === 'update' &&
+            paymentsMethod === 'bankTransfer' &&
+            previousDoc?.orderStatus === 5 && // 이전 주문 상태가 결제대기
+            (orderStatus === 1 || orderStatus?.id === 1) // 현재 주문 상태가 상품준비
+          ) {
+            const product = await payload.findByID({
+              collection: 'product',
+              id: productId,
+            })
+            const userGetPoint = Math.floor(
+              (product.cashback_rate_for_bank * quantity * product.price) / 100,
+            )
+            const user = await payload.findByID({
+              collection: 'users',
+              id: userId,
+            })
+            await payload.update({
+              collection: 'users',
+              id: userId,
+              data: {
+                point: Number(user.point ?? 0) + userGetPoint,
+              },
+              req: { transactionID: req.transactionID as string },
+            })
+
+            await payload.create({
+              collection: 'point-history',
+              data: {
+                user: userId,
+                type: 'earn',
+                reason: `무통장 입금완료`,
+                balanceAfter: Number(user.point ?? 0) + userGetPoint,
+              },
+              req: { transactionID: req.transactionID as string },
+            })
+          }
+        } catch (error) {
+          throw new APIError("업데이트 중 오류가 발생했습니다")
         }
       },
-      async ({ doc, req, operation, previousDoc }) => {
-        const payload = req.payload as BasePayload
-        const userId = typeof doc.user === 'number' ? doc.user : doc.user.id
-        const productId = typeof doc.product === 'number' ? doc.product : doc.product.id
-        const quantity = doc.quantity
-        const paymentsMethod = doc.paymentsMethod
-        const orderStatus =
-          typeof doc.orderStatus === 'number' ? doc.orderStatus : doc.orderStatus.id
-
-        // 결제방법이 무통장, 상품준비단계에서 > 취소단계로 변경시 적립금 차감
-        if (
-          operation === 'update' &&
-          paymentsMethod === 'bankTransfer' &&
-          previousDoc?.orderStatus === 1 &&
-          orderStatus === 4
-        ) {
-          const user = await payload.findByID({
-            collection: 'users',
-            id: userId,
-          })
-          const product = await payload.findByID({
-            collection: 'product',
-            id: productId,
-          })
-          const userGetPoint = Math.floor(
-            (product.cashback_rate_for_bank * quantity * product.price) / 100,
-          )
-
-          await payload.update({
-            collection: 'users',
-            id: userId,
-            data: {
-              point: Number(user.point ?? 0) - userGetPoint,
-            },
-            req: { transactionID: req.transactionID as string },
-          })
-          await payload.create({
-            collection: 'point-history',
-            data: {
-              user: user.id,
-              type: 'cancel',
-              balanceAfter: Number(user.point ?? 0) - userGetPoint,
-              reason: `무통장 입금취소`,
-            },
-            req: { transactionID: req.transactionID as string },
-          })
-        }
-      },
+      // async ({ doc, req, operation, previousDoc }) => {
+      //   try {
+      //     const payload = req.payload as BasePayload
+      //     const userId = typeof doc.user === 'number' ? doc.user : doc.user.id
+      //     const productId = typeof doc.product === 'number' ? doc.product : doc.product.id
+      //     const quantity = doc.quantity
+      //     const paymentsMethod = doc.paymentsMethod
+      //     const orderStatus =
+      //       typeof doc.orderStatus === 'number' ? doc.orderStatus : doc.orderStatus.id
+      //     // 결제방법이 무통장, 상품준비단계에서 > 취소단계로 변경시 적립금 차감
+      //     if (
+      //       operation === 'update' &&
+      //       paymentsMethod === 'bankTransfer' &&
+      //       previousDoc?.orderStatus === 1 &&
+      //       orderStatus === 4
+      //     ) {
+      //       const user = await payload.findByID({
+      //         collection: 'users',
+      //         id: userId,
+      //       })
+      //       const product = await payload.findByID({
+      //         collection: 'product',
+      //         id: productId,
+      //       })
+      //       const userGetPoint = Math.floor(
+      //         (product.cashback_rate_for_bank * quantity * product.price) / 100,
+      //       )
+          
+      //       const newPoint = Number(user.point ?? 0) - userGetPoint
+      //       await payload.update({
+      //         collection: 'users',
+      //         id: userId,
+      //         data: {
+      //           point: newPoint,
+      //         },
+      //         req: { transactionID: req.transactionID as string },
+      //       })
+      //       await payload.create({
+      //         collection: 'point-history',
+      //         data: {
+      //           user: user.id,
+      //           type: 'cancel',
+      //           balanceAfter: newPoint,
+      //           reason: `무통장 입금취소`,
+      //         },
+      //         req: { transactionID: req.transactionID as string },
+      //       })
+      //     }
+      //   } catch (error) {
+      //     console.log("error")
+      //     console.log(error)
+      //     throw new APIError("업데이트 중 오류가 발생했습니다")
+      //   }
+      // },
     ],
   },
 }
