@@ -84,10 +84,7 @@ export default function OrderPaymentPendingToReadyButton() {
       return
     }
 
-    console.log('selectedData')
-    console.log(selectedData)
-
-    // updateOrderStatusMutation(selectedData)
+    updateOrderStatusMutation(selectedData)
   }
 
   return (

@@ -288,6 +288,10 @@ export async function cancelOrderForBankTransfer({
         users: { point: true },
       },
     })) as CancelBankTransferOrderType
+
+    console.log('order')
+    console.log(order)
+    
     const {  user, quantity } = order
     let userPoint = user.point
 
