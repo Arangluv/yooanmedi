@@ -19,6 +19,9 @@ interface SelectedData {
   refundUsedPointAmount: number
   updatedAt: string
   createdAt: string
+  price: number
+  cashback_rate_for_bank: number
+  delivery_fee: number
 }
 
 export default function OrderShipmentStartButton() {

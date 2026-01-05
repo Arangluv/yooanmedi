@@ -17,6 +17,7 @@ export default async function OrderListExport(props: any) {
       quantity: true,
       orderStatus: true,
       orderRequest: true,
+      price: true,
     },
     populate: {
       users: {
@@ -24,7 +25,6 @@ export default async function OrderListExport(props: any) {
       },
       product: {
         name: true,
-        price: true,
         insurance_code: true,
         specification: true,
       },

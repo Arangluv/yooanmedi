@@ -289,7 +289,7 @@ export const translations = {
     password: '비밀번호',
     pasteField: '필드 붙여넣기',
     pasteRow: '행 붙여넣기',
-    payloadSettings: 'Payload 설정',
+    payloadSettings: '대시보드 설정',
     permanentlyDelete: '영구 삭제',
     permanentlyDeletedCountSuccessfully: '여러 항목이 영구 삭제되었습니다',
     perPage: '페이지당',

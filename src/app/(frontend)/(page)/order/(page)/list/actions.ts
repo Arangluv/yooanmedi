@@ -70,13 +70,13 @@ export async function getOrderList({
       quantity: true,
       product: true,
       user: true,
+      price: true,
     },
     populate: {
       product: {
         manufacturer: true,
         specification: true,
         name: true,
-        price: true,
       },
       users: {
         username: true,
@@ -90,12 +90,6 @@ export async function getOrderList({
   return data.docs
 }
 
-type CancelCardProductType = {
-  id: number
-  price: number
-  cashback_rate: number
-  delivery_fee: number
-}
 
 type CancelCardUserType = {
   id: number
@@ -104,7 +98,9 @@ type CancelCardUserType = {
 
 type CancelCardOrderType = {
   id: number
-  product: CancelCardProductType
+  price: number
+  cashback_rate: number
+  delivery_fee: number
   user: CancelCardUserType
   quantity: number
   refundUsedPointAmount: number
@@ -120,22 +116,19 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }): Prom
       collection: 'order',
       id: orderId,
       select: {
+        price: true,
         pgCno: true,
-        product: true,
         user: true,
         quantity: true,
         refundUsedPointAmount: true,
+        cashback_rate: true,
+        delivery_fee: true,
       },
       populate: {
-        product: {
-          price: true,
-          cashback_rate: true,
-          delivery_fee: true,
-        },
         users: { point: true },
       },
     })) as CancelCardOrderType
-    const { pgCno, product, user, quantity, refundUsedPointAmount } = order
+    const { pgCno, user, quantity, refundUsedPointAmount } = order
     // user point 초기화
     userPoint = user.point ?? 0
     // step 1 - 주문취소 상태로 변경
@@ -149,8 +142,8 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }): Prom
     })
 
     // step 2- 적립금 차감 계산
-    if (product.cashback_rate > 0) {
-      const refundAmount = Math.floor((product.cashback_rate * quantity * product.price) / 100)
+    if (order.cashback_rate > 0) {
+      const refundAmount = Math.floor((order.cashback_rate * quantity * order.price) / 100)
       userPoint -= refundAmount
 
       await payload.create({
@@ -203,7 +196,7 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }): Prom
     }
 
     // step 4 - 주문 취소 실행
-    const amount = quantity * product.price + (product.delivery_fee ?? 0) - refundUsedPointAmount
+    const amount = quantity * order.price + (order.delivery_fee ?? 0) - refundUsedPointAmount
     const shopTransactionId = generateRandomShopTransactionId()
     const authMsg = `${pgCno}|${shopTransactionId}`
     const hashedAuthMsg = crypto
@@ -254,8 +247,6 @@ export async function cancelOrderForCard({ orderId }: { orderId: number }): Prom
 
 type CancelBankTransferProductType = {
   id: number
-  price: number
-  cashback_rate_for_bank: number
 }
 
 type CancelBankTransferUserType = {
@@ -265,10 +256,11 @@ type CancelBankTransferUserType = {
 
 type CancelBankTransferOrderType = {
   id: number
-  product: CancelBankTransferProductType
   user: CancelBankTransferUserType
   quantity: number
   refundUsedPointAmount: number
+  price: number
+  cashback_rate_for_bank: number
 }
 
 export async function cancelOrderForBankTransfer({
@@ -289,16 +281,14 @@ export async function cancelOrderForBankTransfer({
         user: true,
         quantity: true,
         refundUsedPointAmount: true,
+        price: true,
+        cashback_rate_for_bank: true,
       },
       populate: {
-        product: {
-          price: true,
-          cashback_rate_for_bank: true,
-        },
         users: { point: true },
       },
     })) as CancelBankTransferOrderType
-    const { product, user, quantity } = order
+    const {  user, quantity } = order
     let userPoint = user.point
 
     // step 1 - 주문취소 상태로 변경
@@ -313,9 +303,9 @@ export async function cancelOrderForBankTransfer({
     })
 
     // step 2 - 상품을 구매했을 때 적립된 적립금 차감 (상품준비단계에서서)
-    if ((orderStatus === 1 || orderStatus === 2 || orderStatus === 3) && product.cashback_rate_for_bank > 0) {
+    if ((orderStatus === 1 || orderStatus === 2 || orderStatus === 3) && order.cashback_rate_for_bank > 0) {
       const refundAmount = Math.floor(
-        (product.cashback_rate_for_bank * quantity * product.price) / 100,
+        (order.cashback_rate_for_bank * quantity * order.price) / 100,
       )
       userPoint -= refundAmount
 
@@ -390,20 +380,18 @@ export async function cancelOrderForBankTransferForHooks({
       collection: 'order',
       id: orderId,
       select: {
-        product: true,
         user: true,
         quantity: true,
         refundUsedPointAmount: true,
+        price: true,
+        cashback_rate_for_bank: true,
       },
       populate: {
-        product: {
-          price: true,
-          cashback_rate_for_bank: true,
-        },
+    
         users: { point: true },
       },
     })) as CancelBankTransferOrderType
-    const { product, user, quantity } = order
+    const {  user, quantity } = order
     let userPoint = user.point
 
     // step 1 - 주문취소 상태로 변경 -> hooks에서 처리
@@ -418,9 +406,9 @@ export async function cancelOrderForBankTransferForHooks({
     // })
 
     // step 2 - 상품을 구매했을 때 적립된 적립금 차감 (상품준비단계에서서)
-    if ((orderStatus === 1 || orderStatus === 2 || orderStatus === 3) && product.cashback_rate_for_bank > 0) {
+    if ((orderStatus === 1 || orderStatus === 2 || orderStatus === 3) && order.cashback_rate_for_bank > 0) {
       const refundAmount = Math.floor(
-        (product.cashback_rate_for_bank * quantity * product.price) / 100,
+        (order.cashback_rate_for_bank * quantity * order.price) / 100,
       )
       userPoint -= refundAmount
 

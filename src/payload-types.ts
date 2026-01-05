@@ -330,6 +330,10 @@ export interface Order {
   orderStatus: number | OrderStatus;
   orderRequest?: string | null;
   refundUsedPointAmount?: number | null;
+  price?: number | null;
+  cashback_rate?: number | null;
+  cashback_rate_for_bank?: number | null;
+  delivery_fee?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -548,6 +552,10 @@ export interface OrderSelect<T extends boolean = true> {
   orderStatus?: T;
   orderRequest?: T;
   refundUsedPointAmount?: T;
+  price?: T;
+  cashback_rate?: T;
+  cashback_rate_for_bank?: T;
+  delivery_fee?: T;
   updatedAt?: T;
   createdAt?: T;
 }

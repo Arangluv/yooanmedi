@@ -11,7 +11,7 @@ export default function OrderListExportButton({ data }: { data: any[] }) {
       '주문 일시': moment(item.orderCreatedAt).format('YYYY-MM-DD'),
       병원명: item.user.hospitalName,
       상품명: item.product.name,
-      '상품 가격': item.product.price,
+      '상품 가격': item.price,
       '보험 코드': item.product.insurance_code,
       규격: item.product.specification,
       '결제 방법': item.paymentsMethod === 'creditCard' ? '신용카드' : '무통장입금',
