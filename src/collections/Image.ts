@@ -13,6 +13,16 @@ export const Image: CollectionConfig = {
     plural: '이미지',
   },
   upload: {
+    mimeTypes: [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'image/vnd.microsoft.icon',
+      'image/x-icon',
+      'image/avif',
+      'image/svg+xml',
+    ],
     formatOptions: {
       format: 'webp',
       options: {

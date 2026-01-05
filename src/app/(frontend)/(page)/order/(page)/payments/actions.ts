@@ -203,6 +203,8 @@ const createOrderList = async ({
         id: order.id,
         select: {
           cashback_rate_for_bank: true,
+          cashback_rate: true,
+          delivery_fee: true,
           price: true,
         },
       })
@@ -214,6 +216,10 @@ const createOrderList = async ({
           user: Number(userId),
           product: order.id,
           quantity: order.quantity,
+          price: product.price,
+          cashback_rate: product.cashback_rate,
+          cashback_rate_for_bank: product.cashback_rate_for_bank,
+          delivery_fee: product.delivery_fee,
           orderCreatedAt: moment.tz('Asia/Seoul').toISOString(),
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,

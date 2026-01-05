@@ -13,9 +13,9 @@ export default function OrderListExportButton({ data }: { data: OrderListType[] 
       주문일시: moment(item.orderCreatedAt).format('YYYY-MM-DD'),
       제조사: item.product.manufacturer,
       상품명: item.product.name,
-      가격: item.product.price,
+      가격: item.price,
       주문수량: item.quantity,
-      총금액: item.product.price * item.quantity,
+      총금액: item.price * item.quantity,
     }))
 
     const worksheet = xlsx.utils.json_to_sheet(exportData)

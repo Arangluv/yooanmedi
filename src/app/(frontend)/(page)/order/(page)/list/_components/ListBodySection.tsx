@@ -22,8 +22,8 @@ export type OrderListType = {
     name: string
     manufacturer: string
     specification: string
-    price: number
   }
+  price: number
   paymentsMethod: 'creditCard' | 'bankTransfer'
   quantity: number
   orderCreatedAt: string
@@ -45,11 +45,9 @@ export function ListBodySection({ data }: { data: OrderListType[] }) {
             <td className="text-center">{moment(item.orderCreatedAt).format('YYYY-MM-DD')}</td>
             <td className="text-center">{item.product.manufacturer}</td>
             <td className="text-center">{item.product.name}</td>
-            <td className="text-center">{formatNumberWithCommas(item.product.price)}원</td>
+            <td className="text-center">{formatNumberWithCommas(item.price)}원</td>
             <td className="text-center">{item.quantity}</td>
-            <td className="text-center">
-              {formatNumberWithCommas(item.product.price * item.quantity)}원
-            </td>
+            <td className="text-center">{formatNumberWithCommas(item.price * item.quantity)}원</td>
             <td className="text-center">
               <OrderStatus id={item.orderStatus.id} name={item.orderStatus.name} />
             </td>
