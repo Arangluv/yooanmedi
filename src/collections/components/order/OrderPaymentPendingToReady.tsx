@@ -1,6 +1,6 @@
 import OrderPaymentPendingToReadyButton from './OrderPaymentPendingToReadyButton'
 
-export default function OrderPaymentPendingToReady(props: any) {
+export default function OrderPaymentPendingToReady() {
   return (
     <div>
       <OrderPaymentPendingToReadyButton />

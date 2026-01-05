@@ -280,7 +280,6 @@ export async function cancelOrderForBankTransfer({
 }): Promise<{ success: boolean; message: string; userPoint?: number }> {
   const payload = await getPayload({ config: config })
   const dbTransactionID = await payload.db.beginTransaction()
-  console.log("여기가 실행 #beginTransaction")
   try {
     const order = (await payload.findByID({
       collection: 'order',
@@ -368,7 +367,6 @@ export async function cancelOrderForBankTransfer({
       })
     }
 
-    console.log("여기가 실행 #commitTransaction")
     await payload.db.commitTransaction(dbTransactionID as string)
     return { success: true, message: '주문취소가 완료되었습니다.', userPoint: userPoint ?? 0 }
   } catch (error) {

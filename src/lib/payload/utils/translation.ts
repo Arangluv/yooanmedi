@@ -270,7 +270,7 @@ export const translations = {
     no: '아니오',
     noDateSelected: '선택된 날짜 없음',
     noFiltersSet: '설정된 필터 없음',
-    noLabel: '라벨 없음',
+    noLabel: '없음',
     none: '없음',
     noOptions: '옵션 없음',
     noResults: '결과 없음',
