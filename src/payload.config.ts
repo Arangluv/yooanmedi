@@ -39,6 +39,7 @@ export default buildConfig({
       },
     },
   },
+
   collections: [Users, Image, Files, Product, ProductCategory, PointHistory, OrderStatus, Order],
   globals: [PopupSetting, Terms, PrivacyPolicy],
   editor: lexicalEditor(),
