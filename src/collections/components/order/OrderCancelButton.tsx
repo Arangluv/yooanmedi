@@ -63,12 +63,18 @@ export default function OrderCancelButton() {
       const isIncludeNotValidStatus = filterdData.some(
         (doc) => doc.orderStatus === 1 || doc.orderStatus === 5,
       )
+      const isExistCancelStatus = filterdData.some((doc) => doc.orderStatus === 4)
 
       if (isIncludeNotValidStatus) {
         setDisabledMessage(
           '주문상태가 결제대기 또는 상품준비 단계가 아닌 주문이 포함되어 있습니다. 해당 주문은 유저가 직접 변경해야 합니다. (로그인 > 주문내역에서 확인가능합니다)',
         )
 
+        return
+      }
+
+      if (isExistCancelStatus) {
+        setDisabledMessage('이미 주문취소 단계로 변경된 주문이 포함되어 있습니다.')
         return
       }
 
