@@ -50,4 +50,5 @@ export const PointHistory: CollectionConfig = {
       label: '사유 (예: 주문 #1234 적립)',
     },
   ],
+
 }

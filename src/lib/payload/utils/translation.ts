@@ -282,7 +282,7 @@ export const translations = {
     of: '중',
     only: '만',
     open: '열기',
-    or: '또는',
+    or: '그리고',
     order: '정렬',
     overwriteExistingData: '기존 데이터를 덮어쓰기',
     pageNotFound: '페이지를 찾을 수 없습니다',
