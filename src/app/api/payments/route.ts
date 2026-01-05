@@ -230,6 +230,7 @@ const createOrderList = async ({
           cashback_rate: true,
           price: true,
           delivery_fee: true,
+          cashback_rate_for_bank: true,
         },
       })
       
@@ -290,6 +291,10 @@ const createOrderList = async ({
             'YYYYMMDDHHmmss',
             'Asia/Seoul',
           ).toISOString(),
+          price: product.price,
+          cashback_rate: product.cashback_rate,
+          cashback_rate_for_bank: product.cashback_rate_for_bank,
+          delivery_fee: product.delivery_fee,
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: approveData.pgCno,
@@ -303,74 +308,3 @@ const createOrderList = async ({
 
   return Math.floor(pointAmount)
 }
-// const createOrderList = async ({
-//   payload,
-//   orderList,
-//   userId,
-//   userOrderRequest,
-//   approveData,
-//   usedPoint,
-//   paymentsMethod,
-//   transactionID,
-// }: {
-//   payload: BasePayload
-//   orderList: any[]
-//   userId: string
-//   userOrderRequest: string
-//   approveData: PaymentApproveResponseDto
-//   usedPoint: number
-//   paymentsMethod: 'creditCard' | 'bankTransfer'
-//   transactionID: string
-// }) => {
-//   let pointAmount = 0
-//   const refundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
-//   const refuntPointRemain = usedPoint > 0 ? usedPoint % orderList.length : 0
-//   const refundPointArr = Array.from({ length: orderList.length }, () => refundPoint)
-//   if (refuntPointRemain > 0) {
-//     refundPointArr[orderList.length - 1] += refuntPointRemain
-//   }
-
-//   await Promise.all(
-//     orderList.map(async (order: any, idx: number) => {
-//       const product = await payload.findByID({
-//         collection: 'product',
-//         id: order.id,
-//         select: {
-//           cashback_rate: true,
-//           price: true,
-//           delivery_fee: true,
-//         },
-//       })
-      
-
-//       pointAmount += (product.cashback_rate * (product.price * order.quantity)) / 100
-
-//       return await payload.create({
-//         collection: 'order',
-//         data: {
-//           user: Number(userId),
-//           product: order.id,
-//           quantity: order.quantity,
-//           orderCreatedAt: moment.tz(
-//             approveData.paymentInfo.approvalDate,
-//             'YYYYMMDDHHmmss',
-//             'Asia/Seoul',
-//           ).toISOString(),
-//           refundUsedPointAmount: refundPointArr[idx],
-//           paymentsMethod: paymentsMethod,
-//           pgCno: approveData.pgCno,
-//           orderStatus: 1,
-//           orderRequest: userOrderRequest,
-//           // 실패케이스를 만들때  -> approveData.paymentInfo.approvalDate, 이것만 사용하기
-//           // orderCreatedAt: moment(
-//           //   approveData.paymentInfo.approvalDate,
-//           //   'YYYYMMDDHHmmss',
-//           // ).toISOString(),
-//         },
-//         req: { transactionID: transactionID as string },
-//       })
-//     }),
-//   )
-
-//   return Math.floor(pointAmount)
-// }
