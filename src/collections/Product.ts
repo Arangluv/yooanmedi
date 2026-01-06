@@ -8,7 +8,7 @@ export const Product: CollectionConfig = {
   },
   admin: {
     group: '홈페이지 컨텐츠',
-    defaultColumns: ['name', 'category', 'price', 'is_best_product'],
+    defaultColumns: ['manufacturer','name', 'category', 'price', 'is_best_product', 'stock'],
     useAsTitle: 'name',
     components: {
       beforeListTable: ['@collections/components/product/ProductListTest'] as CustomComponent[],
@@ -167,6 +167,9 @@ export const Product: CollectionConfig = {
       defaultValue: false,
       admin: {
         description: '인기 제품 여부를 선택해주세요 (체크 시 인기 제품)',
+        components: {
+          Cell: '@/collections/components/product/BestProductCell',
+        },
       },
     },
   ],

@@ -1,4 +1,5 @@
 import { default as default_f28a02750c45e1c8fbf74ae7fa034c70 } from '@/collections/components/common/TextCell'
+import { default as default_aa4e6e22524ebabdb971744beb086bb6 } from '@/collections/components/product/BestProductCell'
 import { default as default_7712bd14948acfabe5d33e1eef7b36b9 } from '@collections/components/product/ProductListTest'
 import { default as default_19920d989ded0e59fd7473c2d9c798ce } from '@/collections/components/order/OrderComponents'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -33,6 +34,7 @@ import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc056
 
 export const importMap = {
   "@/collections/components/common/TextCell#default": default_f28a02750c45e1c8fbf74ae7fa034c70,
+  "@/collections/components/product/BestProductCell#default": default_aa4e6e22524ebabdb971744beb086bb6,
   "@collections/components/product/ProductListTest#default": default_7712bd14948acfabe5d33e1eef7b36b9,
   "@/collections/components/order/OrderComponents#default": default_19920d989ded0e59fd7473c2d9c798ce,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
