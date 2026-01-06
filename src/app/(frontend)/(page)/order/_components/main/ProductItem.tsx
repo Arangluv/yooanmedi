@@ -37,7 +37,7 @@ export default function ProductItem({ productItem }: { productItem: ProductItemT
             <Image
               src={productItem.image.url}
               alt={productItem.image.alt ?? ''}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
               width={244}
               height={244}
               unoptimized={true}
