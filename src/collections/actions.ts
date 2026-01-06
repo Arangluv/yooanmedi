@@ -8,6 +8,7 @@ type RegisterProductDto = {
   insurance_code: string
   manufacturer: string
   specification: string
+  price: number
 }
 
 export async function registerProduct(dto: RegisterProductDto[]) {
@@ -18,7 +19,6 @@ export async function registerProduct(dto: RegisterProductDto[]) {
         collection: 'product',
         data: {
           ...item,
-          price: 0,
           cashback_rate: 0,
           cashback_rate_for_bank: 0,
           stock: 999,
