@@ -7,7 +7,7 @@ export const Users: CollectionConfig = {
     plural: '유저',
   },
   admin: {
-    defaultColumns: ['username', 'hospitalName', 'phoneNumber', 'role', 'isApproved'],
+    defaultColumns: ['username', 'hospitalName', 'phoneNumber', 'role', 'isApproved', 'createdAt'],
     useAsTitle: 'hospitalName',
     group: '홈페이지 설정',
   },
@@ -97,6 +97,18 @@ export const Users: CollectionConfig = {
         },
       },
       required: true,
+    },
+    {
+      type: 'text',
+      name: 'doctorLicenseNumber',
+      label: '의사면허번호',
+      required: true,
+      admin: {
+        condition: (data, siblingData) => {
+          return siblingData.role === 'client'
+        },
+        description: '의사면허번호를 입력해주세요',
+      },
     },
     {
       type: 'email',

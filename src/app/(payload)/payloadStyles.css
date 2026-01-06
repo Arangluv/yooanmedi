@@ -9,6 +9,9 @@
 
 /* Import Tailwind utilities */
 @import 'tailwindcss/utilities.css' layer(utilities);
+/* 커스텀 dark variant (선택사항) */
+
+@custom-variant dark (&:is(.dark *));
 
 .table {
   @apply w-full;
