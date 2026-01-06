@@ -40,7 +40,7 @@ export const Users: CollectionConfig = {
       defaultValue: 'client',
     },
     {
-      type: 'checkbox',
+      type: 'checkbox',   
       name: 'isApproved',
       label: '승인 여부',
       admin: {
@@ -48,6 +48,9 @@ export const Users: CollectionConfig = {
         condition: (data, siblingData) => {
           return siblingData.role === 'client'
         },
+        components: {
+            Cell: "@/collections/components/common/TextCell"
+        }
       },
       defaultValue: false,
     },
