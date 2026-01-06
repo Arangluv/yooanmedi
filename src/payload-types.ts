@@ -154,6 +154,10 @@ export interface User {
    */
   hospitalName?: string | null;
   /**
+   * 의사면허번호를 입력해주세요
+   */
+  doctorLicenseNumber?: string | null;
+  /**
    * 주소를 입력해주세요
    */
   address?: string | null;
@@ -427,6 +431,7 @@ export interface UsersSelect<T extends boolean = true> {
   isApproved?: T;
   ceo?: T;
   hospitalName?: T;
+  doctorLicenseNumber?: T;
   address?: T;
   businessNumber?: T;
   nursingNumber?: T;
