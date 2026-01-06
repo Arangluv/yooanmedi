@@ -7,9 +7,9 @@ export const Order: CollectionConfig = {
     singular: '주문 내역',
     plural: '주문 내역',
   },
-  // access: {
-  //   delete: () => false,
-  // },
+  access: {
+    create: () => false,
+  },
   admin: {
     defaultColumns: ['user', 'product', 'orderStatus',"quantity", 'orderRequest', 'paymentsMethod', "orderCreatedAt"],
     group: '홈페이지 컨텐츠',
