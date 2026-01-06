@@ -18,6 +18,7 @@ export async function join(formData: FormData) {
     const nursingNumber = formData.get('nursingNumber') as string
     const phoneNumber = formData.get('phoneNumber') as string
     const faxNumber = formData.get('faxNumber') as string
+    const doctorLicenseNumber = formData.get('doctorLicenseNumber') as string
 
     const userFullAddress = `${address} | ${addressDetail}`
     // 파일 업로드 - REST API 사용
@@ -82,6 +83,7 @@ export async function join(formData: FormData) {
         phoneNumber,
         faxNumber,
         fileList: uploadedFileIds,
+        doctorLicenseNumber,
       },
     })
 

@@ -123,10 +123,6 @@ export default function JoinForm() {
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="약관동의를 진행해주세요." />,
       })
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      })
       onOpen()
       setIsLoading(false)
       return
@@ -225,12 +221,6 @@ export default function JoinForm() {
         validationBehavior="native"
         onSubmit={onSubmit}
       >
-        <JoinTermsContent
-          isTermsAgreed={isTermsAgreed}
-          setIsTermsAgreed={setIsTermsAgreed}
-          isPrivacyAgreed={isPrivacyAgreed}
-          setIsPrivacyAgreed={setIsPrivacyAgreed}
-        />
         <LoginInfoContent errors={errors} setErrors={setErrors} />
         <PersonalInfoContent
           fullAddress={fullAddress}
@@ -239,6 +229,12 @@ export default function JoinForm() {
           setErrors={setErrors}
           fileList={fileList}
           setFileList={setFileList}
+        />
+        <JoinTermsContent
+          isTermsAgreed={isTermsAgreed}
+          setIsTermsAgreed={setIsTermsAgreed}
+          isPrivacyAgreed={isPrivacyAgreed}
+          setIsPrivacyAgreed={setIsPrivacyAgreed}
         />
         <Button
           type="submit"
@@ -515,6 +511,14 @@ function PersonalInfoContent({
           }
           return true
         }}
+      />
+      <Input
+        name="doctorLicenseNumber"
+        label="의사면허번호"
+        type="number"
+        placeholder="의사면허번호를 입력해주세요."
+        {...inputProps}
+        isRequired
       />
       <Input
         name="phoneNumber"
