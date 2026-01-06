@@ -43,9 +43,10 @@ function ExcelUploadModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
           const dto = trimmedJsonData.map((item: any) => {
             return {
               specification: item['규격'],
-              name: item['제품명'],
+              name: item['제품출력명'],
               insurance_code: item['보험코드'],
-              manufacturer: item['제조사명'],
+              manufacturer: item['제조사'],
+              price: item['보험금액'],
             }
           })
 
@@ -133,6 +134,7 @@ function ProductList({ dtoData, onClose }: { dtoData: any[]; onClose: () => void
               <th className="border-r-1 border-black/20">제품명</th>
               <th className="border-r-1 border-black/20">보험코드</th>
               <th className="border-r-1 border-black/20">제조사명</th>
+              <th className="border-r-1 border-black/20">가격</th>
               <th>규격</th>
             </tr>
           </thead>
@@ -143,6 +145,7 @@ function ProductList({ dtoData, onClose }: { dtoData: any[]; onClose: () => void
                 <td className="text-center ">{item.name}</td>
                 <td className="text-center ">{item.insurance_code}</td>
                 <td className="text-center">{item.manufacturer}</td>
+                <td className="text-center">{item.price.toLocaleString()}</td>
                 <td className="text-center">{item.specification}</td>
               </tr>
             ))}
