@@ -14,23 +14,16 @@ import {
   useDisclosure,
 } from '@heroui/react'
 import { Checkbox } from '@heroui/checkbox'
-import {
-  ChevronRight,
-  Info,
-  Upload,
-  FileText,
-  Image as ImageIcon,
-  Trash,
-  CheckCircle,
-} from 'lucide-react'
+import { ChevronRight, Info, Upload, FileText, Image as ImageIcon, Trash } from 'lucide-react'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 import clsx from 'clsx'
-import { useMutation } from '@tanstack/react-query'
-import { join } from '../actions'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { getPrivacyPolicy, getTerms, join } from '../actions'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import Image from 'next/image'
+import { ContentRenderer } from '@/components/ui/content-renderer'
 
 const inputProps = {
   radius: 'sm',
@@ -68,14 +61,11 @@ export default function JoinForm() {
 
   // 주소
   const [fullAddress, setFullAddress] = useState('')
-
   // 약관동의
   const [isTermsAgreed, setIsTermsAgreed] = useState(false)
   const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false)
-
   // 증빙서류파일
   const [fileList, setFileList] = useState<File[]>([])
-
   // loading state
   const [isLoading, setIsLoading] = useState(false)
 
@@ -235,6 +225,8 @@ export default function JoinForm() {
           setIsTermsAgreed={setIsTermsAgreed}
           isPrivacyAgreed={isPrivacyAgreed}
           setIsPrivacyAgreed={setIsPrivacyAgreed}
+          rootModalOpen={onOpen}
+          setRootModalOpen={setModalContent}
         />
         <Button
           type="submit"
@@ -260,87 +252,114 @@ function JoinTermsContent({
   setIsTermsAgreed,
   isPrivacyAgreed,
   setIsPrivacyAgreed,
+  rootModalOpen,
+  setRootModalOpen,
 }: {
   isTermsAgreed: boolean
   setIsTermsAgreed: (value: boolean) => void
   isPrivacyAgreed: boolean
   setIsPrivacyAgreed: (value: boolean) => void
+  rootModalOpen: () => void
+  setRootModalOpen: (value: { header: React.ReactNode; content: React.ReactNode }) => void
 }) {
-  const [isAllAgreed, setIsAllAgreed] = useState(false)
-
-  useEffect(() => {
-    if (isTermsAgreed && isPrivacyAgreed) {
-      setIsAllAgreed(true)
-    } else {
-      setIsAllAgreed(false)
-    }
-  }, [isTermsAgreed, isPrivacyAgreed])
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+  const [modalContent, setModalContent] = useState<React.ReactNode>(null)
+  const [isAllReadTerms, setIsAllReadTerms] = useState(false)
+  const [isAllReadPrivacy, setIsAllReadPrivacy] = useState(false)
 
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <span className="text-foreground-800 font-bold text-lg">약관동의(유안메디팜 홈페이지)</span>
-      <div className="flex flex-col gap-4 p-6 border-1 border-foreground-100 rounded-md w-full">
-        <Checkbox
-          isSelected={isAllAgreed}
-          value="all"
-          className="font-bold"
-          radius="sm"
-          onValueChange={(isSelected) => {
-            setIsAllAgreed(isSelected)
-            setIsTermsAgreed(isSelected)
-            setIsPrivacyAgreed(isSelected)
-          }}
-        >
-          전체 약관 동의
-        </Checkbox>
-        <Divider className="my-2 text-foreground-100" />
-        <div className="flex w-full justify-between items-center">
-          <Checkbox
-            value="privacy"
-            radius="sm"
-            className="flex-shrink-0"
-            isSelected={isTermsAgreed}
-            onValueChange={(isSelected) => setIsTermsAgreed(isSelected)}
-          >
-            <div className="w-full">
-              <span className="text-brand mr-1 text-[15px]">[필수]</span>이용약관
-            </div>
-          </Checkbox>
-          <Link
-            href="/terms?type=terms"
-            target="_blank"
-            className="w-full flex justify-end items-center"
-          >
-            <span className="text-sm text-foreground-500">자세히보기</span>
-            <ChevronRight className="w-4 h-4 text-foreground-500" />
-          </Link>
+    <>
+      <div className="flex flex-col gap-6 w-full">
+        <span className="text-foreground-800 font-bold text-lg">약관동의(유안메디팜 홈페이지)</span>
+        <div className="flex flex-col gap-4 p-6 border-1 border-foreground-100 rounded-md w-full">
+          <div className="flex w-full justify-between items-center">
+            <Checkbox
+              value="privacy"
+              radius="sm"
+              className="flex-shrink-0"
+              isSelected={isTermsAgreed}
+              onValueChange={() => {
+                if (!isAllReadTerms) {
+                  setRootModalOpen({
+                    header: <ModalErrorHeader />,
+                    content: <ModdalErrorContent message="이용약관을 모두 읽어주세요." />,
+                  })
+
+                  rootModalOpen()
+                  return
+                }
+              }}
+            >
+              <div className="w-full">
+                <span className="text-brand mr-1 text-[15px]">[필수]</span>이용약관
+              </div>
+            </Checkbox>
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                setModalContent(
+                  <JoinTermsModalContent
+                    setIsTermsAgreed={setIsTermsAgreed}
+                    setIsAllReadTerms={setIsAllReadTerms}
+                    onClose={onClose}
+                  />,
+                )
+                onOpen()
+              }}
+              className="flex justify-end items-center border-1 border-foreground-300 rounded-md px-2 py-1 w-fit cursor-pointer"
+            >
+              <span className="text-sm text-foreground-600">전문 읽기</span>
+              <ChevronRight className="w-4 h-4 text-foreground-600" />
+            </button>
+          </div>
+          <div className="flex w-full justify-between items-center">
+            <Checkbox
+              value="privacy"
+              radius="sm"
+              className="flex-shrink-0"
+              isSelected={isPrivacyAgreed}
+              onValueChange={() => {
+                if (!isAllReadPrivacy) {
+                  setRootModalOpen({
+                    header: <ModalErrorHeader />,
+                    content: <ModdalErrorContent message="개인정보처리방침을 모두 읽어주세요." />,
+                  })
+                  rootModalOpen()
+                  return
+                }
+              }}
+            >
+              <div className="w-full">
+                <span className="text-brand mr-1 text-[15px]">[필수]</span>개인정보처리방침
+              </div>
+            </Checkbox>
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                setModalContent(
+                  <JoinPrivacyModalContent
+                    setIsPrivacyAgreed={setIsPrivacyAgreed}
+                    setIsAllReadPrivacy={setIsAllReadPrivacy}
+                    onClose={onClose}
+                  />,
+                )
+                onOpen()
+              }}
+              className="flex justify-end items-center border-1 border-foreground-300 rounded-md px-2 py-1 w-fit cursor-pointer"
+            >
+              <span className="text-sm text-foreground-600">전문 읽기</span>
+              <ChevronRight className="w-4 h-4 text-foreground-600" />
+            </button>
+          </div>
         </div>
-        <div className="flex w-full justify-between items-center">
-          <Checkbox
-            value="privacy"
-            radius="sm"
-            className="flex-shrink-0"
-            isSelected={isPrivacyAgreed}
-            onValueChange={(isSelected) => setIsPrivacyAgreed(isSelected)}
-          >
-            <div className="w-full">
-              <span className="text-brand mr-1 text-[15px]">[필수]</span>개인정보처리방침
-            </div>
-          </Checkbox>
-          <Link
-            href="/terms?type=privacy"
-            target="_blank"
-            className="w-full flex justify-end items-center"
-          >
-            <span className="text-sm text-foreground-500">자세히보기</span>
-            <ChevronRight className="w-4 h-4 text-foreground-500" />
-          </Link>
-        </div>
+        <span className="text-sm text-foreground-500">
+          *필수항목에 동의하지 않으실 경우 서비스 가입이 불가합니다
+        </span>
       </div>
-      <span className="text-sm text-foreground-500">
-        *필수항목에 동의하지 않으실 경우 서비스 가입이 불가합니다
-      </span>
-    </div>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl" scrollBehavior="inside">
+        <ModalContent>{modalContent}</ModalContent>
+      </Modal>
+    </>
   )
 }
 
@@ -839,5 +858,102 @@ function ModdalErrorContent({ message }: { message: string }) {
     <div className="flex flex-col gap-2">
       <p className="text-[15px] text-foreground-600 whitespace-pre-wrap">{message}</p>
     </div>
+  )
+}
+
+// 약관 동의 모달 컴포넌트
+function JoinTermsModalContent({
+  setIsTermsAgreed,
+  setIsAllReadTerms,
+  onClose,
+}: {
+  setIsTermsAgreed: (value: boolean) => void
+  setIsAllReadTerms: (value: boolean) => void
+  onClose: () => void
+}) {
+  const [isAllRead, setIsAllRead] = useState(false)
+  const { data } = useQuery({
+    queryKey: ['terms'],
+    queryFn: () => getTerms(),
+  })
+
+  return (
+    <>
+      <ModalHeader>유안메디팜 이용약관</ModalHeader>
+      <ModalBody
+        onScroll={(e) => {
+          const target = e.currentTarget
+          // Check if scrolled to (or past) the bottom
+          if (target.scrollHeight - target.scrollTop === target.clientHeight) {
+            setIsAllRead(true)
+            setIsAllReadTerms(true)
+          }
+        }}
+      >
+        <ContentRenderer content={data} />
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          className="w-full bg-brand text-white"
+          radius="sm"
+          size="lg"
+          isDisabled={!isAllRead}
+          onPress={() => {
+            setIsTermsAgreed(true)
+            onClose()
+          }}
+        >
+          동의합니다
+        </Button>
+      </ModalFooter>
+    </>
+  )
+}
+
+function JoinPrivacyModalContent({
+  setIsPrivacyAgreed,
+  setIsAllReadPrivacy,
+  onClose,
+}: {
+  setIsPrivacyAgreed: (value: boolean) => void
+  setIsAllReadPrivacy: (value: boolean) => void
+  onClose: () => void
+}) {
+  const [isAllRead, setIsAllRead] = useState(false)
+  const { data } = useQuery({
+    queryKey: ['privacy'],
+    queryFn: () => getPrivacyPolicy(),
+  })
+
+  return (
+    <>
+      <ModalHeader>유안메디팜 개인정보처리방침</ModalHeader>
+      <ModalBody
+        onScroll={(e) => {
+          const target = e.currentTarget
+          // Check if scrolled to (or past) the bottom
+          if (target.scrollHeight - target.scrollTop === target.clientHeight) {
+            setIsAllRead(true)
+            setIsAllReadPrivacy(true)
+          }
+        }}
+      >
+        <ContentRenderer content={data} />
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          className="w-full bg-brand text-white"
+          radius="sm"
+          size="lg"
+          isDisabled={!isAllRead}
+          onPress={() => {
+            setIsPrivacyAgreed(true)
+            onClose()
+          }}
+        >
+          동의합니다
+        </Button>
+      </ModalFooter>
+    </>
   )
 }

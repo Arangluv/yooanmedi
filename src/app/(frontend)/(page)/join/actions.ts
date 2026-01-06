@@ -117,3 +117,21 @@ export async function join(formData: FormData) {
     }
   }
 }
+
+export async function getTerms() {
+  const payload = await getPayload({ config: config })
+  const { content } = await payload.findGlobal({
+    slug: 'terms',
+  })
+
+  return content
+}
+
+export async function getPrivacyPolicy() {
+  const payload = await getPayload({ config: config })
+  const { content } = await payload.findGlobal({
+    slug: 'privacy-policy',
+  })
+
+  return content
+}
