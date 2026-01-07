@@ -1,4 +1,4 @@
-name: Update and Push to Customer Repo
+name: Update and Push to Customer Dev Branch
 
 on:
   workflow_dispatch:
