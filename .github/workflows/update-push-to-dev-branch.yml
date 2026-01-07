@@ -29,6 +29,7 @@ jobs:
       - name: Checkout monorepo
         uses: actions/checkout@v4
         with:
+          ref: yooan-dev
           fetch-depth: 0
 
       - name: Prepare filtered build
