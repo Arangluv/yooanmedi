@@ -883,8 +883,14 @@ function JoinTermsModalContent({
       <ModalBody
         onScroll={(e) => {
           const target = e.currentTarget
-          // Check if scrolled to (or past) the bottom
-          if (target.scrollHeight - target.scrollTop === target.clientHeight) {
+          // Check if scrolled to (or past) the bottom with small threshold for floating point errors
+          const scrollDifference = Math.abs(
+            target.scrollHeight - target.scrollTop - target.clientHeight,
+          )
+          if (
+            scrollDifference < 1 ||
+            target.scrollHeight - target.scrollTop <= target.clientHeight
+          ) {
             setIsAllRead(true)
             setIsAllReadTerms(true)
           }
@@ -931,8 +937,13 @@ function JoinPrivacyModalContent({
       <ModalBody
         onScroll={(e) => {
           const target = e.currentTarget
-          // Check if scrolled to (or past) the bottom
-          if (target.scrollHeight - target.scrollTop === target.clientHeight) {
+          const scrollDifference = Math.abs(
+            target.scrollHeight - target.scrollTop - target.clientHeight,
+          )
+          if (
+            scrollDifference < 1 ||
+            target.scrollHeight - target.scrollTop <= target.clientHeight
+          ) {
             setIsAllRead(true)
             setIsAllReadPrivacy(true)
           }
