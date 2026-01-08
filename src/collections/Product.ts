@@ -1,4 +1,4 @@
-import { CollectionConfig, CustomComponent, EditConfig } from 'payload'
+import { CollectionConfig, CustomComponent } from 'payload'
 
 export const Product: CollectionConfig = {
   slug: 'product',
@@ -6,6 +6,7 @@ export const Product: CollectionConfig = {
     singular: '제품',
     plural: '제품',
   },
+  lockDocuments: false,
   admin: {
     group: '홈페이지 컨텐츠',
     defaultColumns: ['manufacturer','name', 'category', 'price', 'is_best_product', 'stock'],
@@ -13,6 +14,7 @@ export const Product: CollectionConfig = {
     components: {
       beforeListTable: ['@collections/components/product/ProductListTest'] as CustomComponent[],
     },
+    
   },
   fields: [
     {
