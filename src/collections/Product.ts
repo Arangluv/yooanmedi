@@ -14,7 +14,6 @@ export const Product: CollectionConfig = {
     components: {
       beforeListTable: ['@collections/components/product/ProductListTest'] as CustomComponent[],
     },
-    
   },
   fields: [
     {
