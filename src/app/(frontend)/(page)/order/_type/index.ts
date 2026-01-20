@@ -33,6 +33,7 @@ export type ProductItemType = {
   stock: number
   delivery_fee: number
   returnable: boolean
+  is_cost_per_unit: boolean
 }
 
 export type InventoryType = {
