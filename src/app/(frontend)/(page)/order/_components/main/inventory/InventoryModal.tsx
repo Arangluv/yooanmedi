@@ -19,19 +19,11 @@ import { Plus, Minus } from 'lucide-react'
 import { toast } from 'sonner'
 import { QuantityChangedToast } from '../ToastComponents'
 import { useRouter } from 'next/navigation'
+import { calculateDeliveryFee, calculateTotalDeliveryFee } from '@lib/product/utils'
+
 export default function InventoryModal() {
   const { isOpen, onOpenChange } = useContext(InventoryModalContext)
   const { inventory, setInventory } = useContext(InventoryContext)
-  const [selectedEditTarget, setSelectedEditTarget] = useState<number | null>(null)
-
-  const handleEditTarget = (id: number) => {
-    if (selectedEditTarget === id) {
-      setSelectedEditTarget(null)
-      return
-    }
-
-    setSelectedEditTarget(id)
-  }
 
   const handleDelete = (id: number) => {
     const newInventory = inventory.filter((item) => item.product.id !== id)
@@ -39,7 +31,7 @@ export default function InventoryModal() {
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" radius="sm">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" radius="sm" classNames={{ base: "max-w-[1180px]" }}>
       <ModalContent>
         <ModalHeader>
           <span className="text-lg font-bold">장바구니(주문내역)</span>
@@ -55,7 +47,9 @@ export default function InventoryModal() {
                 <th className="border-1 border-foreground-200">규격</th>
                 <th className="border-1 border-foreground-200">단가</th>
                 <th className="border-1 border-foreground-200 min-w-[40px]">수량</th>
-                <th className="border-1 border-foreground-200">수정/삭제</th>
+                <th className="border-1 border-foreground-200">배송비</th>
+                <th className="border-1 border-foreground-200">총 배송비</th>
+                <th className="border-1 border-foreground-200">삭제</th>
               </tr>
             </thead>
             <tbody>
@@ -86,18 +80,12 @@ export default function InventoryModal() {
                     inventory={inventory}
                     quantity={item.quantity}
                     setInventory={setInventory}
-                    setSelectedEditTarget={setSelectedEditTarget}
-                    selectedEditTarget={selectedEditTarget}
                     productId={item.product.id}
                   />
-                  <td className="pl-2">
-                    <div className="mx-auto w-fit flex gap-2">
-                      <button
-                        className="cursor-pointer"
-                        onClick={() => handleEditTarget(item.product.id)}
-                      >
-                        <SquarePen className="w-4 h-4 text-foreground-500 cursor-pointer" />
-                      </button>
+                  <td className="text-end border-r-1 border-foreground-200 pr-2">{formatNumberWithCommas(item.product.delivery_fee)}원</td>
+                  <td className="text-end border-r-1 border-foreground-200 pr-2">{calculateDeliveryFee({ product: { ...item.product, quantity: item.quantity } })}원</td>
+                  <td>
+                    <div className="mx-auto w-fit flex justify-center">
                       <button
                         className="cursor-pointer"
                         onClick={() => handleDelete(item.product.id)}
@@ -123,37 +111,22 @@ function QuantityTableData({
   inventory,
   quantity,
   setInventory,
-  setSelectedEditTarget,
-  selectedEditTarget,
   productId,
 }: {
   inventory: Array<{ product: ProductItemType; quantity: number }>
   quantity: number | null
   setInventory: (inventory: Array<{ product: ProductItemType; quantity: number }>) => void
-  setSelectedEditTarget: (id: number | null) => void
-  selectedEditTarget: number | null
   productId: number
 }) {
   const [value, setValue] = useState(quantity ?? 0)
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
+  useEffect(() => {
+    const findIndexToInventory = inventory.findIndex((item) => item.product.id === productId)
+    const newInventory = [...inventory]
+    newInventory[findIndexToInventory].quantity = value
 
-      // productId를 직접 사용
-      const newInventory = inventory.map((item) => {
-        return item.product.id === selectedEditTarget ? { ...item, quantity: value } : item
-      })
-
-      setInventory(newInventory)
-      toast.success(<QuantityChangedToast />)
-      setSelectedEditTarget(null)
-    }
-  }
-
-  if (selectedEditTarget === null || selectedEditTarget !== productId) {
-    return <td className="text-center border-r-1 border-foreground-200">{quantity}</td>
-  }
+    setInventory(newInventory)
+  }, [value])
 
   return (
     <td className="text-center border-r-1 border-foreground-200">
@@ -176,9 +149,12 @@ function QuantityTableData({
           minValue={1}
           maxValue={999}
           value={value}
-          onKeyDown={handleKeyPress}
-          // @ts-ignore
-          onChange={(e) => setValue(Number(e.target.value))}
+          onChange={(e) => {
+            console.log(productId);
+            alert(productId);
+            // @ts-ignore
+            setValue(Number(e.target.value));
+          }}
           classNames={{ base: 'w-fit', inputWrapper: 'h-5 w-12 border-1 shadow-none' }}
         />
         <Button
@@ -204,8 +180,8 @@ function ExpectedPriceSection({
 
   // 총 상품금액
   const totalPrice = inventory.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
-  // 배송비
-  const totalDeliveryFee = inventory.reduce((acc, item) => acc + item.product.delivery_fee, 0)
+  // 총 배송비
+  const totalDeliveryFee = calculateTotalDeliveryFee({ inventory })
   // 예상 결제금액
   const totalExpectedPrice = totalPrice + totalDeliveryFee
 
@@ -220,7 +196,7 @@ function ExpectedPriceSection({
             <span>{formatNumberWithCommas(totalPrice)}원</span>
           </div>
           <div className="flex justify-between">
-            <span>배송비</span>
+            <span>총 배송비</span>
             <span>{formatNumberWithCommas(totalDeliveryFee)}원</span>
           </div>
           <div className="w-full h-[1px] bg-foreground-200 my-2"></div>

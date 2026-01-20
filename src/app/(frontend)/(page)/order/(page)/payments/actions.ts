@@ -126,22 +126,8 @@ export async function createBankTransferOrder(bankTransferDto: BankTransferDto) 
       })
     }
 
-    // // 구매 적립금 적립 -> payload Hooks에서 처리
-    // if (pointAmount > 0) {
-    //   userPoint += pointAmount
-
-    //   await payload.create({
-    //     collection: 'point-history',
-    //     data: {
-    //       user: Number(userId),
-    //       type: 'earn',
-    //       reason: `상품구매적립 - 상품주문번호 : ${shopOrderNo}`,
-    //       balanceAfter: userPoint,
-    //     },
-    //   })
-    // }
-
     const roundedUserChangePoint = Math.floor(userPoint)
+
     if (roundedUserChangePoint) {
       await payload.update({
         collection: 'users',
@@ -206,6 +192,7 @@ const createOrderList = async ({
           cashback_rate: true,
           delivery_fee: true,
           price: true,
+          is_cost_per_unit: true,
         },
       })
 
@@ -216,10 +203,10 @@ const createOrderList = async ({
           user: Number(userId),
           product: order.id,
           quantity: order.quantity,
-          price: product.price,
+          price: product.price * order.quantity,
           cashback_rate: product.cashback_rate,
           cashback_rate_for_bank: product.cashback_rate_for_bank,
-          delivery_fee: product.delivery_fee,
+          delivery_fee: product.is_cost_per_unit ? (product.delivery_fee * order.quantity) : product.delivery_fee,
           orderCreatedAt: moment.tz('Asia/Seoul').toISOString(),
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,

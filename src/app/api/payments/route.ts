@@ -219,7 +219,7 @@ const createOrderList = async ({
   transactionID: string
 }) => {
   let pointAmount = 0
-  
+
   // 먼저 모든 제품 정보를 가져와서 최대 환불 가능 포인트 계산
   const productsWithMaxRefund = await Promise.all(
     orderList.map(async (order: any) => {
@@ -231,11 +231,12 @@ const createOrderList = async ({
           price: true,
           delivery_fee: true,
           cashback_rate_for_bank: true,
+          is_cost_per_unit: true,
         },
       })
-      
-      const maxRefund = product.price * order.quantity + product.delivery_fee
-      
+
+      const maxRefund = product.is_cost_per_unit ? product.price * order.quantity + (product.delivery_fee * order.quantity) : product.price * order.quantity + product.delivery_fee
+
       return {
         order,
         product,
@@ -248,7 +249,7 @@ const createOrderList = async ({
   // 각 제품에 환불 포인트 분배 (균등 분배를 기본으로 하되, 최대 환불 금액 제한)
   const refundPointArr: number[] = []
   const baseRefundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
-  
+
   // 1단계: 각 제품에 균등 분배 시도 (maxRefund 제한 적용)
   for (let i = 0; i < productsWithMaxRefund.length; i++) {
     const { maxRefund } = productsWithMaxRefund[i]
@@ -256,17 +257,17 @@ const createOrderList = async ({
     const allocatedPoint = Math.min(baseRefundPoint, maxRefund)
     refundPointArr.push(allocatedPoint)
   }
-  
+
   // 2단계: 할당된 포인트 총합 계산
   const totalAllocated = refundPointArr.reduce((sum, point) => sum + point, 0)
   let remainingPoint = usedPoint - totalAllocated
-  
+
   // 3단계: 남은 포인트를 순차적으로 재분배 (maxRefund를 초과하지 않도록)
   for (let i = 0; i < productsWithMaxRefund.length && remainingPoint > 0; i++) {
     const { maxRefund } = productsWithMaxRefund[i]
     const currentAllocated = refundPointArr[i]
     const availableSpace = maxRefund - currentAllocated
-    
+
     if (availableSpace > 0) {
       const additionalPoint = Math.min(remainingPoint, availableSpace)
       refundPointArr[i] += additionalPoint
@@ -294,7 +295,7 @@ const createOrderList = async ({
           price: product.price,
           cashback_rate: product.cashback_rate,
           cashback_rate_for_bank: product.cashback_rate_for_bank,
-          delivery_fee: product.delivery_fee,
+          delivery_fee: product.is_cost_per_unit ? (product.delivery_fee * order.quantity) : product.delivery_fee,
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: approveData.pgCno,

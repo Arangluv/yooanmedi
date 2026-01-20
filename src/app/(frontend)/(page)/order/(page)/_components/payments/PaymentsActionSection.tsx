@@ -12,10 +12,10 @@ import {
   InventoryType,
   OrderContextUserType,
   PaymentRegisterDto,
-  ProductItemType,
 } from '@order/_type'
 import { useRouter } from 'next/navigation'
 import PaymentsBankTransferButton from './PaymentsBankTransferButton'
+import { calculateTotalDeliveryFee } from '@lib/product/utils'
 
 export default function PaymentsActionSection({ userRequest }: { userRequest: string }) {
   const router = useRouter()
@@ -25,7 +25,7 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
   const [totalPaymentAmount, setTotalPaymentAmount] = useState(0)
 
   const totalPrice = inventory.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
-  const totalDeliveryFee = inventory.reduce((acc, item) => acc + item.product.delivery_fee, 0)
+  const totalDeliveryFee = calculateTotalDeliveryFee({ inventory })
   const totalExpectedPrice = totalPrice + totalDeliveryFee
 
   useEffect(() => {
@@ -41,11 +41,11 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
 
         router.push(
           '/order/payments/finish?status=success&amount=' +
-            amount +
-            '&approvalDate=' +
-            approvalDate +
-            '&shopOrderNo=' +
-            shopOrderNo,
+          amount +
+          '&approvalDate=' +
+          approvalDate +
+          '&shopOrderNo=' +
+          shopOrderNo,
         )
         router.refresh()
       } else if (event.data.status === 'error') {

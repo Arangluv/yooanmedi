@@ -93,6 +93,7 @@ function SelectedProductDetailSection({
     cashback_rate,
     cashback_rate_for_bank,
     returnable,
+    is_cost_per_unit,
   } = product
 
   return (
@@ -125,7 +126,7 @@ function SelectedProductDetailSection({
           <ProductDetailSection name="가격" value={`${formatNumberWithCommas(price)}원`} />
           <ProductDetailSection name="규격" value={specification ?? ''} />
           <ProductDetailSection name="보험코드" value={insurance_code ?? ''} />
-          <ProductDetailSection name="배송비" value={`${formatNumberWithCommas(delivery_fee)}원`} />
+          <ProductDeliveryFeeSection name="배송비" value={`${formatNumberWithCommas(delivery_fee)}원`} is_cost_per_unit={is_cost_per_unit} />
           <ProductDetailSection
             name="재고"
             value={stock > 0 ? '재고 있음' : '재고 없음'}
@@ -158,6 +159,18 @@ function ProductDetailEmptySection({ name }: { name: string }) {
   return (
     <div className="flex gap-2 items-start text-sm text-foreground-600">
       <span className="text-foreground-700 block w-[100px] flex-shrink-0">{name}</span>
+    </div>
+  )
+}
+
+function ProductDeliveryFeeSection({ name, value, is_cost_per_unit }: { name: string, value: string, is_cost_per_unit: boolean }) {
+  return (
+    <div className="flex gap-2 items-start text-sm text-foreground-600">
+      <span className="text-foreground-700 block w-[100px] flex-shrink-0">{name}</span>
+      <span className="text-foreground-600 flex items-center gap-1">
+        <span>{value}</span>
+        <span className="text-sm font-bold text-brandWeek">{is_cost_per_unit ? '(수량 당)' : ''}</span>
+      </span>
     </div>
   )
 }
