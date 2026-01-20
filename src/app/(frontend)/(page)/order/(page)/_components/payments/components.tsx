@@ -121,7 +121,10 @@ function PaymentsListItem({ product, quantity }: { product: ProductItemType; qua
         <div className="flex gap-1 text-[13px] text-foreground-600">
           <span>수량 {quantity}개</span>
           <span>|</span>
-          <span>배송비 {formatNumberWithCommas(product.delivery_fee)}원</span>
+          <span className='flex items-center gap-1'>
+            <span>배송비 {formatNumberWithCommas(product.delivery_fee)}원</span>
+            <span className='text-[13px] font-bold text-brandWeek'>{product.is_cost_per_unit ? '(수량 당)' : ''}</span>
+          </span>
           <span>|</span>
           <span>{product.returnable ? '반품가능' : '반품불가'}</span>
         </div>

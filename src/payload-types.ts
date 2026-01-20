@@ -276,6 +276,10 @@ export interface Product {
   stock: number;
   delivery_fee: number;
   /**
+   * 수량 당 배송비 계산 여부를 선택해주세요 (체크 시 수량 당 배송비 계산)
+   */
+  is_cost_per_unit?: boolean | null;
+  /**
    * 반품가능여부를 선택해주세요 (체크 시 반품가능)
    */
   returnable?: boolean | null;
@@ -335,9 +339,9 @@ export interface Order {
   orderRequest?: string | null;
   refundUsedPointAmount?: number | null;
   price?: number | null;
+  delivery_fee?: number | null;
   cashback_rate?: number | null;
   cashback_rate_for_bank?: number | null;
-  delivery_fee?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -508,6 +512,7 @@ export interface ProductSelect<T extends boolean = true> {
   specification?: T;
   stock?: T;
   delivery_fee?: T;
+  is_cost_per_unit?: T;
   returnable?: T;
   is_best_product?: T;
   updatedAt?: T;
@@ -558,9 +563,9 @@ export interface OrderSelect<T extends boolean = true> {
   orderRequest?: T;
   refundUsedPointAmount?: T;
   price?: T;
+  delivery_fee?: T;
   cashback_rate?: T;
   cashback_rate_for_bank?: T;
-  delivery_fee?: T;
   updatedAt?: T;
   createdAt?: T;
 }

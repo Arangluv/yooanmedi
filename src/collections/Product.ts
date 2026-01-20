@@ -153,6 +153,15 @@ export const Product: CollectionConfig = {
       },
     },
     {
+      name: "is_cost_per_unit",
+      type: "checkbox",
+      label: "수량 당 배송비 계산 여부",
+      defaultValue: false,
+      admin: {
+        description: "수량 당 배송비 계산 여부를 선택해주세요 (체크 시 수량 당 배송비 계산)",
+      },
+    },
+    {
       name: 'returnable',
       type: 'checkbox',
       label: '반품가능여부',
