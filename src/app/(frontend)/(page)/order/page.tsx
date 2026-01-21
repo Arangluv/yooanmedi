@@ -46,12 +46,12 @@ export default async function OrderPage({
       delivery_fee: true,
       returnable: true,
       is_cost_per_unit: true,
+      is_free_delivery: true,
     },
     where: getProductCondition?.where,
     page: serverSearchParams.page ? parseInt(serverSearchParams.page) : 1,
     limit: 12,
   })
-
 
   return (
     <Wrapper>
