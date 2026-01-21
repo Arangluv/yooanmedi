@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   Button,
@@ -8,64 +8,65 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-} from '@heroui/react'
-import { Info } from 'lucide-react'
-import Link from 'next/link'
-import { createBankTransferOrder } from '../../payments/actions'
-import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+} from '@heroui/react';
+import { Info } from 'lucide-react';
+import Link from 'next/link';
+import { createBankTransferOrder } from '../../payments/actions';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 type BankTransferDto = {
-  amount: number
-  shopOrderNo: string
+  amount: number;
+  shopOrderNo: string;
   orderInfo: {
-    goodsName: string
+    goodsName: string;
     customerInfo: {
-      customerId: string
-    }
-  }
+      customerId: string;
+    };
+  };
   shopValueInfo: {
-    value1: string
-    value2: string
-    value3: string
-    value4: string
-    value5: 'bankTransfer'
-  }
-}
+    value1: string;
+    value2: string;
+    value3: string;
+    value4: string;
+    value5: 'bankTransfer';
+    value6: number; // 최소 주문금액
+  };
+};
 
 export default function PaymentsBankTransferButton({
   isDisabled,
   bankTransferDto,
 }: {
-  isDisabled: boolean
-  bankTransferDto: BankTransferDto
+  isDisabled: boolean;
+  bankTransferDto: BankTransferDto;
 }) {
-  const { isOpen, onOpen } = useDisclosure()
-  const router = useRouter()
+  const { isOpen, onOpen } = useDisclosure();
+  const router = useRouter();
   const { mutate: createBankTransferOrderMutation, isPending } = useMutation({
     mutationFn: () => createBankTransferOrder(bankTransferDto),
     onSuccess: (data) => {
       if (data.error) {
-        alert(data.message)
-        return
+        alert(data.message);
+        return;
       }
-      router.refresh()
-      onOpen()
+      router.refresh();
+      onOpen();
     },
     onError: () => {
-      alert('무통장 입금 주문을 생성하는데 실패했습니다. 다시 시도해주세요.')
+      alert('무통장 입금 주문을 생성하는데 실패했습니다. 다시 시도해주세요.');
     },
-  })
+  });
 
   const handleBankBtnClick = () => {
-    createBankTransferOrderMutation()
-  }
+    createBankTransferOrderMutation();
+  };
 
   return (
     <>
       <Button
         size="lg"
-        className="bg-brand text-white w-full"
+        className="bg-brand w-full text-white"
         radius="sm"
         isDisabled={isDisabled}
         isLoading={isPending}
@@ -77,7 +78,7 @@ export default function PaymentsBankTransferButton({
         isOpen={isOpen}
         onOpenChange={(open) => {
           if (!open) {
-            router.push('/order/list')
+            router.push('/order/list');
           }
         }}
         size="xl"
@@ -85,8 +86,8 @@ export default function PaymentsBankTransferButton({
         <ModalContent>
           <ModalHeader>무통장입금 결제 정보</ModalHeader>
           <ModalBody>
-            <div className="w-full flex flex-col gap-1">
-              <p className="text-green-600 font-bold">주문이 완료되었습니다</p>
+            <div className="flex w-full flex-col gap-1">
+              <p className="font-bold text-green-600">주문이 완료되었습니다</p>
               <p>
                 현재 주문은 처리 되었지만 <span className="text-brand font-bold">'결제대기'</span>{' '}
                 상태입니다
@@ -97,9 +98,9 @@ export default function PaymentsBankTransferButton({
               <p>
                 <span className="font-bold">적립금은 입금 확인 후 적립됩니다.</span>
               </p>
-              <div className="bg-neutral-50  flex flex-col my-4 p-4 rounded-md">
-                <span className="flex gap-1 items-center mb-3">
-                  <Info className="w-4 h-4" />
+              <div className="my-4 flex flex-col rounded-md bg-neutral-50 p-4">
+                <span className="mb-3 flex items-center gap-1">
+                  <Info className="h-4 w-4" />
                   <span>입금 계좌 정보</span>
                 </span>
                 <span className="mb-1 font-bold">예금주 : 유안메디팜</span>
@@ -111,7 +112,7 @@ export default function PaymentsBankTransferButton({
                 <Link
                   href="/order/list"
                   prefetch={false}
-                  className="text-brand font-bold hover:text-brandWeek transition-colors duration-300"
+                  className="text-brand hover:text-brandWeek font-bold transition-colors duration-300"
                 >
                   이곳
                 </Link>
@@ -123,5 +124,5 @@ export default function PaymentsBankTransferButton({
         </ModalContent>
       </Modal>
     </>
-  )
+  );
 }

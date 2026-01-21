@@ -100,11 +100,13 @@ export interface Config {
     popup: Popup;
     terms: Term;
     'privacy-policy': PrivacyPolicy;
+    'meta-setting': MetaSetting;
   };
   globalsSelect: {
     popup: PopupSelect<false> | PopupSelect<true>;
     terms: TermsSelect<false> | TermsSelect<true>;
     'privacy-policy': PrivacyPolicySelect<false> | PrivacyPolicySelect<true>;
+    'meta-setting': MetaSettingSelect<false> | MetaSettingSelect<true>;
   };
   locale: null;
   user: User & {
@@ -280,11 +282,15 @@ export interface Product {
    */
   is_cost_per_unit?: boolean | null;
   /**
+   * 최소 주문 금액 이상 시 배송비 무료 여부를 선택해주세요 (체크 시 최소 주문 금액 이상 시 배송비 무료)
+   */
+  is_free_delivery?: boolean | null;
+  /**
    * 반품가능여부를 선택해주세요 (체크 시 반품가능)
    */
   returnable?: boolean | null;
   /**
-   * 인기 제품 여부를 선택해주세요 (체크 시 인기 제품)
+   * 인기 제품 여부를 선택해주세요 (체크 시 주문 페이지 상단에 표시됩니다.)
    */
   is_best_product?: boolean | null;
   updatedAt: string;
@@ -513,6 +519,7 @@ export interface ProductSelect<T extends boolean = true> {
   stock?: T;
   delivery_fee?: T;
   is_cost_per_unit?: T;
+  is_free_delivery?: T;
   returnable?: T;
   is_best_product?: T;
   updatedAt?: T;
@@ -697,6 +704,19 @@ export interface PrivacyPolicy {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "meta-setting".
+ */
+export interface MetaSetting {
+  id: number;
+  /**
+   * 배송비 무료를 적용할 최소 주문 금액을 설정해주세요
+   */
+  min_order_price?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "popup_select".
  */
 export interface PopupSelect<T extends boolean = true> {
@@ -728,6 +748,16 @@ export interface TermsSelect<T extends boolean = true> {
  */
 export interface PrivacyPolicySelect<T extends boolean = true> {
   content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "meta-setting_select".
+ */
+export interface MetaSettingSelect<T extends boolean = true> {
+  min_order_price?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

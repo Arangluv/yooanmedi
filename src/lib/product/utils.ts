@@ -27,3 +27,13 @@ export const calculateDeliveryFee = ({ product }: { product: { delivery_fee: num
   return formatNumberWithCommas(delivery_fee);
 }
 
+export const calculateDeliveryFeeNumber = ({ product }: { product: { delivery_fee: number, is_cost_per_unit: boolean, quantity: number } }) => {
+  const { delivery_fee, is_cost_per_unit, quantity } = product;
+
+  if (is_cost_per_unit) {
+    return delivery_fee * quantity;
+  }
+
+  return delivery_fee;
+}
+

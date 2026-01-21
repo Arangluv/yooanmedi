@@ -9,7 +9,7 @@ export const Product: CollectionConfig = {
   lockDocuments: false,
   admin: {
     group: '홈페이지 컨텐츠',
-    defaultColumns: ['manufacturer','name', 'category', 'price', 'is_best_product', 'stock'],
+    defaultColumns: ['manufacturer', 'name', 'category', 'price', 'is_best_product', 'stock'],
     useAsTitle: 'name',
     components: {
       beforeListTable: ['@collections/components/product/ProductListTest'] as CustomComponent[],
@@ -153,34 +153,57 @@ export const Product: CollectionConfig = {
       },
     },
     {
-      name: "is_cost_per_unit",
-      type: "checkbox",
-      label: "수량 당 배송비 계산 여부",
-      defaultValue: false,
-      admin: {
-        description: "수량 당 배송비 계산 여부를 선택해주세요 (체크 시 수량 당 배송비 계산)",
-      },
-    },
-    {
-      name: 'returnable',
-      type: 'checkbox',
-      label: '반품가능여부',
-      defaultValue: false,
-      admin: {
-        description: '반품가능여부를 선택해주세요 (체크 시 반품가능)',
-      },
-    },
-    {
-      name: 'is_best_product',
-      type: 'checkbox',
-      label: '인기 제품 여부',
-      defaultValue: false,
-      admin: {
-        description: '인기 제품 여부를 선택해주세요 (체크 시 인기 제품)',
-        components: {
-          Cell: '@/collections/components/product/BestProductCell',
+      type: "row",
+      fields: [
+        {
+          name: "is_cost_per_unit",
+          type: "checkbox",
+          label: "수량 당 배송비 계산 여부",
+          defaultValue: false,
+          admin: {
+            width: '50%',
+            description: "수량 당 배송비 계산 여부를 선택해주세요 (체크 시 수량 당 배송비 계산)",
+          },
         },
-      },
+        {
+          name: "is_free_delivery",
+          type: "checkbox",
+          label: "최소 주문 금액 이상 시 배송비 무료 여부",
+          defaultValue: false,
+          admin: {
+            width: '50%',
+            description: "최소 주문 금액 이상 시 배송비 무료 여부를 선택해주세요 (체크 시 최소 주문 금액 이상 시 배송비 무료)",
+          },
+        },
+      ]
     },
+    {
+      type: "row",
+      fields: [
+        {
+          name: 'returnable',
+          type: 'checkbox',
+          label: '반품가능여부',
+          defaultValue: false,
+          admin: {
+            width: '50%',
+            description: '반품가능여부를 선택해주세요 (체크 시 반품가능)',
+          },
+        },
+        {
+          name: 'is_best_product',
+          type: 'checkbox',
+          label: '인기 제품 여부',
+          defaultValue: false,
+          admin: {
+            width: '50%',
+            description: `인기 제품 여부를 선택해주세요 (체크 시 주문 페이지 상단에 표시됩니다.)`,
+            components: {
+              Cell: '@/collections/components/product/BestProductCell',
+            },
+          },
+        },
+      ]
+    }
   ],
 }

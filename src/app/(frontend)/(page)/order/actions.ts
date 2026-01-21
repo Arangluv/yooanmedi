@@ -2,7 +2,7 @@
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { cookies } from 'next/headers'
-import { ProductItemType } from './_type'
+import { MetaSettingType, ProductItemType } from './_type'
 
 export async function getAuthUser() {
   const payload = await getPayload({ config: config })
@@ -49,6 +49,22 @@ export async function getAuthUser() {
   return {
     user: dto,
     message: 'success',
+  }
+}
+
+export async function getMinOrderPrice() {
+  const payload = await getPayload({ config: config })
+  try {
+    const metaSetting = await payload.findGlobal({
+      slug: 'meta-setting',
+      select: {
+        min_order_price: true,
+      }
+    }) as MetaSettingType
+
+    return metaSetting.min_order_price
+  } catch (error) {
+    return 0
   }
 }
 
