@@ -31,9 +31,9 @@ export async function updateOrderStatus(selectedData: SelectedData[]) {
     const userIds = selectedData[0].user;
   
     for (const data of selectedData) {
-        const {  product, quantity, price, cashback_rate_for_bank } = data
+        const { price, cashback_rate_for_bank } = data
         const userGetPoint = Math.floor(
-            (cashback_rate_for_bank * quantity * price) / 100,
+            (cashback_rate_for_bank * price) / 100,
         )
         totalUserGetPoint += userGetPoint
     }
