@@ -150,8 +150,6 @@ function QuantityTableData({
           maxValue={999}
           value={value}
           onChange={(e) => {
-            console.log(productId);
-            alert(productId);
             // @ts-ignore
             setValue(Number(e.target.value));
           }}
