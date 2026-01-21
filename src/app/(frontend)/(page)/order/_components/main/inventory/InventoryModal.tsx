@@ -10,20 +10,19 @@ import {
   Tooltip,
   NumberInput,
 } from '@heroui/react'
-import { InventoryContext, InventoryModalContext } from '@order/_context/order_context'
+import { InventoryContext, InventoryModalContext, MinOrderPriceContext } from '@order/_context/order_context'
 import { useContext, useEffect, useState } from 'react'
-import { Trash, SquarePen } from 'lucide-react'
+import { Trash, Info } from 'lucide-react'
 import { formatNumberWithCommas } from '@order/utils'
 import { ProductItemType } from '@order/_type'
 import { Plus, Minus } from 'lucide-react'
-import { toast } from 'sonner'
-import { QuantityChangedToast } from '../ToastComponents'
 import { useRouter } from 'next/navigation'
-import { calculateDeliveryFee, calculateTotalDeliveryFee } from '@lib/product/utils'
+import { calculateDeliveryFee, calculateDeliveryFeeNumber, calculateTotalDeliveryFee } from '@lib/product/utils'
 
 export default function InventoryModal() {
   const { isOpen, onOpenChange } = useContext(InventoryModalContext)
   const { inventory, setInventory } = useContext(InventoryContext)
+  const { minOrderPrice } = useContext(MinOrderPriceContext)
 
   const handleDelete = (id: number) => {
     const newInventory = inventory.filter((item) => item.product.id !== id)
@@ -100,7 +99,7 @@ export default function InventoryModal() {
           </table>
         </ModalBody>
         <ModalFooter className="flex flex-col">
-          <ExpectedPriceSection inventory={inventory} />
+          <ExpectedPriceSection inventory={inventory} minOrderPrice={minOrderPrice} />
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -169,10 +168,41 @@ function QuantityTableData({
   )
 }
 
-function ExpectedPriceSection({
+function DiscountAlertSection({
   inventory,
+  minOrderPrice,
 }: {
   inventory: Array<{ product: ProductItemType; quantity: number }>
+  minOrderPrice: number
+}) {
+  // 총 상품금액
+  const totalPrice = inventory.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+  // 할인된 배송비
+  const discountedDeliveryFee = inventory.reduce((acc, item) => {
+    if (item.product.is_free_delivery && totalPrice >= minOrderPrice) {
+      return acc + calculateDeliveryFeeNumber({ product: { ...item.product, quantity: item.quantity } })
+    }
+    return acc
+  }, 0)
+
+  if (totalPrice >= minOrderPrice && discountedDeliveryFee > 0) {
+    return (
+      <div className='mt-4 p-2 bg-brandWeek/10 flex items-center justify-end gap-1 rounded-md'>
+        <Info className='w-4 h-4 text-brand' />
+        <span className='text-sm text-brand'>주문금액 {`${formatNumberWithCommas(minOrderPrice)}`}원 이상 고객 혜택으로 배송비 할인이 적용되었어요</span>
+      </div>
+    )
+  }
+
+  return null
+}
+
+function ExpectedPriceSection({
+  inventory,
+  minOrderPrice,
+}: {
+  inventory: Array<{ product: ProductItemType; quantity: number }>
+  minOrderPrice: number
 }) {
   const router = useRouter()
 
@@ -180,12 +210,21 @@ function ExpectedPriceSection({
   const totalPrice = inventory.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   // 총 배송비
   const totalDeliveryFee = calculateTotalDeliveryFee({ inventory })
+  // 할인된 배송비
+  const discountedDeliveryFee = inventory.reduce((acc, item) => {
+    if (item.product.is_free_delivery && totalPrice >= minOrderPrice) {
+      return acc + calculateDeliveryFeeNumber({ product: { ...item.product, quantity: item.quantity } })
+    }
+    return acc
+  }, 0)
+
   // 예상 결제금액
-  const totalExpectedPrice = totalPrice + totalDeliveryFee
+  const totalExpectedPrice = totalPrice + totalDeliveryFee - discountedDeliveryFee
 
   return (
     <div className="flex flex-col">
       <div className="w-full h-[1px] bg-foreground-200"></div>
+      <DiscountAlertSection inventory={inventory} minOrderPrice={minOrderPrice} />
       <div className="flex flex-col gap-6 bg-neutral-50 p-4 my-4">
         <span className="text-lg font-bold">주문 예상금액</span>
         <div className="flex flex-col gap-2">
@@ -197,9 +236,14 @@ function ExpectedPriceSection({
             <span>총 배송비</span>
             <span>{formatNumberWithCommas(totalDeliveryFee)}원</span>
           </div>
+          {/* 할인된 배송비 */}
+          <div className="flex justify-between">
+            <span className='text-brand'>할인된 배송비</span>
+            <span className='text-brand'>-{formatNumberWithCommas(discountedDeliveryFee)}원</span>
+          </div>
           <div className="w-full h-[1px] bg-foreground-200 my-2"></div>
           <div className="flex justify-between">
-            <span className="font-bold">예상 결제금액</span>
+            <span className="font-bold">총 결제금액</span>
             <span className="font-bold text-brandWeek">
               {formatNumberWithCommas(totalExpectedPrice)}원
             </span>

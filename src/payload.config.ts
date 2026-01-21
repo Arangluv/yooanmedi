@@ -19,6 +19,7 @@ import { ProductCategory } from './collections/ProductCategory'
 import { PointHistory } from './collections/PointHistory'
 import { OrderStatus } from './collections/OrderStatus'
 import { Order } from './collections/Order'
+import { MetaSetting } from './collections/MetaSetting'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -41,7 +42,7 @@ export default buildConfig({
   },
 
   collections: [Users, Image, Files, Product, ProductCategory, PointHistory, OrderStatus, Order],
-  globals: [PopupSetting, Terms, PrivacyPolicy],
+  globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

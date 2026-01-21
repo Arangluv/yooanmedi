@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { getAuthUser } from './actions'
+import { getAuthUser, getMinOrderPrice } from './actions'
 import { TriangleAlert } from 'lucide-react'
 import {
   InventoryModalProvider,
   InventoryProvider,
+  MinOrderPriceProvider,
   OrderUserInfoProvider,
   ProductInfoProvider,
 } from './_context/order_context'
@@ -11,6 +12,7 @@ import { OrderContextUserType } from './_type'
 
 export default async function OrderLayout({ children }: { children: React.ReactNode }) {
   const { user, message } = await getAuthUser()
+  const minOrderPrice = await getMinOrderPrice()
 
   if (!user) {
     return (
@@ -34,7 +36,11 @@ export default async function OrderLayout({ children }: { children: React.ReactN
     <OrderUserInfoProvider initialUser={user as OrderContextUserType}>
       <InventoryModalProvider>
         <ProductInfoProvider>
-          <InventoryProvider>{children}</InventoryProvider>
+          <InventoryProvider>
+            <MinOrderPriceProvider initialMinOrderPrice={minOrderPrice}>
+              {children}
+            </MinOrderPriceProvider>
+          </InventoryProvider>
         </ProductInfoProvider>
       </InventoryModalProvider>
     </OrderUserInfoProvider>

@@ -34,7 +34,7 @@ type OrderContextUserType = {
 // 유저 정보 컨텍스트
 export const OrderUserInfoContext = createContext<OrderContextUserType>({
   user: null,
-  setUser: () => {},
+  setUser: () => { },
 })
 
 export const OrderUserInfoProvider = ({
@@ -71,8 +71,8 @@ type InventoryModalContextType = {
 
 export const InventoryModalContext = createContext<InventoryModalContextType>({
   isOpen: false,
-  onOpen: () => {},
-  onOpenChange: () => {},
+  onOpen: () => { },
+  onOpenChange: () => { },
 })
 
 export const InventoryModalProvider = ({ children }: { children: React.ReactNode }) => {
@@ -94,7 +94,7 @@ type ProductInfoContextType = {
 
 export const ProductInfoContext = createContext<ProductInfoContextType>({
   clickedProduct: null,
-  setClickedProduct: () => {},
+  setClickedProduct: () => { },
 })
 
 export const ProductInfoProvider = ({ children }: { children: React.ReactNode }) => {
@@ -109,10 +109,9 @@ export const ProductInfoProvider = ({ children }: { children: React.ReactNode })
 }
 
 // 장바구니
-
 export const InventoryContext = createContext<InventoryType>({
   inventory: [],
-  setInventory: () => {},
+  setInventory: () => { },
 })
 
 export const InventoryProvider = ({ children }: { children: React.ReactNode }) => {
@@ -124,3 +123,34 @@ export const InventoryProvider = ({ children }: { children: React.ReactNode }) =
     </InventoryContext.Provider>
   )
 }
+
+type MinOrderPriceContextType = {
+  minOrderPrice: number
+  setMinOrderPrice: (minOrderPrice: number) => void
+}
+
+// 최소 주문 금액
+export const MinOrderPriceContext = createContext<MinOrderPriceContextType>({
+  minOrderPrice: 0,
+  setMinOrderPrice: () => { },
+})
+
+export const MinOrderPriceProvider = ({ initialMinOrderPrice, children }: { initialMinOrderPrice: number, children: React.ReactNode }) => {
+  const [minOrderPrice, setMinOrderPrice] = useState<MinOrderPriceContextType['minOrderPrice']>(0)
+
+  useEffect(() => {
+    if (initialMinOrderPrice) {
+      setMinOrderPrice(initialMinOrderPrice)
+    } else {
+      setMinOrderPrice(0)
+    }
+  }, [initialMinOrderPrice])
+
+  return (
+    <MinOrderPriceContext.Provider value={{ minOrderPrice, setMinOrderPrice }}>
+      {children}
+    </MinOrderPriceContext.Provider>
+  )
+}
+
+

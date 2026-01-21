@@ -1,50 +1,60 @@
-import { NextRequest, NextResponse } from 'next/server'
-import moment from 'moment-timezone'
-import { generateRandomShopTransactionId } from '@order/utils'
-import { BasePayload, getPayload } from 'payload'
-import config from '@/payload.config'
+import { NextRequest, NextResponse } from 'next/server';
+import moment from 'moment-timezone';
+import { generateRandomShopTransactionId } from '@order/utils';
+import { BasePayload, getPayload } from 'payload';
+import config from '@/payload.config';
+import { Product } from '@/payload-types';
 
 type PaymentResponseType = {
-  resCd: string
-  authorizationId: string
-  shopOrderNo: string
-  shopValue1: string
-  shopValue2: string
-  shopValue3?: string
-  shopValue4?: string
-  shopValue5?: string
-  shopValue6?: string
-}
+  resCd: string;
+  authorizationId: string;
+  shopOrderNo: string;
+  shopValue1: string;
+  shopValue2: string;
+  shopValue3?: string;
+  shopValue4?: string;
+  shopValue5?: string;
+  shopValue6?: string;
+};
 
 type PaymentApproveRequestDto = {
-  mallId: string
+  mallId: string;
   // 중복되지 않는 고유값, 요청시마다 생성
-  shopTransactionId: string
-  authorizationId: string
-  shopOrderNo: string // 결제 등록시 생성한 주문번호 그대로 사용
-  approvalReqDate: string // 결제 등록시 생성한 주문번호 그대로 사용
-}
+  shopTransactionId: string;
+  authorizationId: string;
+  shopOrderNo: string; // 결제 등록시 생성한 주문번호 그대로 사용
+  approvalReqDate: string; // 결제 등록시 생성한 주문번호 그대로 사용
+};
 
 type PaymentApproveResponseDto = {
-  resCd: string
-  pgCno: string
-  shopOrderNo: string
-  amount: number
+  resCd: string;
+  pgCno: string;
+  shopOrderNo: string;
+  amount: number;
   paymentInfo: {
-    approvalDate: string
-  }
-}
+    approvalDate: string;
+  };
+};
+
+type OrderListType = {
+  product: {
+    id: number;
+    price: number;
+  };
+  quantity: number;
+};
+
 export async function POST(request: NextRequest) {
-  const payload = await getPayload({ config: config })
-  const dbTransactionID = await payload.db.beginTransaction()
+  const payload = await getPayload({ config: config });
+  const dbTransactionID = await payload.db.beginTransaction();
 
   try {
-    let data = {} as PaymentResponseType
-    const formData = await request.formData()
+    let data = {} as PaymentResponseType;
+    const formData = await request.formData();
     formData.forEach((value: any, key: string) => {
       // @ts-ignore
-      data[key as unknown as string] = value
-    })
+      data[key as unknown as string] = value;
+    });
 
     if (data.resCd === '0000') {
       // shopValue1: 주문요청사항
@@ -61,22 +71,23 @@ export async function POST(request: NextRequest) {
         shopValue3,
         shopValue4,
         shopValue5,
-      } = data
-      const userOrderRequest = shopValue1 as string
-      const orderList = JSON.parse(shopValue2 as string)
-      const usedPoint = shopValue3 as string
-      const userId = shopValue4 as string
+        shopValue6, // 최소 주문금액
+      } = data;
+      const userOrderRequest = shopValue1 as string;
+      const orderList = JSON.parse(shopValue2 as string) as OrderListType[];
+      const usedPoint = shopValue3 as string;
+      const userId = shopValue4 as string;
 
       const user = await payload.findByID({
         collection: 'users',
         id: Number(userId),
-      })
+      });
 
       if (!user) {
-        throw new Error('유저 정보 없음', { cause: { code: 'USER_NOT_FOUND' } })
+        throw new Error('유저 정보 없음', { cause: { code: 'USER_NOT_FOUND' } });
       }
 
-      const approveData = await approvePayment({ authorizationId, shopOrderNo })
+      const approveData = await approvePayment({ authorizationId, shopOrderNo });
 
       // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
       const pointAmount = await createOrderList({
@@ -88,12 +99,13 @@ export async function POST(request: NextRequest) {
         usedPoint: Number(usedPoint),
         paymentsMethod: shopValue5 as 'creditCard' | 'bankTransfer',
         transactionID: dbTransactionID as string,
-      })
+        minOrderPrice: Number(shopValue6),
+      });
 
-      let userPoint = Number(user.point ?? 0)
+      let userPoint = Number(user.point ?? 0);
       // 사용 적립금이 있다면 적립금 차감
       if (Number(usedPoint) > 0) {
-        userPoint -= Number(usedPoint)
+        userPoint -= Number(usedPoint);
 
         await payload.create({
           collection: 'point-history',
@@ -104,12 +116,12 @@ export async function POST(request: NextRequest) {
             balanceAfter: userPoint,
           },
           req: { transactionID: dbTransactionID as string },
-        })
+        });
       }
 
       // 구매 적립금 적립
       if (pointAmount > 0) {
-        userPoint += pointAmount
+        userPoint += pointAmount;
 
         await payload.create({
           collection: 'point-history',
@@ -120,10 +132,10 @@ export async function POST(request: NextRequest) {
             balanceAfter: userPoint,
           },
           req: { transactionID: dbTransactionID as string },
-        })
+        });
       }
 
-      const roundedUserChangePoint = Math.floor(userPoint)
+      const roundedUserChangePoint = Math.floor(userPoint);
       if (roundedUserChangePoint) {
         await payload.update({
           collection: 'users',
@@ -132,33 +144,33 @@ export async function POST(request: NextRequest) {
             point: roundedUserChangePoint,
           },
           req: { transactionID: dbTransactionID as string },
-        })
+        });
       }
       // // 리다이렉트
-      const url = request.nextUrl.clone()
-      url.pathname = '/order/payments/result'
-      url.searchParams.set('status', 'success')
-      url.searchParams.set('approvalDate', approveData.paymentInfo.approvalDate)
-      url.searchParams.set('amount', approveData?.amount.toString())
-      url.searchParams.set('shopOrderNo', approveData.shopOrderNo)
+      const url = request.nextUrl.clone();
+      url.pathname = '/order/payments/result';
+      url.searchParams.set('status', 'success');
+      url.searchParams.set('approvalDate', approveData.paymentInfo.approvalDate);
+      url.searchParams.set('amount', approveData?.amount.toString());
+      url.searchParams.set('shopOrderNo', approveData.shopOrderNo);
 
       // 트랜잭션 커밋
-      await payload.db.commitTransaction(dbTransactionID as string)
-      return NextResponse.redirect(url, { status: 302 })
+      await payload.db.commitTransaction(dbTransactionID as string);
+      return NextResponse.redirect(url, { status: 302 });
     } else {
-      throw new Error('결제 실패', { cause: { code: data.resCd } })
+      throw new Error('결제 실패', { cause: { code: data.resCd } });
     }
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     // payload에서 에러가 터지면 여기서도 이제 주문취소를 해야함
-    const url = request.nextUrl.clone()
-    url.pathname = '/order/payments/result'
-    url.searchParams.set('status', 'error')
-    url.searchParams.set('code', error.cause?.code || 'unknown')
+    const url = request.nextUrl.clone();
+    url.pathname = '/order/payments/result';
+    url.searchParams.set('status', 'error');
+    url.searchParams.set('code', error.cause?.code || 'unknown');
 
     // 트랜잭션 롤백
-    await payload.db.rollbackTransaction(dbTransactionID as string)
-    return NextResponse.redirect(url, { status: 302 })
+    await payload.db.rollbackTransaction(dbTransactionID as string);
+    return NextResponse.redirect(url, { status: 302 });
   }
 }
 
@@ -167,17 +179,17 @@ const approvePayment = async ({
   authorizationId,
   shopOrderNo,
 }: {
-  authorizationId: string
-  shopOrderNo: string
+  authorizationId: string;
+  shopOrderNo: string;
 }) => {
-  const approvalReqDate = moment().format('YYYYMMDD')
+  const approvalReqDate = moment().format('YYYYMMDD');
   const dto: PaymentApproveRequestDto = {
     mallId: process.env.PAYMENTS_MID as string,
     shopTransactionId: generateRandomShopTransactionId(),
     authorizationId: authorizationId,
     shopOrderNo: shopOrderNo,
     approvalReqDate: approvalReqDate,
-  }
+  };
 
   const res = await fetch(process.env.PAYMENTS_APPROVAL_URL as string, {
     method: 'POST',
@@ -185,18 +197,17 @@ const approvePayment = async ({
     headers: {
       'Content-Type': 'application/json',
     },
-  })
+  });
 
   if (!res.ok) {
-    const errorData = await res.json()
-    throw new Error('결제 승인요청 실패', { cause: { code: errorData.resCd } })
+    const errorData = await res.json();
+    throw new Error('결제 승인요청 실패', { cause: { code: errorData.resCd } });
   }
 
-  const approveData = (await res.json()) as PaymentApproveResponseDto
+  const approveData = (await res.json()) as PaymentApproveResponseDto;
 
-  return approveData
-}
-
+  return approveData;
+};
 
 const createOrderList = async ({
   payload,
@@ -207,94 +218,105 @@ const createOrderList = async ({
   usedPoint,
   paymentsMethod,
   transactionID,
+  minOrderPrice,
 }: {
-  payload: BasePayload
-  orderList: any[]
-  userId: string
-  userOrderRequest: string
-  approveData: PaymentApproveResponseDto
-  usedPoint: number
-  paymentsMethod: 'creditCard' | 'bankTransfer'
-  transactionID: string
+  payload: BasePayload;
+  orderList: OrderListType[];
+  userId: string;
+  userOrderRequest: string;
+  approveData: PaymentApproveResponseDto;
+  usedPoint: number;
+  paymentsMethod: 'creditCard' | 'bankTransfer';
+  transactionID: string;
+  minOrderPrice: number;
 }) => {
-  let pointAmount = 0
+  let pointAmount = 0;
+  let freeDeliveryFlg = false;
+  const totalPrice = orderList.reduce(
+    (acc, order) => acc + order.product.price * order.quantity,
+    0,
+  );
+
+  if (totalPrice >= minOrderPrice) {
+    freeDeliveryFlg = true;
+  }
 
   // 먼저 모든 제품 정보를 가져와서 최대 환불 가능 포인트 계산
   const productsWithMaxRefund = await Promise.all(
     orderList.map(async (order: any) => {
       const product = await payload.findByID({
         collection: 'product',
-        id: order.id,
+        id: order.product.id,
         select: {
           cashback_rate: true,
           price: true,
           delivery_fee: true,
           cashback_rate_for_bank: true,
           is_cost_per_unit: true,
+          is_free_delivery: true,
         },
-      })
+      });
 
-      const maxRefund = product.is_cost_per_unit ? product.price * order.quantity + (product.delivery_fee * order.quantity) : product.price * order.quantity + product.delivery_fee
+      let deliveryFee = calculateDeliveryFee({ product, order, freeDeliveryFlg });
+
+      const maxRefund = product.price * order.quantity + deliveryFee;
 
       return {
         order,
         product,
         maxRefund,
-      }
+      };
     }),
-  )
-
+  );
 
   // 각 제품에 환불 포인트 분배 (균등 분배를 기본으로 하되, 최대 환불 금액 제한)
-  const refundPointArr: number[] = []
-  const baseRefundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0
+  const refundPointArr: number[] = [];
+  const baseRefundPoint = usedPoint > 0 ? Math.floor(usedPoint / orderList.length) : 0;
 
   // 1단계: 각 제품에 균등 분배 시도 (maxRefund 제한 적용)
   for (let i = 0; i < productsWithMaxRefund.length; i++) {
-    const { maxRefund } = productsWithMaxRefund[i]
+    const { maxRefund } = productsWithMaxRefund[i];
     // 균등 분배 금액과 최대 환불 금액 중 작은 값으로 할당
-    const allocatedPoint = Math.min(baseRefundPoint, maxRefund)
-    refundPointArr.push(allocatedPoint)
+    const allocatedPoint = Math.min(baseRefundPoint, maxRefund);
+    refundPointArr.push(allocatedPoint);
   }
 
   // 2단계: 할당된 포인트 총합 계산
-  const totalAllocated = refundPointArr.reduce((sum, point) => sum + point, 0)
-  let remainingPoint = usedPoint - totalAllocated
+  const totalAllocated = refundPointArr.reduce((sum, point) => sum + point, 0);
+  let remainingPoint = usedPoint - totalAllocated;
 
   // 3단계: 남은 포인트를 순차적으로 재분배 (maxRefund를 초과하지 않도록)
   for (let i = 0; i < productsWithMaxRefund.length && remainingPoint > 0; i++) {
-    const { maxRefund } = productsWithMaxRefund[i]
-    const currentAllocated = refundPointArr[i]
-    const availableSpace = maxRefund - currentAllocated
+    const { maxRefund } = productsWithMaxRefund[i];
+    const currentAllocated = refundPointArr[i];
+    const availableSpace = maxRefund - currentAllocated;
 
     if (availableSpace > 0) {
-      const additionalPoint = Math.min(remainingPoint, availableSpace)
-      refundPointArr[i] += additionalPoint
-      remainingPoint -= additionalPoint
+      const additionalPoint = Math.min(remainingPoint, availableSpace);
+      refundPointArr[i] += additionalPoint;
+      remainingPoint -= additionalPoint;
     }
   }
-
 
   // 주문 생성
   await Promise.all(
     productsWithMaxRefund.map(async ({ order, product }, idx: number) => {
-      pointAmount += (product.cashback_rate * (product.price * order.quantity)) / 100
+      pointAmount += (product.cashback_rate * (product.price * order.quantity)) / 100;
+      let deliveryFee = calculateDeliveryFee({ product, order, freeDeliveryFlg });
 
       return await payload.create({
         collection: 'order',
         data: {
           user: Number(userId),
-          product: order.id,
+          product: order.product.id,
           quantity: order.quantity,
-          orderCreatedAt: moment.tz(
-            approveData.paymentInfo.approvalDate,
-            'YYYYMMDDHHmmss',
-            'Asia/Seoul',
-          ).toISOString(),
+          orderCreatedAt: moment
+            .tz(approveData.paymentInfo.approvalDate, 'YYYYMMDDHHmmss', 'Asia/Seoul')
+            .toISOString(),
           price: product.price,
           cashback_rate: product.cashback_rate,
           cashback_rate_for_bank: product.cashback_rate_for_bank,
-          delivery_fee: product.is_cost_per_unit ? (product.delivery_fee * order.quantity) : product.delivery_fee,
+          delivery_fee: deliveryFee,
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
           pgCno: approveData.pgCno,
@@ -302,9 +324,41 @@ const createOrderList = async ({
           orderRequest: userOrderRequest,
         },
         req: { transactionID: transactionID as string },
-      })
+      });
     }),
-  )
+  );
 
-  return Math.floor(pointAmount)
+  return Math.floor(pointAmount);
+};
+
+function calculateDeliveryFee({
+  product,
+  order,
+  freeDeliveryFlg,
+}: {
+  product: {
+    id: number;
+    price: number;
+    delivery_fee: number;
+    is_cost_per_unit?: boolean | null;
+    is_free_delivery?: boolean | null;
+  };
+  order: OrderListType;
+  freeDeliveryFlg: boolean;
+}) {
+  let deliveryFee = 0;
+
+  if (freeDeliveryFlg) {
+    if (product.is_free_delivery) {
+      deliveryFee = 0;
+    } else {
+      if (product.is_cost_per_unit) {
+        deliveryFee = product.delivery_fee * order.quantity;
+      } else {
+        deliveryFee = product.delivery_fee;
+      }
+    }
+  }
+
+  return deliveryFee;
 }
