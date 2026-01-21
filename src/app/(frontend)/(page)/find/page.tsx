@@ -29,7 +29,6 @@ export default async function FindPage({
         </div>
         <div className="flex flex-col w-full rounded-2xl py-12 px-8 gap-6">
           <FindTabs />
-          {/* alert */}
           <div className="flex items-center gap-4 w-full p-4 bg-neutral-50 rounded-md mb-4">
             <Info className="w-5 h-5 text-foreground-500" />
             <div className="flex flex-col gap-1">

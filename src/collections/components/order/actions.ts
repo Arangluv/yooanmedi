@@ -29,52 +29,52 @@ export async function updateOrderStatus(selectedData: SelectedData[]) {
   try {
     let totalUserGetPoint = 0
     const userIds = selectedData[0].user;
-  
+
     for (const data of selectedData) {
-        const {  product, quantity, price, cashback_rate_for_bank } = data
-        const userGetPoint = Math.floor(
-            (cashback_rate_for_bank * quantity * price) / 100,
-        )
-        totalUserGetPoint += userGetPoint
+      const { price, cashback_rate_for_bank } = data
+      const userGetPoint = Math.floor(
+        (cashback_rate_for_bank * price) / 100,
+      )
+      totalUserGetPoint += userGetPoint
     }
-  
+
     const findUser = await payload.findByID({
-        collection: 'users',
-        id: userIds,
+      collection: 'users',
+      id: userIds,
     })
 
     await Promise.all([
-        ...selectedData.map(async (data) => {
-            return payload.update({
-                collection: 'order',
-                id: data.id,
-                data: {
-                    orderStatus: 1,
-                },
-            })
-        }),
+      ...selectedData.map(async (data) => {
+        return payload.update({
+          collection: 'order',
+          id: data.id,
+          data: {
+            orderStatus: 1,
+          },
+        })
+      }),
     ])
-  
+
     await payload.update({
-        collection: 'users',
-        id: userIds,
-        data: {
-            point: Number(findUser.point ?? 0) + totalUserGetPoint,
-        },
+      collection: 'users',
+      id: userIds,
+      data: {
+        point: Number(findUser.point ?? 0) + totalUserGetPoint,
+      },
     })
     await payload.create({
-        collection: 'point-history',
-        data: {
-            user: userIds,
-            type: 'earn',
-            reason: `무통장 입금 완료`,
-            balanceAfter: Number(findUser.point ?? 0) + totalUserGetPoint,
-        },
+      collection: 'point-history',
+      data: {
+        user: userIds,
+        type: 'earn',
+        reason: `무통장 입금 완료`,
+        balanceAfter: Number(findUser.point ?? 0) + totalUserGetPoint,
+      },
     })
-  
-    return {message: '상품준비 단계로 변경되었습니다.', success: true}
-  } catch(error) {
-    return {message: '상품준비 단계로 변경에 실패했습니다.', success: false}
+
+    return { message: '상품준비 단계로 변경되었습니다.', success: true }
+  } catch (error) {
+    return { message: '상품준비 단계로 변경에 실패했습니다.', success: false }
   }
 }
 
@@ -94,35 +94,35 @@ export async function updateOrderStatusToShipmentStart(selectedData: SelectedDat
       }),
     ])
 
-    return {message: '배송 시작 단계로 변경되었습니다.', success: true}
-  } catch(error) {
-    return {message: '배송 시작 단계로 변경에 실패했습니다.', success: false}
+    return { message: '배송 시작 단계로 변경되었습니다.', success: true }
+  } catch (error) {
+    return { message: '배송 시작 단계로 변경에 실패했습니다.', success: false }
   }
 }
 
 export async function updateOrderStatusToShipmentComplete(selectedData: SelectedData[]) {
-    const payload = await getPayload({ config: config })
-  
-    try {
-      await Promise.all([
-        ...selectedData.map(async (data) => {
-          return payload.update({
-            collection: 'order',
-            id: data.id,
-            data: {
-              orderStatus: 3,
-            },
-          })
-        }),
-      ])
-  
-      return {message: '배송 완료 단계로 변경되었습니다.', success: true}
-    } catch(error) {
-      return {message: '배송 완료 단계로 변경에 실패했습니다.', success: false}
-    }
-  }
+  const payload = await getPayload({ config: config })
 
-export async function updateOrderStatusToCancel(selectedData: {bankTransferData: SelectedData[], cardData: SelectedData[]}) {
+  try {
+    await Promise.all([
+      ...selectedData.map(async (data) => {
+        return payload.update({
+          collection: 'order',
+          id: data.id,
+          data: {
+            orderStatus: 3,
+          },
+        })
+      }),
+    ])
+
+    return { message: '배송 완료 단계로 변경되었습니다.', success: true }
+  } catch (error) {
+    return { message: '배송 완료 단계로 변경에 실패했습니다.', success: false }
+  }
+}
+
+export async function updateOrderStatusToCancel(selectedData: { bankTransferData: SelectedData[], cardData: SelectedData[] }) {
   const payload = await getPayload({ config: config })
   try {
     // 주문상태 변경
@@ -158,8 +158,8 @@ export async function updateOrderStatusToCancel(selectedData: {bankTransferData:
 
 
 
-    return {message: '주문취소 단계로 변경되었습니다.', success: true}
+    return { message: '주문취소 단계로 변경되었습니다.', success: true }
   } catch (error) {
-    return {message: '주문취소 단계로 변경에 실패했습니다.', success: false}
+    return { message: '주문취소 단계로 변경에 실패했습니다.', success: false }
   }
 }
