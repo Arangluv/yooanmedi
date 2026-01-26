@@ -1,28 +1,29 @@
 // storage-adapter-import-placeholder
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { postgresAdapter } from '@payloadcms/db-postgres';
 // import { en } from '@payloadcms/translations/languages/en'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
-import sharp from 'sharp'
-import { Users } from './collections/Users'
-import { Image } from './collections/Image'
-import { Files } from './collections/Files'
-import { PopupSetting } from './collections/PopupSetting'
-import { Terms } from './collections/Terms'
-import { PrivacyPolicy } from './collections/PrivacyPolicy'
-import { s3Storage } from '@payloadcms/storage-s3'
-import { translations as ko } from '@lib/payload/utils/translation'
-import { Product } from './collections/Product'
-import { ProductCategory } from './collections/ProductCategory'
-import { PointHistory } from './collections/PointHistory'
-import { OrderStatus } from './collections/OrderStatus'
-import { Order } from './collections/Order'
-import { MetaSetting } from './collections/MetaSetting'
+import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import path from 'path';
+import { buildConfig } from 'payload';
+import { fileURLToPath } from 'url';
+import sharp from 'sharp';
+import { Users } from './collections/Users';
+import { Image } from './collections/Image';
+import { Files } from './collections/Files';
+import { PopupSetting } from './collections/PopupSetting';
+import { Terms } from './collections/Terms';
+import { PrivacyPolicy } from './collections/PrivacyPolicy';
+import { s3Storage } from '@payloadcms/storage-s3';
+import { translations as ko } from '@lib/payload/utils/translation';
+import { Product } from './collections/Product';
+import { ProductCategory } from './collections/ProductCategory';
+import { PointHistory } from './collections/PointHistory';
+import { OrderStatus } from './collections/OrderStatus';
+import { Order } from './collections/Order';
+import { MetaSetting } from './collections/MetaSetting';
+import { ProductPrice } from './collections/ProductPrice';
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 export default buildConfig({
   admin: {
@@ -41,7 +42,17 @@ export default buildConfig({
     },
   },
 
-  collections: [Users, Image, Files, Product, ProductCategory, PointHistory, OrderStatus, Order],
+  collections: [
+    Users,
+    Image,
+    Files,
+    Product,
+    ProductCategory,
+    PointHistory,
+    OrderStatus,
+    Order,
+    ProductPrice,
+  ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -85,4 +96,4 @@ export default buildConfig({
     }),
     // storage-adapter-placeholder
   ],
-})
+});

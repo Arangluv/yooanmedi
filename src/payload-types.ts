@@ -75,6 +75,7 @@ export interface Config {
     'point-history': PointHistory;
     'order-status': OrderStatus;
     order: Order;
+    'product-price': ProductPrice;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -89,6 +90,7 @@ export interface Config {
     'point-history': PointHistorySelect<false> | PointHistorySelect<true>;
     'order-status': OrderStatusSelect<false> | OrderStatusSelect<true>;
     order: OrderSelect<false> | OrderSelect<true>;
+    'product-price': ProductPriceSelect<false> | ProductPriceSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -144,58 +146,23 @@ export interface User {
    */
   role?: ('admin' | 'client') | null;
   /**
-   * 승인 여부를 선택해주세요 (체크 시 회원가입이 승인됩니다)
+   * 회원가입 승인 여부를 선택해주세요 활성화 시 회원가입이 승인됩니다
    */
   isApproved?: boolean | null;
-  /**
-   * 대표자명을 입력해주세요
-   */
-  ceo?: string | null;
-  /**
-   * 병원명을 입력해주세요
-   */
-  hospitalName?: string | null;
-  /**
-   * 의사면허번호를 입력해주세요
-   */
-  doctorLicenseNumber?: string | null;
-  /**
-   * 주소를 입력해주세요
-   */
-  address?: string | null;
-  /**
-   * 사업자등록번호를 입력해주세요
-   */
-  businessNumber?: string | null;
-  /**
-   * 요양기관번호를 입력해주세요
-   */
-  nursingNumber?: string | null;
-  /**
-   * 전화번호를 입력해주세요
-   */
-  phoneNumber?: string | null;
-  /**
-   * FAX번호를 입력해주세요
-   */
-  faxNumber?: string | null;
-  /**
-   * 증빙서류를 업로드해주세요
-   */
-  fileList?: (number | File)[] | null;
-  /**
-   * 적립금을 입력해주세요
-   */
   point?: number | null;
+  ceo?: string | null;
+  hospitalName?: string | null;
+  doctorLicenseNumber?: string | null;
+  businessNumber?: string | null;
+  nursingNumber?: string | null;
+  address?: string | null;
+  contactEmail?: string | null;
+  phoneNumber?: string | null;
+  faxNumber?: string | null;
+  fileList?: (number | File)[] | null;
   updatedAt: string;
   createdAt: string;
-  /**
-   * 이메일을 입력해주세요
-   */
   email?: string | null;
-  /**
-   * 아이디를 입력해주세요
-   */
   username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -262,7 +229,18 @@ export interface Product {
   name: string;
   category?: (number | null) | ProductCategory;
   insurance_code?: string | null;
+  specification?: string | null;
   manufacturer: string;
+  ingredient?: string | null;
+  stock: number;
+  /**
+   * 인기 제품 여부를 선택해주세요 (체크 시 주문 페이지 상단에 표시됩니다.)
+   */
+  is_best_product?: boolean | null;
+  /**
+   * 반품가능여부를 선택해주세요 (체크 시 반품가능)
+   */
+  returnable?: boolean | null;
   price: number;
   /**
    * 카드 결제 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5)
@@ -274,25 +252,16 @@ export interface Product {
    * 최대 1.8까지 입력 가능합니다.
    */
   cashback_rate_for_bank: number;
-  specification?: string | null;
-  stock: number;
   delivery_fee: number;
   /**
-   * 수량 당 배송비 계산 여부를 선택해주세요 (체크 시 수량 당 배송비 계산)
+   * 수량 당 배송비를 계산할지에 대한 여부를 설정할 수 있습니다. 활성화 시 배송비는 수량 * 배송비로 계산됩니다.
    */
   is_cost_per_unit?: boolean | null;
   /**
-   * 최소 주문 금액 이상 시 배송비 무료 여부를 선택해주세요 (체크 시 최소 주문 금액 이상 시 배송비 무료)
+   * 최소 주문 금액 이상 시 배송비 무료 여부를 선택해주세요
+   *  활성화 시 최소주문 금액 이상 주문건에 대한 배송비는 0원으로 처리됩니다
    */
   is_free_delivery?: boolean | null;
-  /**
-   * 반품가능여부를 선택해주세요 (체크 시 반품가능)
-   */
-  returnable?: boolean | null;
-  /**
-   * 인기 제품 여부를 선택해주세요 (체크 시 주문 페이지 상단에 표시됩니다.)
-   */
-  is_best_product?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -353,6 +322,18 @@ export interface Order {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-price".
+ */
+export interface ProductPrice {
+  id: number;
+  product: number | Product;
+  user: number | User;
+  price: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -389,6 +370,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'order';
         value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'product-price';
+        value: number | ProductPrice;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -439,16 +424,17 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
   isApproved?: T;
+  point?: T;
   ceo?: T;
   hospitalName?: T;
   doctorLicenseNumber?: T;
-  address?: T;
   businessNumber?: T;
   nursingNumber?: T;
+  address?: T;
+  contactEmail?: T;
   phoneNumber?: T;
   faxNumber?: T;
   fileList?: T;
-  point?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -511,17 +497,18 @@ export interface ProductSelect<T extends boolean = true> {
   name?: T;
   category?: T;
   insurance_code?: T;
+  specification?: T;
   manufacturer?: T;
+  ingredient?: T;
+  stock?: T;
+  is_best_product?: T;
+  returnable?: T;
   price?: T;
   cashback_rate?: T;
   cashback_rate_for_bank?: T;
-  specification?: T;
-  stock?: T;
   delivery_fee?: T;
   is_cost_per_unit?: T;
   is_free_delivery?: T;
-  returnable?: T;
-  is_best_product?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -573,6 +560,17 @@ export interface OrderSelect<T extends boolean = true> {
   delivery_fee?: T;
   cashback_rate?: T;
   cashback_rate_for_bank?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-price_select".
+ */
+export interface ProductPriceSelect<T extends boolean = true> {
+  product?: T;
+  user?: T;
+  price?: T;
   updatedAt?: T;
   createdAt?: T;
 }
