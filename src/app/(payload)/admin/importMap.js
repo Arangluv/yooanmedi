@@ -1,4 +1,7 @@
+import { default as default_d3da62deca79bd822a814c94269e7325 } from '@/collections/components/common/SeparatorLine'
 import { default as default_f28a02750c45e1c8fbf74ae7fa034c70 } from '@/collections/components/common/TextCell'
+import { default as default_d44b349654e0e0f76f8d78913e7a8cc8 } from '@/collections/components/common/CustomCheckboxField'
+import { default as default_1db109c33276d2385210db5013fc62ed } from '@/collections/components/common/SeparatorMargin'
 import { default as default_aa4e6e22524ebabdb971744beb086bb6 } from '@/collections/components/product/BestProductCell'
 import { default as default_7712bd14948acfabe5d33e1eef7b36b9 } from '@collections/components/product/ProductListTest'
 import { default as default_19920d989ded0e59fd7473c2d9c798ce } from '@/collections/components/order/OrderComponents'
@@ -33,7 +36,10 @@ import { BrandLogoSmall as BrandLogoSmall_97bc79299977fcd966caf47fe3f27eaa } fro
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
+  "@/collections/components/common/SeparatorLine#default": default_d3da62deca79bd822a814c94269e7325,
   "@/collections/components/common/TextCell#default": default_f28a02750c45e1c8fbf74ae7fa034c70,
+  "@/collections/components/common/CustomCheckboxField#default": default_d44b349654e0e0f76f8d78913e7a8cc8,
+  "@/collections/components/common/SeparatorMargin#default": default_1db109c33276d2385210db5013fc62ed,
   "@/collections/components/product/BestProductCell#default": default_aa4e6e22524ebabdb971744beb086bb6,
   "@collections/components/product/ProductListTest#default": default_7712bd14948acfabe5d33e1eef7b36b9,
   "@/collections/components/order/OrderComponents#default": default_19920d989ded0e59fd7473c2d9c798ce,
