@@ -45,6 +45,8 @@ export default async function OrderPage({
       stock: true,
       delivery_fee: true,
       returnable: true,
+      is_cost_per_unit: true,
+      is_free_delivery: true,
     },
     where: getProductCondition?.where,
     page: serverSearchParams.page ? parseInt(serverSearchParams.page) : 1,

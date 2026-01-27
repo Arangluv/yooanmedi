@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 export const Image: CollectionConfig = {
   slug: 'image',
@@ -36,9 +36,10 @@ export const Image: CollectionConfig = {
         // 파일명 정리: 특수문자 제거 및 URL-safe하게 변환
         if (data?.filename) {
           // 파일 확장자 분리
-          const ext = data.filename.split('.').pop() || ''
-          const nameWithoutExt = data.filename.substring(0, data.filename.lastIndexOf('.')) || data.filename
-          
+          const ext = data.filename.split('.').pop() || '';
+          const nameWithoutExt =
+            data.filename.substring(0, data.filename.lastIndexOf('.')) || data.filename;
+
           // 파일명 정리: 한글, 공백, 특수문자 처리
           const sanitized = nameWithoutExt
             .normalize('NFD') // 유니코드 정규화
@@ -47,24 +48,15 @@ export const Image: CollectionConfig = {
             .replace(/\s+/g, '-') // 공백을 하이픈으로
             .replace(/-+/g, '-') // 연속된 하이픈 제거
             .toLowerCase()
-            .trim()
-          
+            .trim();
+
           // 타임스탬프 추가로 중복 방지
-          const timestamp = Date.now()
-          data.filename = `${sanitized}-${timestamp}.${ext}`
+          const timestamp = Date.now();
+          data.filename = `${sanitized}-${timestamp}.${ext}`;
         }
-        return data
+        return data;
       },
     ],
   },
-  fields: [
-    {
-      name: 'alt',
-      label: '이미지 설명',
-      type: 'text',
-      admin: {
-        description: '필수x, 이미지 설명을 입력해주세요. ex) 제품명',
-      },
-    },
-  ],
-}
+  fields: [],
+};
