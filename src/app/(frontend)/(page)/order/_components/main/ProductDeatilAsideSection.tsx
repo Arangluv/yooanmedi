@@ -1,28 +1,28 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import { Button, Divider, Form } from '@heroui/react'
-import { clsx } from 'clsx'
-import { NumberInput } from '@heroui/react'
+import Image from 'next/image';
+import { Button, Divider, Form } from '@heroui/react';
+import { clsx } from 'clsx';
+import { NumberInput } from '@heroui/react';
 import {
   InventoryContext,
   OrderUserInfoContext,
   ProductInfoContext,
-} from '@order/_context/order_context'
-import { useContext, useState } from 'react'
-import { Image as ImageIcon } from 'lucide-react'
-import { ProductItemType } from '../../_type'
-import { formatNumberWithCommas, getPointOnPurchase } from '../../utils'
-import { AddedProductToast, ExistingProductToast } from './ToastComponents'
-import { toast } from 'sonner'
-import { getCurrentUserOrderHistory } from '../../actions'
-import { useQuery } from '@tanstack/react-query'
-import moment from 'moment'
+} from '@order/_context/order_context';
+import { useContext, useState } from 'react';
+import { Image as ImageIcon } from 'lucide-react';
+import { ProductItemType } from '../../_type';
+import { formatNumberWithCommas, getPointOnPurchase } from '../../utils';
+import { AddedProductToast, ExistingProductToast } from './ToastComponents';
+import { toast } from 'sonner';
+import { getCurrentUserOrderHistory } from '../../actions';
+import { useQuery } from '@tanstack/react-query';
+import moment from 'moment';
 
 export default function ProductDeatilAsideSection() {
-  const { clickedProduct } = useContext(ProductInfoContext)
-  const { inventory, setInventory } = useContext(InventoryContext)
-  const { user } = useContext(OrderUserInfoContext)
+  const { clickedProduct } = useContext(ProductInfoContext);
+  const { inventory, setInventory } = useContext(InventoryContext);
+  const { user } = useContext(OrderUserInfoContext);
 
   return clickedProduct ? (
     <SelectedProductDetailSection
@@ -33,22 +33,22 @@ export default function ProductDeatilAsideSection() {
     />
   ) : (
     <EmptyProductDetailSection />
-  )
+  );
 }
 
 function EmptyProductDetailSection() {
   return (
-    <div className="w-[calc((100%-1024px)/2)] px-8 flex flex-col gap-8 fixed top-[148px] right-0">
+    <div className="fixed top-[148px] right-0 flex w-[calc((100%-1024px)/2)] flex-col gap-8 px-8">
       {/* 상품 디테일 */}
       <div
         style={{ boxShadow: '0 0 6px 0 rgba(0, 0, 0, 0.2)' }}
-        className="flex flex-col gap-4 w-full max-w-[400px] p-4 rounded-lg bg-white"
+        className="flex w-full max-w-[400px] flex-col gap-4 rounded-lg bg-white p-4"
       >
         <span className="font-bold">상품 정보</span>
         <div className="flex flex-col gap-1">
-          <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden flex items-center justify-center gap-2">
-            <ImageIcon className="w-6 h-6 text-foreground-200" />
-            <span className="text-sm text-foreground-600">상품을 선택해주세요.</span>
+          <div className="mb-4 flex h-[150px] w-full items-center justify-center gap-2 overflow-hidden rounded-md bg-neutral-100">
+            <ImageIcon className="text-foreground-200 h-6 w-6" />
+            <span className="text-foreground-600 text-sm">상품을 선택해주세요.</span>
           </div>
           <ProductDetailEmptySection name="상품명" />
           <ProductDetailEmptySection name="제조사" />
@@ -59,7 +59,7 @@ function EmptyProductDetailSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function SelectedProductDetailSection({
@@ -68,18 +68,18 @@ function SelectedProductDetailSection({
   setInventory,
   user,
 }: {
-  product: ProductItemType
+  product: ProductItemType;
   inventory: Array<{
-    product: ProductItemType
-    quantity: number
-  }>
+    product: ProductItemType;
+    quantity: number;
+  }>;
   setInventory: (
     inventory: Array<{
-      product: ProductItemType
-      quantity: number
+      product: ProductItemType;
+      quantity: number;
     }>,
-  ) => void
-  user: any
+  ) => void;
+  user: any;
 }) {
   const {
     id,
@@ -94,30 +94,30 @@ function SelectedProductDetailSection({
     cashback_rate_for_bank,
     returnable,
     is_cost_per_unit,
-  } = product
+  } = product;
 
   return (
-    <div className="w-[calc((100%-1024px)/2)] px-8 flex flex-col gap-8 fixed top-[148px] right-0">
+    <div className="fixed top-[148px] right-0 flex w-[calc((100%-1024px)/2)] flex-col gap-8 px-8">
       {/* 상품 디테일 */}
       <div
         style={{ boxShadow: '0 0 6px 0 rgba(0, 0, 0, 0.2)' }}
-        className="flex flex-col gap-4 w-full max-w-[400px] p-4 rounded-lg bg-white"
+        className="flex w-full max-w-[400px] flex-col gap-4 rounded-lg bg-white p-4"
       >
         <span className="font-bold">상품 정보</span>
         <div className="flex flex-col gap-1">
-          <div className="w-full h-[150px] bg-neutral-100 mb-4 rounded-md overflow-hidden">
+          <div className="mb-4 h-[150px] w-full overflow-hidden rounded-md bg-neutral-100">
             {product.image?.url ? (
               <Image
                 src={product.image.url}
                 alt={product.image.alt ?? ''}
                 width={150}
                 height={150}
-                className="w-full h-full object-contain"
+                className="h-full w-full object-contain"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center gap-1">
-                <ImageIcon className="w-6 h-6 text-foreground-300" strokeWidth={1.5} />
-                <span className="text-sm text-foreground-600">상품 이미지를 준비중입니다.</span>
+              <div className="flex h-full w-full items-center justify-center gap-1">
+                <ImageIcon className="text-foreground-300 h-6 w-6" strokeWidth={1.5} />
+                <span className="text-foreground-600 text-sm">상품 이미지를 준비중입니다.</span>
               </div>
             )}
           </div>
@@ -126,7 +126,11 @@ function SelectedProductDetailSection({
           <ProductDetailSection name="가격" value={`${formatNumberWithCommas(price)}원`} />
           <ProductDetailSection name="규격" value={specification ?? ''} />
           <ProductDetailSection name="보험코드" value={insurance_code ?? ''} />
-          <ProductDeliveryFeeSection name="배송비" value={`${formatNumberWithCommas(delivery_fee)}원`} is_cost_per_unit={is_cost_per_unit} />
+          <ProductDeliveryFeeSection
+            name="배송비"
+            value={`${formatNumberWithCommas(delivery_fee)}원`}
+            is_cost_per_unit={is_cost_per_unit}
+          />
           <ProductDetailSection
             name="재고"
             value={stock > 0 ? '재고 있음' : '재고 없음'}
@@ -152,27 +156,37 @@ function SelectedProductDetailSection({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function ProductDetailEmptySection({ name }: { name: string }) {
   return (
-    <div className="flex gap-2 items-start text-sm text-foreground-600">
+    <div className="text-foreground-600 flex items-start gap-2 text-sm">
       <span className="text-foreground-700 block w-[100px] flex-shrink-0">{name}</span>
     </div>
-  )
+  );
 }
 
-function ProductDeliveryFeeSection({ name, value, is_cost_per_unit }: { name: string, value: string, is_cost_per_unit: boolean }) {
+function ProductDeliveryFeeSection({
+  name,
+  value,
+  is_cost_per_unit,
+}: {
+  name: string;
+  value: string;
+  is_cost_per_unit: boolean;
+}) {
   return (
-    <div className="flex gap-2 items-start text-sm text-foreground-600">
+    <div className="text-foreground-600 flex items-start gap-2 text-sm">
       <span className="text-foreground-700 block w-[100px] flex-shrink-0">{name}</span>
       <span className="text-foreground-600 flex items-center gap-1">
         <span>{value}</span>
-        <span className="text-sm font-bold text-brandWeek">{is_cost_per_unit ? '(수량 당)' : ''}</span>
+        <span className="text-brandWeek text-sm font-bold">
+          {is_cost_per_unit ? '(수량 당)' : ''}
+        </span>
       </span>
     </div>
-  )
+  );
 }
 
 function ProductDetailSection({
@@ -181,13 +195,13 @@ function ProductDetailSection({
   accent = 'default',
   isBold = false,
 }: {
-  name: string
-  value: string
-  accent?: 'brand' | 'danger' | 'default'
-  isBold?: boolean
+  name: string;
+  value: string;
+  accent?: 'brand' | 'danger' | 'default';
+  isBold?: boolean;
 }) {
   if (!value) {
-    return null
+    return null;
   }
 
   const accentColor =
@@ -195,16 +209,16 @@ function ProductDetailSection({
       ? 'text-brandWeek'
       : accent === 'danger'
         ? 'text-danger'
-        : 'text-foreground-600'
+        : 'text-foreground-600';
 
-  const fontWeight = isBold ? 'font-bold' : 'font-normal'
+  const fontWeight = isBold ? 'font-bold' : 'font-normal';
 
   return (
-    <div className="flex gap-2 items-start text-sm text-foreground-600">
+    <div className="text-foreground-600 flex items-start gap-2 text-sm">
       <span className="text-foreground-700 block w-[100px] flex-shrink-0">{name}</span>
       <span className={clsx(accentColor, fontWeight)}>{value}</span>
     </div>
-  )
+  );
 }
 
 function ProductPointBenefitSection({
@@ -212,22 +226,22 @@ function ProductPointBenefitSection({
   rate,
   rate_for_bank,
 }: {
-  price: number
-  rate: number
-  rate_for_bank: number
+  price: number;
+  rate: number;
+  rate_for_bank: number;
 }) {
-  const willEarnPoint = getPointOnPurchase(price, rate)
-  const willEarnPointForBank = getPointOnPurchase(price, rate_for_bank)
+  const willEarnPoint = getPointOnPurchase(price, rate);
+  const willEarnPointForBank = getPointOnPurchase(price, rate_for_bank);
 
   if (
     (willEarnPoint === '0' && willEarnPointForBank === '0') ||
     (!willEarnPoint && !willEarnPointForBank)
   ) {
-    return null
+    return null;
   }
 
   return (
-    <div className="flex gap-2 items-start text-sm text-foreground-600">
+    <div className="text-foreground-600 flex items-start gap-2 text-sm">
       <span className="text-foreground-700 block w-[100px] flex-shrink-0">결제혜택</span>
       <div className="flex flex-col gap-1">
         {Number(willEarnPoint) > 0 && (
@@ -242,7 +256,7 @@ function ProductPointBenefitSection({
         )}
       </div>
     </div>
-  )
+  );
 }
 
 function ProductQuantityInput({
@@ -251,71 +265,71 @@ function ProductQuantityInput({
   product,
 }: {
   inventory: Array<{
-    product: ProductItemType
-    quantity: number
-  }>
+    product: ProductItemType;
+    quantity: number;
+  }>;
   setInventory: (
     inventory: Array<{
-      product: ProductItemType
-      quantity: number
+      product: ProductItemType;
+      quantity: number;
     }>,
-  ) => void
-  product: ProductItemType
+  ) => void;
+  product: ProductItemType;
 }) {
-  const [value, setValue] = useState<number>(0)
+  const [value, setValue] = useState<number>(0);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const { quantity } = Object.fromEntries(new FormData(e.target as HTMLFormElement))
+    e.preventDefault();
+    const { quantity } = Object.fromEntries(new FormData(e.target as HTMLFormElement));
 
     if (value < 1 || value > 999) {
-      toast.error('주문수량은 1 이상 999 이하이어야 합니다.')
-      setValue(0)
-      return
+      toast.error('주문수량은 1 이상 999 이하이어야 합니다.');
+      setValue(0);
+      return;
     }
 
-    const isUserAdded = inventory.some((item) => item.product.id === product.id)
+    const isUserAdded = inventory.some((item) => item.product.id === product.id);
 
     if (isUserAdded) {
-      toast.info(<ExistingProductToast />)
-      setValue(0)
-      return
+      toast.info(<ExistingProductToast />);
+      setValue(0);
+      return;
     } else {
-      const newInventory = [...inventory, { product, quantity: Number(quantity) }]
-      setInventory(newInventory)
-      setValue(0)
-      toast.success(<AddedProductToast count={Number(quantity)} />)
+      const newInventory = [...inventory, { product, quantity: Number(quantity) }];
+      setInventory(newInventory);
+      setValue(0);
+      toast.success(<AddedProductToast count={Number(quantity)} />);
     }
-  }
+  };
 
   const handlePressBtn = () => {
-    const isUserAdded = inventory.some((item) => item.product.id === product.id)
+    const isUserAdded = inventory.some((item) => item.product.id === product.id);
 
     if (value < 1 || value > 999) {
-      toast.error('주문수량은 1 이상 999 이하이어야 합니다.')
-      setValue(0)
-      return
+      toast.error('주문수량은 1 이상 999 이하이어야 합니다.');
+      setValue(0);
+      return;
     }
 
     if (isUserAdded) {
-      toast.info(<ExistingProductToast />)
-      return
+      toast.info(<ExistingProductToast />);
+      return;
     }
 
-    const newInventory = [...inventory, { product, quantity: value }]
-    setInventory(newInventory)
-    setValue(0)
-    toast.success(<AddedProductToast count={value} />)
-  }
+    const newInventory = [...inventory, { product, quantity: value }];
+    setInventory(newInventory);
+    setValue(0);
+    toast.success(<AddedProductToast count={value} />);
+  };
 
   return (
     <Form
-      className="flex gap-2 items-start text-sm text-foreground-600 mt-2"
+      className="text-foreground-600 mt-2 flex items-start gap-2 text-sm"
       onSubmit={onSubmit}
       validationBehavior="native"
     >
-      <span className="text-foreground-700 flex-shrink-0 w-[100px]">주문수량</span>
-      <div className="flex items-start w-full gap-2">
+      <span className="text-foreground-700 w-[100px] flex-shrink-0">주문수량</span>
+      <div className="flex w-full items-start gap-2">
         <NumberInput
           aria-label="주문수량"
           size="sm"
@@ -328,14 +342,14 @@ function ProductQuantityInput({
           onChange={(e) => setValue(Number(e.target.value))}
           validate={(value) => {
             if (!value) {
-              return '주문수량을 입력해주세요.'
+              return '주문수량을 입력해주세요.';
             }
 
             if (value < 1 || value > 999) {
-              return '주문수량은 1 이상 999 이하이어야 합니다.'
+              return '주문수량은 1 이상 999 이하이어야 합니다.';
             }
 
-            return true
+            return true;
           }}
           variant="bordered"
           description="입력 후 Enter를 눌러주세요."
@@ -350,37 +364,37 @@ function ProductQuantityInput({
         </Button>
       </div>
     </Form>
-  )
+  );
 }
 
 function ProductPurchaseHistorySection({ prod_id, user_id }: { prod_id: number; user_id: number }) {
   const { data } = useQuery({
     queryKey: ['order-history', prod_id, user_id],
     queryFn: () => getCurrentUserOrderHistory({ prod_id, user_id }),
-  })
+  });
 
   if (!data || data.length === 0) {
-    return null
+    return null;
   }
 
   return (
-    <div className="flex gap-2 items-start text-sm text-foreground-600">
-      <span className="text-foreground-700 flex-shrink-0 w-[100px]">최근 구매내역</span>
+    <div className="text-foreground-600 flex items-start gap-2 text-sm">
+      <span className="text-foreground-700 w-[100px] flex-shrink-0">최근 구매내역</span>
       <table className="w-full">
         <thead>
-          <tr className="bg-neutral-100 text-sm border-1 border-foreground-200">
-            <th className="border-r-1 border-foreground-200">구매일시</th>
-            <th className="border-r-1 border-foreground-200">수량</th>
+          <tr className="border-foreground-200 border-1 bg-neutral-100 text-sm">
+            <th className="border-foreground-200 border-r-1">구매일시</th>
+            <th className="border-foreground-200 border-r-1">수량</th>
             <th>단가</th>
           </tr>
         </thead>
         <tbody>
           {data?.map((item) => (
-            <tr key={item.id} className="text-xs border-1 border-foreground-200">
-              <td className="text-center py-1 border-r-1 border-foreground-200">
+            <tr key={item.id} className="border-foreground-200 border-1 text-xs">
+              <td className="border-foreground-200 border-r-1 py-1 text-center">
                 {moment(item.orderCreatedAt).format('YYYY-MM-DD')}
               </td>
-              <td className="text-center border-r-1 border-foreground-200">{item.quantity}</td>
+              <td className="border-foreground-200 border-r-1 text-center">{item.quantity}</td>
               {/* @ts-ignore */}
               <td className="text-center">{formatNumberWithCommas(item.product.price)}원</td>
             </tr>
@@ -388,5 +402,5 @@ function ProductPurchaseHistorySection({ prod_id, user_id }: { prod_id: number; 
         </tbody>
       </table>
     </div>
-  )
+  );
 }
