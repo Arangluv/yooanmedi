@@ -1,29 +1,27 @@
-'use client'
+'use client';
 
 import {
   Button,
-  Divider,
   Form,
   Input,
-  Link,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
   useDisclosure,
-} from '@heroui/react'
-import { Checkbox } from '@heroui/checkbox'
-import { ChevronRight, Info, Upload, FileText, Image as ImageIcon, Trash } from 'lucide-react'
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
-import Script from 'next/script'
-import clsx from 'clsx'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { getPrivacyPolicy, getTerms, join } from '../actions'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import Image from 'next/image'
-import { ContentRenderer } from '@/components/ui/content-renderer'
+} from '@heroui/react';
+import { Checkbox } from '@heroui/checkbox';
+import { ChevronRight, Info, Upload, FileText, Image as ImageIcon, Trash } from 'lucide-react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import Script from 'next/script';
+import clsx from 'clsx';
+import { useMutation } from '@tanstack/react-query';
+import { join } from '../actions';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const inputProps = {
   radius: 'sm',
@@ -34,58 +32,58 @@ const inputProps = {
     inputWrapper: 'border-1',
     label: 'font-medium',
   },
-} as const
+} as const;
 
 export default function JoinForm() {
   // Modal 관련 상태
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalContent, setModalContent] = useState<{
-    header: React.ReactNode
-    content: React.ReactNode
+    header: React.ReactNode;
+    content: React.ReactNode;
   }>({
     header: <ModalErrorHeader />,
     content: <ModdalErrorContent message="알림 내용" />,
-  })
+  });
   //   error 관리
   const [errors, setErrors] = useState<{
-    password: string
-    passwordConfirm: string
-    address: string
-    addressDetail: string
+    password: string;
+    passwordConfirm: string;
+    address: string;
+    addressDetail: string;
   }>({
     password: '',
     passwordConfirm: '',
     address: '',
     addressDetail: '',
-  })
+  });
 
   // 주소
-  const [fullAddress, setFullAddress] = useState('')
+  const [fullAddress, setFullAddress] = useState('');
   // 약관동의
-  const [isTermsAgreed, setIsTermsAgreed] = useState(false)
-  const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false)
+  const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+  const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
   // 증빙서류파일
-  const [fileList, setFileList] = useState<File[]>([])
+  const [fileList, setFileList] = useState<File[]>([]);
   // loading state
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const { mutate: joinMutation } = useMutation({
     mutationFn: (formData: FormData) => join(formData),
     onSuccess: (data: { success: boolean; message: string }) => {
-      setIsLoading(false)
+      setIsLoading(false);
       if (!data.success) {
         setModalContent({
           header: <ModalErrorHeader />,
           content: <ModdalErrorContent message={data.message} />,
-        })
-        onOpen()
-        return
+        });
+        onOpen();
+        return;
       }
-      toast.success('회원가입 신청이 정상적으로 완료되었습니다.')
-      router.push('/')
+      toast.success('회원가입 신청이 정상적으로 완료되었습니다.');
+      router.push('/');
     },
     onError: () => {
-      setIsLoading(false)
+      setIsLoading(false);
       setModalContent({
         header: <ModalErrorHeader />,
         content: (
@@ -93,38 +91,38 @@ export default function JoinForm() {
             message={'회원가입 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'}
           />
         ),
-      })
-      onOpen()
+      });
+      onOpen();
     },
-  })
+  });
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    setIsLoading(true)
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
+    setIsLoading(true);
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
     // 실제 파일 데이터를 FormData에 파일별로 추가
     fileList.forEach((file, idx) => {
-      formData.append('fileList', file)
-    })
-    formData.append('fullAddress', fullAddress)
+      formData.append('fileList', file);
+    });
+    formData.append('fullAddress', fullAddress);
 
     if (!isTermsAgreed || !isPrivacyAgreed) {
       setModalContent({
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="약관동의를 진행해주세요." />,
-      })
-      onOpen()
-      setIsLoading(false)
-      return
+      });
+      onOpen();
+      setIsLoading(false);
+      return;
     }
     if (!formData.get('password') || formData.get('password') === '') {
-      alert('비밀번호를 입력해주세요.')
+      alert('비밀번호를 입력해주세요.');
       setErrors({
         ...errors,
         password: '비밀번호를 입력해주세요.',
-      })
-      setIsLoading(false)
-      return
+      });
+      setIsLoading(false);
+      return;
     }
 
     // @ts-ignore
@@ -132,81 +130,81 @@ export default function JoinForm() {
       setErrors({
         ...errors,
         password: '비밀번호는 5자 이상 25자 이하로 입력해주세요.',
-      })
-      setIsLoading(false)
-      return
+      });
+      setIsLoading(false);
+      return;
     }
 
     if (formData.get('password') !== formData.get('passwordConfirm')) {
       setModalContent({
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="비밀번호가 일치하지 않습니다." />,
-      })
+      });
       setErrors({
         ...errors,
         password: '비밀번호가 일치하지 않습니다.',
         passwordConfirm: '비밀번호가 일치하지 않습니다.',
-      })
-      onOpen()
-      setIsLoading(false)
-      return
+      });
+      onOpen();
+      setIsLoading(false);
+      return;
     }
 
     if (!formData.get('fullAddress')) {
       setModalContent({
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="주소를 입력해주세요." />,
-      })
+      });
       setErrors({
         ...errors,
         address: '주소를 입력해주세요.',
-      })
-      onOpen()
-      setIsLoading(false)
-      return
+      });
+      onOpen();
+      setIsLoading(false);
+      return;
     }
 
     if (!formData.get('addressDetail')) {
       setModalContent({
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="상세주소를 입력해주세요." />,
-      })
+      });
       setErrors({
         ...errors,
         addressDetail: '상세주소를 입력해주세요.',
-      })
-      onOpen()
-      setIsLoading(false)
-      return
+      });
+      onOpen();
+      setIsLoading(false);
+      return;
     }
 
     if (formData.getAll('fileList').length === 0) {
       setModalContent({
         header: <ModalErrorHeader />,
         content: <ModdalErrorContent message="증빙서류를 업로드해주세요." />,
-      })
+      });
 
       const fileUploadSection = document.querySelector(
         'label[for="fileUpload"]',
-      ) as HTMLLabelElement | null
+      ) as HTMLLabelElement | null;
 
       if (fileUploadSection) {
-        fileUploadSection.scrollIntoView({ behavior: 'smooth' })
+        fileUploadSection.scrollIntoView({ behavior: 'smooth' });
       }
-      onOpen()
-      setIsLoading(false)
-      return
+      onOpen();
+      setIsLoading(false);
+      return;
     }
 
-    joinMutation(formData)
-  }
+    joinMutation(formData);
+  };
 
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
       <Form
-        className="w-full flex flex-col gap-12"
+        className="flex w-full flex-col gap-12"
         validationErrors={errors}
         validationBehavior="native"
         onSubmit={onSubmit}
@@ -225,13 +223,11 @@ export default function JoinForm() {
           setIsTermsAgreed={setIsTermsAgreed}
           isPrivacyAgreed={isPrivacyAgreed}
           setIsPrivacyAgreed={setIsPrivacyAgreed}
-          rootModalOpen={onOpen}
-          setRootModalOpen={setModalContent}
         />
         <Button
           type="submit"
           isLoading={isLoading}
-          className="text-base w-full h-12 bg-brand text-white rounded-md font-medium cursor-pointer hover:bg-brandWeek transition-all duration-300"
+          className="bg-brand hover:bg-brandWeek h-12 w-full cursor-pointer rounded-md text-base font-medium text-white transition-all duration-300"
         >
           회원가입
         </Button>
@@ -244,7 +240,7 @@ export default function JoinForm() {
         </ModalContent>
       </Modal>
     </>
-  )
+  );
 }
 
 function JoinTermsContent({
@@ -252,134 +248,91 @@ function JoinTermsContent({
   setIsTermsAgreed,
   isPrivacyAgreed,
   setIsPrivacyAgreed,
-  rootModalOpen,
-  setRootModalOpen,
 }: {
-  isTermsAgreed: boolean
-  setIsTermsAgreed: (value: boolean) => void
-  isPrivacyAgreed: boolean
-  setIsPrivacyAgreed: (value: boolean) => void
-  rootModalOpen: () => void
-  setRootModalOpen: (value: { header: React.ReactNode; content: React.ReactNode }) => void
+  isTermsAgreed: boolean;
+  setIsTermsAgreed: (value: boolean) => void;
+  isPrivacyAgreed: boolean;
+  setIsPrivacyAgreed: (value: boolean) => void;
 }) {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
-  const [modalContent, setModalContent] = useState<React.ReactNode>(null)
-  const [isAllReadTerms, setIsAllReadTerms] = useState(false)
-  const [isAllReadPrivacy, setIsAllReadPrivacy] = useState(false)
-
   return (
     <>
-      <div className="flex flex-col gap-6 w-full">
-        <span className="text-foreground-800 font-bold text-lg">약관동의(유안메디팜 홈페이지)</span>
-        <div className="flex flex-col gap-4 p-6 border-1 border-foreground-100 rounded-md w-full">
-          <div className="flex w-full justify-between items-center">
+      <div className="flex w-full flex-col gap-6">
+        <span className="text-foreground-800 text-lg font-bold">약관동의(유안메디팜 홈페이지)</span>
+        <div className="border-foreground-100 flex w-full flex-col gap-4 rounded-md border-1 p-6">
+          <div className="flex w-full items-center justify-between">
             <Checkbox
               value="privacy"
               radius="sm"
               className="flex-shrink-0"
               isSelected={isTermsAgreed}
               onValueChange={() => {
-                if (!isAllReadTerms) {
-                  setRootModalOpen({
-                    header: <ModalErrorHeader />,
-                    content: <ModdalErrorContent message="이용약관을 모두 읽어주세요." />,
-                  })
-
-                  rootModalOpen()
-                  return
-                }
+                setIsTermsAgreed(!isTermsAgreed);
               }}
             >
               <div className="w-full">
                 <span className="text-brand mr-1 text-[15px]">[필수]</span>이용약관
               </div>
             </Checkbox>
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                setModalContent(
-                  <JoinTermsModalContent
-                    setIsTermsAgreed={setIsTermsAgreed}
-                    setIsAllReadTerms={setIsAllReadTerms}
-                    onClose={onClose}
-                  />,
-                )
-                onOpen()
-              }}
-              className="flex justify-end items-center border-1 border-foreground-300 rounded-md px-2 py-1 w-fit cursor-pointer"
+            <Link
+              href="/terms?type=terms"
+              prefetch={false}
+              target="_blank"
+              className="flex w-fit cursor-pointer items-center justify-end"
             >
-              <span className="text-sm text-foreground-600">전문 읽기</span>
-              <ChevronRight className="w-4 h-4 text-foreground-600" />
-            </button>
+              <span className="text-foreground-500 text-sm">확인하기</span>
+              <ChevronRight className="text-foreground-500 h-4 w-4" />
+            </Link>
           </div>
-          <div className="flex w-full justify-between items-center">
+          <div className="flex w-full items-center justify-between">
             <Checkbox
               value="privacy"
               radius="sm"
               className="flex-shrink-0"
               isSelected={isPrivacyAgreed}
               onValueChange={() => {
-                if (!isAllReadPrivacy) {
-                  setRootModalOpen({
-                    header: <ModalErrorHeader />,
-                    content: <ModdalErrorContent message="개인정보처리방침을 모두 읽어주세요." />,
-                  })
-                  rootModalOpen()
-                  return
-                }
+                setIsPrivacyAgreed(!isPrivacyAgreed);
               }}
             >
               <div className="w-full">
                 <span className="text-brand mr-1 text-[15px]">[필수]</span>개인정보처리방침
               </div>
             </Checkbox>
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                setModalContent(
-                  <JoinPrivacyModalContent
-                    setIsPrivacyAgreed={setIsPrivacyAgreed}
-                    setIsAllReadPrivacy={setIsAllReadPrivacy}
-                    onClose={onClose}
-                  />,
-                )
-                onOpen()
-              }}
-              className="flex justify-end items-center border-1 border-foreground-300 rounded-md px-2 py-1 w-fit cursor-pointer"
+            <Link
+              href="/terms?type=privacy"
+              prefetch={false}
+              target="_blank"
+              className="flex w-fit cursor-pointer items-center justify-end"
             >
-              <span className="text-sm text-foreground-600">전문 읽기</span>
-              <ChevronRight className="w-4 h-4 text-foreground-600" />
-            </button>
+              <span className="text-foreground-500 text-sm">확인하기</span>
+              <ChevronRight className="text-foreground-500 h-4 w-4" />
+            </Link>
           </div>
         </div>
-        <span className="text-sm text-foreground-500">
+        <span className="text-foreground-500 text-sm">
           *필수항목에 동의하지 않으실 경우 서비스 가입이 불가합니다
         </span>
       </div>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl" scrollBehavior="inside">
-        <ModalContent>{modalContent}</ModalContent>
-      </Modal>
     </>
-  )
+  );
 }
 
 function LoginInfoContent({
   errors,
   setErrors,
 }: {
-  errors: { password: string; passwordConfirm: string; address: string; addressDetail: string }
+  errors: { password: string; passwordConfirm: string; address: string; addressDetail: string };
   setErrors: Dispatch<
     SetStateAction<{
-      password: string
-      passwordConfirm: string
-      address: string
-      addressDetail: string
+      password: string;
+      passwordConfirm: string;
+      address: string;
+      addressDetail: string;
     }>
-  >
+  >;
 }) {
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <span className="text-foreground-800 font-bold text-lg">로그인 정보</span>
+    <div className="flex w-full flex-col gap-6">
+      <span className="text-foreground-800 text-lg font-bold">로그인 정보</span>
       <Input
         name="id"
         label="아이디"
@@ -401,7 +354,7 @@ function LoginInfoContent({
             ...errors,
             password: '',
             passwordConfirm: '',
-          })
+          });
         }}
         description="비밀번호는 5자 이상 25자 이하로 입력해주세요."
         validate={PasswordValidation}
@@ -416,12 +369,12 @@ function LoginInfoContent({
             ...errors,
             password: '',
             passwordConfirm: '',
-          })
+          });
         }}
         {...inputProps}
       />
     </div>
-  )
+  );
 }
 
 function PersonalInfoContent({
@@ -432,23 +385,23 @@ function PersonalInfoContent({
   fileList,
   setFileList,
 }: {
-  fullAddress: string
-  setFullAddress: (value: string) => void
-  errors: { password: string; passwordConfirm: string; address: string; addressDetail: string }
+  fullAddress: string;
+  setFullAddress: (value: string) => void;
+  errors: { password: string; passwordConfirm: string; address: string; addressDetail: string };
   setErrors: Dispatch<
     SetStateAction<{
-      password: string
-      passwordConfirm: string
-      address: string
-      addressDetail: string
+      password: string;
+      passwordConfirm: string;
+      address: string;
+      addressDetail: string;
     }>
-  >
-  fileList: File[]
-  setFileList: (value: File[]) => void
+  >;
+  fileList: File[];
+  setFileList: (value: File[]) => void;
 }) {
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <span className="text-foreground-800 font-bold text-lg">개인정보</span>
+    <div className="flex w-full flex-col gap-6">
+      <span className="text-foreground-800 text-lg font-bold">개인정보</span>
       <Input
         name="ceo"
         label="대표자명"
@@ -456,9 +409,9 @@ function PersonalInfoContent({
         {...inputProps}
         validate={(value: string) => {
           if (!value) {
-            return '대표자명을 입력해주세요.'
+            return '대표자명을 입력해주세요.';
           }
-          return true
+          return true;
         }}
       />
       <Input
@@ -468,9 +421,9 @@ function PersonalInfoContent({
         {...inputProps}
         validate={(value: string) => {
           if (!value) {
-            return '병원명을 입력해주세요.'
+            return '병원명을 입력해주세요.';
           }
-          return true
+          return true;
         }}
       />
       <Input
@@ -482,13 +435,13 @@ function PersonalInfoContent({
         description="입력하신 이메일 주소로 세금계산서를 발행해드립니다."
         validate={(value: string) => {
           if (!value) {
-            return '이메일을 입력해주세요.'
+            return '이메일을 입력해주세요.';
           }
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(value)) {
-            return '이메일 형식이 올바르지 않습니다.'
+            return '이메일 형식이 올바르지 않습니다.';
           }
-          return true
+          return true;
         }}
       />
       <AddressInput
@@ -506,12 +459,12 @@ function PersonalInfoContent({
         {...inputProps}
         validate={(value: string) => {
           if (!value) {
-            return '사업자등록번호를 입력해주세요.'
+            return '사업자등록번호를 입력해주세요.';
           }
           if (value.length !== 10 || isNaN(Number(value))) {
-            return '사업자등록번호는 10자리 숫자로 입력해주세요.'
+            return '사업자등록번호는 10자리 숫자로 입력해주세요.';
           }
-          return true
+          return true;
         }}
       />
       <Input
@@ -523,12 +476,12 @@ function PersonalInfoContent({
         {...inputProps}
         validate={(value: string) => {
           if (!value) {
-            return '요양기관번호를 입력해주세요.'
+            return '요양기관번호를 입력해주세요.';
           }
           if (value.length !== 8 || isNaN(Number(value))) {
-            return '요양기관번호는 8자리 숫자로 입력해주세요.'
+            return '요양기관번호는 8자리 숫자로 입력해주세요.';
           }
-          return true
+          return true;
         }}
       />
       <Input
@@ -548,12 +501,12 @@ function PersonalInfoContent({
         {...inputProps}
         validate={(value: string) => {
           if (!value) {
-            return '전화번호를 입력해주세요.'
+            return '전화번호를 입력해주세요.';
           }
           if (isNaN(Number(value))) {
-            return '전화번호는 10자리 숫자로 입력해주세요.'
+            return '전화번호는 10자리 숫자로 입력해주세요.';
           }
-          return true
+          return true;
         }}
       />
       <Input
@@ -567,7 +520,7 @@ function PersonalInfoContent({
       />
       <FileUploadInput fileList={fileList} setFileList={setFileList} />
     </div>
-  )
+  );
 }
 
 function AddressInput({
@@ -576,98 +529,98 @@ function AddressInput({
   errors,
   setErrors,
 }: {
-  fullAddress: string
-  setFullAddress: (value: string) => void
-  errors: { password: string; passwordConfirm: string; address: string; addressDetail: string }
+  fullAddress: string;
+  setFullAddress: (value: string) => void;
+  errors: { password: string; passwordConfirm: string; address: string; addressDetail: string };
   setErrors: Dispatch<
     SetStateAction<{
-      password: string
-      passwordConfirm: string
-      address: string
-      addressDetail: string
+      password: string;
+      passwordConfirm: string;
+      address: string;
+      addressDetail: string;
     }>
-  >
+  >;
 }) {
-  const [isLayerVisible, setIsLayerVisible] = useState(false)
-  const layerRef = useRef<HTMLDivElement>(null)
+  const [isLayerVisible, setIsLayerVisible] = useState(false);
+  const layerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // 다음 우편번호 API 스크립트가 로드된 후 실행
     if (typeof window !== 'undefined' && (window as any).daum) {
-      initLayerPosition()
+      initLayerPosition();
     }
-  }, [isLayerVisible])
+  }, [isLayerVisible]);
 
   const closeDaumPostcode = () => {
-    setIsLayerVisible(false)
-  }
+    setIsLayerVisible(false);
+  };
 
   const sample2_execDaumPostcode = () => {
     if (typeof window === 'undefined' || !(window as any).daum) {
-      return
+      return;
     }
 
     new (window as any).daum.Postcode({
       oncomplete: function (data: any) {
-        let addr = ''
-        let extraAddr = ''
+        let addr = '';
+        let extraAddr = '';
 
         if (data.userSelectedType === 'R') {
-          addr = data.roadAddress
+          addr = data.roadAddress;
         } else {
-          addr = data.jibunAddress
+          addr = data.jibunAddress;
         }
 
         if (data.userSelectedType === 'R') {
           if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
-            extraAddr += data.bname
+            extraAddr += data.bname;
           }
           if (data.buildingName !== '' && data.apartment === 'Y') {
-            extraAddr += extraAddr !== '' ? ', ' + data.buildingName : data.buildingName
+            extraAddr += extraAddr !== '' ? ', ' + data.buildingName : data.buildingName;
           }
           if (extraAddr !== '') {
-            extraAddr = ' (' + extraAddr + ')'
+            extraAddr = ' (' + extraAddr + ')';
           }
         }
 
-        setFullAddress(`${addr} ${extraAddr}, ${data.zonecode}`)
+        setFullAddress(`${addr} ${extraAddr}, ${data.zonecode}`);
         setErrors({
           ...errors,
           address: '',
           addressDetail: '',
-        })
-        setIsLayerVisible(false)
+        });
+        setIsLayerVisible(false);
 
         // 상세주소 입력 필드로 포커스 이동
         const detailInput = document.querySelector(
           'input[name="address-detail"]',
-        ) as HTMLInputElement
+        ) as HTMLInputElement;
         if (detailInput) {
-          detailInput.focus()
+          detailInput.focus();
         }
       },
       width: '100%',
       height: '100%',
       maxSuggestItems: 5,
-    }).embed(layerRef.current)
+    }).embed(layerRef.current);
 
-    setIsLayerVisible(true)
+    setIsLayerVisible(true);
     setTimeout(() => {
-      initLayerPosition()
-    }, 100)
-  }
+      initLayerPosition();
+    }, 100);
+  };
 
   const initLayerPosition = () => {
-    if (!layerRef.current) return
+    if (!layerRef.current) return;
 
-    const width = 608
-    const height = 400
-    const borderWidth = 5
+    const width = 608;
+    const height = 400;
+    const borderWidth = 5;
 
-    layerRef.current.style.width = width + 'px'
-    layerRef.current.style.height = height + 'px'
-    layerRef.current.style.border = borderWidth + 'px solid'
-  }
+    layerRef.current.style.width = width + 'px';
+    layerRef.current.style.height = height + 'px';
+    layerRef.current.style.border = borderWidth + 'px solid';
+  };
 
   return (
     <>
@@ -678,7 +631,7 @@ function AddressInput({
           // 스크립트 로드 완료 후 처리
         }}
       />
-      <div className="flex gap-2 items-end relative">
+      <div className="relative flex items-end gap-2">
         <Input
           name="address"
           value={fullAddress}
@@ -692,7 +645,7 @@ function AddressInput({
             errorMessage: 'hidden',
           }}
         />
-        <Button className="h-10 bg-brand text-white" radius="sm" onPress={sample2_execDaumPostcode}>
+        <Button className="bg-brand h-10 text-white" radius="sm" onPress={sample2_execDaumPostcode}>
           주소검색
         </Button>
         {/* 주소 모달창 */}
@@ -734,237 +687,129 @@ function AddressInput({
         {...inputProps}
       />
     </>
-  )
+  );
 }
 
 function FileUploadInput({
   fileList,
   setFileList,
 }: {
-  fileList: File[]
-  setFileList: (value: File[]) => void
+  fileList: File[];
+  setFileList: (value: File[]) => void;
 }) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const files = e.target.files;
     if (files) {
-      setFileList(Array.from(files))
+      setFileList(Array.from(files));
     }
-  }
+  };
 
   const FileListItems = ({ file }: { file: File }) => {
     const handleFileDelete = (file: File) => {
       // 파일 객체 전체가 아닌 name과 size 모두로 필터해야 동일 파일명 업로드 가능
-      setFileList(fileList.filter((f) => !(f.name === file.name && f.size === file.size)))
+      setFileList(fileList.filter((f) => !(f.name === file.name && f.size === file.size)));
       // input[type=file] value 초기화로 재업로드 가능하게 함
-      const input = document.getElementById('fileUpload') as HTMLInputElement | null
+      const input = document.getElementById('fileUpload') as HTMLInputElement | null;
       if (input) {
-        input.value = ''
+        input.value = '';
       }
-    }
+    };
 
     return (
-      <div className="flex items-center justify-between gap-6 px-6 py-3 border-1 border-foreground-100 rounded-md">
+      <div className="border-foreground-100 flex items-center justify-between gap-6 rounded-md border-1 px-6 py-3">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-foreground-500" />
+            <FileText className="text-foreground-500 h-5 w-5" />
           </div>
           <div className="flex flex-col gap-[2px]">
             <span className="text-[13px] font-medium">{file.name}</span>
-            <span className="text-[12px] text-foreground-500">
+            <span className="text-foreground-500 text-[12px]">
               {(file.size / 1024 / 1024).toFixed(2)} MB
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Trash
-            className="w-4 h-4 text-foreground-500 cursor-pointer hover:text-danger transition-all duration-300"
+            className="text-foreground-500 hover:text-danger h-4 w-4 cursor-pointer transition-all duration-300"
             onClick={() => handleFileDelete(file)}
           />
         </div>
       </div>
-    )
-  }
+    );
+  };
   return (
     <div className="flex flex-col gap-4">
-      <span className="text-[14px] font-medium after:content-['*'] after:text-danger after:ml-[2px]">
+      <span className="after:text-danger text-[14px] font-medium after:ml-[2px] after:content-['*']">
         사업자등록증 제출
       </span>
       <label
         htmlFor="fileUpload"
         className={clsx(
-          'w-full py-6 border-1 border-foreground-200 rounded-md flex flex-col items-center justify-center border-dashed gap-2',
-          'cursor-pointer hover:bg-foreground-50 transition-all duration-300',
+          'border-foreground-200 flex w-full flex-col items-center justify-center gap-2 rounded-md border-1 border-dashed py-6',
+          'hover:bg-foreground-50 cursor-pointer transition-all duration-300',
         )}
       >
-        <div className="p-3 bg-foreground-100 rounded-full">
-          <Upload className="w-5 h-5 text-foreground-400" />
+        <div className="bg-foreground-100 rounded-full p-3">
+          <Upload className="text-foreground-400 h-5 w-5" />
         </div>
         <span className="text-[15px] font-medium">
           사업자등록증을 <span className="text-brand">업로드</span>해주세요
         </span>
-        <span className="text-[13px] text-foreground-500">
+        <span className="text-foreground-500 text-[13px]">
           파일 최대 크기: 25MB • 최대 파일 개수: 5
         </span>
       </label>
       <input type="file" id="fileUpload" className="hidden" multiple onChange={handleFileChange} />
       {/* 파일 리스트 */}
       {fileList.length > 0 ? (
-        <div className="flex flex-col gap-2 mt-2">
+        <div className="mt-2 flex flex-col gap-2">
           {fileList.map((file) => (
             <FileListItems key={file.name} file={file} />
           ))}
         </div>
       ) : null}
     </div>
-  )
+  );
 }
 
 function IdValidation(value: string) {
   if (!value) {
-    return '아이디를 입력해주세요.'
+    return '아이디를 입력해주세요.';
   }
   if (value.length < 4 || value.length > 20) {
-    return '아이디는 4자 이상 20자 이하로 입력해주세요.'
+    return '아이디는 4자 이상 20자 이하로 입력해주세요.';
   }
-  const idRegex = /^[a-zA-Z0-9]+$/
+  const idRegex = /^[a-zA-Z0-9]+$/;
   if (!idRegex.test(value)) {
-    return '아이디는 영문과 숫자로 구성되어야 합니다.'
+    return '아이디는 영문과 숫자로 구성되어야 합니다.';
   }
 
-  return true
+  return true;
 }
 
 function PasswordValidation(value: string) {
   if (!value) {
-    return '비밀번호를 입력해주세요.'
+    return '비밀번호를 입력해주세요.';
   }
   if (value.length < 5 || value.length > 25) {
-    return '비밀번호는 5자 이상 25자 이하로 입력해주세요.'
+    return '비밀번호는 5자 이상 25자 이하로 입력해주세요.';
   }
-  return true
+  return true;
 }
 
 function ModalErrorHeader() {
   return (
     <div className="flex items-center gap-2">
-      <Info className="w-5 h-5 text-danger" />
-      <span className="text-base font-bold text-foreground-600">알림</span>
+      <Info className="text-danger h-5 w-5" />
+      <span className="text-foreground-600 text-base font-bold">알림</span>
     </div>
-  )
+  );
 }
 
 function ModdalErrorContent({ message }: { message: string }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-[15px] text-foreground-600 whitespace-pre-wrap">{message}</p>
+      <p className="text-foreground-600 text-[15px] whitespace-pre-wrap">{message}</p>
     </div>
-  )
-}
-
-// 약관 동의 모달 컴포넌트
-function JoinTermsModalContent({
-  setIsTermsAgreed,
-  setIsAllReadTerms,
-  onClose,
-}: {
-  setIsTermsAgreed: (value: boolean) => void
-  setIsAllReadTerms: (value: boolean) => void
-  onClose: () => void
-}) {
-  const [isAllRead, setIsAllRead] = useState(false)
-  const { data } = useQuery({
-    queryKey: ['terms'],
-    queryFn: () => getTerms(),
-  })
-
-  return (
-    <>
-      <ModalHeader>유안메디팜 이용약관</ModalHeader>
-      <ModalBody
-        onScroll={(e) => {
-          const target = e.currentTarget
-          // Check if scrolled to (or past) the bottom with small threshold for floating point errors
-          const scrollDifference = Math.abs(
-            target.scrollHeight - target.scrollTop - target.clientHeight,
-          )
-          if (
-            scrollDifference < 1 ||
-            target.scrollHeight - target.scrollTop <= target.clientHeight
-          ) {
-            setIsAllRead(true)
-            setIsAllReadTerms(true)
-          }
-        }}
-      >
-        <ContentRenderer content={data} />
-      </ModalBody>
-      <ModalFooter>
-        <Button
-          className="w-full bg-brand text-white"
-          radius="sm"
-          size="lg"
-          isDisabled={!isAllRead}
-          onPress={() => {
-            setIsTermsAgreed(true)
-            onClose()
-          }}
-        >
-          동의합니다
-        </Button>
-      </ModalFooter>
-    </>
-  )
-}
-
-function JoinPrivacyModalContent({
-  setIsPrivacyAgreed,
-  setIsAllReadPrivacy,
-  onClose,
-}: {
-  setIsPrivacyAgreed: (value: boolean) => void
-  setIsAllReadPrivacy: (value: boolean) => void
-  onClose: () => void
-}) {
-  const [isAllRead, setIsAllRead] = useState(false)
-  const { data } = useQuery({
-    queryKey: ['privacy'],
-    queryFn: () => getPrivacyPolicy(),
-  })
-
-  return (
-    <>
-      <ModalHeader>유안메디팜 개인정보처리방침</ModalHeader>
-      <ModalBody
-        onScroll={(e) => {
-          const target = e.currentTarget
-          const scrollDifference = Math.abs(
-            target.scrollHeight - target.scrollTop - target.clientHeight,
-          )
-          if (
-            scrollDifference < 1 ||
-            target.scrollHeight - target.scrollTop <= target.clientHeight
-          ) {
-            setIsAllRead(true)
-            setIsAllReadPrivacy(true)
-          }
-        }}
-      >
-        <ContentRenderer content={data} />
-      </ModalBody>
-      <ModalFooter>
-        <Button
-          className="w-full bg-brand text-white"
-          radius="sm"
-          size="lg"
-          isDisabled={!isAllRead}
-          onPress={() => {
-            setIsPrivacyAgreed(true)
-            onClose()
-          }}
-        >
-          동의합니다
-        </Button>
-      </ModalFooter>
-    </>
-  )
+  );
 }

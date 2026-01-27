@@ -1,5 +1,4 @@
-import { APIError, BasePayload, CollectionConfig, SanitizedCollectionConfig, RequestContext, PayloadRequest } from 'payload'
-import {cancelOrderForCard, cancelOrderForBankTransferForHooks} from "@order/(page)/list/actions"
+import { CollectionConfig } from 'payload';
 
 export const Order: CollectionConfig = {
   slug: 'order',
@@ -11,11 +10,19 @@ export const Order: CollectionConfig = {
     create: () => false,
   },
   admin: {
-    defaultColumns: ['user', 'product', 'orderStatus',"quantity", 'orderRequest', 'paymentsMethod', "orderCreatedAt"],
+    defaultColumns: [
+      'user',
+      'product',
+      'orderStatus',
+      'quantity',
+      'orderRequest',
+      'paymentsMethod',
+      'orderCreatedAt',
+    ],
     group: '홈페이지 컨텐츠',
     components: {
-      beforeListTable: ["@/collections/components/order/OrderComponents"]
-    }
+      beforeListTable: ['@/collections/components/order/OrderComponents'],
+    },
   },
   fields: [
     {
@@ -91,12 +98,12 @@ export const Order: CollectionConfig = {
       },
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
-          return true
+          return true;
         }
         if (value < 1) {
-          return '수량은 1 이상이어야 합니다.'
+          return '수량은 1 이상이어야 합니다.';
         }
-        return true
+        return true;
       },
     },
     {
@@ -112,11 +119,11 @@ export const Order: CollectionConfig = {
       filterOptions: ({ data, id }) => {
         // 현재 문서의 orderStatus가 결제대기(id: 5)인 경우
         if (!id) {
-          return true
+          return true;
         }
 
         const currentOrderStatus =
-          typeof data?.orderStatus === 'number' ? data.orderStatus : data?.orderStatus?.id
+          typeof data?.orderStatus === 'number' ? data.orderStatus : data?.orderStatus?.id;
 
         if (currentOrderStatus === 5) {
           // 상품준비(id: 1)만 반환
@@ -124,11 +131,11 @@ export const Order: CollectionConfig = {
             id: {
               equals: 1,
             },
-          }
+          };
         }
 
         // 그 외의 경우 모든 옵션 표시
-        return true
+        return true;
       },
     },
     {
@@ -150,24 +157,50 @@ export const Order: CollectionConfig = {
       },
     },
     {
-      name: 'price',
-      type: 'number',
-      label: '주문 금액',
-      admin: {
-        disableBulkEdit: true,
-        readOnly: true,
-      },
-      defaultValue: 0,
-      validate: (value: number | null | undefined) => {
-        if (value === null || value === undefined) {
-          return '가격을 입력해주세요'
-        }
-        if (value < 0) {
-          return '가격은 0 이상이어야 합니다.'
-        }
-        return true
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'price',
+          type: 'number',
+          label: '총 주문 상품금액',
+          admin: {
+            disableBulkEdit: true,
+            readOnly: true,
+          },
+          defaultValue: 0,
+          validate: (value: number | null | undefined) => {
+            if (value === null || value === undefined) {
+              return '가격을 입력해주세요';
+            }
+            if (value < 0) {
+              return '가격은 0 이상이어야 합니다.';
+            }
+            return true;
+          },
+        },
+        {
+          name: 'delivery_fee',
+          type: 'number',
+          label: '주문 시 배송비',
+          defaultValue: 0,
+          admin: {
+            disableBulkEdit: true,
+            readOnly: true,
+          },
+          validate: (value: number | null | undefined) => {
+            if (value === null || value === undefined) {
+              return '배송비를 입력해주세요';
+            }
+
+            if (value < 0) {
+              return '배송비는 0 이상이어야 합니다.';
+            }
+            return true;
+          },
+        },
+      ],
     },
+
     {
       name: 'cashback_rate',
       type: 'number',
@@ -180,16 +213,16 @@ export const Order: CollectionConfig = {
       defaultValue: 0,
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
-          return '카드 결제 적립금 비율을 입력해주세요'
+          return '카드 결제 적립금 비율을 입력해주세요';
         }
 
         if (value < 0) {
-          return '적립금 비율은 0 이상이어야 합니다.'
+          return '적립금 비율은 0 이상이어야 합니다.';
         }
         if (value > 1.8) {
-          return '적립금 비율은 1.8 이하이어야 합니다.'
+          return '적립금 비율은 1.8 이하이어야 합니다.';
         }
-        return true
+        return true;
       },
     },
     {
@@ -204,49 +237,28 @@ export const Order: CollectionConfig = {
       defaultValue: 0,
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
-          return '무통장 입금 적립금 비율을 입력해주세요'
+          return '무통장 입금 적립금 비율을 입력해주세요';
         }
 
         if (value < 0) {
-          return '적립금 비율은 0 이상이어야 합니다.'
+          return '적립금 비율은 0 이상이어야 합니다.';
         }
         if (value > 1.8) {
-          return '적립금 비율은 1.8 이하이어야 합니다.'
+          return '적립금 비율은 1.8 이하이어야 합니다.';
         }
-        return true
-      },
-    },
-    {
-      name: 'delivery_fee',
-      type: 'number',
-      label: '주문 시 배송비',
-      defaultValue: 0,
-      admin: {
-        disableBulkEdit: true,
-        readOnly: true,
-        hidden: true,
-      },
-      validate: (value: number | null | undefined) => {
-        if (value === null || value === undefined) {
-          return '배송비를 입력해주세요'
-        }
-
-        if (value < 0) {
-          return '배송비는 0 이상이어야 합니다.'
-        }
-        return true
+        return true;
       },
     },
   ],
   hooks: {
     beforeOperation: [
-      ({context,args, operation, req}) => {
+      ({ context, args, operation, req }) => {
         if (operation === 'read' && req?.user?.role === 'admin' && args.where) {
-       // 구조: { and: [ { or: [ { and: [...] }, { and: [...] } ] } ] }
+          // 구조: { and: [ { or: [ { and: [...] }, { and: [...] } ] } ] }
           // 이를 { and: [...] } 형태로 변환
-          
-          const allConditions: any[] = []
-          
+
+          const allConditions: any[] = [];
+
           // 기존 and 배열의 다른 항목들 처리 (or가 아닌 것들)
           if (args.where.and && Array.isArray(args.where.and)) {
             args.where.and.forEach((andItem: any) => {
@@ -256,27 +268,27 @@ export const Order: CollectionConfig = {
                   if (orItem.and && Array.isArray(orItem.and)) {
                     // 각 and 배열의 조건들을 평탄화하여 추가
                     orItem.and.forEach((condition: any) => {
-                      allConditions.push(condition)
-                    })
+                      allConditions.push(condition);
+                    });
                   } else if (orItem) {
                     // and가 없으면 직접 조건으로 추가
-                    allConditions.push(orItem)
+                    allConditions.push(orItem);
                   }
-                })
+                });
               } else if (andItem) {
                 // or가 아닌 일반 조건은 그대로 추가
-                allConditions.push(andItem)
+                allConditions.push(andItem);
               }
-            })
+            });
           }
-          
+
           // 변환된 where 절 적용
           args.where = {
-            and: allConditions
-          }
+            and: allConditions,
+          };
         }
-        return args
-      }
-    ]
+        return args;
+      },
+    ],
   },
-}
+};
