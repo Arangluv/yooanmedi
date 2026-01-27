@@ -10,7 +10,7 @@ function Label({ className, ...props }: React.ComponentProps<typeof LabelPrimiti
     <LabelPrimitive.Root
       data-slot="label"
       className={cn(
-        'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
+        'flex cursor-pointer items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
         className,
       )}
       {...props}
@@ -36,7 +36,7 @@ function Switch({
       checked={checked}
       onCheckedChange={onCheckedChange}
       className={cn(
-        'peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
+        'peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input cursor-pointer',
         'focus-visible:border-ring focus-visible:ring-ring/50',
         'dark:data-[state=unchecked]:bg-input/80',
         'group/switch inline-flex shrink-0 items-center rounded-full border border-transparent shadow-xs',
@@ -52,7 +52,7 @@ function Switch({
         data-slot="switch-thumb"
         className={cn(
           'bg-background',
-          'dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-foreground',
+          'dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-foreground cursor-pointer',
           'pointer-events-none block rounded-full ring-0 transition-transform',
           'group-data-[size=default]/switch:size-6 group-data-[size=sm]/switch:size-3',
           'data-[state=checked]:translate-x-[calc(100%+4px)] data-[state=unchecked]:translate-x-0',

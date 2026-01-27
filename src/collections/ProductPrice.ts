@@ -8,6 +8,7 @@ export const ProductPrice: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'id',
+    hidden: true,
   },
   fields: [
     {
