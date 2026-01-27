@@ -41,7 +41,7 @@ function LeftContent() {
           <span className="font-black">유안메디팜 온라인 주문 서비스</span>
         </h1>
         <p className="text-foreground-600 text-lg">
-          유안메디팜은 병의원에 필수제품을 판매하는 온라인 쇼핑몰입니다. 테스트 개발 브랜치22
+          유안메디팜은 병의원에 필수제품을 판매하는 온라인 쇼핑몰입니다.
         </p>
       </div>
       {/* 중단 이미지 */}
