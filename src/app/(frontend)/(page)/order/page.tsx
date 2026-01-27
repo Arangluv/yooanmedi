@@ -1,35 +1,35 @@
-import { BrandLogo } from '@/config/Logo'
-import Link from 'next/link'
+import { BrandLogo } from '@/config/Logo';
+import Link from 'next/link';
 
 /** components */
-import SearchForm from './_components/main/SearchForm'
-import SearchResultList from './_components/main/SearchResultList'
-import Inventory from './_components/main/inventory/InventoryBottomButton'
-import CategoryNav from './_components/main/CategoryNav'
-import ProductList from './_components/main/ProductList'
-import ProductDeatilAsideSection from './_components/main/ProductDeatilAsideSection'
-import UserInfo from './_components/main/UserInfo'
-import InventoryModal from './_components/main/inventory/InventoryModal'
-import InventoryButtonAsLink from './_components/main/inventory/InventoryButtonAsLink'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
-import { ProductItemType, SearchParamsType } from './_type'
-import { generateGetProductCondition } from './utils'
+import SearchForm from './_components/main/SearchForm';
+import SearchResultList from './_components/main/SearchResultList';
+import Inventory from './_components/main/inventory/InventoryBottomButton';
+import CategoryNav from './_components/main/CategoryNav';
+import ProductList from './_components/main/ProductList';
+import ProductDeatilAsideSection from './_components/main/ProductDeatilAsideSection';
+import UserInfo from './_components/main/UserInfo';
+import InventoryModal from './_components/main/inventory/InventoryModal';
+import InventoryButtonAsLink from './_components/main/inventory/InventoryButtonAsLink';
+import { getPayload } from 'payload';
+import config from '@/payload.config';
+import { ProductItemType, SearchParamsType } from './_type';
+import { generateGetProductCondition } from './utils';
 
 export default async function OrderPage({
   searchParams,
 }: {
-  searchParams: Promise<SearchParamsType>
+  searchParams: Promise<SearchParamsType>;
 }) {
-  const serverSearchParams = await searchParams
+  const serverSearchParams = await searchParams;
   const getProductCondition = generateGetProductCondition({
     condition: serverSearchParams.condition,
     keyword: serverSearchParams.keyword,
     page: serverSearchParams.page,
     category: serverSearchParams.category,
-  })
+  });
 
-  const payload = await getPayload({ config })
+  const payload = await getPayload({ config });
   const { docs, totalPages, totalDocs } = await payload.find({
     collection: 'product',
     select: {
@@ -51,16 +51,16 @@ export default async function OrderPage({
     where: getProductCondition?.where,
     page: serverSearchParams.page ? parseInt(serverSearchParams.page) : 1,
     limit: 12,
-  })
+  });
 
   return (
     <Wrapper>
-      <div className="w-full flex bg-white z-10 py-6 sticky top-0">
+      <div className="sticky top-0 z-10 flex w-full bg-white py-6">
         <div className="w-[calc((100%-1024px)/2)]" />
-        <div className="w-5xl h-full">
-          <header className="w-full h-full relative flex items-center justify-between">
+        <div className="h-full w-5xl">
+          <header className="relative flex h-full w-full items-center justify-between">
             <Link href="/order" prefetch={false}>
-              <BrandLogo width={140} height={40} className="w-[140px] h-[40px]" />
+              <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
             </Link>
             {/* search area */}
             <SearchForm />
@@ -76,9 +76,9 @@ export default async function OrderPage({
         <UserInfo />
       </div>
       {/* divider */}
-      <div className="w-full h-[1px] bg-foreground-200 mb-4" />
+      <div className="bg-foreground-200 mb-4 h-[1px] w-full" />
       {/* bottom area */}
-      <div className="w-full max-w-5xl flex items-center">
+      <div className="flex w-full max-w-5xl items-center">
         {/* 제품카테고리 */}
         <CategoryNav />
       </div>
@@ -101,13 +101,13 @@ export default async function OrderPage({
       <Inventory />
       <InventoryModal />
     </Wrapper>
-  )
+  );
 }
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col w-full h-full items-center min-h-screen">
-      <div className="w-full h-full flex flex-col items-center">{children}</div>
+    <div className="flex h-full min-h-screen w-full flex-col items-center">
+      <div className="flex h-full w-full flex-col items-center">{children}</div>
     </div>
-  )
+  );
 }
