@@ -77,6 +77,7 @@ export async function join(formData: FormData) {
         ceo,
         hospitalName,
         email,
+        contactEmail: email,
         address: userFullAddress,
         businessNumber,
         nursingNumber,
