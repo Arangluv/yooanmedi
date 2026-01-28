@@ -8,7 +8,7 @@ export const Users: CollectionConfig = {
     plural: '유저',
   },
   admin: {
-    defaultColumns: ['username', 'hospitalName', 'phoneNumber', 'role', 'isApproved', 'createdAt'],
+    defaultColumns: ['username', 'hospitalName', 'phoneNumber', 'role', 'isApproved'],
     useAsTitle: 'hospitalName',
     group: '홈페이지 설정',
   },
@@ -66,6 +66,9 @@ export const Users: CollectionConfig = {
           type: 'checkbox',
           name: 'isApproved',
           label: '회원가입 승인 여부',
+          custom: {
+            test: 'test',
+          },
           admin: {
             description: '회원가입 승인 여부를 선택해주세요 활성화 시 회원가입이 승인됩니다',
             condition: (data, siblingData) => {
@@ -73,7 +76,7 @@ export const Users: CollectionConfig = {
             },
             components: {
               Field: '@/collections/components/common/CustomCheckboxField',
-              Cell: '@/collections/components/common/TextCell',
+              Cell: '@/collections/components/common/cells/BadgeCell',
             },
           },
           defaultValue: false,
