@@ -122,7 +122,7 @@ export const Product: CollectionConfig = {
           isRequireMargin: true,
         },
         components: {
-          Cell: '@/collections/components/product/BestProductCell',
+          Cell: '@/collections/components/common/cells/BestProductCell',
           Field: '@/collections/components/common/CustomCheckboxField',
         },
       },
