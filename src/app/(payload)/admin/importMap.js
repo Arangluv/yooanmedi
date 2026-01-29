@@ -2,6 +2,8 @@ import { default as default_d3da62deca79bd822a814c94269e7325 } from '@/collectio
 import { default as default_4361494a095172c694451452be0d799c } from '@/collections/components/common/cells/BadgeCell'
 import { default as default_d44b349654e0e0f76f8d78913e7a8cc8 } from '@/collections/components/common/CustomCheckboxField'
 import { default as default_1db109c33276d2385210db5013fc62ed } from '@/collections/components/common/SeparatorMargin'
+import { default as default_673c7e47019e6bb6267348408d8ac86c } from '@/collections/components/price/PriceAdjustBtnCell'
+import { default as default_3ff702871335ccd8d9267c18cfef4ccb } from '@/collections/components/common/UserListViewSetDialog'
 import { default as default_97a89a2354d8899aef171a5f425d689f } from '@/collections/components/common/cells/BestProductCell'
 import { default as default_f36f12dd4d6ebd30112d75266a5c524f } from '@collections/components/product/ProductListBulkUploadBtn'
 import { default as default_19920d989ded0e59fd7473c2d9c798ce } from '@/collections/components/order/OrderComponents'
@@ -40,6 +42,8 @@ export const importMap = {
   "@/collections/components/common/cells/BadgeCell#default": default_4361494a095172c694451452be0d799c,
   "@/collections/components/common/CustomCheckboxField#default": default_d44b349654e0e0f76f8d78913e7a8cc8,
   "@/collections/components/common/SeparatorMargin#default": default_1db109c33276d2385210db5013fc62ed,
+  "@/collections/components/price/PriceAdjustBtnCell#default": default_673c7e47019e6bb6267348408d8ac86c,
+  "@/collections/components/common/UserListViewSetDialog#default": default_3ff702871335ccd8d9267c18cfef4ccb,
   "@/collections/components/common/cells/BestProductCell#default": default_97a89a2354d8899aef171a5f425d689f,
   "@collections/components/product/ProductListBulkUploadBtn#default": default_f36f12dd4d6ebd30112d75266a5c524f,
   "@/collections/components/order/OrderComponents#default": default_19920d989ded0e59fd7473c2d9c798ce,
