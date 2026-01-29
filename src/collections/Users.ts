@@ -1,4 +1,3 @@
-import { describe } from 'node:test';
 import type { CollectionConfig } from 'payload';
 
 export const Users: CollectionConfig = {
@@ -8,9 +7,23 @@ export const Users: CollectionConfig = {
     plural: '유저',
   },
   admin: {
-    defaultColumns: ['username', 'hospitalName', 'phoneNumber', 'role', 'isApproved'],
+    defaultColumns: [
+      'username',
+      'hospitalName',
+      'phoneNumber',
+      'role',
+      'isApproved',
+      'adjust_price_btn',
+    ],
     useAsTitle: 'hospitalName',
     group: '홈페이지 설정',
+    components: {
+      views: {
+        list: {
+          Component: '@/collections/components/common/UserListViewSetDialog',
+        },
+      },
+    },
   },
   auth: {
     loginWithUsername: true,
@@ -67,7 +80,18 @@ export const Users: CollectionConfig = {
           name: 'isApproved',
           label: '회원가입 승인 여부',
           custom: {
-            test: 'test',
+            check: {
+              color: 'success',
+              text: '승인',
+            },
+            uncheck: {
+              color: 'default',
+              text: '승인대기',
+            },
+            admin: {
+              color: 'default',
+              text: '-',
+            },
           },
           admin: {
             description: '회원가입 승인 여부를 선택해주세요 활성화 시 회원가입이 승인됩니다',
@@ -292,6 +316,16 @@ export const Users: CollectionConfig = {
       required: true,
       relationTo: 'files',
       hasMany: true,
+    },
+    {
+      type: 'ui',
+      name: 'adjust_price_btn',
+      label: '가격 조정',
+      admin: {
+        components: {
+          Cell: '@/collections/components/price/PriceAdjustBtnCell',
+        },
+      },
     },
   ],
 };
