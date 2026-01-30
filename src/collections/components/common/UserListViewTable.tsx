@@ -4,8 +4,8 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
+  RowData,
 } from '@tanstack/react-table';
 
 import {
@@ -27,13 +27,24 @@ import {
   SelectItem,
   Button,
 } from '@collections/components/shadcn';
-import { SetStateAction, Dispatch, useState, useEffect, useRef } from 'react';
+import { SetStateAction, Dispatch, useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from 'lucide-react';
 import { columns, Product } from './Columns';
 import { useQuery } from '@tanstack/react-query';
 import { getProductList } from '@/collections/apis/product/actions';
 import { Fragment } from 'react';
-import type { Table as TableType } from '@tanstack/react-table';
+import type { OnChangeFn, Row, RowSelectionState, Table as TableType } from '@tanstack/react-table';
+import useProductSelectList from '@/app/(payload)/context/useProductSelectStore';
+import '@tanstack/table-core';
+import { Updater } from '@tanstack/react-table';
+
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData = RowData> {
+    addAllRowsProducts: (newProducts: Product[]) => void;
+    removeAllRowsProducts: (removeProducts: Product[]) => void;
+    onRowSelectionChange: ({ row, selected }: { row: Row<Product>; selected: boolean }) => void;
+  }
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -96,20 +107,53 @@ function ProductListDataTable<TData, TValue>({
   totalPages,
   page,
   setPage,
+  // setProductSelectList,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
 
-  useEffect(() => {
-    console.log('rowSelection');
-    console.log(rowSelection);
-  }, [rowSelection]);
+  // 커스텀 setRowSelection 테스트 코드 작성해보기 -> hook으로 분리
+  //onRowSelectionChange?: OnChangeFn<RowSelectionState> | undefined
+  const testSetRowSelection: OnChangeFn<RowSelectionState> = (updater) => {
+    setRowSelection((prev) => {
+      console.log('typeof updater');
+      console.log(typeof updater);
+
+      const newSelection = typeof updater === 'function' ? updater(prev) : updater;
+
+      // 2. 변경된 항목들을 찾아서 스토어도 업데이트
+      const prevIds = new Set(Object.keys(prev).map(Number));
+      const newIds = new Set(Object.keys(newSelection).map(Number));
+
+      return newSelection;
+    });
+  };
+
+  const addAllRowsProducts = useProductSelectList((state) => state.addAllRowsProducts);
+  const removeAllRowsProducts = useProductSelectList((state) => state.removeAllRowsProducts);
+  const addProduct = useProductSelectList((state) => state.addProduct);
+  const removeProduct = useProductSelectList((state) => state.removeProduct);
+
+  const handleRowSelectionChange = ({
+    row,
+    selected,
+  }: {
+    row: Row<Product>;
+    selected: boolean;
+  }) => {
+    if (selected) {
+      row.toggleSelected(true);
+      addProduct(row.original);
+    } else {
+      row.toggleSelected(false);
+      removeProduct(row.original);
+    }
+  };
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: testSetRowSelection,
     // 페이지 세팅 부분
     manualPagination: true,
     getRowId: (row: TData) => {
@@ -117,7 +161,6 @@ function ProductListDataTable<TData, TValue>({
       // @ts-ignore
       return row.id;
     },
-    // autoResetPageIndex: true, // 데이터 업데이트 시 페이지 인덱스 초기화
     rowCount: totalRows,
     pageCount: totalPages,
     onPaginationChange: setPage,
@@ -126,7 +169,24 @@ function ProductListDataTable<TData, TValue>({
       rowSelection,
       pagination: page,
     },
+    meta: {
+      addAllRowsProducts,
+      removeAllRowsProducts,
+      onRowSelectionChange: handleRowSelectionChange,
+    },
   });
+
+  // 해당 부분 기록
+  // useEffect(() => {
+  //   const selectedRowsOriginalData = table.getSelectedRowModel().rows.map((row) => row.original);
+  //   setProductSelectList(selectedRowsOriginalData as Product[]);
+
+  // }, [rowSelection]);
+
+  // 해당 부분 기록
+  useEffect(() => {
+    console.log('rowSelection', rowSelection);
+  }, [rowSelection]);
 
   return (
     <Fragment>
@@ -153,7 +213,17 @@ function ProductListDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => row.toggleSelected()}
+                  // 이렇게 작성하면 ProductSetSection과 강하게 이어진다
+                  // data-state={
+                  //   products.some((product) => parseInt(product.id) === parseInt(row.id)) &&
+                  //   'selected'
+                  // }
+                  onClick={() =>
+                    handleRowSelectionChange({
+                      row: row as Row<Product>,
+                      selected: !row.getIsSelected(),
+                    })
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -206,15 +276,8 @@ function DataTableSearchField({
         <InputGroupAddon>
           <SearchIcon className="size-4" />
         </InputGroupAddon>
-        <InputGroupInput
-          id="keyword"
-          name="keyword"
-          placeholder="키워드를 입력해주세요."
-          // value={keyword}
-          // onChange={(e) => setKeyword(e.target.value)}
-        />
+        <InputGroupInput id="keyword" name="keyword" placeholder="키워드를 입력해주세요." />
       </InputGroup>
-      {/* <Select defaultValue={'pn'} value={condition} onValueChange={(value) => setCondition(value)}> */}
       <Select defaultValue={'pn'} name="condition">
         <SelectTrigger className="w-fit items-center justify-start !border">
           <span className="text-foreground/60 text-sm">검색조건</span>
