@@ -3,13 +3,13 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@collections/components/shadcn';
 
-export type Product = {
+export interface Product {
   id: number;
   name: string;
   manufacturer: string;
   ingredient: string;
   price: number;
-};
+}
 
 export const columns: ColumnDef<Product>[] = [
   {
