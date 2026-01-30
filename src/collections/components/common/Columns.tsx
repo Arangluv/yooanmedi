@@ -1,7 +1,8 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, RowData } from '@tanstack/react-table';
 import { Checkbox } from '@collections/components/shadcn';
+import '@tanstack/table-core';
 
 export interface Product {
   id: number;
@@ -14,22 +15,56 @@ export interface Product {
 export const columns: ColumnDef<Product>[] = [
   {
     id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="전체선택"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="행선택"
-      />
-    ),
+    header: ({ table }) => {
+      const addAllRowsProducts = table.options.meta?.addAllRowsProducts;
+      const removeAllRowsProducts = table.options.meta?.removeAllRowsProducts;
+
+      if (!addAllRowsProducts || !removeAllRowsProducts) {
+        return null;
+      }
+
+      return (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => {
+            // 전체 상품 추가 / 삭제하기
+            const targetData = table.getRowModel().rows.map((row) => row.original);
+
+            if (value) {
+              addAllRowsProducts(targetData);
+            } else {
+              removeAllRowsProducts(targetData);
+            }
+
+            table.toggleAllPageRowsSelected(!!value);
+          }}
+          aria-label="전체선택"
+        />
+      );
+    },
+    cell: ({ table, row }) => {
+      const onRowSelectionChange = table.options.meta?.onRowSelectionChange;
+
+      if (!onRowSelectionChange) {
+        return null;
+      }
+
+      return (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onCheckedChange={(value) => {
+            onRowSelectionChange({ row, selected: !!value });
+          }}
+          aria-label="행선택"
+        />
+      );
+    },
   },
   {
     accessorKey: 'id',
@@ -49,7 +84,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: 'price',
-    header: () => <div className="text-right">가격</div>,
+    header: () => <div className="text-right">기본가격</div>,
     cell: ({ row }) => {
       const price = parseFloat(row.getValue('price'));
       const formattedPrice = new Intl.NumberFormat('ko-KR', {

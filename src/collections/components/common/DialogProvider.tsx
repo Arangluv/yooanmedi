@@ -9,7 +9,7 @@ import {
 } from '@collections/components/shadcn';
 import CustomDialogFooter from './DialogFooter';
 import ProductDataTable from './UserListViewTable';
-import { Product } from './Columns';
+import ProductPriceSetSection from './ProductPriceSetSection';
 
 const DialogProvider = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -43,8 +43,7 @@ const DialogProvider = ({ children }: { children: React.ReactNode }) => {
 
 const ProductSection = () => {
   return (
-    <div className="flex h-full w-[70%] flex-col gap-4 rounded-md">
-
+    <div className="flex h-full w-[60%] flex-col gap-4 rounded-md">
       <ProductDataTable />
     </div>
   );
@@ -52,8 +51,7 @@ const ProductSection = () => {
 
 const SettingSection = () => {
   return (
-    <div className="flex h-full w-[30%] flex-col gap-4 rounded-md bg-white">
-      {/* 변경하는 타켓 정보 */}
+    <div className="flex h-full w-[40%] flex-col gap-4 rounded-md bg-white">
       <TargetInfo />
       <UpdateOverview />
     </div>
@@ -84,7 +82,17 @@ const TargetInfo = () => {
 const UpdateOverview = () => {
   return (
     <div className="flex h-full w-full flex-col gap-4 overflow-y-auto rounded-md border border-neutral-200 p-4">
-      <span className="text-lg font-bold">가격 설정</span>
+      <div className="flex flex-col gap-1">
+        <span className="text-lg font-bold">가격 설정</span>
+        <span className="text-foreground/80 text-sm">
+          선택된 상품의 가격을 변경할 수 있으며{' '}
+          <span className="text-brand font-medium">
+            선택되지 않은 상품의 가격은 기존 가격으로 유지
+          </span>
+          됩니다.
+        </span>
+      </div>
+      <ProductPriceSetSection />
     </div>
   );
 };
