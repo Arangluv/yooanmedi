@@ -5,11 +5,9 @@ import { Button, Input } from '@collections/components/shadcn';
 
 import useProductSelectList from '@/app/(payload)/context/useProductSelectStore';
 import { Product } from './Columns';
+import TableEmpty from './TableEmpty';
 
 export default function ProductPriceSetSection() {
-  // 기존
-  // const products = useProductSelectList((state) => state.products);
-  //변경
   const products = useProductSelectList((state) => state.products);
   const updateProductPrice = useProductSelectList((state) => state.updateProductPrice);
   const removeProduct = useProductSelectList((state) => state.removeProduct);
@@ -18,28 +16,57 @@ export default function ProductPriceSetSection() {
   // map을 사용하여 렌더링한다면 전체가 렌더링 될텐데 이 부분 생각
 
   return (
-    <table>
-      <thead className="text-foreground/60 rounded-md bg-neutral-100 text-sm">
-        <tr>
-          <th className="p-2 text-start">상품명</th>
-          <th className="text-start">기존 가격</th>
-          <th className="px-2 text-start">수정 가격</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody className="max-h-[200px]">
-        {Array.from(products.values()).map((item: Product) => (
-          <TableRow
-            key={item.id}
-            product={item}
-            updateProductPrice={updateProductPrice}
-            removeProduct={removeProduct}
-          />
-        ))}
-      </tbody>
-    </table>
+    <div className="flex h-full w-full flex-col gap-4 overflow-y-auto rounded-md border border-neutral-200 p-4">
+      <div className="flex flex-col gap-1">
+        <span className="text-lg font-bold">가격 설정</span>
+        <span className="text-foreground/80 text-sm">
+          선택된 상품의 가격을 변경할 수 있으며{' '}
+          <span className="text-brand font-medium">
+            선택되지 않은 상품의 가격은 기존 가격으로 유지
+          </span>
+          됩니다.
+        </span>
+      </div>
+      <table>
+        <thead className="text-foreground/60 rounded-md bg-neutral-100 text-sm">
+          <tr>
+            <th className="p-2 text-start">상품명</th>
+            <th className="text-start">기존 가격</th>
+            <th className="px-2 text-start">수정 가격</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody className="max-h-[200px]">
+          {Array.from(products.values()).length === 0 ? (
+            <TableEmptyRow />
+          ) : (
+            Array.from(products.values()).map((item: Product) => (
+              <TableRow
+                key={item.id}
+                product={item}
+                updateProductPrice={updateProductPrice}
+                removeProduct={removeProduct}
+              />
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
+
+const TableEmptyRow = () => {
+  return (
+    <tr>
+      <td colSpan={4}>
+        <TableEmpty
+          title="선택된 상품이 없습니다."
+          description="등록된 상품에서 상품을 클릭해주세요"
+        />
+      </td>
+    </tr>
+  );
+};
 
 const TableRow = ({
   product,
