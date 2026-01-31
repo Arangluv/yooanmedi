@@ -48,8 +48,5 @@ export const getProductList = async ({
     where: where,
   });
 
-  console.log('where: ', where);
-  console.log('docs: ', docs);
-
   return { docs, totalDocs, totalPages };
 };
