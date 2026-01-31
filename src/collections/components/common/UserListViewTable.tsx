@@ -33,10 +33,9 @@ import { columns, Product } from './Columns';
 import { useQuery } from '@tanstack/react-query';
 import { getProductList } from '@/collections/apis/product/actions';
 import { Fragment } from 'react';
-import type { OnChangeFn, Row, RowSelectionState, Table as TableType } from '@tanstack/react-table';
+import type { Row, Table as TableType } from '@tanstack/react-table';
 import useProductSelectList from '@/app/(payload)/context/useProductSelectStore';
 import '@tanstack/table-core';
-import { Updater } from '@tanstack/react-table';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData = RowData> {
@@ -107,23 +106,11 @@ function ProductListDataTable<TData, TValue>({
   totalPages,
   page,
   setPage,
-  // setProductSelectList,
 }: DataTableProps<TData, TValue>) {
+  // 가격 설정 부분에서 Delete 액션을 감지하기 위해 사용
+  const products = useProductSelectList((state) => state.products);
+
   const [rowSelection, setRowSelection] = useState({});
-
-  // 커스텀 setRowSelection 테스트 코드 작성해보기 -> hook으로 분리
-  //onRowSelectionChange?: OnChangeFn<RowSelectionState> | undefined
-  const testSetRowSelection: OnChangeFn<RowSelectionState> = (updater) => {
-    setRowSelection((prev) => {
-      const newSelection = typeof updater === 'function' ? updater(prev) : updater;
-      // 2. 변경된 항목들을 찾아서 스토어도 업데이트
-      const prevIds = new Set(Object.keys(prev).map(Number));
-      const newIds = new Set(Object.keys(newSelection).map(Number));
-
-      return newSelection;
-    });
-  };
-
   const addAllRowsProducts = useProductSelectList((state) => state.addAllRowsProducts);
   const removeAllRowsProducts = useProductSelectList((state) => state.removeAllRowsProducts);
   const addProduct = useProductSelectList((state) => state.addProduct);
@@ -149,7 +136,7 @@ function ProductListDataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onRowSelectionChange: testSetRowSelection,
+    onRowSelectionChange: setRowSelection,
     // 페이지 세팅 부분
     manualPagination: true,
     getRowId: (row: TData) => {
@@ -179,10 +166,16 @@ function ProductListDataTable<TData, TValue>({
 
   // }, [rowSelection]);
 
-  // 해당 부분 기록
   useEffect(() => {
-    console.log('rowSelection', rowSelection);
-  }, [rowSelection]);
+    const newRowSelection = {} as Record<number, boolean>;
+    const idList = Array.from(products.keys());
+
+    idList.forEach((id) => {
+      newRowSelection[id] = true;
+    });
+
+    setRowSelection(newRowSelection);
+  }, [products]);
 
   return (
     <Fragment>
