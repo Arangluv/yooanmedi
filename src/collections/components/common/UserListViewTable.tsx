@@ -36,6 +36,7 @@ import { Fragment } from 'react';
 import type { Row, Table as TableType } from '@tanstack/react-table';
 import useProductSelectList from '@/app/(payload)/context/useProductSelectStore';
 import '@tanstack/table-core';
+import TableEmpty from './TableEmpty';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData = RowData> {
@@ -52,6 +53,7 @@ interface DataTableProps<TData, TValue> {
   totalRows: number;
   page: { pageIndex: number; pageSize: number };
   setPage: Dispatch<SetStateAction<{ pageIndex: number; pageSize: number }>>;
+  isLoading: boolean;
 }
 
 const ProductDataTable = () => {
@@ -61,7 +63,7 @@ const ProductDataTable = () => {
   const [condition, setCondition] = useState('pn');
   const [keyword, setKeyword] = useState('');
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['product-list', page, keyword, condition],
     queryFn: () => getProductList({ page: page.pageIndex + 1, limit: LIMIT, keyword, condition }),
   });
@@ -83,6 +85,7 @@ const ProductDataTable = () => {
           totalRows={data?.totalDocs || 0}
           page={page}
           setPage={setPage}
+          isLoading={isLoading}
         />
       </div>
     </div>
@@ -106,6 +109,7 @@ function ProductListDataTable<TData, TValue>({
   totalPages,
   page,
   setPage,
+  isLoading,
 }: DataTableProps<TData, TValue>) {
   // 가격 설정 부분에서 Delete 액션을 감지하기 위해 사용
   const products = useProductSelectList((state) => state.products);
@@ -177,6 +181,10 @@ function ProductListDataTable<TData, TValue>({
     setRowSelection(newRowSelection);
   }, [products]);
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <Fragment>
       <div className="h-full w-full overflow-y-auto">
@@ -224,7 +232,10 @@ function ProductListDataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-48 text-center">
-                  상품 리스트가 없습니다
+                  <TableEmpty
+                    title="검색 결과가 없습니다."
+                    description="검색 조건을 변경해주세요."
+                  />
                 </TableCell>
               </TableRow>
             )}
