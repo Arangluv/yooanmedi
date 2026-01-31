@@ -10,6 +10,7 @@ import {
 import CustomDialogFooter from './DialogFooter';
 import ProductDataTable from './UserListViewTable';
 import ProductPriceSetSection from './ProductPriceSetSection';
+import TargetUserInfo from './TargetUserInfo';
 
 const DialogProvider = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -52,29 +53,8 @@ const ProductSection = () => {
 const SettingSection = () => {
   return (
     <div className="flex h-full w-[40%] flex-col gap-4 rounded-md bg-white">
-      <TargetInfo />
+      <TargetUserInfo />
       <UpdateOverview />
-    </div>
-  );
-};
-
-const TargetInfo = () => {
-  const TargetCard = ({ title, value }: { title: string; value: string }) => {
-    return (
-      <div className="flex flex-col gap-1">
-        <span className="text-foreground/60">{title}</span>
-        <span className="font-medium">{value}</span>
-      </div>
-    );
-  };
-  return (
-    <div className="flex w-full shrink-0 flex-col gap-4 rounded-md border border-neutral-200 p-4">
-      <span className="text-lg font-bold">고객 정보</span>
-      <div className="flex items-center justify-between">
-        <TargetCard title="병원명" value="인천병원" />
-        <TargetCard title="대표자명" value="김인천" />
-        <TargetCard title="이메일" value="yooanmedi@gmail.com" />
-      </div>
     </div>
   );
 };
