@@ -7,12 +7,15 @@ import useProductSelectList from '@/app/(payload)/context/useProductSelectStore'
 import { Product } from './Columns';
 
 export default function ProductPriceSetSection() {
-  // UserListViewTable에서 선택한 행의 정보를 가져옴
-  // 전역으로 선택한 행에 대한 정보를 관리해야 할 것이고
-  // map을 사용하여 렌더링한다면 전체가 렌더링 될텐데 이 부분 생각
+  // 기존
+  // const products = useProductSelectList((state) => state.products);
+  //변경
   const products = useProductSelectList((state) => state.products);
   const updateProductPrice = useProductSelectList((state) => state.updateProductPrice);
   const removeProduct = useProductSelectList((state) => state.removeProduct);
+  // UserListViewTable에서 선택한 행의 정보를 가져옴
+  // 전역으로 선택한 행에 대한 정보를 관리해야 할 것이고
+  // map을 사용하여 렌더링한다면 전체가 렌더링 될텐데 이 부분 생각
 
   return (
     <table>
@@ -25,7 +28,7 @@ export default function ProductPriceSetSection() {
         </tr>
       </thead>
       <tbody className="max-h-[200px]">
-        {products.map((item: Product) => (
+        {Array.from(products.values()).map((item: Product) => (
           <TableRow
             key={item.id}
             product={item}

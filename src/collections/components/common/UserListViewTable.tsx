@@ -115,11 +115,7 @@ function ProductListDataTable<TData, TValue>({
   //onRowSelectionChange?: OnChangeFn<RowSelectionState> | undefined
   const testSetRowSelection: OnChangeFn<RowSelectionState> = (updater) => {
     setRowSelection((prev) => {
-      console.log('typeof updater');
-      console.log(typeof updater);
-
       const newSelection = typeof updater === 'function' ? updater(prev) : updater;
-
       // 2. 변경된 항목들을 찾아서 스토어도 업데이트
       const prevIds = new Set(Object.keys(prev).map(Number));
       const newIds = new Set(Object.keys(newSelection).map(Number));

@@ -7,7 +7,7 @@ type SelectedProduct = Product & {
 };
 
 type ProductSelectListState = {
-  products: SelectedProduct[];
+  products: Map<number, SelectedProduct>;
   addProduct: (newProduct: Product) => void;
   addAllRowsProducts: (newProducts: Product[]) => void;
   removeProduct: (removeProduct: Product) => void;
@@ -16,52 +16,69 @@ type ProductSelectListState = {
   clearProducts: () => void;
 };
 
-const useProductSelectList = create<ProductSelectListState>((set) => ({
-  products: [],
-  addProduct: (newProduct: Product) =>
-    set((state) => ({
-      products: [...state.products, { ...newProduct, custom_price: 0 }],
-    })),
+const useProductSelectList = create<ProductSelectListState>((set, get) => ({
+  products: new Map<number, SelectedProduct>(),
+  addProduct: (newProduct: Product) => {
+    set((state) => {
+      // 참조 값을 변경해야하기에 새로운 Map을 만들어줘야한다.
+      const newMap = new Map(state.products);
+      newMap.set(newProduct.id, { ...newProduct, custom_price: 0 });
+
+      return {
+        products: newMap,
+      };
+    });
+  },
   addAllRowsProducts: (newProducts: Product[]) =>
     set((state) => {
       // 체크한 새로운 제품은 newProduct 근데 existingProducts에 있는 제품은 추가하지 않는다.
-      const addedProducts = newProducts.filter(
-        (product) => !state.products.some((p) => p.id === product.id),
-      );
+      const newMap = new Map(state.products);
 
-      return {
-        products: [
-          ...state.products,
-          ...addedProducts.map((product) => ({ ...product, custom_price: 0 })),
-        ],
-      };
+      newProducts.forEach((product) => {
+        if (!newMap.has(product.id)) {
+          newMap.set(product.id, { ...product, custom_price: 0 });
+        }
+      });
+
+      return { products: newMap };
     }),
   removeProduct: (removeProduct: Product) =>
-    set((state) => ({
-      products: state.products.filter((product) => product.id !== removeProduct.id),
-    })),
-  removeAllRowsProducts: (removeProducts: Product[]) =>
     set((state) => {
-      const removedProductsIdList = removeProducts.map((product) => product.id);
-      const filteredProducts = state.products.filter(
-        (product) => !removedProductsIdList.includes(product.id),
-      );
+      const newMap = new Map(state.products);
+      newMap.delete(removeProduct.id);
 
       return {
-        products: filteredProducts,
+        products: newMap,
+      };
+    }),
+  removeAllRowsProducts: (removeProducts: Product[]) =>
+    set((state) => {
+      const newMap = new Map(state.products);
+      removeProducts.forEach((product) => {
+        newMap.delete(product.id);
+      });
+
+      return {
+        products: newMap,
       };
     }),
   updateProductPrice: ({ id, price }: { id: number; price: number }) =>
     set((state) => {
-      const updatedProduct = state.products.map((product) =>
-        product.id === id ? { ...product, custom_price: price } : product,
-      );
+      const newMap = new Map(state.products);
+      const targetProduct = newMap.get(id);
+
+      if (!targetProduct) {
+        throw new Error(`Product with id ${id} not found`);
+      }
+
+      targetProduct.custom_price = price;
+      newMap.set(id, targetProduct);
 
       return {
-        products: updatedProduct,
+        products: newMap,
       };
     }),
-  clearProducts: () => set({ products: [] }),
+  clearProducts: () => set((state) => ({ products: new Map<number, SelectedProduct>() })),
 }));
 
 export default useProductSelectList;
