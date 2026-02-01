@@ -8,8 +8,14 @@ export const ProductPrice: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'id',
-    hidden: true,
+    // hidden: true,
   },
+  indexes: [
+    {
+      fields: ['product', 'user'],
+      unique: true,
+    },
+  ],
   fields: [
     {
       name: 'product',

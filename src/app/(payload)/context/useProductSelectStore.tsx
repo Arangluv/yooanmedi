@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { Product } from '@collections/components/common/Columns';
 
 // Columns에서 사용하는 Product type에 custom_price 필드를 추가한 타입
-type SelectedProduct = Product & {
+export type SelectedProduct = Product & {
   custom_price: number;
 };
 
@@ -64,18 +64,17 @@ const useProductSelectList = create<ProductSelectListState>((set, get) => ({
     }),
   updateProductPrice: ({ id, price }: { id: number; price: number }) =>
     set((state) => {
-      const newMap = new Map(state.products);
-      const targetProduct = newMap.get(id);
+      const targetProduct = state.products.get(id);
 
       if (!targetProduct) {
         throw new Error(`Product with id ${id} not found`);
       }
 
       targetProduct.custom_price = price;
-      newMap.set(id, targetProduct);
+      state.products.set(id, targetProduct);
 
       return {
-        products: newMap,
+        products: state.products,
       };
     }),
   clearProducts: () => set((state) => ({ products: new Map<number, SelectedProduct>() })),
