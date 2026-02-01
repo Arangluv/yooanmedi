@@ -2,7 +2,8 @@
 
 import { create } from 'zustand';
 
-type TargetUser = {
+export type TargetUser = {
+  id: number;
   hosipital_name: string;
   ceo_name: string;
   email: string;

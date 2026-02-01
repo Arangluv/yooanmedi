@@ -1,23 +1,24 @@
 'use client';
 
 import { TrashIcon } from 'lucide-react';
-import { Button, Input } from '@collections/components/shadcn';
+import { Button, Input, ScrollArea } from '@collections/components/shadcn';
 
 import useProductSelectList from '@/app/(payload)/context/useProductSelectStore';
 import { Product } from './Columns';
 import TableEmpty from './TableEmpty';
+import useCreateCustomPrice from '@/collections/hooks/useCreateCustomPrice';
+import InLineAlertBox from './InLineAlertBox';
+import { useEffect } from 'react';
 
 export default function ProductPriceSetSection() {
   const products = useProductSelectList((state) => state.products);
   const updateProductPrice = useProductSelectList((state) => state.updateProductPrice);
   const removeProduct = useProductSelectList((state) => state.removeProduct);
-  // UserListViewTable에서 선택한 행의 정보를 가져옴
-  // 전역으로 선택한 행에 대한 정보를 관리해야 할 것이고
-  // map을 사용하여 렌더링한다면 전체가 렌더링 될텐데 이 부분 생각
+  const { onSaveCustomPrice, errors, isPendingForCreateCustomPrice } = useCreateCustomPrice();
 
   return (
-    <div className="flex h-full w-full flex-col gap-4 overflow-y-auto rounded-md border border-neutral-200 p-4">
-      <div className="flex flex-col gap-1">
+    <div className="flex w-full flex-col justify-between gap-4 rounded-md border border-neutral-200 p-4">
+      <div className="flex h-[48px] flex-col justify-center gap-1">
         <span className="text-lg font-bold">가격 설정</span>
         <span className="text-foreground/80 text-sm">
           선택된 상품의 가격을 변경할 수 있으며{' '}
@@ -27,30 +28,48 @@ export default function ProductPriceSetSection() {
           됩니다.
         </span>
       </div>
-      <table>
-        <thead className="text-foreground/60 rounded-md bg-neutral-100 text-sm">
-          <tr>
-            <th className="p-2 text-start">상품명</th>
-            <th className="text-start">기존 가격</th>
-            <th className="px-2 text-start">수정 가격</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody className="max-h-[200px]">
-          {Array.from(products.values()).length === 0 ? (
-            <TableEmptyRow />
-          ) : (
-            Array.from(products.values()).map((item: Product) => (
-              <TableRow
-                key={item.id}
-                product={item}
-                updateProductPrice={updateProductPrice}
-                removeProduct={removeProduct}
-              />
-            ))
-          )}
-        </tbody>
-      </table>
+      {/* 테이블 영역 */}
+      <ScrollArea className="max-h-[400px] border border-neutral-200">
+        <table className="w-full">
+          <thead className="text-foreground/60 rounded-md bg-neutral-100 text-sm">
+            <tr>
+              <th className="p-2 text-start">상품명</th>
+              <th className="text-start">기존 가격</th>
+              <th className="px-2 text-start">수정 가격</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody className="min-h-[200px]">
+            {Array.from(products.values()).length === 0 ? (
+              <TableEmptyRow />
+            ) : (
+              Array.from(products.values()).map((item: Product) => (
+                <TableRow
+                  key={item.id}
+                  product={item}
+                  updateProductPrice={updateProductPrice}
+                  removeProduct={removeProduct}
+                  isError={errors.set.has(item.id)}
+                />
+              ))
+            )}
+          </tbody>
+        </table>
+      </ScrollArea>
+      {errors.info.length > 0 && (
+        <InLineAlertBox message={errors.info[0].message} variant="success" />
+      )}
+      {/* 저장 혹은 추가될 수 있는 액션영역 */}
+      <div className="flex h-fit w-full items-center justify-end">
+        <Button
+          disabled={isPendingForCreateCustomPrice}
+          variant="default"
+          className="bg-brand hover:bg-brand/90 cursor-pointer text-white"
+          onClick={onSaveCustomPrice}
+        >
+          가격 저장
+        </Button>
+      </div>
     </div>
   );
 }
@@ -72,13 +91,19 @@ const TableRow = ({
   product,
   updateProductPrice,
   removeProduct,
+  isError,
 }: {
   product: Product;
   updateProductPrice: ({ id, price }: { id: number; price: number }) => void;
   removeProduct: (removeProduct: Product) => void;
+  isError: boolean;
 }) => {
   return (
-    <tr className="border-b border-neutral-200 font-normal text-neutral-800">
+    <tr
+      data-id={product.id}
+      data-error={isError}
+      className="border-b border-neutral-200 font-normal text-neutral-800 data-[error=true]:bg-red-50"
+    >
       <td className="px-2 py-1 text-start font-medium">{product.name}</td>
       <PriceCell price={product.price} />
       <EditPriceCell id={product.id} updateProductPrice={updateProductPrice} />
@@ -108,11 +133,19 @@ const EditPriceCell = ({
   // 3. 업데이트 방식은 포커스의 해제가 있겠지만 안전하지는 않다 -> 디바운스 고려
 
   return (
-    <td className="max-w-[100px] px-2 py-2 text-end">
+    <td className="max-w-[120px] px-2 py-2 text-end">
       <Input
         type="number"
         className="w-full"
-        onChange={(e) => updateProductPrice({ id, price: parseInt(e.target.value) || 0 })}
+        id={id.toString()}
+        onChange={(e) => {
+          updateProductPrice({ id, price: parseInt(e.target.value) || 0 });
+          // 입력값이 바뀌면 상위 tr의 data-error를 false로 설정
+          const tr = (e.target as HTMLInputElement).closest('tr');
+          if (tr) {
+            tr.setAttribute('data-error', 'false');
+          }
+        }}
       />
     </td>
   );

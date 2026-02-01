@@ -9,13 +9,10 @@ export default function CustomDialogFooter() {
   return (
     <DialogFooter className="px-2">
       <DialogClose asChild>
-        <Button variant="default" size="lg" onClick={clearProducts}>
+        <Button variant="default" size="lg" onClick={clearProducts} className="cursor-pointer">
           닫기
         </Button>
       </DialogClose>
-      <Button variant="default" size="lg" className="bg-brand hover:bg-brand/90 text-white">
-        저장
-      </Button>
     </DialogFooter>
   );
 }

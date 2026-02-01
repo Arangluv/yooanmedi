@@ -7,7 +7,7 @@ const TargetUserInfo = () => {
   const { hosipital_name, ceo_name, email } = user;
 
   return (
-    <div className="flex w-full shrink-0 flex-col gap-4 rounded-md border border-neutral-200 p-4">
+    <div className="flex h-[110px] w-full shrink-0 flex-col justify-center gap-4 rounded-md border border-neutral-200 p-4">
       <span className="text-lg font-bold">고객 정보</span>
       <div className="flex items-center justify-between">
         <TargetCard title="병원명" value={hosipital_name} />
