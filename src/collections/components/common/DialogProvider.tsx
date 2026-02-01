@@ -30,7 +30,7 @@ const DialogProvider = ({ children }: { children: React.ReactNode }) => {
           </DialogDescription>
         </DialogHeader>
         {/* Main Content */}
-        <div className="mt-4 flex h-[650px] w-full gap-8">
+        <div className="mt-4 flex min-h-[650px] w-full gap-8">
           <ProductSection />
           <SettingSection />
         </div>

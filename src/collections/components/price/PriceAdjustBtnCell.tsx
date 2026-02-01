@@ -7,13 +7,14 @@ import useUserInfo from '@/app/(payload)/context/useUserInfo';
 export default function PriceAdjustBtnCell(props: any) {
   const setUser = useUserInfo((state) => state.setUser);
   const { rowData } = props;
-  const { hospitalName, ceo, email } = rowData;
+  const { id, hospitalName, ceo, email } = rowData;
 
   if (rowData.role === 'admin') {
     return null;
   }
 
   setUser({
+    id: id,
     hosipital_name: hospitalName,
     ceo_name: ceo,
     email: email,
