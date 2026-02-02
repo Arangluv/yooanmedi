@@ -1,57 +1,57 @@
-'use client'
+'use client';
 
-import Navbar from '@order/(page)/_components/Navbar'
-import { ChevronRight } from 'lucide-react'
-import Link from 'next/link'
-import { useContext, useEffect, useState } from 'react'
-import type { RangeValue } from '@react-types/shared'
-import type { DateValue } from '@react-types/datepicker'
-import moment from 'moment'
-import { useQuery } from '@tanstack/react-query'
-import { OrderUserInfoContext } from '../../_context/order_context'
-import { getOrderList } from './actions'
-import { useSearchParams } from 'next/navigation'
-import ListFilterSection from './_components/ListFilterSection'
-import { OrderListType } from './_components/ListBodySection'
-import { ListBodySection, ListEmptyBody } from './_components/ListBodySection'
-import OrderListExportButton from './_components/OrderListExportButton'
+import Navbar from '@/app/(frontend)/(page)/order/(page)/_components/Navbar';
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { useContext, useEffect, useState } from 'react';
+import type { RangeValue } from '@react-types/shared';
+import type { DateValue } from '@react-types/datepicker';
+import moment from 'moment';
+import { useQuery } from '@tanstack/react-query';
+import { OrderUserInfoContext } from '../../_context/order_context';
+import { getOrderList } from './actions';
+import { useSearchParams } from 'next/navigation';
+import ListFilterSection from './_components/ListFilterSection';
+import { OrderListType } from './_components/ListBodySection';
+import { ListBodySection, ListEmptyBody } from './_components/ListBodySection';
+import OrderListExportButton from './_components/OrderListExportButton';
 
 type FilterdDateType = {
   weekly: {
-    start: string
-    end: string
-  }
+    start: string;
+    end: string;
+  };
   monthly: {
-    start: string
-    end: string
-  }
+    start: string;
+    end: string;
+  };
   threeMonths: {
-    start: string
-    end: string
-  }
+    start: string;
+    end: string;
+  };
   sixmonth: {
-    start: string
-    end: string
-  }
+    start: string;
+    end: string;
+  };
   yearly: {
-    start: string
-    end: string
-  }
-}
+    start: string;
+    end: string;
+  };
+};
 
 export default function OrderListPage() {
-  const searchParams = useSearchParams()
-  const [defaultFilter, setDefaultFilter] = useState('weekly')
-  const [productName, setProductName] = useState('')
-  const [date, setDate] = useState<RangeValue<DateValue> | null>(null)
-  const [filterdDate, setFilterdDate] = useState<FilterdDateType | null>(null)
-  const { user } = useContext(OrderUserInfoContext)
+  const searchParams = useSearchParams();
+  const [defaultFilter, setDefaultFilter] = useState('weekly');
+  const [productName, setProductName] = useState('');
+  const [date, setDate] = useState<RangeValue<DateValue> | null>(null);
+  const [filterdDate, setFilterdDate] = useState<FilterdDateType | null>(null);
+  const { user } = useContext(OrderUserInfoContext);
 
   const start =
-    searchParams.get('start') || filterdDate?.[defaultFilter as keyof FilterdDateType]?.start || ''
+    searchParams.get('start') || filterdDate?.[defaultFilter as keyof FilterdDateType]?.start || '';
   const end =
-    searchParams.get('end') || filterdDate?.[defaultFilter as keyof FilterdDateType]?.end || ''
-  const prodNameSearchParam = searchParams.get('productName') || ''
+    searchParams.get('end') || filterdDate?.[defaultFilter as keyof FilterdDateType]?.end || '';
+  const prodNameSearchParam = searchParams.get('productName') || '';
 
   const { data } = useQuery({
     queryKey: ['order-list', start, end, prodNameSearchParam],
@@ -63,16 +63,16 @@ export default function OrderListPage() {
         productName: prodNameSearchParam,
       }),
     enabled: !!user?.id && !!start && !!end,
-  })
+  });
 
   useEffect(() => {
-    const today = new Date()
-    const parsedByMomentToday = moment(today).format('YYYY-MM-DD')
-    const parsedByMomentSubtract1Week = moment(today).subtract(1, 'week').format('YYYY-MM-DD')
-    const parsedByMomentSubtract1Month = moment(today).subtract(1, 'month').format('YYYY-MM-DD')
-    const parsedByMomentSubtract3Months = moment(today).subtract(3, 'month').format('YYYY-MM-DD')
-    const parsedByMomentSubtract6Months = moment(today).subtract(6, 'month').format('YYYY-MM-DD')
-    const parsedByMomentSubtract12Months = moment(today).subtract(12, 'month').format('YYYY-MM-DD')
+    const today = new Date();
+    const parsedByMomentToday = moment(today).format('YYYY-MM-DD');
+    const parsedByMomentSubtract1Week = moment(today).subtract(1, 'week').format('YYYY-MM-DD');
+    const parsedByMomentSubtract1Month = moment(today).subtract(1, 'month').format('YYYY-MM-DD');
+    const parsedByMomentSubtract3Months = moment(today).subtract(3, 'month').format('YYYY-MM-DD');
+    const parsedByMomentSubtract6Months = moment(today).subtract(6, 'month').format('YYYY-MM-DD');
+    const parsedByMomentSubtract12Months = moment(today).subtract(12, 'month').format('YYYY-MM-DD');
 
     setFilterdDate({
       weekly: {
@@ -95,11 +95,11 @@ export default function OrderListPage() {
         start: parsedByMomentSubtract12Months,
         end: parsedByMomentToday,
       },
-    })
-  }, [])
+    });
+  }, []);
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="flex w-full flex-col">
       <Navbar />
       <ContentWrapper>
         <ListTitle />
@@ -115,20 +115,20 @@ export default function OrderListPage() {
         <ListTableSection data={data as OrderListType[] | undefined} />
       </ContentWrapper>
     </div>
-  )
+  );
 }
 
 function ContentWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="w-full flex justify-center min-h-[calc(100vh-415px)]">
-      <div className="w-5xl flex flex-col">{children}</div>
+    <div className="flex min-h-[calc(100vh-415px)] w-full justify-center">
+      <div className="flex w-5xl flex-col">{children}</div>
     </div>
-  )
+  );
 }
 
 function ListTitle() {
   return (
-    <div className="w-full flex justify-between items-center my-4 pb-4 border-b-2 border-foreground-200">
+    <div className="border-foreground-200 my-4 flex w-full items-center justify-between border-b-2 pb-4">
       <div className="">
         <span className="text-3xl font-bold">주문 내역</span>
       </div>
@@ -136,23 +136,23 @@ function ListTitle() {
         <Link href="/order" className="text-foreground-600">
           상품조회
         </Link>
-        <ChevronRight className="w-4 h-4" />
+        <ChevronRight className="h-4 w-4" />
         <span className="text-brand font-bold">주문내역</span>
       </div>
     </div>
-  )
+  );
 }
 
 function ListTableSection({ data }: { data: OrderListType[] | undefined }) {
   return (
-    <div className="flex flex-col w-full gap-4 mt-8">
+    <div className="mt-8 flex w-full flex-col gap-4">
       <div className="flex items-center justify-between">
         <span className="text-xl font-bold">주문내역</span>
         <OrderListExportButton data={data as OrderListType[]} />
       </div>
       <table>
         <thead>
-          <tr className="bg-neutral-100 font-normal text-foreground-700 text-sm">
+          <tr className="text-foreground-700 bg-neutral-100 text-sm font-normal">
             <th className="py-2">번호</th>
             <th>주문일시</th>
             <th>제조사</th>
@@ -169,5 +169,5 @@ function ListTableSection({ data }: { data: OrderListType[] | undefined }) {
         </tbody>
       </table>
     </div>
-  )
+  );
 }

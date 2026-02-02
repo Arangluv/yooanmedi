@@ -8,7 +8,7 @@ import {
   InventoryContext,
   OrderUserInfoContext,
   ProductInfoContext,
-} from '@order/_context/order_context';
+} from '@/app/(frontend)/(page)/order/_context/order_context';
 import { useContext, useState } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { ProductItemType } from '../../_type';

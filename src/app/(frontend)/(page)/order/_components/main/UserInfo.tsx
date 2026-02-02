@@ -1,8 +1,8 @@
 'use client';
 
-import { OrderUserInfoContext } from '@order/_context/order_context';
+import { OrderUserInfoContext } from '@/app/(frontend)/(page)/order/_context/order_context';
 import { useContext } from 'react';
-import { formatNumberWithCommas } from '@order/utils';
+import { formatNumberWithCommas } from '@/app/(frontend)/(page)/order/utils';
 import clsx from 'clsx';
 
 export default function UserInfo({

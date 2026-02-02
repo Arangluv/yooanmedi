@@ -26,7 +26,9 @@
       "@payload-config": ["./src/payload.config.ts"],
       "@public/*": ["./public/*"],
       "@order/*": ["./src/app/(frontend)/(page)/order/*"],
-      "@collections/*": ["./src/collections/*"]
+      "@collections/*": ["./src/collections/*"],
+      "@entities/*": ["./src/entities/*"],
+      "@shared/*": ["./src/shared/*"]
     },
     "target": "ES2022"
   },
