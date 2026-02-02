@@ -13,16 +13,16 @@ export default function PriceAdjustBtnCell(props: any) {
     return null;
   }
 
-  setUser({
-    id: id,
-    hosipital_name: hospitalName,
-    ceo_name: ceo,
-    email: email,
-  });
-
   return (
     <DialogTrigger asChild>
-      <Button className="bg-brand rounded-md px-4 py-2 text-white">가격 조정</Button>
+      <Button
+        onClick={() =>
+          setUser({ id: id, hosipital_name: hospitalName, ceo_name: ceo, email: email })
+        }
+        className="bg-brand rounded-md px-4 py-2 text-white"
+      >
+        가격 조정
+      </Button>
     </DialogTrigger>
   );
 }

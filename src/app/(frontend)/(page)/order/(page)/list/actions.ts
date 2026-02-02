@@ -3,7 +3,7 @@
 import { getPayload, Where } from 'payload';
 import config from '@/payload.config';
 import moment from 'moment-timezone';
-import { generateRandomShopTransactionId } from '@order/utils';
+import { generateRandomShopTransactionId } from '@/app/(frontend)/(page)/order/utils';
 import crypto from 'crypto';
 
 export async function getOrderList({

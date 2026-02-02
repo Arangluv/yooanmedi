@@ -1,47 +1,47 @@
-'use client'
+'use client';
 
-import moment from 'moment'
-import { formatNumberWithCommas } from '@order/utils'
-import clsx from 'clsx'
-import { Button } from '@heroui/react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { cancelOrderForCard, cancelOrderForBankTransfer } from '../actions'
-import { useRouter } from 'next/navigation'
-import { OrderUserInfoContext } from '@order/_context/order_context'
-import { useContext } from 'react'
+import moment from 'moment';
+import { formatNumberWithCommas } from '@/app/(frontend)/(page)/order/utils';
+import clsx from 'clsx';
+import { Button } from '@heroui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { cancelOrderForCard, cancelOrderForBankTransfer } from '../actions';
+import { useRouter } from 'next/navigation';
+import { OrderUserInfoContext } from '@/app/(frontend)/(page)/order/_context/order_context';
+import { useContext } from 'react';
 
 export type OrderListType = {
-  id: number
+  id: number;
   user: {
-    id: number
-    username: string
-  }
+    id: number;
+    username: string;
+  };
   product: {
-    id: number
-    name: string
-    manufacturer: string
-    specification: string
-  }
-  price: number
-  paymentsMethod: 'creditCard' | 'bankTransfer'
-  quantity: number
-  orderCreatedAt: string
-  pgCno: string
+    id: number;
+    name: string;
+    manufacturer: string;
+    specification: string;
+  };
+  price: number;
+  paymentsMethod: 'creditCard' | 'bankTransfer';
+  quantity: number;
+  orderCreatedAt: string;
+  pgCno: string;
   orderStatus: {
-    id: number
-    name: string
-  }
-  deliveryCompany: string | null
-}
+    id: number;
+    name: string;
+  };
+  deliveryCompany: string | null;
+};
 
 export function ListBodySection({ data }: { data: OrderListType[] }) {
   return (
     <>
       {data.map((item: OrderListType, index: number) => {
         return (
-          <tr key={item.id} className="border-t-1 border-foreground-200 text-sm">
-            <td className="text-center py-2">{index + 1}</td>
+          <tr key={item.id} className="border-foreground-200 border-t-1 text-sm">
+            <td className="py-2 text-center">{index + 1}</td>
             <td className="text-center">{moment(item.orderCreatedAt).format('YYYY-MM-DD')}</td>
             <td className="text-center">{item.product.manufacturer}</td>
             <td className="text-center">{item.product.name}</td>
@@ -65,10 +65,10 @@ export function ListBodySection({ data }: { data: OrderListType[] }) {
               </div>
             </td>
           </tr>
-        )
+        );
       })}
     </>
-  )
+  );
 }
 
 export function ListEmptyBody() {
@@ -76,12 +76,12 @@ export function ListEmptyBody() {
     <tr>
       <td
         colSpan={10}
-        className="text-center py-[200px] border-1 border-t-none border-foreground-200 text-foreground-600"
+        className="border-t-none border-foreground-200 text-foreground-600 border-1 py-[200px] text-center"
       >
         주문내역이 없습니다.
       </td>
     </tr>
-  )
+  );
 }
 
 export function OrderStatus({ id, name }: { id: number; name: string }) {
@@ -99,7 +99,7 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
     3: 'bg-success-50',
     4: 'bg-danger-50',
     5: 'bg-neutral-200',
-  }
+  };
 
   const textColorMap = {
     1: 'text-foreground-700',
@@ -107,59 +107,59 @@ export function OrderStatus({ id, name }: { id: number; name: string }) {
     3: 'text-success-600',
     4: 'text-danger-500',
     5: 'text-foreground-700',
-  }
-  const bgColor = bgColorMap[id as keyof typeof bgColorMap]
-  const textColor = textColorMap[id as keyof typeof textColorMap]
+  };
+  const bgColor = bgColorMap[id as keyof typeof bgColorMap];
+  const textColor = textColorMap[id as keyof typeof textColorMap];
 
   return (
-    <div className={clsx('mx-auto w-fit px-2 py-1 rounded-md', bgColor)}>
+    <div className={clsx('mx-auto w-fit rounded-md px-2 py-1', bgColor)}>
       <span className={clsx('text-xs', textColor)}>{name}</span>
     </div>
-  )
+  );
 }
 
 function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number }) {
-  const queryClient = useQueryClient()
-  const { user, setUser } = useContext(OrderUserInfoContext)
+  const queryClient = useQueryClient();
+  const { user, setUser } = useContext(OrderUserInfoContext);
 
   const { mutate: cancelOrderMutation } = useMutation({
     mutationFn: ({ orderId }: { orderId: number }) => cancelOrderForCard({ orderId }),
     onSuccess: (data) => {
       if (data?.success) {
-        toast.success(data?.message ?? '주문취소가 완료되었습니다.')
+        toast.success(data?.message ?? '주문취소가 완료되었습니다.');
       } else {
-        toast.error(data?.message ?? '주문취소에 실패했습니다.')
+        toast.error(data?.message ?? '주문취소에 실패했습니다.');
       }
 
       queryClient.invalidateQueries({
         queryKey: ['order-list'],
         exact: false,
         refetchType: 'all',
-      })
+      });
 
       if (user) {
-        setUser({ ...user, point: data?.userPoint ?? 0 })
+        setUser({ ...user, point: data?.userPoint ?? 0 });
       }
     },
     onError: () => {
-      toast.error('주문취소에 실패했습니다.')
+      toast.error('주문취소에 실패했습니다.');
     },
-  })
+  });
 
   const status = {
     1: false,
     2: true,
     3: true,
     4: true,
-  }
+  };
 
   const handleCancel = ({ orderId }: { orderId: number }) => {
-    const isOk = confirm('주문을 취소하시겠습니까?')
+    const isOk = confirm('주문을 취소하시겠습니까?');
 
     if (isOk) {
-      cancelOrderMutation({ orderId })
+      cancelOrderMutation({ orderId });
     }
-  }
+  };
 
   return (
     <div className="mx-auto w-fit">
@@ -168,12 +168,12 @@ function OrderCancelButtonForCard({ orderId, id }: { orderId: number; id: number
         radius="sm"
         onPress={() => handleCancel({ orderId: orderId })}
         isDisabled={status[id as keyof typeof status]}
-        className="bg-danger-500 text-white rounded-md text-xs !w-fit !max-w-fit !py-1 !px-2"
+        className="bg-danger-500 !w-fit !max-w-fit rounded-md !px-2 !py-1 text-xs text-white"
       >
         주문취소
       </Button>
     </div>
-  )
+  );
 }
 
 function OrderCancelButtonForBankTransfer({
@@ -181,35 +181,35 @@ function OrderCancelButtonForBankTransfer({
   id,
   orderStatus,
 }: {
-  orderId: number
-  id: number
-  orderStatus: number
+  orderId: number;
+  id: number;
+  orderStatus: number;
 }) {
-  const queryClient = useQueryClient()
-  const { user, setUser } = useContext(OrderUserInfoContext)
+  const queryClient = useQueryClient();
+  const { user, setUser } = useContext(OrderUserInfoContext);
   const { mutate: cancelOrderMutation } = useMutation({
     mutationFn: ({ orderId, orderStatus }: { orderId: number; orderStatus: number }) =>
       cancelOrderForBankTransfer({ orderId, orderStatus }),
     onSuccess: async (data) => {
       if (data?.success) {
-        toast.success(data?.message ?? '주문취소가 완료되었습니다.')
+        toast.success(data?.message ?? '주문취소가 완료되었습니다.');
       } else {
-        toast.error(data?.message ?? '주문취소에 실패했습니다.')
+        toast.error(data?.message ?? '주문취소에 실패했습니다.');
       }
 
       if (user) {
-        setUser({ ...user, point: data?.userPoint ?? 0 })
+        setUser({ ...user, point: data?.userPoint ?? 0 });
       }
 
       await queryClient.invalidateQueries({
         queryKey: ['order-list'],
         exact: false,
-      })
+      });
     },
     onError: () => {
-      toast.error('주문취소에 실패했습니다.')
+      toast.error('주문취소에 실패했습니다.');
     },
-  })
+  });
 
   const status = {
     1: false,
@@ -217,15 +217,15 @@ function OrderCancelButtonForBankTransfer({
     3: true,
     4: true,
     5: false,
-  }
+  };
 
   const handleCancel = ({ orderId, orderStatus }: { orderId: number; orderStatus: number }) => {
-    const isOk = confirm('주문을 취소하시겠습니까?')
+    const isOk = confirm('주문을 취소하시겠습니까?');
 
     if (isOk) {
-      cancelOrderMutation({ orderId, orderStatus })
+      cancelOrderMutation({ orderId, orderStatus });
     }
-  }
+  };
 
   return (
     <div className="mx-auto w-fit">
@@ -234,10 +234,10 @@ function OrderCancelButtonForBankTransfer({
         radius="sm"
         onPress={() => handleCancel({ orderId: orderId, orderStatus: orderStatus })}
         isDisabled={status[id as keyof typeof status]}
-        className="bg-danger-500 text-white rounded-md text-xs !w-fit !max-w-fit !py-1 !px-2"
+        className="bg-danger-500 !w-fit !max-w-fit rounded-md !px-2 !py-1 text-xs text-white"
       >
         주문취소
       </Button>
     </div>
-  )
+  );
 }

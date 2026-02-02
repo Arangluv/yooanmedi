@@ -11,47 +11,42 @@ import ProductDeatilAsideSection from './_components/main/ProductDeatilAsideSect
 import UserInfo from './_components/main/UserInfo';
 import InventoryModal from './_components/main/inventory/InventoryModal';
 import InventoryButtonAsLink from './_components/main/inventory/InventoryButtonAsLink';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
-import { ProductItemType, SearchParamsType } from './_type';
-import { generateGetProductCondition } from './utils';
+import { ProductItemType } from './_type';
+import { headers as nextHeaders } from 'next/headers';
+
+/** entities */
+import type { SearchParamsType } from '@/entities/product/lib/generate-condition';
+import { getProductList } from '@/entities/product/api/get-product-list';
 
 export default async function OrderPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParamsType>;
 }) {
+  const nextHeader = await nextHeaders();
   const serverSearchParams = await searchParams;
-  const getProductCondition = generateGetProductCondition({
-    condition: serverSearchParams.condition,
-    keyword: serverSearchParams.keyword,
-    page: serverSearchParams.page,
-    category: serverSearchParams.category,
-  });
 
-  const payload = await getPayload({ config });
-  const { docs, totalPages, totalDocs } = await payload.find({
-    collection: 'product',
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      image: true,
-      cashback_rate: true,
-      cashback_rate_for_bank: true,
-      manufacturer: true,
-      specification: true,
-      insurance_code: true,
-      stock: true,
-      delivery_fee: true,
-      returnable: true,
-      is_cost_per_unit: true,
-      is_free_delivery: true,
-    },
-    where: getProductCondition?.where,
-    page: serverSearchParams.page ? parseInt(serverSearchParams.page) : 1,
-    limit: 12,
-  });
+  const { productList, totalProductPages, totalProductDocs } =
+    await getProductList(serverSearchParams);
+
+  // const payloadAuthResult = await payload.auth({ headers: nextHeader, canSetHeaders: false });
+
+  // const { docs: customPriceDocs } = await payload.find({
+  //   collection: 'product-price',
+  //   select: {
+  //     product: true,
+  //   },
+  //   populate: {
+  //     product: {
+  //       price: true,
+  //     },
+  //   },
+  //   where: {
+  //     user: {
+  //       equals: payloadAuthResult.user?.id,
+  //     },
+  //   },
+  // });
 
   return (
     <Wrapper>
@@ -87,14 +82,17 @@ export default async function OrderPage({
         <div className="w-[calc((100%-1024px)/2)]"></div>
         {serverSearchParams.keyword ? (
           <SearchResultList
-            products={docs as unknown as ProductItemType[]}
-            totalPages={totalPages}
+            products={productList as unknown as ProductItemType[]}
+            totalPages={totalProductPages}
             condition={serverSearchParams.condition as 'pn' | 'cn'}
-            totalProducts={totalDocs}
+            totalProducts={totalProductDocs}
             keyword={serverSearchParams.keyword ?? ''}
           />
         ) : (
-          <ProductList totalPages={totalPages} products={docs as unknown as ProductItemType[]} />
+          <ProductList
+            totalPages={totalProductPages}
+            products={productList as unknown as ProductItemType[]}
+          />
         )}
         <ProductDeatilAsideSection />
       </div>

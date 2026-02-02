@@ -3,7 +3,7 @@
 import ProductItem from './ProductItem';
 import ProductListPagination from './Pagination';
 import { useQuery } from '@tanstack/react-query';
-import { getBestProducts } from '@order/actions';
+import { getBestProducts } from '@/app/(frontend)/(page)/order/actions';
 import { ProductItemType } from '../../_type';
 
 export default function ProductList({

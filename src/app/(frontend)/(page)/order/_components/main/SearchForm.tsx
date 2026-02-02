@@ -1,10 +1,10 @@
-'use client'
-import { Form, Input, Select, SelectItem } from '@heroui/react'
-import clsx from 'clsx'
-import { Search } from 'lucide-react'
-import { generateQueryStringForSearch } from '@order/utils'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { SearchParamsType } from '@order/_type'
+'use client';
+import { Form, Input, Select, SelectItem } from '@heroui/react';
+import clsx from 'clsx';
+import { Search } from 'lucide-react';
+import { generateQueryStringForSearch } from '@/app/(frontend)/(page)/order/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { SearchParamsType } from '@/app/(frontend)/(page)/order/_type';
 
 const searchCondition = [
   {
@@ -15,28 +15,28 @@ const searchCondition = [
     key: 'cn',
     label: '제약사명',
   },
-]
+];
 
 export default function SearchForm() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
-    const condition = formData.get('condition') as string
-    const keyword = formData.get('keyword') as string
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const condition = formData.get('condition') as string;
+    const keyword = formData.get('keyword') as string;
 
     const query = generateQueryStringForSearch({
       searchParams,
       condition,
       keyword,
-    }) as SearchParamsType
-    router.push(`/order?${query}`)
-  }
+    }) as SearchParamsType;
+    router.push(`/order?${query}`);
+  };
   return (
     <Form
-      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] flex flex-row gap-0"
+      className="absolute top-1/2 left-1/2 flex w-[600px] -translate-x-1/2 -translate-y-1/2 flex-row gap-0"
       onSubmit={onSubmit}
     >
       <Select
@@ -51,7 +51,7 @@ export default function SearchForm() {
             'border-1 border-brandWeek rounded-r-none border-r-0 text-sm data-[hover=true]:border-brandWeekWeek data-[open=true]:border-brandWeekWeek',
         }}
         renderValue={(items: any) => {
-          return <span className="text-sm text-foreground-700">{items[0].textValue}</span>
+          return <span className="text-foreground-700 text-sm">{items[0].textValue}</span>;
         }}
       >
         {searchCondition.map((item) => (
@@ -78,10 +78,10 @@ export default function SearchForm() {
         placeholder="검색어를 입력해주세요."
         endContent={
           <button type="submit">
-            <Search className="w-5 h-5 text-brandWeek cursor-pointer" />
+            <Search className="text-brandWeek h-5 w-5 cursor-pointer" />
           </button>
         }
       />
     </Form>
-  )
+  );
 }
