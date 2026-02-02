@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import moment from 'moment-timezone';
-import { generateRandomShopTransactionId } from '@order/utils';
+import { generateRandomShopTransactionId } from '@/app/(frontend)/(page)/order/utils';
 import { BasePayload, getPayload } from 'payload';
 import config from '@/payload.config';
 import { Product } from '@/payload-types';

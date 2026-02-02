@@ -1,14 +1,18 @@
 'use client';
 
 import { Divider, Textarea } from '@heroui/react';
-import { formatNumberWithCommas, getMaxPointOnPurchase, getPointOnPurchase } from '@order/utils';
+import {
+  formatNumberWithCommas,
+  getMaxPointOnPurchase,
+  getPointOnPurchase,
+} from '@/app/(frontend)/(page)/order/utils';
 import {
   InventoryContext,
   MinOrderPriceContext,
   OrderUserInfoContext,
-} from '@order/_context/order_context';
+} from '@/app/(frontend)/(page)/order/_context/order_context';
 import { Fragment, useContext } from 'react';
-import { ProductItemType } from '@order/_type';
+import { ProductItemType } from '@/app/(frontend)/(page)/order/_type';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Image as ImageIcon } from 'lucide-react';

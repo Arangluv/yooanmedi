@@ -2,7 +2,7 @@
 
 import { SelectedProduct } from '@/app/(payload)/context/useProductSelectStore';
 import { getPayload } from 'payload';
-import config from '@/payload.config';
+import config from '@payload-config';
 import { TargetUser } from '@/app/(payload)/context/useUserInfo';
 
 export const createCustomPrice = async ({

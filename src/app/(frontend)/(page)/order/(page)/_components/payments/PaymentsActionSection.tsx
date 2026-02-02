@@ -2,17 +2,21 @@
 
 import { Button, Divider, NumberInput } from '@heroui/react';
 import { ChevronRight } from 'lucide-react';
-import { formatNumberWithCommas } from '@order/utils';
-import { registerOrder } from '@order/(page)/payments/actions';
+import { formatNumberWithCommas } from '@/app/(frontend)/(page)/order/utils';
+import { registerOrder } from '@/app/(frontend)/(page)/order/(page)/payments/actions';
 import { useMutation } from '@tanstack/react-query';
 import { useContext, useEffect, useState } from 'react';
 import {
   InventoryContext,
   MinOrderPriceContext,
   OrderUserInfoContext,
-} from '@order/_context/order_context';
+} from '@/app/(frontend)/(page)/order/_context/order_context';
 import Link from 'next/link';
-import { InventoryType, OrderContextUserType, PaymentRegisterDto } from '@order/_type';
+import {
+  InventoryType,
+  OrderContextUserType,
+  PaymentRegisterDto,
+} from '@/app/(frontend)/(page)/order/_type';
 import { useRouter } from 'next/navigation';
 import PaymentsBankTransferButton from './PaymentsBankTransferButton';
 import { calculateDeliveryFeeNumber, calculateTotalDeliveryFee } from '@lib/product/utils';

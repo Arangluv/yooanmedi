@@ -1,32 +1,32 @@
-'use client'
+'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import Navbar from '@order/(page)/_components/Navbar'
-import PaymentsTitle from '@order/(page)/_components/PaymentsTitle'
-import Link from 'next/link'
-import { CircleAlert, CircleCheckBig } from 'lucide-react'
-import moment from 'moment'
-import { formatNumberWithCommas } from '@order/utils'
-import { useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
+import Navbar from '@/app/(frontend)/(page)/order/(page)/_components/Navbar';
+import PaymentsTitle from '@/app/(frontend)/(page)/order/(page)/_components/PaymentsTitle';
+import Link from 'next/link';
+import { CircleAlert, CircleCheckBig } from 'lucide-react';
+import moment from 'moment';
+import { formatNumberWithCommas } from '@/app/(frontend)/(page)/order/utils';
+import { useEffect } from 'react';
 
 export default function PaymentsFinishPage() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  const status = searchParams.get('status')
-  const message = searchParams.get('message')
-  const amount = searchParams.get('amount')
-  const approvalDate = searchParams.get('approvalDate')
-  const shopOrderNo = searchParams.get('shopOrderNo')
+  const status = searchParams.get('status');
+  const message = searchParams.get('message');
+  const amount = searchParams.get('amount');
+  const approvalDate = searchParams.get('approvalDate');
+  const shopOrderNo = searchParams.get('shopOrderNo');
 
   useEffect(() => {
     if (status === 'success') {
-      router.refresh()
+      router.refresh();
     }
-  }, [status])
+  }, [status]);
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="flex w-full flex-col">
       <Navbar />
       <ContentWrapper>
         <PaymentsTitle step="finish" />
@@ -41,33 +41,33 @@ export default function PaymentsFinishPage() {
         )}
       </ContentWrapper>
     </div>
-  )
+  );
 }
 
 function ContentWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="w-full flex justify-center items-center">
-      <div className="w-5xl flex flex-col">{children}</div>
+    <div className="flex w-full items-center justify-center">
+      <div className="flex w-5xl flex-col">{children}</div>
     </div>
-  )
+  );
 }
 
 function OrderFailedContent({ message }: { message: string }) {
   return (
-    <div className="w-full flex items-center justify-center flex-col gap-4 py-12 h-[calc(100vh-469px)]">
-      <span className="text-danger-400 text-lg font-bold flex items-center gap-1">
-        <CircleAlert className="w-6 h-6" />
+    <div className="flex h-[calc(100vh-469px)] w-full flex-col items-center justify-center gap-4 py-12">
+      <span className="text-danger-400 flex items-center gap-1 text-lg font-bold">
+        <CircleAlert className="h-6 w-6" />
         주문 처리 실패
       </span>
       <span>사유 : {message}</span>
       <Link
         href="/order"
-        className="text-hover:bg-brandWeek transition-colors duration-300 text-[15px] px-4 py-2 rounded-md bg-brand text-white mt-8"
+        className="text-hover:bg-brandWeek bg-brand mt-8 rounded-md px-4 py-2 text-[15px] text-white transition-colors duration-300"
       >
         홈으로 돌아가기
       </Link>
     </div>
-  )
+  );
 }
 
 function OrderSuccessContent({
@@ -75,22 +75,22 @@ function OrderSuccessContent({
   approvalDate,
   shopOrderNo,
 }: {
-  amount: string
-  approvalDate: string
-  shopOrderNo: string
+  amount: string;
+  approvalDate: string;
+  shopOrderNo: string;
 }) {
   return (
-    <div className="w-full flex items-center justify-center flex-col gap-4 py-12 h-[calc(100vh-469px)]">
-      <span className="text-success-500 text-xl font-bold flex items-center gap-1">
-        <CircleCheckBig className="w-6 h-6" />
+    <div className="flex h-[calc(100vh-469px)] w-full flex-col items-center justify-center gap-4 py-12">
+      <span className="text-success-500 flex items-center gap-1 text-xl font-bold">
+        <CircleCheckBig className="h-6 w-6" />
         주문 처리가 완료되었습니다
       </span>
-      <div className="flex flex-col gap-2 p-4 w-1/2 border-1 border-foreground-200 rounded-md mt-4">
-        <div className="w-full flex items-center justify-between">
+      <div className="border-foreground-200 mt-4 flex w-1/2 flex-col gap-2 rounded-md border-1 p-4">
+        <div className="flex w-full items-center justify-between">
           <span className="text-foreground-600">거래 번호 :</span>
           <span>{shopOrderNo}</span>
         </div>
-        <div className="w-full flex items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <span className="text-foreground-600">결제 일시 :</span>
           <span>
             {approvalDate
@@ -98,17 +98,17 @@ function OrderSuccessContent({
               : ''}
           </span>
         </div>
-        <div className="w-full flex items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <span className="text-foreground-600">결제 금액 :</span>
           <span className="font-bold">{formatNumberWithCommas(Number(amount))}원</span>
         </div>
       </div>
       <Link
         href="/order/list"
-        className="text-white bg-brand w-1/2 h-12 flex items-center justify-center rounded-md hover:bg-brandWeek transition-colors duration-300"
+        className="bg-brand hover:bg-brandWeek flex h-12 w-1/2 items-center justify-center rounded-md text-white transition-colors duration-300"
       >
         주문내역 확인하기
       </Link>
     </div>
-  )
+  );
 }
