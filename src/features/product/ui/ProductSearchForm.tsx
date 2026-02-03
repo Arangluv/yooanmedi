@@ -1,28 +1,33 @@
 'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { SearchParamsType } from '@/entities/product/model/types';
+
 import { Form, Input, Select, SelectItem } from '@heroui/react';
 import clsx from 'clsx';
 import { Search } from 'lucide-react';
-import { generateQueryStringForSearch } from '@/app/(frontend)/(page)/order/utils';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { SearchParamsType } from '@/app/(frontend)/(page)/order/_type';
 
-const searchCondition = [
-  {
-    key: 'pn',
-    label: '상품명',
-  },
-  {
-    key: 'cn',
-    label: '제약사명',
-  },
-];
+import { generateQueryStringForSearch } from '@/entities/product/lib/generate-query-for-search';
+import {
+  KEYWORD_SEARCH_CONDITION_KEY,
+  KEYWORD_SEARCH_CONDITION_LABEL,
+} from '@/entities/product/constant/search-keyword-condition';
 
-export default function SearchForm() {
+const ProductSearchForm = () => {
+  // useSearchParams -> SearchParamsType으로 변경해주는 유틸 함수가 필요할거같다.
+  // 혹은 nuqs 라이브러리를 사용하자
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const searchKeywordCondition = KEYWORD_SEARCH_CONDITION_KEY.map((key) => ({
+    key,
+    label: KEYWORD_SEARCH_CONDITION_LABEL[key],
+  }));
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const formData = new FormData(e.target as HTMLFormElement);
     const condition = formData.get('condition') as string;
     const keyword = formData.get('keyword') as string;
@@ -34,13 +39,15 @@ export default function SearchForm() {
     }) as SearchParamsType;
     router.push(`/order?${query}`);
   };
+
   return (
     <Form
       className="absolute top-1/2 left-1/2 flex w-[600px] -translate-x-1/2 -translate-y-1/2 flex-row gap-0"
       onSubmit={onSubmit}
     >
       <Select
-        defaultSelectedKeys={[searchParams.get('condition') ?? searchCondition[0].key]}
+        // TODO : Refactoring
+        defaultSelectedKeys={[searchParams?.get('condition') ?? searchKeywordCondition[0].key]}
         radius="sm"
         name="condition"
         variant="bordered"
@@ -54,7 +61,7 @@ export default function SearchForm() {
           return <span className="text-foreground-700 text-sm">{items[0].textValue}</span>;
         }}
       >
-        {searchCondition.map((item) => (
+        {searchKeywordCondition.map((item) => (
           <SelectItem key={item.key} classNames={{ title: 'text-sm text-foreground-800' }}>
             {item.label}
           </SelectItem>
@@ -66,7 +73,7 @@ export default function SearchForm() {
         disableAnimation={true}
         variant="bordered"
         aria-label="검색어"
-        defaultValue={searchParams.get('keyword') ?? ''}
+        defaultValue={searchParams?.get('keyword') ?? ''}
         classNames={{
           base: 'w-[80%]',
           inputWrapper: clsx(
@@ -84,4 +91,6 @@ export default function SearchForm() {
       />
     </Form>
   );
-}
+};
+
+export default ProductSearchForm;

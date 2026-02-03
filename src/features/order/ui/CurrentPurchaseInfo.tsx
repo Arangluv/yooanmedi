@@ -1,14 +1,18 @@
 'use client';
 
-import { formatNumberWithCommas } from '../../utils';
-import { getCurrentUserOrderHistory } from '../../actions';
 import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 
-function ProductPurchaseHistorySection({ prod_id, user_id }: { prod_id: number; user_id: number }) {
+import { getCurrentUserOrder } from '../api/get-current-user-order';
+import { ProductItem } from '@/entities/product/model/types';
+import { formatNumberWithCommas } from '@/shared/lib/fomatters';
+
+const CurrentPurchaseInfo = ({ product }: { product: ProductItem }) => {
+  const tempUserId = 1;
+
   const { data } = useQuery({
-    queryKey: ['order-history', prod_id, user_id],
-    queryFn: () => getCurrentUserOrderHistory({ prod_id, user_id }),
+    queryKey: ['order-history', product.id, tempUserId],
+    queryFn: () => getCurrentUserOrder({ prod_id: product.id, user_id: tempUserId }),
   });
 
   if (!data || data.length === 0) {
@@ -33,12 +37,15 @@ function ProductPurchaseHistorySection({ prod_id, user_id }: { prod_id: number; 
                 {moment(item.orderCreatedAt).format('YYYY-MM-DD')}
               </td>
               <td className="border-foreground-200 border-r-1 text-center">{item.quantity}</td>
+              {/* TODO : 아직 entities에서 order type을 제대로 정의하지 않았음 */}
               {/* @ts-ignore */}
-              <td className="text-center">{formatNumberWithCommas(item.product.price)}원</td>
+              <td className="text-center">{formatNumberWithCommas(item.product?.price)}원</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
   );
-}
+};
+
+export default CurrentPurchaseInfo;
