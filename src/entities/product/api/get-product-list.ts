@@ -1,12 +1,11 @@
 'use server';
 
 import { getPayload } from '@shared/lib/get-payload';
-import type { SearchParamsType } from '../lib/generate-condition';
 import { generationCondition } from '../lib/generate-condition';
-import type { ProductListItem } from '../model/product-list';
+import type { ProductItem, SearchParamsType } from '../model/types';
 
 export type ProductList = {
-  productList: ProductListItem[];
+  productList: ProductItem[];
   totalProductPages: number;
   totalProductDocs: number;
 };

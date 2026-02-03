@@ -1,11 +1,6 @@
 import type { Where } from 'payload';
 
-export type SearchParamsType = {
-  condition: 'pn' | 'cn' | undefined;
-  keyword: string | undefined;
-  page: string | undefined;
-  category: string | undefined;
-};
+import type { SearchParamsType } from '../model/types';
 
 export const generationCondition = (searchParams: SearchParamsType) => {
   const { condition, keyword, category } = searchParams;
