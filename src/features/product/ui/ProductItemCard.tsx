@@ -3,15 +3,16 @@
 import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
-import type { ProductItem } from '@/entities/product/model/types';
-import { getMaxPointOnPurchase } from '@/entities/product/lib/get-max-point';
+import type { ProductItem } from '@/entities/product';
+import { getMaxPointOnPurchase } from '@/entities/product';
+
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import { isPayloadImageRenderable } from '@/shared/lib/validation';
 
 import AddToCartBtn from './AddToCartBtn';
 import useProductDetailStore from '../model/useProductDetailStore';
 
-const ProductItem = ({ product }: { product: ProductItem }) => {
+const ProductItemCard = ({ product }: { product: ProductItem }) => {
   const { setClieckedProduct } = useProductDetailStore();
 
   return (
@@ -55,4 +56,4 @@ const ProductItem = ({ product }: { product: ProductItem }) => {
   );
 };
 
-export default ProductItem;
+export default ProductItemCard;

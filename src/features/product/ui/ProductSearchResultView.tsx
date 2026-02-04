@@ -2,8 +2,9 @@ import Link from 'next/link';
 
 import { Search, CircleArrowRight } from 'lucide-react';
 
-import EmptySearchResult from '@/entities/product/ui/EmptySearchResult';
-import ProductItem from './ProductItem';
+import { EmptySearchResult } from '@/entities/product';
+import type { ProductItem } from '@/entities/product';
+
 import ProductListPagination from './ProductListPagination';
 import ProductList from './ProductList';
 

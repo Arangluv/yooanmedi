@@ -1,11 +1,12 @@
 'use client';
 
-import { ExistingProductToast } from '@/app/(frontend)/(page)/order/_components/main/ToastComponents';
 import useInventoryStore from '@/entities/inventory/model/useInventoryStore';
 import { toast } from 'sonner';
-import type { ProductItem } from '@/entities/product/model/types';
 import { Tooltip } from '@heroui/react';
 import { ShoppingCart } from 'lucide-react';
+
+import type { ProductItem } from '@/entities/product';
+import { ExistingProductToast } from '@/entities/product';
 
 const AddToCartBtn = ({ product }: { product: ProductItem }) => {
   const { addInventory, isExistingProduct } = useInventoryStore();

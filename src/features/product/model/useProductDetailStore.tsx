@@ -1,6 +1,6 @@
 'use client';
 
-import { ProductItem } from '@/entities/product/model/types';
+import { ProductItem } from '@/entities/product';
 import { create } from 'zustand';
 
 type ProductDetailStore = {

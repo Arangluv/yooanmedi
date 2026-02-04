@@ -1,4 +1,4 @@
-import type { ProductItem } from '@/entities/product/model/types';
+import type { ProductItem } from '@/entities/product';
 import ProductList from './ProductList';
 
 import ProductListPagination from './ProductListPagination';
