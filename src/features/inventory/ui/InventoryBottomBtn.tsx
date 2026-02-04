@@ -2,15 +2,14 @@
 
 import { Badge } from '@heroui/react';
 import { CreditCard } from 'lucide-react';
-import {
-  InventoryContext,
-  InventoryModalContext,
-} from '@/app/(frontend)/(page)/order/_context/order_context';
-import { useContext } from 'react';
 
-export default function Inventory() {
-  const { onOpen } = useContext(InventoryModalContext);
-  const { inventory } = useContext(InventoryContext);
+import { useInventoryStore } from '@/entities/inventory';
+
+import useInventoryOpenStateStore from '../model/useInventoryOpenStateStore';
+
+const InventoryBottomBtn = () => {
+  const { inventory } = useInventoryStore();
+  const { onOpen } = useInventoryOpenStateStore();
 
   return (
     <div className="fixed right-8 bottom-6">
@@ -25,4 +24,6 @@ export default function Inventory() {
       </Badge>
     </div>
   );
-}
+};
+
+export default InventoryBottomBtn;

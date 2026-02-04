@@ -6,7 +6,7 @@ import { Tooltip } from '@heroui/react';
 import { ShoppingCart } from 'lucide-react';
 
 import type { ProductItem } from '@/entities/product';
-import { ExistingProductToast } from '@/entities/product';
+import { AddedProductToast, ExistingProductToast } from '@/entities/product';
 
 const AddToCartBtn = ({ product }: { product: ProductItem }) => {
   const { addInventory, isExistingProduct } = useInventoryStore();
@@ -15,13 +15,14 @@ const AddToCartBtn = ({ product }: { product: ProductItem }) => {
     if (isExistingProduct(product.id)) {
       toast.info(<ExistingProductToast />);
     } else {
+      toast.success(<AddedProductToast />);
       addInventory({ product, quantity: 1 });
     }
   };
 
   return (
     <button
-      className="absolute right-2 bottom-2 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100"
+      className="absolute right-2 bottom-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-neutral-100"
       style={{ boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)' }}
       onClick={handleAddToInventory}
     >
