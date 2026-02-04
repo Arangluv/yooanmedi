@@ -1,30 +1,20 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import { Pagination } from '@heroui/react';
 
+import { useSearchQueryState } from '@/entities/product';
+
 export default function ProductListPagination({ totalPages }: { totalPages: number }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  // const handleChange = (page: number) => {
-  //   const query = generateQueryString({
-  //     searchParams,
-  //     page: String(page),
-  //   }) as SearchParamsType;
-
-  //   router.push(`/order?${query}`, { scroll: false });
-  // };
+  const { filters, updatePage } = useSearchQueryState();
 
   return (
     <div className="flex w-full justify-center">
       <Pagination
         total={totalPages}
         showControls
-        // defaultValue={Number(searchParams.get('page')) || 1}
-        page={1}
-        // onChange={handleChange}
+        defaultValue={filters.page}
+        page={filters.page}
+        onChange={(page) => updatePage(page)}
         className="cursor-pointer"
       />
     </div>

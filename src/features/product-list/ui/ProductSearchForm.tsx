@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Form, Input, Select, SelectItem } from '@heroui/react';
 import clsx from 'clsx';
@@ -9,18 +9,20 @@ import { Search } from 'lucide-react';
 import {
   KEYWORD_SEARCH_CONDITION_KEY,
   KEYWORD_SEARCH_CONDITION_LABEL,
-  generateQueryStringForSearch,
   useSearchQueryState,
 } from '@/entities/product';
-import type { KeywordSearchConditionKey, SearchParamsType } from '@/entities/product';
-import { useEffect } from 'react';
+import type { KeywordSearchConditionKey } from '@/entities/product';
+
+const searchKeywordCondition = KEYWORD_SEARCH_CONDITION_KEY.map((key) => ({
+  key,
+  label: KEYWORD_SEARCH_CONDITION_LABEL[key],
+}));
 
 const ProductSearchForm = () => {
-  const { filters, updateKeyword } = useSearchQueryState();
-  const searchKeywordCondition = KEYWORD_SEARCH_CONDITION_KEY.map((key) => ({
-    key,
-    label: KEYWORD_SEARCH_CONDITION_LABEL[key],
-  }));
+  const { filters, updateKeyword, resetFilters } = useSearchQueryState();
+
+  const [condition, setCondition] = useState<KeywordSearchConditionKey>(filters.condition);
+  const [keyword, setKeyword] = useState<string>(filters.keyword);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,15 +31,18 @@ const ProductSearchForm = () => {
     const condition = formData.get('condition') as KeywordSearchConditionKey;
     const keyword = formData.get('keyword') as string;
 
+    if (keyword.trim() === '') {
+      resetFilters();
+      return;
+    }
+
     updateKeyword({ keyword, condition });
-    // 더 이상 컴포넌트 별로 상태를 관리할 필요가 없다
-    // const query = generateQueryStringForSearch({
-    //   searchParams,
-    //   condition,
-    //   keyword,
-    // }) as SearchParamsType;
-    // router.push(`/order?${query}`);
   };
+
+  useEffect(() => {
+    setCondition(filters.condition);
+    setKeyword(filters.keyword);
+  }, [filters]);
 
   return (
     <Form
@@ -45,8 +50,9 @@ const ProductSearchForm = () => {
       onSubmit={onSubmit}
     >
       <Select
-        defaultSelectedKeys={[filters.condition ?? searchKeywordCondition[0].key]}
         radius="sm"
+        selectedKeys={[condition]}
+        onChange={(e) => setCondition(e.target.value as KeywordSearchConditionKey)}
         name="condition"
         variant="bordered"
         aria-label="검색 조건"
@@ -71,7 +77,8 @@ const ProductSearchForm = () => {
         disableAnimation={true}
         variant="bordered"
         aria-label="검색어"
-        defaultValue={filters.keyword}
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
         classNames={{
           base: 'w-[80%]',
           inputWrapper: clsx(
