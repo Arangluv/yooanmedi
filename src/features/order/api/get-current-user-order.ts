@@ -1,6 +1,6 @@
 'use server';
 
-import { getPayload } from '@shared/lib/get-payload';
+import { getPayload } from '@/shared';
 
 export const getCurrentUserOrder = async ({
   prod_id,

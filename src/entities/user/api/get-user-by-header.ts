@@ -2,7 +2,7 @@
 
 import { getPayload } from '@shared/lib/get-payload';
 import { headers as nextHeaders } from 'next/headers';
-import type { User } from '../model/user';
+import type { User } from '../model/type';
 
 export const getUserByHeader = async (): Promise<User | null> => {
   const nextHeader = await nextHeaders();

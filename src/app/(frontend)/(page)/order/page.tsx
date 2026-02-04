@@ -15,7 +15,7 @@ import {
   ProductSearchForm,
   ProductCategotyNavigation,
   ProductAsideDetail,
-} from '@/features/product';
+} from '@/features/product-list';
 
 /** entities */
 import type { SearchParamsType } from '@/entities/product';
@@ -33,6 +33,8 @@ export default async function OrderPage({
 
   // TODO: 개선 필요할 수도 있음
   const productCategory = await getProductCategory();
+
+  
 
   return (
     <Wrapper>
