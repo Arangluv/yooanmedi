@@ -1,9 +1,10 @@
 import { BrandLogo } from '@/config/Logo';
 import Link from 'next/link';
 
+import type { SearchParams } from 'nuqs';
+
 /** components */
 import Inventory from './_components/main/inventory/InventoryBottomButton';
-import UserInfo from './_components/main/UserInfo';
 import InventoryModal from './_components/main/inventory/InventoryModal';
 import InventoryButtonAsLink from './_components/main/inventory/InventoryButtonAsLink';
 
@@ -19,22 +20,21 @@ import {
 
 /** entities */
 import type { SearchParamsType } from '@/entities/product';
-import { getProductCategory } from '@/entities/product';
+import { generateSearchParams, getProductCategory } from '@/entities/product';
+import { UserInfo } from '@/entities/user';
 
-export default async function OrderPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParamsType>;
-}) {
-  const serverSearchParams = await searchParams;
+type PageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function OrderPage({ searchParams }: PageProps) {
+  const serverSearchParams = await generateSearchParams(searchParams);
 
   const { productList, totalProductPages, totalProductDocs } =
     await getCustomPriceList(serverSearchParams);
 
   // TODO: 개선 필요할 수도 있음
   const productCategory = await getProductCategory();
-
-  
 
   return (
     <Wrapper>
