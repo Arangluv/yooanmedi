@@ -2,7 +2,8 @@
 
 import { getPayload } from '@shared/lib/get-payload';
 import { generationCondition } from '../lib/generate-condition';
-import type { ProductItem, SearchParamsType } from '../model/types';
+import type { ProductItem } from '../model/types';
+import type { ProductSearchParamsType } from '../lib/generate-searchparams';
 
 export type ProductList = {
   productList: ProductItem[];
@@ -10,12 +11,14 @@ export type ProductList = {
   totalProductDocs: number;
 };
 
-export const getProductList = async (searchParams: SearchParamsType): Promise<ProductList> => {
+export const getProductList = async (
+  searchParams: ProductSearchParamsType,
+): Promise<ProductList> => {
   const payload = await getPayload();
 
   const where = generationCondition(searchParams);
-  const page = searchParams.page ? parseInt(searchParams.page) : 1;
-  const Limit = 12;
+  const page = searchParams.page;
+  const LIMIT = 12;
 
   const { docs, totalPages, totalDocs } = await payload.find({
     collection: 'product',
@@ -37,7 +40,7 @@ export const getProductList = async (searchParams: SearchParamsType): Promise<Pr
     },
     where,
     page,
-    limit: Limit,
+    limit: LIMIT,
   });
 
   return { productList: docs, totalProductPages: totalPages, totalProductDocs: totalDocs };

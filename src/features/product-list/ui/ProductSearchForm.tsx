@@ -1,25 +1,22 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-
-import { SearchParamsType } from '@/entities/product/model/types';
+import { useSearchParams } from 'next/navigation';
 
 import { Form, Input, Select, SelectItem } from '@heroui/react';
 import clsx from 'clsx';
 import { Search } from 'lucide-react';
 
-import { generateQueryStringForSearch } from '@/entities/product/lib/generate-query-for-search';
 import {
   KEYWORD_SEARCH_CONDITION_KEY,
   KEYWORD_SEARCH_CONDITION_LABEL,
-} from '@/entities/product/constant/search-keyword-condition';
+  generateQueryStringForSearch,
+  useSearchQueryState,
+} from '@/entities/product';
+import type { KeywordSearchConditionKey, SearchParamsType } from '@/entities/product';
+import { useEffect } from 'react';
 
 const ProductSearchForm = () => {
-  // useSearchParams -> SearchParamsType으로 변경해주는 유틸 함수가 필요할거같다.
-  // 혹은 nuqs 라이브러리를 사용하자
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
+  const { filters, updateKeyword } = useSearchQueryState();
   const searchKeywordCondition = KEYWORD_SEARCH_CONDITION_KEY.map((key) => ({
     key,
     label: KEYWORD_SEARCH_CONDITION_LABEL[key],
@@ -29,15 +26,17 @@ const ProductSearchForm = () => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const condition = formData.get('condition') as string;
+    const condition = formData.get('condition') as KeywordSearchConditionKey;
     const keyword = formData.get('keyword') as string;
 
-    const query = generateQueryStringForSearch({
-      searchParams,
-      condition,
-      keyword,
-    }) as SearchParamsType;
-    router.push(`/order?${query}`);
+    updateKeyword({ keyword, condition });
+    // 더 이상 컴포넌트 별로 상태를 관리할 필요가 없다
+    // const query = generateQueryStringForSearch({
+    //   searchParams,
+    //   condition,
+    //   keyword,
+    // }) as SearchParamsType;
+    // router.push(`/order?${query}`);
   };
 
   return (
@@ -46,8 +45,7 @@ const ProductSearchForm = () => {
       onSubmit={onSubmit}
     >
       <Select
-        // TODO : Refactoring
-        defaultSelectedKeys={[searchParams?.get('condition') ?? searchKeywordCondition[0].key]}
+        defaultSelectedKeys={[filters.condition ?? searchKeywordCondition[0].key]}
         radius="sm"
         name="condition"
         variant="bordered"
@@ -73,7 +71,7 @@ const ProductSearchForm = () => {
         disableAnimation={true}
         variant="bordered"
         aria-label="검색어"
-        defaultValue={searchParams?.get('keyword') ?? ''}
+        defaultValue={filters.keyword}
         classNames={{
           base: 'w-[80%]',
           inputWrapper: clsx(
