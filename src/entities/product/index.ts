@@ -19,9 +19,15 @@ export {
   getPointWhenUsingCard,
   getPointWhenUsingBankTransfer,
 } from './lib/get-max-point';
+export {
+  generateSearchParams,
+  targetFiltersSearchParams,
+  type ProductSearchParamsType,
+} from './lib/generate-searchparams';
 
 // model
 export type { Product, ProductItem, ProductCategory, SearchParamsType } from './model/types';
+export { default as useSearchQueryState } from './model/useSearchQueryState';
 
 // ui
 export { default as DetailDefaultRow } from './ui/DetailDefaultRow';

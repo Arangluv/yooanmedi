@@ -6,7 +6,7 @@ import type { CustomPriceTable } from '../model/custom-price-table';
 /** entities */
 import { getUserByHeader } from '@/entities/user';
 import { getProductList } from '@/entities/product';
-import type { SearchParamsType } from '@/entities/product';
+import type { ProductSearchParamsType } from '@/entities/product';
 import type { User } from '@/entities/user';
 
 /** shared */
@@ -34,7 +34,7 @@ const getCustomPrice = async (user: User): Promise<CustomPriceTable[]> => {
   return data.docs as CustomPriceTable[];
 };
 
-export const getCustomPriceList = async (searchParams: SearchParamsType) => {
+export const getCustomPriceList = async (searchParams: ProductSearchParamsType) => {
   const { productList, totalProductPages, totalProductDocs } = await getProductList(searchParams);
 
   const user = await getUserByHeader();

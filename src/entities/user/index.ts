@@ -7,3 +7,6 @@ export { default as useAuthStore } from './model/useAuthStore';
 export { default as AuthGuard } from './model/auth-gruard';
 
 export { checkAuthValidate } from './lib/validates';
+
+// ui
+export { default as UserInfo } from './ui/UserInfo';

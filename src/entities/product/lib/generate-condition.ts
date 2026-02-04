@@ -1,31 +1,29 @@
 import type { Where } from 'payload';
 
-import type { SearchParamsType } from '../model/types';
+import { ProductSearchParamsType } from './generate-searchparams';
 
-export const generationCondition = (searchParams: SearchParamsType) => {
-  const { condition, keyword, category } = searchParams;
-
+export const generationCondition = (searchParams: ProductSearchParamsType) => {
   let searchCondition = null;
 
-  if (condition === 'pn') {
+  if (searchParams.condition === 'pn') {
     searchCondition = {
       name: {
-        contains: keyword,
+        contains: searchParams.keyword,
       },
     };
   }
 
-  if (condition === 'cn') {
+  if (searchParams.condition === 'cn') {
     searchCondition = {
       manufacturer: {
-        contains: keyword,
+        contains: searchParams.keyword,
       },
     };
   }
 
   const where: Where = {
     ...(searchCondition ? searchCondition : {}),
-    ...(category ? { category: { equals: category } } : {}),
+    ...(searchParams.category ? { category: { equals: searchParams.category } } : {}),
     stock: {
       greater_than: 0,
     },
