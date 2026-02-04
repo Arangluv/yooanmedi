@@ -5,19 +5,22 @@ import Image from 'next/image';
 import { Image as ImageIcon } from 'lucide-react';
 import { Divider } from '@heroui/react';
 
-import useProductDetailStore from '../model/useProductDetailStore';
-import EmptyProductDetail from '@/entities/product/ui/EmptyProductDetail';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
-import DetailDefaultRow from '@/entities/product/ui/DetailDefaultRow';
-import DetailDeliveryFeeRow from '@/entities/product/ui/DetailDeliveryFeeRow';
-import DetailPointBenefitRow from '@/entities/product/ui/DetailPointBenefitRow';
+import { CurrentPurchaseInfo } from '@/features/order';
+import {
+  EmptyProductDetail,
+  DetailDefaultRow,
+  DetailDeliveryFeeRow,
+  DetailPointBenefitRow,
+} from '@/entities/product';
+import { useAuthStore } from '@/entities/user';
+import { formatNumberWithCommas } from '@/shared';
+import { isPayloadImageRenderable } from '@/shared';
 import DetailQuantityInputRow from './DetailQuantityInputRow';
-import CurrentPurchaseInfo from '@/features/order/ui/CurrentPurchaseInfo';
-
-import { isPayloadImageRenderable } from '@/shared/lib/validation';
+import useProductDetailStore from '../model/useProductDetailStore';
 
 const ProductAsideDetail = () => {
   const { clieckedProduct } = useProductDetailStore();
+  const { user } = useAuthStore();
 
   if (!clieckedProduct) {
     return <EmptyProductDetail />;
@@ -73,8 +76,8 @@ const ProductAsideDetail = () => {
             isAccent={clieckedProduct.returnable ? true : false}
             variant={clieckedProduct.returnable ? 'brand' : 'default'}
           />
-          {/* feature 내부에서 order의 ui를 참조하고 있으므로 잘못된 구조다 -> 리팩토링 필요 */}
-          <CurrentPurchaseInfo product={clieckedProduct} />
+          {/*TODO: AuthGuard를 사용하기때문에 반드시 user는 보장된다 하지만 typescript는 이를 모르는데 refactoring 필요 */}
+          <CurrentPurchaseInfo product={clieckedProduct} user={user!} />
           <Divider className="my-2" />
           <DetailPointBenefitRow product={clieckedProduct} />
           <DetailQuantityInputRow />

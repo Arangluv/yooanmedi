@@ -1,8 +1,10 @@
+'use server';
+
 import { parseAsString, parseAsInteger, parseAsStringLiteral, createLoader } from 'nuqs/server';
 
 import { KEYWORD_SEARCH_CONDITION_KEY } from '../constant/search-keyword-condition';
 
-export const targetFiltersSearchParams = {
+const targetFiltersSearchParams = {
   keyword: parseAsString.withDefault(''),
   condition: parseAsStringLiteral(KEYWORD_SEARCH_CONDITION_KEY).withDefault(
     KEYWORD_SEARCH_CONDITION_KEY[0],

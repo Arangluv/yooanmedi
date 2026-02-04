@@ -18,7 +18,14 @@ const targetFilters = {
 };
 
 const useSearchQueryState = () => {
-  const [filters, setFilters] = useQueryStates(targetFilters, { shallow: false });
+  const [filters, setFilters] = useQueryStates(targetFilters, {
+    shallow: false,
+    history: 'push',
+    limitUrlUpdates: {
+      method: 'debounce',
+      timeMs: 500,
+    },
+  });
 
   const updateKeyword = ({
     keyword,
@@ -34,18 +41,33 @@ const useSearchQueryState = () => {
     });
   };
 
+  const updateCategory = (category: number | null) => {
+    setFilters({
+      page: 1,
+      category,
+    });
+  };
+
+  const updatePage = (page: number) => {
+    setFilters({
+      page,
+    });
+  };
+
   const resetFilters = () => {
     setFilters({
       keyword: '',
       condition: KEYWORD_SEARCH_CONDITION_KEY[0],
       page: 1,
-      category: 1,
+      category: null,
     });
   };
 
   return {
     filters,
     updateKeyword,
+    updateCategory,
+    updatePage,
     resetFilters,
   };
 };
