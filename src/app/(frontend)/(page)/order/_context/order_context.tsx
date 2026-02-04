@@ -1,156 +1,130 @@
-'use client'
+'use client';
 
-import { useDisclosure } from '@heroui/react'
-import { createContext, useEffect, useState } from 'react'
-import { InventoryType, ProductItemType } from '../_type'
+import { useDisclosure } from '@heroui/react';
+import { createContext, useEffect, useState } from 'react';
+import { InventoryType, ProductItemType } from '../_type';
 
 type OrderContextUserType = {
   user: {
-    role: string
-    isApproved: boolean
-    username: string
-    hospitalName: string
-    point: number
-    email: string
-    phoneNumber: string
-    address: string
-    id: number
-  } | null
+    role: string;
+    isApproved: boolean;
+    username: string;
+    hospitalName: string;
+    point: number;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    id: number;
+  } | null;
   setUser: (
     user: {
-      role: string
-      isApproved: boolean
-      username: string
-      hospitalName: string
-      point: number
-      email: string
-      phoneNumber: string
-      address: string
-      id: number
+      role: string;
+      isApproved: boolean;
+      username: string;
+      hospitalName: string;
+      point: number;
+      email: string;
+      phoneNumber: string;
+      address: string;
+      id: number;
     } | null,
-  ) => void
-}
-
-// 유저 정보 컨텍스트
-export const OrderUserInfoContext = createContext<OrderContextUserType>({
-  user: null,
-  setUser: () => { },
-})
-
-export const OrderUserInfoProvider = ({
-  initialUser,
-  children,
-}: {
-  initialUser: OrderContextUserType['user']
-  children: React.ReactNode
-}) => {
-  const [user, setUser] = useState<OrderContextUserType['user']>(null)
-
-  useEffect(() => {
-    if (initialUser) {
-      setUser(initialUser)
-    } else {
-      setUser(null)
-    }
-  }, [initialUser])
-
-  return (
-    <OrderUserInfoContext.Provider value={{ user, setUser }}>
-      {children}
-    </OrderUserInfoContext.Provider>
-  )
-}
+  ) => void;
+};
 
 // 모달 관리
 
 type InventoryModalContextType = {
-  isOpen: boolean
-  onOpen: () => void
-  onOpenChange: (open: boolean) => void
-}
+  isOpen: boolean;
+  onOpen: () => void;
+  onOpenChange: (open: boolean) => void;
+};
 
 export const InventoryModalContext = createContext<InventoryModalContextType>({
   isOpen: false,
-  onOpen: () => { },
-  onOpenChange: () => { },
-})
+  onOpen: () => {},
+  onOpenChange: () => {},
+});
 
 export const InventoryModalProvider = ({ children }: { children: React.ReactNode }) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <InventoryModalContext.Provider value={{ isOpen, onOpen, onOpenChange }}>
       {children}
     </InventoryModalContext.Provider>
-  )
-}
+  );
+};
 
 // 상품정보
 
 type ProductInfoContextType = {
-  clickedProduct: ProductItemType | null
-  setClickedProduct: (product: ProductItemType | null) => void
-}
+  clickedProduct: ProductItemType | null;
+  setClickedProduct: (product: ProductItemType | null) => void;
+};
 
 export const ProductInfoContext = createContext<ProductInfoContextType>({
   clickedProduct: null,
-  setClickedProduct: () => { },
-})
+  setClickedProduct: () => {},
+});
 
 export const ProductInfoProvider = ({ children }: { children: React.ReactNode }) => {
   const [clickedProduct, setClickedProduct] =
-    useState<ProductInfoContextType['clickedProduct']>(null)
+    useState<ProductInfoContextType['clickedProduct']>(null);
 
   return (
     <ProductInfoContext.Provider value={{ clickedProduct, setClickedProduct }}>
       {children}
     </ProductInfoContext.Provider>
-  )
-}
+  );
+};
 
 // 장바구니
 export const InventoryContext = createContext<InventoryType>({
   inventory: [],
-  setInventory: () => { },
-})
+  setInventory: () => {},
+});
 
 export const InventoryProvider = ({ children }: { children: React.ReactNode }) => {
-  const [inventory, setInventory] = useState<InventoryType['inventory']>([])
+  const [inventory, setInventory] = useState<InventoryType['inventory']>([]);
 
   return (
     <InventoryContext.Provider value={{ inventory, setInventory }}>
       {children}{' '}
     </InventoryContext.Provider>
-  )
-}
+  );
+};
 
 type MinOrderPriceContextType = {
-  minOrderPrice: number
-  setMinOrderPrice: (minOrderPrice: number) => void
-}
+  minOrderPrice: number;
+  setMinOrderPrice: (minOrderPrice: number) => void;
+};
 
 // 최소 주문 금액
 export const MinOrderPriceContext = createContext<MinOrderPriceContextType>({
   minOrderPrice: 0,
-  setMinOrderPrice: () => { },
-})
+  setMinOrderPrice: () => {},
+});
 
-export const MinOrderPriceProvider = ({ initialMinOrderPrice, children }: { initialMinOrderPrice: number, children: React.ReactNode }) => {
-  const [minOrderPrice, setMinOrderPrice] = useState<MinOrderPriceContextType['minOrderPrice']>(0)
+export const MinOrderPriceProvider = ({
+  initialMinOrderPrice,
+  children,
+}: {
+  initialMinOrderPrice: number;
+  children: React.ReactNode;
+}) => {
+  const [minOrderPrice, setMinOrderPrice] = useState<MinOrderPriceContextType['minOrderPrice']>(0);
 
   useEffect(() => {
     if (initialMinOrderPrice) {
-      setMinOrderPrice(initialMinOrderPrice)
+      setMinOrderPrice(initialMinOrderPrice);
     } else {
-      setMinOrderPrice(0)
+      setMinOrderPrice(0);
     }
-  }, [initialMinOrderPrice])
+  }, [initialMinOrderPrice]);
 
   return (
     <MinOrderPriceContext.Provider value={{ minOrderPrice, setMinOrderPrice }}>
       {children}
     </MinOrderPriceContext.Provider>
-  )
-}
-
-
+  );
+};
