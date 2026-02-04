@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 
-import type { User } from './user';
+import type { User } from './type';
 
 type AuthStore = {
   user: User | null;
