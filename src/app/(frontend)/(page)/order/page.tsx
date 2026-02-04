@@ -7,17 +7,19 @@ import UserInfo from './_components/main/UserInfo';
 import InventoryModal from './_components/main/inventory/InventoryModal';
 import InventoryButtonAsLink from './_components/main/inventory/InventoryButtonAsLink';
 
-/** entities */
-import type { SearchParamsType } from '@/entities/product/model/types';
-import { getProductCategory } from '@/entities/product/api/get-product-category';
-
 /** features */
-import { getCustomPriceList } from '@/features/custom-price/api/get-product-list';
-import ProductSearchResultView from '@/features/product/ui/ProductSearchResultView';
-import ProductDefaultView from '@/features/product/ui/ProductDefaultView';
-import ProductSearchForm from '@/features/product/ui/ProductSearchForm';
-import ProductCategotyNavigation from '@/features/product/ui/ProductCategotyNavigation';
-import ProductAsideDetail from '@/features/product/ui/ProductAsideDetail';
+import { getCustomPriceList } from '@/features/custom-price';
+import {
+  ProductSearchResultView,
+  ProductDefaultView,
+  ProductSearchForm,
+  ProductCategotyNavigation,
+  ProductAsideDetail,
+} from '@/features/product';
+
+/** entities */
+import type { SearchParamsType } from '@/entities/product';
+import { getProductCategory } from '@/entities/product';
 
 export default async function OrderPage({
   searchParams,

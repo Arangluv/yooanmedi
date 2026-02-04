@@ -1,16 +1,16 @@
 'use server';
 
+import { convertToCustomPrice } from '../lib/convert-to-custom-price';
+import type { CustomPriceTable } from '../model/custom-price-table';
+
 /** entities */
-import { getProductList } from '@/entities/product/api/get-product-list';
-import { getUserByHeader } from '@/entities/user/api/get-user-by-header';
-import type { SearchParamsType } from '@/entities/product/model/types';
-import type { User } from '@/entities/user/model/user';
+import { getUserByHeader } from '@/entities/user';
+import { getProductList } from '@/entities/product';
+import type { SearchParamsType } from '@/entities/product';
+import type { User } from '@/entities/user';
 
 /** shared */
 import { getPayload } from '@shared/lib/get-payload';
-
-import { convertToCustomPrice } from '../lib/convert-to-custom-price';
-import type { CustomPriceTable } from '../model/custom-price-table';
 
 const getCustomPrice = async (user: User): Promise<CustomPriceTable[]> => {
   const payload = await getPayload();
