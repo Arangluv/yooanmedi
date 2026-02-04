@@ -1,5 +1,5 @@
 import type { CustomPriceTable } from '../model/custom-price-table';
-import type { ProductItem } from '@/entities/product/model/types';
+import type { ProductItem } from '@/entities/product';
 
 /**
  * 커스텀 가격 테이블을 사용하여 제품 가격을 변환합니다.

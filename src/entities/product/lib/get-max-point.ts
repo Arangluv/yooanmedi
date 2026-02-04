@@ -1,4 +1,3 @@
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import type { ProductItem } from '../model/types';
 
 // TODO: Point라는 도메인 분리가 필요할 수 있습니다.

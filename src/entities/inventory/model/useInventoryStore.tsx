@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { InventoryItem } from './index';
+import type { InventoryItem } from './type';
 import type { ProductItem } from '@/entities/product/@x/inventory';
 
 type InventoryStore = {
