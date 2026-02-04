@@ -5,15 +5,16 @@ import { useState } from 'react';
 import { Form, NumberInput, Button } from '@heroui/react';
 import { toast } from 'sonner';
 
+import { useInventoryStore } from '@/entities/inventory';
+import { AddedProductToast, ExistingProductToast } from '@/entities/product';
+
 import useProductDetailStore from '../model/useProductDetailStore';
-import useInventoryStore from '@/entities/inventory/model/useInventoryStore';
-import { AddedProductToast, ExistingProductToast } from '@/entities/product/ui/toast-items';
 
 const DetailQuantityInputRow = () => {
   const [value, setValue] = useState<number>(0);
 
   const { clieckedProduct } = useProductDetailStore();
-  const { inventory, addInventory, isExistingProduct } = useInventoryStore();
+  const { addInventory, isExistingProduct } = useInventoryStore();
 
   const addInventoryWithQuantity = (quantity: number) => {
     if (!clieckedProduct) {
