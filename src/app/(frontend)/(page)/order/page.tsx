@@ -3,11 +3,6 @@ import Link from 'next/link';
 
 import type { SearchParams } from 'nuqs';
 
-/** components */
-import Inventory from './_components/main/inventory/InventoryBottomButton';
-import InventoryModal from './_components/main/inventory/InventoryModal';
-import InventoryButtonAsLink from './_components/main/inventory/InventoryButtonAsLink';
-
 /** features */
 import { getCustomPriceList } from '@/features/custom-price';
 import {
@@ -17,9 +12,9 @@ import {
   ProductCategotyNavigation,
   ProductAsideDetail,
 } from '@/features/product-list';
+import { InventoryModal, InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
 
 /** entities */
-import type { SearchParamsType } from '@/entities/product';
 import { generateSearchParams, getProductCategory } from '@/entities/product';
 import { UserInfo } from '@/entities/user';
 
@@ -48,7 +43,7 @@ export default async function OrderPage({ searchParams }: PageProps) {
             {/* search area */}
             <ProductSearchForm />
             <div className="flex gap-4 text-lg">
-              <InventoryButtonAsLink />
+              <InventoryBtnAsLink />
               <Link href="/order/list" className="text-foreground-700">
                 주문내역확인
               </Link>
@@ -81,7 +76,7 @@ export default async function OrderPage({ searchParams }: PageProps) {
         )}
         <ProductAsideDetail />
       </div>
-      <Inventory />
+      <InventoryBottomBtn />
       <InventoryModal />
     </Wrapper>
   );
