@@ -51,7 +51,9 @@ export default async function OrderPage({ searchParams }: PageProps) {
           </header>
         </div>
         {/* aside info */}
-        <UserInfo />
+        <div className="w-[calc((100%-1024px)/2)]">
+          <UserInfo />
+        </div>
       </div>
       {/* divider */}
       <div className="bg-foreground-200 mb-4 h-[1px] w-full" />

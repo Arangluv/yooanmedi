@@ -12,7 +12,7 @@ const UserInfo = () => {
   }
 
   return (
-    <div className="flex h-full w-[calc((100%-1024px)/2)] justify-end pr-8">
+    <div className="flex h-full w-full justify-end pr-8">
       <div className="flex flex-col items-end justify-center">
         <span className="text-brandWeek">
           <span className="mr-1 font-bold">{user.hospitalName}</span>

@@ -47,7 +47,7 @@ const usePrice = ({ inventory, minOrderPrice }: UsePriceProps): UsePriceReturn =
 
     setOriginalPrice(originalPrice);
     setOriginalDeliveryFee(originalDeliveryFee);
-    setDiscountedPrice(originalPrice + originalDeliveryFee - discountedDeliveryFee);
+    setDiscountedPrice(discountedDeliveryFee);
     setPayablePrice(originalPrice + originalDeliveryFee - discountedDeliveryFee);
     setDiscountFlg(originalPrice >= minOrderPrice && discountedDeliveryFee > 0);
   }, [inventory, minOrderPrice]);

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { ChevronRight } from 'lucide-react';
 
-export default function PaymentsTitle({ step }: { step: 'payment' | 'finish' }) {
+const PaymentProgressInfo = ({ step }: { step: 'payment' | 'finish' }) => {
   return (
     <div className="border-foreground-200 my-4 flex w-full items-center justify-between border-b-2 pb-4">
       <span className="text-3xl font-bold">주문 결제</span>
@@ -28,4 +28,6 @@ export default function PaymentsTitle({ step }: { step: 'payment' | 'finish' }) 
       </div>
     </div>
   );
-}
+};
+
+export default PaymentProgressInfo;
