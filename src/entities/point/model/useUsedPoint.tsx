@@ -61,7 +61,6 @@ const useUsedPoint = ({ user }: { user: User }) => {
       setPointStatus({
         ...pointStatus,
         usedPoint: payablePrice,
-        maxUseablePoint: payablePrice,
       });
       return;
     }
@@ -69,18 +68,10 @@ const useUsedPoint = ({ user }: { user: User }) => {
     setPointStatus({
       ...pointStatus,
       usedPoint: pointStatus.usedPoint,
-      maxUseablePoint: normalizePoint(user.point),
     });
   };
 
-  const setFieldToDisable = () => {
-    setPointStatus({
-      ...pointStatus,
-      isDisableField: true,
-    });
-  };
-
-  return { pointStatus, updatePoint, updateFieldToMaxUseablePoint, setFieldToDisable };
+  return { pointStatus, updatePoint, updateFieldToMaxUseablePoint };
 };
 
 export default useUsedPoint;
