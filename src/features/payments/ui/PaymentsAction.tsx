@@ -10,12 +10,12 @@ import { useInventoryStore } from '@/entities/inventory';
 import { usePrice } from '@/entities/price';
 import { useEarnPoint } from '@/entities/point';
 
-import { useSiteMetaStore } from '@/shared';
-import { formatNumberWithCommas } from '@/shared';
+import { useSiteMetaStore, formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';
 import { useUsedPoint } from '@/entities/point';
 
 import PaymentsRouter from '../model/payments-router';
+import usePaymentsAction from '../model/usePaymentsAction';
 
 const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
   const { inventory } = useInventoryStore();
@@ -27,8 +27,15 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
     minOrderPrice,
   });
 
-  const { pointStatus, updatePoint, updateFieldToMaxUseablePoint, setFieldToDisable } =
-    useUsedPoint({ user });
+  const { pointStatus, updatePoint, updateFieldToMaxUseablePoint } = useUsedPoint({ user });
+  const { mutate: registerOrderMutation } = usePaymentsAction({
+    inventory,
+    user,
+    amount: payablePrice,
+    minOrderPrice,
+    usedPoint: pointStatus.usedPoint,
+    userRequest,
+  });
 
   return (
     <PaymentsRouter>
@@ -55,17 +62,17 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
                     radius="sm"
                     aria-label="적립금 사용"
                     variant="bordered"
-                    isDisabled={user.point === 0 || user.point === null || inventory.length === 0}
+                    isDisabled={pointStatus.maxUseablePoint === 0 || inventory.length === 0}
                     hideStepper
-                    // value={useEarnPoint}
+                    value={pointStatus.usedPoint}
                     minValue={0}
-                    // maxValue={calculateMaxuseEarnPoint(user.point ?? 0, totalExpectedPrice)}
-                    // onValueChange={(value) => {
-                    //   setuseEarnPoint(value);
-                    // }}
+                    maxValue={pointStatus.maxUseablePoint}
+                    onValueChange={(value) => {
+                      updatePoint({ usedPoint: value, payablePrice });
+                    }}
                     description={
                       <span className="text-brand text-[14px]">
-                        (사용가능 적립금 {formatNumberWithCommas(user.point ?? 0)}원)
+                        (사용가능 적립금 {formatNumberWithCommas(pointStatus.maxUseablePoint)}원)
                       </span>
                     }
                     classNames={{
@@ -74,12 +81,14 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
                     }}
                   />
                 </div>
-                <Button className="bg-brand h-8 text-white" radius="sm">
+                <Button
+                  className="bg-brand h-8 text-white"
+                  radius="sm"
+                  onPress={() => updateFieldToMaxUseablePoint({ payablePrice })}
+                  isDisabled={pointStatus.maxUseablePoint === 0 || inventory.length === 0}
+                >
                   전액사용
                 </Button>
-                {/* <Button className="bg-brand h-8 text-white" radius="sm" onPress={handlePointBtnClick}>
-                전액사용
-              </Button> */}
               </div>
             </div>
           </div>
@@ -89,7 +98,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold">총 결제 금액</span>
             <span className="text-brand text-xl font-bold">
-              {formatNumberWithCommas(payablePrice)}원
+              {formatNumberWithCommas(payablePrice - pointStatus.usedPoint)}원
             </span>
           </div>
           <Link
@@ -115,8 +124,8 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
               size="lg"
               radius="sm"
               className="bg-brand w-full text-white"
-              // isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
-              // onPress={() => registerOrderMutation()}
+              isDisabled={payablePrice === 0 || inventory.length === 0}
+              onPress={() => registerOrderMutation()}
             >
               카드결제
             </Button>
