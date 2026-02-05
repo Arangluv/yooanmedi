@@ -26,7 +26,7 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
   const { inventory } = useContext(InventoryContext);
   const { user } = useContext(OrderUserInfoContext);
   const { minOrderPrice } = useContext(MinOrderPriceContext);
-  const [usePoint, setUsePoint] = useState(0);
+  const [useEarnPoint, setuseEarnPoint] = useState(0);
   const [totalPaymentAmount, setTotalPaymentAmount] = useState(0);
 
   const totalPrice = inventory.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
@@ -42,38 +42,39 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
   const totalExpectedPrice = totalPrice + totalDeliveryFee - discountedDeliveryFee;
 
   useEffect(() => {
-    setTotalPaymentAmount(totalExpectedPrice - usePoint);
-  }, [usePoint, totalExpectedPrice]);
+    setTotalPaymentAmount(totalExpectedPrice - useEarnPoint);
+  }, [useEarnPoint, totalExpectedPrice]);
 
-  useEffect(() => {
-    const popupHandler = (event: MessageEvent) => {
-      if (event.data.status === 'success') {
-        const amount = event.data.amount;
-        const approvalDate = event.data.approvalDate;
-        const shopOrderNo = event.data.shopOrderNo;
+  // ** PaymentsRouter에서 처리합니다
+  // useEffect(() => {
+  //   const popupHandler = (event: MessageEvent) => {
+  //     if (event.data.status === 'success') {
+  //       const amount = event.data.amount;
+  //       const approvalDate = event.data.approvalDate;
+  //       const shopOrderNo = event.data.shopOrderNo;
 
-        router.push(
-          '/order/payments/finish?status=success&amount=' +
-            amount +
-            '&approvalDate=' +
-            approvalDate +
-            '&shopOrderNo=' +
-            shopOrderNo,
-        );
-        router.refresh();
-      } else if (event.data.status === 'error') {
-        router.push('/order/payments/finish?status=error&message=' + event.data.message);
-        router.refresh();
-      } else {
-        alert('결제 주문 등록 실패');
-      }
-    };
+  //       router.push(
+  //         '/order/payments/finish?status=success&amount=' +
+  //           amount +
+  //           '&approvalDate=' +
+  //           approvalDate +
+  //           '&shopOrderNo=' +
+  //           shopOrderNo,
+  //       );
+  //       router.refresh();
+  //     } else if (event.data.status === 'error') {
+  //       router.push('/order/payments/finish?status=error&message=' + event.data.message);
+  //       router.refresh();
+  //     } else {
+  //       alert('결제 주문 등록 실패');
+  //     }
+  //   };
 
-    window.addEventListener('message', popupHandler);
-    return () => {
-      window.removeEventListener('message', popupHandler);
-    };
-  }, []);
+  //   window.addEventListener('message', popupHandler);
+  //   return () => {
+  //     window.removeEventListener('message', popupHandler);
+  //   };
+  // }, []);
 
   // mallId는 서버에서만 필요하므로 클라이언트사이드에서는 생략된 타입으로 작성
   const dto: Omit<PaymentRegisterDto, 'mallId' | 'paymentsMethod'> = {
@@ -91,35 +92,38 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
     shopValueInfo: {
       value1: userRequest,
       value2: generateOrderList(inventory) as string,
-      value3: usePoint.toString(),
+      value3: useEarnPoint.toString(),
       value4: user?.id?.toString() ?? '',
       value5: 'creditCard' as const,
       value6: minOrderPrice,
     },
   };
 
-  const openPaymentPopup = (authPageUrl: string) => {
-    if (!authPageUrl) {
-      alert('결제 주문 등록 실패');
-      return;
-    }
+  // ** features/payments/lib로 이동했습니다
+  // const openPaymentPopup = (authPageUrl: string) => {
+  //   if (!authPageUrl) {
+  //     alert('결제 주문 등록 실패');
+  //     return;
+  //   }
 
-    const width = 600;
-    const height = 680;
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
+  //   const width = 600;
+  //   const height = 680;
+  //   const left = window.screen.width / 2 - width / 2;
+  //   const top = window.screen.height / 2 - height / 2;
 
-    const popup = window.open(
-      authPageUrl,
-      'payment',
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
-    );
+  //   const popup = window.open(
+  //     authPageUrl,
+  //     'payment',
+  //     `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
+  //   );
 
-    if (!popup) {
-      alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
-      return;
-    }
-  };
+  //   if (!popup) {
+  //     alert('팝업이 차단되었습니다. 팝업 차단을 해제해주세요.');
+  //     return;
+  //   }
+  // };
+
+  // 훅을 만들어야합니다
   const { mutate: registerOrderMutation } = useMutation({
     mutationFn: () => registerOrder(dto),
     onSuccess: (data) => {
@@ -135,8 +139,8 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
   });
 
   const handlePointBtnClick = () => {
-    const usedPoint = calculateMaxUsePoint(user?.point ?? 0, totalExpectedPrice);
-    setUsePoint(usedPoint);
+    const usedPoint = calculateMaxuseEarnPoint(user?.point ?? 0, totalExpectedPrice);
+    setuseEarnPoint(usedPoint);
   };
 
   const bankTransferDto = {
@@ -149,7 +153,7 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
     shopValueInfo: {
       value1: userRequest,
       value2: generateOrderList(inventory) as string,
-      value3: usePoint.toString(),
+      value3: useEarnPoint.toString(),
       value4: user?.id?.toString() ?? '',
       value5: 'bankTransfer' as const,
       value6: minOrderPrice,
@@ -190,11 +194,11 @@ export default function PaymentsActionSection({ userRequest }: { userRequest: st
                   variant="bordered"
                   isDisabled={user.point === 0 || user.point === null || inventory.length === 0}
                   hideStepper
-                  value={usePoint}
+                  value={useEarnPoint}
                   minValue={0}
-                  maxValue={calculateMaxUsePoint(user.point ?? 0, totalExpectedPrice)}
+                  maxValue={calculateMaxuseEarnPoint(user.point ?? 0, totalExpectedPrice)}
                   onValueChange={(value) => {
-                    setUsePoint(value);
+                    setuseEarnPoint(value);
                   }}
                   description={
                     <span className="text-brand text-[14px]">
@@ -324,7 +328,7 @@ function TotalGetPoint({ inventory }: { inventory: InventoryType['inventory'] })
   );
 }
 
-function calculateMaxUsePoint(point: number, totalPrice: number) {
+function calculateMaxuseEarnPoint(point: number, totalPrice: number) {
   if (point > totalPrice) {
     return totalPrice;
   } else {

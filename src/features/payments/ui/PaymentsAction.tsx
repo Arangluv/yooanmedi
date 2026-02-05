@@ -1,0 +1,168 @@
+'use client';
+
+import Link from 'next/link';
+
+import { Button, NumberInput, Divider } from '@heroui/react';
+import { ChevronRight } from 'lucide-react';
+
+import type { InventoryItem } from '@/entities/inventory';
+import { useInventoryStore } from '@/entities/inventory';
+import { usePrice } from '@/entities/price';
+import { useEarnPoint } from '@/entities/point';
+
+import { useSiteMetaStore } from '@/shared';
+import { formatNumberWithCommas } from '@/shared';
+import { useAuthStore } from '@/entities/user';
+import { useUsedPoint } from '@/entities/point';
+
+import PaymentsRouter from '../model/payments-router';
+
+const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
+  const { inventory } = useInventoryStore();
+  const { minOrderPrice } = useSiteMetaStore();
+  const { user } = useAuthStore();
+
+  console.log('user');
+  console.log(user);
+
+  const { originalPrice, originalDeliveryFee, discountedPrice, payablePrice } = usePrice({
+    inventory,
+    minOrderPrice,
+  });
+  // // TODO :: user는 반드시 있다.
+  // const { pointStatus, updatePoint, updateFieldToMaxUseablePoint, setFieldToDisable } =
+  //   useUsedPoint({ user: user! });
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <PaymentsRouter>
+      <div className="border-foreground-200 flex w-full flex-col gap-6 rounded-md border-1 p-4">
+        <div className="flex flex-col gap-4">
+          <span className="text-xl font-bold">최종 결제 금액</span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between">
+              <span className="text-foreground-600">총 금액</span>
+              <span className="font-bold">{formatNumberWithCommas(originalPrice)}원</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-foreground-600">배송비</span>
+              <span className="font-bold">{formatNumberWithCommas(originalDeliveryFee)}원</span>
+            </div>
+            <DeliveryDiscountInfo discountedDeliveryFee={discountedPrice} />
+            <TotalGetPoint inventory={inventory} />
+            <div className="flex justify-between gap-4">
+              <span className="text-foreground-600 flex-shrink-0">적립금 사용</span>
+              <div className="flex gap-2">
+                <div className="flex flex-col items-start">
+                  <NumberInput
+                    size="sm"
+                    radius="sm"
+                    aria-label="적립금 사용"
+                    variant="bordered"
+                    isDisabled={user.point === 0 || user.point === null || inventory.length === 0}
+                    hideStepper
+                    // value={useEarnPoint}
+                    minValue={0}
+                    // maxValue={calculateMaxuseEarnPoint(user.point ?? 0, totalExpectedPrice)}
+                    // onValueChange={(value) => {
+                    //   setuseEarnPoint(value);
+                    // }}
+                    description={
+                      <span className="text-brand text-[14px]">
+                        (사용가능 적립금 {formatNumberWithCommas(user.point ?? 0)}원)
+                      </span>
+                    }
+                    classNames={{
+                      inputWrapper: 'border-1 border-foreground-200 shadow-none h-8',
+                      description: 'flex justify-end',
+                    }}
+                  />
+                </div>
+                <Button className="bg-brand h-8 text-white" radius="sm">
+                  전액사용
+                </Button>
+                {/* <Button className="bg-brand h-8 text-white" radius="sm" onPress={handlePointBtnClick}>
+                전액사용
+              </Button> */}
+              </div>
+            </div>
+          </div>
+        </div>
+        <Divider />
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <span className="text-lg font-bold">총 결제 금액</span>
+            <span className="text-brand text-xl font-bold">
+              {formatNumberWithCommas(payablePrice)}원
+            </span>
+          </div>
+          <Link
+            href="/terms?type=terms"
+            target="_blank"
+            className="text-foreground-600 hover:text-foreground-800 flex items-center justify-between text-sm transition-all duration-300"
+          >
+            <span> 서비스 이용약관 동의 </span>
+            <span>
+              <ChevronRight className="h-4 w-4" />
+            </span>
+          </Link>
+          <Divider />
+          <p className="text-foreground-600 text-sm">
+            위 주문 내용을 확인하였으며 회원 본인은 개인정보 이용 및 서비스 이용약관에 동의합니다.
+          </p>
+          <div className="flex items-center gap-2">
+            {/* <PaymentsBankTransferButton
+            bankTransferDto={bankTransferDto}
+            isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
+          /> */}
+            <Button
+              size="lg"
+              radius="sm"
+              className="bg-brand w-full text-white"
+              // isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
+              // onPress={() => registerOrderMutation()}
+            >
+              카드결제
+            </Button>
+          </div>
+        </div>
+      </div>
+    </PaymentsRouter>
+  );
+};
+
+const DeliveryDiscountInfo = ({ discountedDeliveryFee }: { discountedDeliveryFee: number }) => {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-foreground-600">할인된 배송비</span>
+      <span className="text-brand font-bold">
+        - {formatNumberWithCommas(discountedDeliveryFee)}원
+      </span>
+    </div>
+  );
+};
+
+const TotalGetPoint = ({ inventory }: { inventory: InventoryItem[] }) => {
+  const { cardPoint, bankPoint } = useEarnPoint({ inventory });
+
+  return (
+    <div className="my-1 flex items-start justify-between">
+      <span className="text-foreground-600">총 적립금액</span>
+      <div className="gap2 flex flex-col">
+        <div className="flex items-center justify-end gap-1">
+          <span className="text-foreground-600 text-[15px]">카드결제 시 </span>
+          <span className="text-brand font-bold">{formatNumberWithCommas(cardPoint)}원</span>
+        </div>
+        <div className="flex items-center justify-end gap-1">
+          <span className="text-foreground-600 text-[15px]">무통장 입금 시 </span>
+          <span className="text-brand font-bold">{formatNumberWithCommas(bankPoint)}원</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PaymentsAction;

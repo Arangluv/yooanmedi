@@ -1,13 +1,10 @@
-'use client';
-
 import Link from 'next/link';
-import { useEffect } from 'react';
 
 import { TriangleAlert } from 'lucide-react';
 
-import useAuthStore from './useAuthStore';
 import type { User } from './type';
 import { checkAuthValidate } from '../lib/validates';
+import AuthHydrator from './auth-hydrator';
 
 type AuthGuardProps = {
   children: React.ReactNode;
@@ -15,7 +12,6 @@ type AuthGuardProps = {
 };
 
 const AuthGuard = ({ children, user }: AuthGuardProps) => {
-  const { setUser } = useAuthStore();
   const validateResult = checkAuthValidate(user);
 
   if (!validateResult.isValid) {
@@ -36,11 +32,7 @@ const AuthGuard = ({ children, user }: AuthGuardProps) => {
     );
   }
 
-  useEffect(() => {
-    setUser(validateResult.user);
-  }, [user]);
-
-  return children;
+  return <AuthHydrator user={validateResult.user}>{children}</AuthHydrator>;
 };
 
 export default AuthGuard;
