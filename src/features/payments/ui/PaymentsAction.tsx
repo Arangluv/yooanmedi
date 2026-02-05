@@ -22,20 +22,13 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
   const { minOrderPrice } = useSiteMetaStore();
   const { user } = useAuthStore();
 
-  console.log('user');
-  console.log(user);
-
   const { originalPrice, originalDeliveryFee, discountedPrice, payablePrice } = usePrice({
     inventory,
     minOrderPrice,
   });
-  // // TODO :: user는 반드시 있다.
-  // const { pointStatus, updatePoint, updateFieldToMaxUseablePoint, setFieldToDisable } =
-  //   useUsedPoint({ user: user! });
 
-  if (!user) {
-    return null;
-  }
+  const { pointStatus, updatePoint, updateFieldToMaxUseablePoint, setFieldToDisable } =
+    useUsedPoint({ user });
 
   return (
     <PaymentsRouter>

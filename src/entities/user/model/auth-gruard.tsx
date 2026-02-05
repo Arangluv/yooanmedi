@@ -4,7 +4,7 @@ import { TriangleAlert } from 'lucide-react';
 
 import type { User } from './type';
 import { checkAuthValidate } from '../lib/validates';
-import AuthHydrator from './auth-hydrator';
+import { AuthStoreProvider } from './auth-store-provider';
 
 type AuthGuardProps = {
   children: React.ReactNode;
@@ -32,7 +32,9 @@ const AuthGuard = ({ children, user }: AuthGuardProps) => {
     );
   }
 
-  return <AuthHydrator user={validateResult.user}>{children}</AuthHydrator>;
+  return (
+    <AuthStoreProvider initProps={{ user: validateResult.user }}>{children}</AuthStoreProvider>
+  );
 };
 
 export default AuthGuard;
