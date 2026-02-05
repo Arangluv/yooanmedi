@@ -1,20 +1,21 @@
 'use client';
 
-import { create } from 'zustand';
+import { useContext } from 'react';
 
-import type { User } from './type';
+import type { AuthState } from './auth-store-provider';
+import { AuthStoreContext } from './auth-store-provider';
+import { useStore } from 'zustand';
 
-type AuthStore = {
-  user: User | null;
-  setUser: (user: User | null) => void;
-  // TODO : 추후 Refactoing 시 추가
-  // login: (user: User) => void;
-  // logout: () => void;
-};
+function useAuthStore(): AuthState;
+function useAuthStore<T>(selector: (state: AuthState) => T): T;
+function useAuthStore<T>(selector?: (state: AuthState) => T) {
+  const store = useContext(AuthStoreContext);
 
-const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  setUser: (user: User | null) => set({ user }),
-}));
+  if (!store) {
+    throw new Error('useAuthStore must be used within AuthStoreProvider');
+  }
+
+  return selector ? useStore(store, selector) : useStore(store, (s) => s);
+}
 
 export default useAuthStore;
