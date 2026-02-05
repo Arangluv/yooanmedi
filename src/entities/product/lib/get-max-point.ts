@@ -4,10 +4,8 @@ import type { ProductItem } from '../model/types';
 
 /**
  *
- * @param {ProductItem} product
  * 상품을 구매 할 시 최대 적립금을 반환합니다.
  * 카드 결제와 무통장 입금 적립 비율을 고려하여 최대 적립금을 반환합니다.
- * @returns {string}
  */
 export const getMaxPointOnPurchase = (product: ProductItem) => {
   const cardPoint = Math.floor(product.price * (product.cashback_rate / 100));

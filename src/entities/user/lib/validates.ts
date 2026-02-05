@@ -1,12 +1,12 @@
 import type { User } from '../model/type';
 
 type CheckAuthValidateSuccessResult = {
-  isValid: boolean;
+  isValid: true;
   user: User;
 };
 
 type CheckAuthValidateFailResult = {
-  isValid: boolean;
+  isValid: false;
   message: string;
   user: null;
 };
