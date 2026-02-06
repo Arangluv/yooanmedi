@@ -21,6 +21,7 @@ import { OrderStatus } from './collections/OrderStatus';
 import { Order } from './collections/Order';
 import { MetaSetting } from './collections/MetaSetting';
 import { ProductPrice } from './collections/ProductPrice';
+import { PointTransactions } from './collections/point-transactions';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -52,6 +53,7 @@ export default buildConfig({
     OrderStatus,
     Order,
     ProductPrice,
+    PointTransactions,
   ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),

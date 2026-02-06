@@ -148,13 +148,14 @@ export const Order: CollectionConfig = {
       },
     },
     {
-      name: 'refundUsedPointAmount',
-      type: 'number',
-      label: '취소 시 환불 적립금',
+      name: 'orderNo',
+      type: 'text',
+      label: '주문번호',
       admin: {
         disableBulkEdit: true,
         readOnly: true,
       },
+      required: true,
     },
     {
       type: 'row',
