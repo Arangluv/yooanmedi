@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import moment from 'moment-timezone';
 import { generateRandomShopTransactionId } from '@/app/(frontend)/(page)/order/utils';
-import { BasePayload, getPayload } from 'payload';
-import config from '@/payload.config';
-import { Product } from '@/payload-types';
+
+import {
+  registerResponseSchema,
+  registerResultSchema,
+  paymentsApproval,
+} from '@/features/payments';
+
+import { getPayload } from '@/shared';
 
 type PaymentResponseType = {
   resCd: string;
@@ -45,121 +51,146 @@ type OrderListType = {
 };
 
 export async function POST(request: NextRequest) {
-  const payload = await getPayload({ config: config });
-  const dbTransactionID = await payload.db.beginTransaction();
+  const payload = await getPayload();
+  // const dbTransactionID = await payload.db.beginTransaction();
 
   try {
-    let data = {} as PaymentResponseType;
+    let data = {} as Record<string, string>;
     const formData = await request.formData();
     formData.forEach((value: any, key: string) => {
-      // @ts-ignore
-      data[key as unknown as string] = value;
+      data[key as string] = value;
     });
 
-    if (data.resCd === '0000') {
-      // shopValue1: 주문요청사항
-      // shopValue2: 주문상품리스트
-      // shopValue3: 사용 적립금
-      // shopValue4: 유저ID(고유)
-      // shopValue5: 결제 방법 -> creditCard | bankTransfer
-
-      const {
-        authorizationId,
-        shopOrderNo,
-        shopValue1,
-        shopValue2,
-        shopValue3,
-        shopValue4,
-        shopValue5,
-        shopValue6, // 최소 주문금액
-      } = data;
-      const userOrderRequest = shopValue1 as string;
-      const orderList = JSON.parse(shopValue2 as string) as OrderListType[];
-      const usedPoint = shopValue3 as string;
-      const userId = shopValue4 as string;
+    const registerResponse = registerResponseSchema.parse(data);
+    if (registerResponse.resCd === '0000') {
+      const registerResult = registerResultSchema.parse(data);
 
       const user = await payload.findByID({
         collection: 'users',
-        id: Number(userId),
+        id: registerResult.userId,
       });
 
       if (!user) {
         throw new Error('유저 정보 없음', { cause: { code: 'USER_NOT_FOUND' } });
       }
 
-      const approveData = await approvePayment({ authorizationId, shopOrderNo });
-
-      // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
-      const pointAmount = await createOrderList({
-        payload,
-        orderList,
-        userId,
-        userOrderRequest,
-        approveData,
-        usedPoint: Number(usedPoint),
-        paymentsMethod: shopValue5 as 'creditCard' | 'bankTransfer',
-        transactionID: dbTransactionID as string,
-        minOrderPrice: Number(shopValue6),
+      console.log('결제 승인 요청을 합니다');
+      const approveData = await paymentsApproval({
+        authorizationId: registerResult.authorizationId,
+        shopOrderNo: registerResult.shopOrderNo,
       });
-
-      let userPoint = Number(user.point ?? 0);
-      // 사용 적립금이 있다면 적립금 차감
-      if (Number(usedPoint) > 0) {
-        userPoint -= Number(usedPoint);
-
-        await payload.create({
-          collection: 'point-history',
-          data: {
-            user: Number(userId),
-            type: 'use',
-            reason: `적립금 사용 차감 - 상품주문번호 : ${approveData.shopOrderNo}`,
-            balanceAfter: userPoint,
-          },
-          req: { transactionID: dbTransactionID as string },
-        });
-      }
-
-      // 구매 적립금 적립
-      if (pointAmount > 0) {
-        userPoint += pointAmount;
-
-        await payload.create({
-          collection: 'point-history',
-          data: {
-            user: Number(userId),
-            type: 'earn',
-            reason: `상품구매적립 - 상품주문번호 : ${approveData.shopOrderNo}`,
-            balanceAfter: userPoint,
-          },
-          req: { transactionID: dbTransactionID as string },
-        });
-      }
-
-      const roundedUserChangePoint = Math.floor(userPoint);
-      if (roundedUserChangePoint) {
-        await payload.update({
-          collection: 'users',
-          id: Number(userId),
-          data: {
-            point: roundedUserChangePoint,
-          },
-          req: { transactionID: dbTransactionID as string },
-        });
-      }
-      // // 리다이렉트
-      const url = request.nextUrl.clone();
-      url.pathname = '/order/payments/result';
-      url.searchParams.set('status', 'success');
-      url.searchParams.set('approvalDate', approveData.paymentInfo.approvalDate);
-      url.searchParams.set('amount', approveData?.amount.toString());
-      url.searchParams.set('shopOrderNo', approveData.shopOrderNo);
-
-      // 트랜잭션 커밋
-      await payload.db.commitTransaction(dbTransactionID as string);
-      return NextResponse.redirect(url, { status: 302 });
-    } else {
-      throw new Error('결제 실패', { cause: { code: data.resCd } });
     }
+
+    // if (data.resCd === '0000') {
+    //   // shopValue1: 주문요청사항
+    //   // shopValue2: 주문상품리스트
+    //   // shopValue3: 사용 적립금
+    //   // shopValue4: 유저ID(고유)
+    //   // shopValue5: 결제 방법 -> creditCard | bankTransfer
+
+    //   const {
+    //     authorizationId,
+    //     shopOrderNo,
+    //     shopValue1,
+    //     shopValue2,
+    //     shopValue3,
+    //     shopValue4,
+    //     shopValue5,
+    //     shopValue6, // 최소 주문금액
+    //   } = data;
+    //   const userOrderRequest = shopValue1 as string;
+    //   const orderList = JSON.parse(shopValue2 as string) as OrderListType[];
+    //   const usedPoint = shopValue3 as string;
+    //   const userId = shopValue4 as string;
+
+    //   const user = await payload.findByID({
+    //     collection: 'users',
+    //     id: Number(userId),
+    //   });
+
+    //   if (!user) {
+    //     throw new Error('유저 정보 없음', { cause: { code: 'USER_NOT_FOUND' } });
+    //   }
+
+    //   const approveData = await approvePayment({ authorizationId, shopOrderNo });
+
+    //   // OrderList를 생성 -> 얼마나 포인트를 적립했는지 반환
+    //   const pointAmount = await createOrderList({
+    //     payload,
+    //     orderList,
+    //     userId,
+    //     userOrderRequest,
+    //     approveData,
+    //     usedPoint: Number(usedPoint),
+    //     paymentsMethod: shopValue5 as 'creditCard' | 'bankTransfer',
+    //     transactionID: dbTransactionID as string,
+    //     minOrderPrice: Number(shopValue6),
+    //   });
+
+    //   let userPoint = Number(user.point ?? 0);
+    //   // 사용 적립금이 있다면 적립금 차감
+    //   if (Number(usedPoint) > 0) {
+    //     userPoint -= Number(usedPoint);
+
+    //     await payload.create({
+    //       collection: 'point-history',
+    //       data: {
+    //         user: Number(userId),
+    //         type: 'use',
+    //         reason: `적립금 사용 차감 - 상품주문번호 : ${approveData.shopOrderNo}`,
+    //         balanceAfter: userPoint,
+    //       },
+    //       req: { transactionID: dbTransactionID as string },
+    //     });
+    //   }
+
+    //   // 구매 적립금 적립
+    //   if (pointAmount > 0) {
+    //     userPoint += pointAmount;
+
+    //     await payload.create({
+    //       collection: 'point-history',
+    //       data: {
+    //         user: Number(userId),
+    //         type: 'earn',
+    //         reason: `상품구매적립 - 상품주문번호 : ${approveData.shopOrderNo}`,
+    //         balanceAfter: userPoint,
+    //       },
+    //       req: { transactionID: dbTransactionID as string },
+    //     });
+    //   }
+
+    //   const roundedUserChangePoint = Math.floor(userPoint);
+    //   if (roundedUserChangePoint) {
+    //     await payload.update({
+    //       collection: 'users',
+    //       id: Number(userId),
+    //       data: {
+    //         point: roundedUserChangePoint,
+    //       },
+    //       req: { transactionID: dbTransactionID as string },
+    //     });
+    //   }
+    //   // // 리다이렉트
+    //   const url = request.nextUrl.clone();
+    //   url.pathname = '/order/payments/result';
+    //   url.searchParams.set('status', 'success');
+    //   url.searchParams.set('approvalDate', approveData.paymentInfo.approvalDate);
+    //   url.searchParams.set('amount', approveData?.amount.toString());
+    //   url.searchParams.set('shopOrderNo', approveData.shopOrderNo);
+
+    //   // 트랜잭션 커밋
+    //   // await payload.db.commitTransaction(dbTransactionID as string);
+    //   return NextResponse.redirect(url, { status: 302 });
+    // } else {
+    //   throw new Error('결제 실패', { cause: { code: data.resCd } });
+    // }
+
+    // 리다이렉트
+    const url = request.nextUrl.clone();
+    url.pathname = '/order/payments/result';
+    url.searchParams.set('status', 'success');
+    return NextResponse.redirect(url, { status: 302 });
   } catch (error: any) {
     console.log(error);
     // payload에서 에러가 터지면 여기서도 이제 주문취소를 해야함
@@ -169,45 +200,45 @@ export async function POST(request: NextRequest) {
     url.searchParams.set('code', error.cause?.code || 'unknown');
 
     // 트랜잭션 롤백
-    await payload.db.rollbackTransaction(dbTransactionID as string);
+    // await payload.db.rollbackTransaction(dbTransactionID as string);
     return NextResponse.redirect(url, { status: 302 });
   }
 }
 
 // 결제 승인요청
-const approvePayment = async ({
-  authorizationId,
-  shopOrderNo,
-}: {
-  authorizationId: string;
-  shopOrderNo: string;
-}) => {
-  const approvalReqDate = moment().format('YYYYMMDD');
-  const dto: PaymentApproveRequestDto = {
-    mallId: process.env.PAYMENTS_MID as string,
-    shopTransactionId: generateRandomShopTransactionId(),
-    authorizationId: authorizationId,
-    shopOrderNo: shopOrderNo,
-    approvalReqDate: approvalReqDate,
-  };
+// const approvePayment = async ({
+//   authorizationId,
+//   shopOrderNo,
+// }: {
+//   authorizationId: string;
+//   shopOrderNo: string;
+// }) => {
+//   const approvalReqDate = moment().format('YYYYMMDD');
+//   const dto: PaymentApproveRequestDto = {
+//     mallId: process.env.PAYMENTS_MID as string,
+//     shopTransactionId: generateRandomShopTransactionId(),
+//     authorizationId: authorizationId,
+//     shopOrderNo: shopOrderNo,
+//     approvalReqDate: approvalReqDate,
+//   };
 
-  const res = await fetch(process.env.PAYMENTS_APPROVAL_URL as string, {
-    method: 'POST',
-    body: JSON.stringify(dto),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+//   const res = await fetch(process.env.PAYMENTS_APPROVAL_URL as string, {
+//     method: 'POST',
+//     body: JSON.stringify(dto),
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error('결제 승인요청 실패', { cause: { code: errorData.resCd } });
-  }
+//   if (!res.ok) {
+//     const errorData = await res.json();
+//     throw new Error('결제 승인요청 실패', { cause: { code: errorData.resCd } });
+//   }
 
-  const approveData = (await res.json()) as PaymentApproveResponseDto;
+//   const approveData = (await res.json()) as PaymentApproveResponseDto;
 
-  return approveData;
-};
+//   return approveData;
+// };
 
 const createOrderList = async ({
   payload,
@@ -309,17 +340,18 @@ const createOrderList = async ({
         data: {
           user: Number(userId),
           product: order.product.id,
+
           quantity: order.quantity,
           orderCreatedAt: moment
             .tz(approveData.paymentInfo.approvalDate, 'YYYYMMDDHHmmss', 'Asia/Seoul')
             .toISOString(),
+          pgCno: approveData.pgCno,
           price: product.price,
           cashback_rate: product.cashback_rate,
           cashback_rate_for_bank: product.cashback_rate_for_bank,
           delivery_fee: deliveryFee,
           refundUsedPointAmount: refundPointArr[idx],
           paymentsMethod: paymentsMethod,
-          pgCno: approveData.pgCno,
           orderStatus: 1,
           orderRequest: userOrderRequest,
         },

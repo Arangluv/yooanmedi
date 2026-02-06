@@ -76,6 +76,7 @@ export interface Config {
     'order-status': OrderStatus;
     order: Order;
     'product-price': ProductPrice;
+    'point-transactions': PointTransaction;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -91,6 +92,7 @@ export interface Config {
     'order-status': OrderStatusSelect<false> | OrderStatusSelect<true>;
     order: OrderSelect<false> | OrderSelect<true>;
     'product-price': ProductPriceSelect<false> | ProductPriceSelect<true>;
+    'point-transactions': PointTransactionsSelect<false> | PointTransactionsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -312,7 +314,7 @@ export interface Order {
   quantity: number;
   orderStatus: number | OrderStatus;
   orderRequest?: string | null;
-  refundUsedPointAmount?: number | null;
+  orderNo: string;
   price?: number | null;
   delivery_fee?: number | null;
   cashback_rate?: number | null;
@@ -329,6 +331,20 @@ export interface ProductPrice {
   product: number | Product;
   user: number | User;
   price: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-transactions".
+ */
+export interface PointTransaction {
+  id: number;
+  user?: (number | null) | User;
+  order?: (number | null) | Order;
+  type: 'USE' | 'EARN' | 'CANCEL_USE' | 'CANCEL_EARN';
+  reason?: string | null;
+  amount: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -374,6 +390,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'product-price';
         value: number | ProductPrice;
+      } | null)
+    | ({
+        relationTo: 'point-transactions';
+        value: number | PointTransaction;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -555,7 +575,7 @@ export interface OrderSelect<T extends boolean = true> {
   quantity?: T;
   orderStatus?: T;
   orderRequest?: T;
-  refundUsedPointAmount?: T;
+  orderNo?: T;
   price?: T;
   delivery_fee?: T;
   cashback_rate?: T;
@@ -571,6 +591,19 @@ export interface ProductPriceSelect<T extends boolean = true> {
   product?: T;
   user?: T;
   price?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-transactions_select".
+ */
+export interface PointTransactionsSelect<T extends boolean = true> {
+  user?: T;
+  order?: T;
+  type?: T;
+  reason?: T;
+  amount?: T;
   updatedAt?: T;
   createdAt?: T;
 }

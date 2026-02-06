@@ -78,6 +78,10 @@ const usePaymentsAction = ({
 };
 
 const getGoodsName = (inventory: InventoryItem[]) => {
+  if (inventory.length === 0) {
+    return '';
+  }
+
   if (inventory.length === 1) {
     return inventory[0].product.name;
   }
