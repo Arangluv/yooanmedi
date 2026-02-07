@@ -4,10 +4,10 @@ import { useMutation } from '@tanstack/react-query';
 
 import type { InventoryItem } from '@/entities/inventory';
 import type { User } from '@/entities/user';
+import { PAYMENTS_METHOD } from '@/entities/order';
 
 import { paymentsRegisterApplicationDtoSchema } from './payments-register-schema';
 import { paymentRegistration } from '../api/payment-registration';
-import { PAYMENTS_METHOD } from '../constants/payments-options';
 import { openPaymentsPopup } from '../lib/open-payments-popup';
 import { orderUuid } from '../lib/order-uuid';
 

@@ -4,7 +4,7 @@ import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
 import type { ProductItem } from '@/entities/product';
-import { getMaxPointOnPurchase } from '@/entities/product';
+import { getMaxPointOnPurchase } from '@/entities/point';
 
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import { isPayloadImageRenderable } from '@/shared/lib/validation';

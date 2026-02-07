@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { PAYMENTS_METHOD } from '../constants/payments-options';
+
+import { PAYMENTS_METHOD } from '@/entities/order';
 
 /** resCd가 '0000'일 때 — 모든 필드 보장 */
 const successResponseSchema = z.object({
@@ -56,16 +57,17 @@ const registerApplicationTransformSchema = z.object({
   minOrderPrice: z.number(),
 });
 
-export const registerResultSchema = successResponseSchema.transform((data) => ({
-  authorizationId: data.authorizationId,
-  shopOrderNo: data.shopOrderNo,
-  deliveryRequest: data.shopValue1,
-  orderList: data.shopValue2, // 이미 transform 돼 있음
-  usedPoint: data.shopValue3,
-  userId: data.shopValue4,
-  paymentsMethod: data.shopValue5,
-  minOrderPrice: data.shopValue6,
-}))
-.pipe(registerApplicationTransformSchema);
+export const registerResultSchema = successResponseSchema
+  .transform((data) => ({
+    authorizationId: data.authorizationId,
+    shopOrderNo: data.shopOrderNo,
+    deliveryRequest: data.shopValue1,
+    orderList: data.shopValue2, // 이미 transform 돼 있음
+    usedPoint: data.shopValue3,
+    userId: data.shopValue4,
+    paymentsMethod: data.shopValue5,
+    minOrderPrice: data.shopValue6,
+  }))
+  .pipe(registerApplicationTransformSchema);
 
 export type RegisterResult = z.infer<typeof registerResultSchema>;

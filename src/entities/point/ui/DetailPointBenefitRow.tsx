@@ -1,7 +1,7 @@
-import type { ProductItem } from '../model/types';
-import { getPointWhenUsingBankTransfer, getPointWhenUsingCard } from '../lib/get-max-point';
+import type { Inventory } from '@/entities/inventory/@x/point';
+import { getPointWhenUsingBankTransfer, getPointWhenUsingCard } from '../lib/calculator';
 
-const DetailPointBenefitRow = ({ product }: { product: ProductItem }) => {
+const DetailPointBenefitRow = ({ product }: Pick<Inventory[number], 'product'>) => {
   const willEarnPointForCard = getPointWhenUsingCard(product);
   const willEarnPointForBankTransfer = getPointWhenUsingBankTransfer(product);
 
