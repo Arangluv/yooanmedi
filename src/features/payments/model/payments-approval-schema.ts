@@ -24,7 +24,7 @@ export const paymentsApprovalResponseSchema = z
     resCd: z.string(),
     resMsg: z.string(),
     mallId: z.string(),
-    PGCno: z.string(),
+    pgCno: z.string(),
     shopTransactionId: z.string(),
     shopOrderNo: z.string(),
     amount: z.number(),

@@ -43,6 +43,7 @@ export const getPointTransactionContext = async ({
       order,
     };
   } catch (error) {
+    console.log(error);
     throw new Error('적립금 컨텍스트를 가져오는데 실패했습니다');
   }
 };

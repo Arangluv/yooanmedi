@@ -7,7 +7,7 @@ import { ImageIcon } from 'lucide-react';
 
 import type { InventoryItem } from '@/entities/inventory';
 import { useInventoryStore } from '@/entities/inventory';
-import { getMaxPointOnPurchase } from '@/entities/product';
+import { getMaxPointOnPurchase } from '@/entities/point';
 import { usePrice } from '@/entities/price';
 import { formatNumberWithCommas, isPayloadImageRenderable, useSiteMetaStore } from '@/shared';
 

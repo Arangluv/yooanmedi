@@ -1,5 +1,12 @@
 // apis
 export { getCurrrentUserOrder } from './api/get-recent-purchases';
+export { createOrder } from './api/create-order';
 
 // models
 export { type Order } from './model/type';
+export type { CreateOrderDto } from './model/create-order-schema';
+export { createOrderSchema } from './model/create-order-schema';
+
+// constants
+export { PAYMENTS_METHOD } from './constants/payments-options';
+export { ORDER_STATUS } from './constants/order-status';

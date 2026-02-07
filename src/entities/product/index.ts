@@ -1,6 +1,7 @@
 // apis
 export { getProductList } from './api/get-product-list';
 export { getProductCategory } from './api/get-product-category';
+export { getProductById } from './api/get-product-by-id';
 
 // constants
 export {
@@ -12,11 +13,6 @@ export type { KeywordSearchConditionKey } from './constant/search-keyword-condit
 
 // libs
 export { generationCondition } from './lib/generate-condition';
-export {
-  getMaxPointOnPurchase,
-  getPointWhenUsingCard,
-  getPointWhenUsingBankTransfer,
-} from './lib/get-max-point';
 export { generateSearchParams, type ProductSearchParamsType } from './lib/generate-searchparams';
 
 // model
@@ -26,7 +22,6 @@ export { default as useSearchQueryState } from './model/useSearchQueryState';
 // ui
 export { default as DetailDefaultRow } from './ui/DetailDefaultRow';
 export { default as DetailDeliveryFeeRow } from './ui/DetailDeliveryFeeRow';
-export { default as DetailPointBenefitRow } from './ui/DetailPointBenefitRow';
 export { default as EmptyProductDetail } from './ui/EmptyProductDetail';
 export { default as EmptyProductList } from './ui/EmptyProductList';
 export { default as EmptyRankingProductList } from './ui/EmptyRankingProductList';

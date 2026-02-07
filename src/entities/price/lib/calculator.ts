@@ -46,3 +46,20 @@ export const getDeliveryFeeFromProduct = (item: Inventory[number]) => {
 
   return product.delivery_fee;
 };
+
+// TODO :: 네이밍 수정 필요
+export const getDeliveryFeeFromProductCosiderFlg = ({
+  inventoryItem,
+  freeDeliveryFlg,
+}: {
+  inventoryItem: Inventory[number];
+  freeDeliveryFlg: boolean;
+}) => {
+  const { product } = inventoryItem;
+
+  if (freeDeliveryFlg && product.is_free_delivery) {
+    return 0;
+  }
+
+  return getDeliveryFeeFromProduct(inventoryItem);
+};

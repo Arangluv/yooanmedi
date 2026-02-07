@@ -47,6 +47,7 @@ export const createUsePointTransaction = async ({
     });
   } catch (error) {
     // todo :: error 핸들링
+    console.log(error);
     throw new Error('적립금 사용내역을 생성하는데 실패했습니다');
   }
 };

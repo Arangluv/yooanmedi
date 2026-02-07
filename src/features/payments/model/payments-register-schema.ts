@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-import { PAYMENTS_METHOD } from '../constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order';
 
 const orderInfoSchema = z.object({
   goodsName: z.string(),
