@@ -3,10 +3,11 @@
 import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 
-import { getCurrentUserOrder } from '../api/get-current-user-order';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import type { ProductItem } from '@/entities/product/@x/order';
 import type { User } from '@/entities/user/@x/order';
+import { formatNumberWithCommas } from '@/shared';
+
+import { getCurrentUserOrder } from '../api/get-current-user-order';
 
 const CurrentPurchaseInfo = ({ product, user }: { product: ProductItem; user: User }) => {
   const { data } = useQuery({
@@ -36,7 +37,7 @@ const CurrentPurchaseInfo = ({ product, user }: { product: ProductItem; user: Us
                 {moment(item.orderCreatedAt).format('YYYY-MM-DD')}
               </td>
               <td className="border-foreground-200 border-r-1 text-center">{item.quantity}</td>
-              {/* TODO : refactoring -> isImageRenderable처럼 type 가드 필요 */}
+              {/* TODO :: isPayloadImageRenderable처럼 type 가드가 필요할 수 있습니다 */}
               {/* @ts-ignore */}
               <td className="text-center">{formatNumberWithCommas(item.product?.price)}원</td>
             </tr>

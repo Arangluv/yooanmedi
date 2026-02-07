@@ -14,7 +14,7 @@ import { useSiteMetaStore, formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';
 import { useUsedPoint } from '@/entities/point';
 
-import PaymentsRouter from '../model/payments-router';
+import PaymentsPopupListener from '../model/payments-popup-listener';
 import usePaymentsAction from '../model/usePaymentsAction';
 
 const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
@@ -38,7 +38,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
   });
 
   return (
-    <PaymentsRouter>
+    <PaymentsPopupListener>
       <div className="border-foreground-200 flex w-full flex-col gap-6 rounded-md border-1 p-4">
         <div className="flex flex-col gap-4">
           <span className="text-xl font-bold">최종 결제 금액</span>
@@ -132,7 +132,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
           </div>
         </div>
       </div>
-    </PaymentsRouter>
+    </PaymentsPopupListener>
   );
 };
 

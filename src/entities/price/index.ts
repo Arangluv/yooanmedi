@@ -4,6 +4,7 @@ export {
   getDeliveryFeeFromInventory,
   getDiscountedDeliveryFeeFromInventory,
   getDeliveryFeeFromProduct,
+  getDeliveryFeeFromProductCosiderFlg,
 } from './lib/calculator';
 
 // models

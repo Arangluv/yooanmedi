@@ -1,6 +1,7 @@
 // ui
 export { default as PaymentsNavbar } from './ui/PaymentsNavbar';
 export { default as PaymentsView } from './ui/PaymentsView';
+export { default as PaymentsResultOverview } from './ui/payment-result/PaymentsResultOverview';
 
 // model
 export {
@@ -9,7 +10,7 @@ export {
   type RegisterResponseDto,
   type RegisterResult,
 } from './model/register-response-schema';
-
+export { default as usePaymentsResultQuery } from './model/usePaymentsResultQuery';
 export {
   paymentsApprovalResponseSchema,
   paymentsApprovalRequestSchema,
