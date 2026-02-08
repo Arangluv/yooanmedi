@@ -5,6 +5,7 @@ export { isPayloadImageRenderable } from './lib/validation';
 export { getNowYYYYMMDD } from './lib/date';
 export { getUuidWithoutHyphen } from './lib/get-uuid';
 export { getNowISOString } from './lib/date';
+export { cn } from './lib/utils';
 
 // model
 export { default as useSiteMetaStore } from './model/useSiteMetaStore';
