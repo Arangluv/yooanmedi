@@ -54,7 +54,7 @@ export const createCancelEarnPointTransaction = async ({
         user: userId,
         order: orderId,
         type: POINT_ACTION_TYPE.CANCEL_EARN,
-        reason: `주문취소로 인한 적립금 취소 - 주문번호 : ${order.orderNo}`,
+        reason: `주문취소로 인한 적립금 취소 - 주문 아이디 : ${order.id}`,
         amount: previousPointTransactionAmount,
       },
     });

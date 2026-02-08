@@ -130,6 +130,7 @@ export const Product: CollectionConfig = {
       type: 'checkbox',
       label: '반품가능여부',
       defaultValue: false,
+      required: true,
       admin: {
         description: '반품가능여부를 선택해주세요 (체크 시 반품가능)',
         components: {
@@ -288,6 +289,7 @@ export const Product: CollectionConfig = {
       type: 'checkbox',
       label: '수량 당 배송비 설정',
       defaultValue: false,
+      required: true,
       admin: {
         description:
           '수량 당 배송비를 계산할지에 대한 여부를 설정할 수 있습니다. 활성화 시 배송비는 수량 * 배송비로 계산됩니다.',
@@ -305,6 +307,7 @@ export const Product: CollectionConfig = {
       type: 'checkbox',
       label: '최소주문 금액 이상 시 배송비 무료 여부 설정',
       defaultValue: false,
+      required: true,
       admin: {
         description:
           '최소 주문 금액 이상 시 배송비 무료 여부를 선택해주세요 \n 활성화 시 최소주문 금액 이상 주문건에 대한 배송비는 0원으로 처리됩니다',

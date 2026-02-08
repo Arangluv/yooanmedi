@@ -33,7 +33,7 @@ export const createUsePointTransaction = async ({
         user: userId,
         order: orderId,
         type: POINT_ACTION_TYPE.USE,
-        reason: `적립금 사용 - 주문번호 : ${order.orderNo}`,
+        reason: `적립금 사용 - 주문 아이디 : ${order.id}`,
         amount: amount,
       },
     });
