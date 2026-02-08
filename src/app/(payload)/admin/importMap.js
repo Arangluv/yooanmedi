@@ -33,8 +33,8 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client';
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client';
 import { default as default_62822d1fca684579ea845f3f896686f1 } from '@/collections/components/common/ArrayLabel';
-import { HomeIcon as HomeIcon_97bc79299977fcd966caf47fe3f27eaa } from '@/config/Logo';
-import { BrandLogoSmall as BrandLogoSmall_97bc79299977fcd966caf47fe3f27eaa } from '@/config/Logo';
+import { HomeIcon as HomeIcon_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos';
+import { BrandLogoSmall as BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos';
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client';
 
 export const importMap = {
@@ -106,8 +106,8 @@ export const importMap = {
   '@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient':
     FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@/collections/components/common/ArrayLabel#default': default_62822d1fca684579ea845f3f896686f1,
-  '@/config/Logo#HomeIcon': HomeIcon_97bc79299977fcd966caf47fe3f27eaa,
-  '@/config/Logo#BrandLogoSmall': BrandLogoSmall_97bc79299977fcd966caf47fe3f27eaa,
+  '@/shared/ui/logos#HomeIcon': HomeIcon_c4ed48037aede40cf46fe21deda1067f,
+  '@/shared/ui/logos#BrandLogoSmall': BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f,
   '@payloadcms/storage-s3/client#S3ClientUploadHandler':
     S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
 };

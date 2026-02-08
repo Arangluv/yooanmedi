@@ -1,6 +1,4 @@
-// storage-adapter-import-placeholder
 import { postgresAdapter } from '@payloadcms/db-postgres';
-// import { en } from '@payloadcms/translations/languages/en'
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { buildConfig } from 'payload';
@@ -37,8 +35,8 @@ export default buildConfig({
     },
     components: {
       graphics: {
-        Icon: '@/config/Logo#HomeIcon',
-        Logo: '@/config/Logo#BrandLogoSmall',
+        Icon: '@/shared/ui/logos#HomeIcon',
+        Logo: '@/shared/ui/logos#BrandLogoSmall',
       },
     },
   },

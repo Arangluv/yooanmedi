@@ -7,6 +7,7 @@ export const PointTransactions: CollectionConfig = {
     plural: '적립금 거래 내역',
   },
   admin: {
+    defaultColumns: ['user', 'type', 'amount', 'reason'],
     group: '홈페이지 컨텐츠',
   },
   fields: [

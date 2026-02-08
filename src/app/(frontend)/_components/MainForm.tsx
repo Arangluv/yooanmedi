@@ -13,7 +13,7 @@ import {
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '@/app/(frontend)/actions';
-import { BrandLogo } from '@/config/Logo';
+import { BrandLogo } from '@/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
