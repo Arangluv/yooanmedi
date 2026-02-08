@@ -1,5 +1,4 @@
 // ui
-export { default as PaymentsNavbar } from './ui/PaymentsNavbar';
 export { default as PaymentsView } from './ui/PaymentsView';
 export { default as PaymentsResultOverview } from './ui/payment-result/PaymentsResultOverview';
 

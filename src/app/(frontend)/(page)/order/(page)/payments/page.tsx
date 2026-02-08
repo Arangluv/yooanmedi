@@ -1,9 +1,10 @@
-import { PaymentsNavbar, PaymentsView } from '@/features/payments';
+import { PaymentsView } from '@/features/payments';
+import { Navbar } from '@/entities/order';
 
 export default function PaymentsPage() {
   return (
     <div className="flex w-full flex-col">
-      <PaymentsNavbar />
+      <Navbar />
       <PaymentsView />
     </div>
   );
