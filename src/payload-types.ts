@@ -306,6 +306,9 @@ export interface Order {
   product: number | Product;
   orderCreatedAt: string;
   paymentsMethod: 'creditCard' | 'bankTransfer';
+  /**
+   * 신용카드 결제 시 생성되는 PG사 주문번호입니다.
+   */
   pgCno?: string | null;
   quantity: number;
   orderStatus: number | OrderStatus;

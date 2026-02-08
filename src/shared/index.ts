@@ -13,3 +13,6 @@ export type { SiteMetadata } from './api/get-site-metadata';
 
 // api
 export { getSiteMetadata } from './api/get-site-metadata';
+
+// ui
+export { BrandLogo, BrandLogoSmall, HomeIcon } from './ui/logos';

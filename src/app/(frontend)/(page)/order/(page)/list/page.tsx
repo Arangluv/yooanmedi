@@ -1,6 +1,5 @@
 'use client';
 
-import Navbar from '@/app/(frontend)/(page)/order/(page)/_components/Navbar';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';

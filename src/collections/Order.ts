@@ -28,7 +28,7 @@ export const Order: CollectionConfig = {
     {
       name: 'user',
       type: 'relationship',
-      label: '유저',
+      label: '주문고객',
       relationTo: 'users',
       required: true,
       admin: {
@@ -39,7 +39,7 @@ export const Order: CollectionConfig = {
     {
       name: 'product',
       type: 'relationship',
-      label: '상품',
+      label: '주문상품',
       relationTo: 'product',
       required: true,
       admin: {
@@ -82,6 +82,7 @@ export const Order: CollectionConfig = {
       type: 'text',
       label: 'PG 주문번호',
       admin: {
+        description: '신용카드 결제 시 생성되는 PG사 주문번호입니다.',
         disableBulkEdit: true,
         readOnly: true,
       },
