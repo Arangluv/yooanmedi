@@ -1,9 +1,10 @@
-import { PaymentsNavbar, PaymentsResultOverview } from '@/features/payments';
+import { PaymentsResultOverview } from '@/features/payments';
+import { Navbar } from '@/entities/order';
 
 const PaymentsResultPage = () => {
   return (
     <div className="flex w-full flex-col">
-      <PaymentsNavbar />
+      <Navbar />
       <PaymentsResultOverview />
     </div>
   );
