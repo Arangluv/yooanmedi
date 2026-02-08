@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { BrandLogo } from '@/config/Logo';
+import { BrandLogo } from '@/shared';
 
 import UserInfo from '@/entities/user/ui/UserInfo';
 

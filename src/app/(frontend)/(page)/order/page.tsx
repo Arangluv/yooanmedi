@@ -1,4 +1,4 @@
-import { BrandLogo } from '@/config/Logo';
+import { BrandLogo } from '@/shared';
 import Link from 'next/link';
 
 import type { SearchParams } from 'nuqs';
