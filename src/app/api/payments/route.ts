@@ -15,7 +15,7 @@ import {
 import { type CreateOrderDto } from '@/entities/order';
 import { ORDER_STATUS, createOrder } from '@/entities/order';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price';
-import { getPayload } from '@/shared';
+import { PAYMENTS_METHOD } from '@/entities/order';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
       orderList,
       usedPoint,
       userId,
-      paymentsMethod,
       minOrderPrice,
     } = registerResultSchema.parse(data);
 
@@ -81,7 +80,7 @@ export async function POST(request: NextRequest) {
         delivery_fee: productDeliveryFee,
         pgCno: approveData.pgCno,
         orderNo: shopOrderNo,
-        paymentsMethod: paymentsMethod,
+        paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
         orderCreatedAt: approveData.paymentInfo.approvalDate,
         orderStatus: ORDER_STATUS.PREPARING,
         orderRequest: deliveryRequest,
@@ -100,7 +99,6 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // TODO :: card와 bank transfer에 따라 분기가 필요합니다
       // 구매 포인트 적립
       await createEarnPointTransaction({
         userId,

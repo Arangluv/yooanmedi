@@ -16,6 +16,7 @@ import { useUsedPoint } from '@/entities/point';
 
 import PaymentsPopupListener from '../model/payments-popup-listener';
 import usePaymentsAction from '../model/usePaymentsAction';
+import BankTransferButton from './BankTransferButton';
 
 const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
   const { inventory } = useInventoryStore();
@@ -116,10 +117,13 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
             위 주문 내용을 확인하였으며 회원 본인은 개인정보 이용 및 서비스 이용약관에 동의합니다.
           </p>
           <div className="flex items-center gap-2">
-            {/* <PaymentsBankTransferButton
-            bankTransferDto={bankTransferDto}
-            isDisabled={isButtonDisabled({ totalPaymentAmount, totalExpectedPrice })}
-          /> */}
+            <BankTransferButton
+              deliveryRequest={userRequest}
+              inventory={inventory}
+              usedPoint={pointStatus.usedPoint}
+              userId={user.id}
+              minOrderPrice={minOrderPrice}
+            />
             <Button
               size="lg"
               radius="sm"

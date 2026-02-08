@@ -9,7 +9,7 @@ import { PAYMENTS_METHOD } from '@/entities/order';
 import { paymentsRegisterApplicationDtoSchema } from './payments-register-schema';
 import { paymentRegistration } from '../api/payment-registration';
 import { openPaymentsPopup } from '../lib/open-payments-popup';
-import { orderUuid } from '../lib/order-uuid';
+import { generateShopOrderNo } from '../lib/order-uuid';
 
 interface UsePaymentsActionProps {
   inventory: InventoryItem[];
@@ -35,7 +35,7 @@ const usePaymentsAction = ({
     currency: '00',
     deviceTypeCode: 'pc',
     returnUrl: process.env.NEXT_PUBLIC_SITE_URL + '/api/payments',
-    shopOrderNo: orderUuid(),
+    shopOrderNo: generateShopOrderNo(),
     orderInfo: {
       goodsName: getGoodsName(inventory),
       customerInfo: {

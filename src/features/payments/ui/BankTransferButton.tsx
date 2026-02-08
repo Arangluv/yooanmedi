@@ -1,5 +1,10 @@
 'use client';
 
+import { Fragment } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { Info } from 'lucide-react';
 import {
   Button,
   Modal,
@@ -9,80 +14,82 @@ import {
   ModalFooter,
   useDisclosure,
 } from '@heroui/react';
-import { Info } from 'lucide-react';
-import Link from 'next/link';
-import { createBankTransferOrder } from '../../payments/actions';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 
-type BankTransferDto = {
-  amount: number;
-  shopOrderNo: string;
-  orderInfo: {
-    goodsName: string;
-    customerInfo: {
-      customerId: string;
-    };
-  };
-  shopValueInfo: {
-    value1: string;
-    value2: string;
-    value3: string;
-    value4: string;
-    value5: 'bankTransfer';
-    value6: number; // 최소 주문금액
-  };
-};
+import type { InventoryItem } from '@/entities/inventory';
+import { generateShopOrderNo } from '../lib/order-uuid';
+import { orderBankTransfer } from '../api/order-banktransfer';
+import {
+  type OrderBankTransferDto,
+  orderBankTransferSchema,
+} from '../model/order-banktransfer-schema';
 
-export default function PaymentsBankTransferButton({
-  isDisabled,
-  bankTransferDto,
-}: {
-  isDisabled: boolean;
-  bankTransferDto: BankTransferDto;
-}) {
+interface BankTransferButtonProps {
+  deliveryRequest: string;
+  inventory: InventoryItem[];
+  usedPoint: number;
+  userId: number;
+  minOrderPrice: number;
+}
+
+const BankTransferButton = ({
+  deliveryRequest,
+  inventory,
+  usedPoint,
+  userId,
+  minOrderPrice,
+}: BankTransferButtonProps) => {
   const { isOpen, onOpen } = useDisclosure();
-  const router = useRouter();
-  const { mutate: createBankTransferOrderMutation, isPending } = useMutation({
-    mutationFn: () => createBankTransferOrder(bankTransferDto),
+
+  const dto: OrderBankTransferDto = {
+    shopOrderNo: generateShopOrderNo(),
+    deliveryRequest,
+    orderList: inventory,
+    usedPoint,
+    userId,
+    minOrderPrice,
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: () => orderBankTransfer(orderBankTransferSchema.parse(dto)),
     onSuccess: (data) => {
-      if (data.error) {
+      if (!data.success) {
         alert(data.message);
         return;
       }
-      router.refresh();
+
       onOpen();
     },
-    onError: () => {
+    onError: (error) => {
+      console.error(error);
       alert('무통장 입금 주문을 생성하는데 실패했습니다. 다시 시도해주세요.');
     },
   });
 
-  const handleBankBtnClick = () => {
-    createBankTransferOrderMutation();
-  };
-
   return (
-    <>
-      <Button
-        size="lg"
-        className="bg-brand w-full text-white"
-        radius="sm"
-        isDisabled={isDisabled}
-        isLoading={isPending}
-        onPress={handleBankBtnClick}
-      >
+    <Fragment>
+      <Button size="lg" className="bg-brand w-full text-white" radius="sm" onPress={() => mutate()}>
         무통장 입금
       </Button>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            router.push('/order/list');
-          }
-        }}
-        size="xl"
-      >
+      <BrakTransferModal isOpen={isOpen} />
+    </Fragment>
+  );
+};
+
+const BrakTransferModal = ({ isOpen }: { isOpen: boolean }) => {
+  const router = useRouter();
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          router.push('/order/list');
+        }
+      }}
+      size="xl"
+    >
+      <ModalBody>
         <ModalContent>
           <ModalHeader>무통장입금 결제 정보</ModalHeader>
           <ModalBody>
@@ -120,9 +127,11 @@ export default function PaymentsBankTransferButton({
               </p>
             </div>
           </ModalBody>
-          <ModalFooter></ModalFooter>
+          <ModalFooter />
         </ModalContent>
-      </Modal>
-    </>
+      </ModalBody>
+    </Modal>
   );
-}
+};
+
+export default BankTransferButton;
