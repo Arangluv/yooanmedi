@@ -1,4 +1,4 @@
-export const orderUuid = () => {
+export const generateShopOrderNo = () => {
   const now = new Date();
   const yyyymmdd =
     now.getFullYear().toString() +

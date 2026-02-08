@@ -238,7 +238,7 @@ export interface Product {
   /**
    * 반품가능여부를 선택해주세요 (체크 시 반품가능)
    */
-  returnable?: boolean | null;
+  returnable: boolean;
   price: number;
   /**
    * 카드 결제 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5)
@@ -254,12 +254,12 @@ export interface Product {
   /**
    * 수량 당 배송비를 계산할지에 대한 여부를 설정할 수 있습니다. 활성화 시 배송비는 수량 * 배송비로 계산됩니다.
    */
-  is_cost_per_unit?: boolean | null;
+  is_cost_per_unit: boolean;
   /**
    * 최소 주문 금액 이상 시 배송비 무료 여부를 선택해주세요
    *  활성화 시 최소주문 금액 이상 주문건에 대한 배송비는 0원으로 처리됩니다
    */
-  is_free_delivery?: boolean | null;
+  is_free_delivery: boolean;
   updatedAt: string;
   createdAt: string;
 }
