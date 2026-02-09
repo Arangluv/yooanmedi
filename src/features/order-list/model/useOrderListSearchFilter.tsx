@@ -3,23 +3,27 @@
 import { useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import moment from 'moment';
-import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 
-import { ORDER_STATUS_NAME } from '@/entities/order';
+import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order';
 
 const useOrderListSearchFilter = () => {
-  const [filters, setFilters] = useQueryStates({
-    from: parseAsString,
-    to: parseAsString,
-    pn_keyword: parseAsString.withDefault(''),
-    order_status: parseAsInteger,
-  });
+  const [filters, setFilters] = useQueryStates(
+    {
+      from: parseAsString,
+      to: parseAsString,
+      pn_keyword: parseAsString.withDefault(''),
+      order_status: parseAsStringEnum<keyof typeof ORDER_STATUS_NAME>(Object.values(ORDER_STATUS)),
+    },
+    {
+      history: 'push',
+    },
+  );
 
   const [date, setDate] = useState<DateRange | undefined>({
     from: moment().subtract(7, 'days').toDate(),
     to: moment().toDate(),
   });
-
   const [pnKeyword, setPnKeyword] = useState<string>(filters.pn_keyword);
   const [orderStatus, setOrderStatus] = useState<keyof typeof ORDER_STATUS_NAME | null>(
     filters.order_status,
@@ -103,8 +107,8 @@ const useOrderListSearchFilter = () => {
 
   useEffect(() => {
     setDate({
-      from: moment(filters.from).toDate(),
-      to: moment(filters.to).toDate(),
+      from: filters.from ? moment(filters.from).toDate() : moment().subtract(7, 'days').toDate(),
+      to: filters.to ? moment(filters.to).toDate() : moment().toDate(),
     });
     setPnKeyword(filters.pn_keyword ?? '');
     setOrderStatus(filters.order_status ?? null);

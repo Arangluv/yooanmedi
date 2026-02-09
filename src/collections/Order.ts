@@ -25,6 +25,13 @@ export const Order: CollectionConfig = {
       },
     },
     {
+      name: 'orderProducts',
+      type: 'join',
+      label: '주문 상품 목록',
+      collection: 'order-product',
+      on: 'order',
+    },
+    {
       name: 'paymentsMethod',
       type: 'select',
       label: '결제 방법',

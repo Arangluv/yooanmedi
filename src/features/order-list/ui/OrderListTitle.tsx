@@ -3,9 +3,10 @@ import { ChevronRight } from 'lucide-react';
 
 const OrderListTitle = () => {
   return (
-    <div className="my-4 flex w-full items-center justify-between">
-      <div className="">
-        <span className="text-3xl font-bold">주문 내역</span>
+    <div className="mt-4 flex w-full items-center justify-between">
+      <div className="flex items-center gap-4">
+        <span className="text-2xl font-bold">주문 내역</span>
+        <span className="text-foreground-500">고객님의 주문 정보를 확인하실 수 있습니다</span>
       </div>
       <div className="flex items-center gap-1">
         <Link href="/order" className="text-foreground-600">

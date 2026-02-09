@@ -37,7 +37,7 @@ const OrderListSearch = () => {
   } = useOrderListSearchFilter();
 
   return (
-    <div className="flex w-full flex-col items-center justify-center rounded-md bg-neutral-50 p-4">
+    <div className="mt-4 flex w-full flex-col items-center justify-center rounded-md bg-neutral-50 p-4">
       <div className="flex w-full items-center justify-between">
         <DateRangeOptions searchOptions={searchOptions} />
         <button
@@ -170,18 +170,14 @@ const SearchDetailOptions = ({
             search();
           }}
         >
-          <DateRangePicker
-            onChange={updateDate}
-            defaultDate={{ from: date?.from ?? new Date(), to: date?.to ?? new Date() }}
-          />
+          <DateRangePicker date={date} setDate={updateDate} />
           <Select
-            defaultValue={orderStatus?.toString() ?? 'all'}
             value={orderStatus?.toString() ?? 'all'}
             onValueChange={(value) => {
               if (value === 'all') {
                 updateOrderStatus(null);
               } else {
-                updateOrderStatus(parseInt(value) as keyof typeof ORDER_STATUS_NAME);
+                updateOrderStatus(value as keyof typeof ORDER_STATUS_NAME);
               }
             }}
           >
@@ -200,7 +196,6 @@ const SearchDetailOptions = ({
             </SelectContent>
           </Select>
           <Input
-            defaultValue={pnKeyword}
             placeholder="상품명을 입력해주세요."
             className="w-[250px] bg-white"
             value={pnKeyword}

@@ -51,7 +51,7 @@ export default async function OrderPage({ searchParams }: PageProps) {
           </header>
         </div>
         {/* aside info */}
-        <div className="w-[calc((100%-1024px)/2)]">
+        <div className="w-[calc((100%-1024px)/2)] pr-8">
           <UserInfo />
         </div>
       </div>
