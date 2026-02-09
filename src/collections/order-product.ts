@@ -1,6 +1,6 @@
 import { CollectionConfig } from 'payload';
 
-import { ITEM_STATUS, ITEM_STATUS_NAME } from '@/entities/order';
+import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
 
 export const OrderProduct: CollectionConfig = {
   slug: 'order-product',
@@ -32,7 +32,7 @@ export const OrderProduct: CollectionConfig = {
       },
     },
     {
-      name: 'order_item_status',
+      name: 'orderProductStatus',
       type: 'select',
       label: '주문 상태',
       required: true,
@@ -42,29 +42,28 @@ export const OrderProduct: CollectionConfig = {
       },
       options: [
         {
-          label: ITEM_STATUS_NAME[ITEM_STATUS.ORDERED],
-          value: ITEM_STATUS.ORDERED,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.ORDERED],
+          value: ORDER_PRODUCT_STATUS.ORDERED,
         },
         {
-          label: ITEM_STATUS_NAME[ITEM_STATUS.CANCELLED],
-          value: ITEM_STATUS.CANCELLED,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.CANCELLED],
+          value: ORDER_PRODUCT_STATUS.CANCELLED,
         },
         {
-          label: ITEM_STATUS_NAME[ITEM_STATUS.REFUNDED],
-          value: ITEM_STATUS.REFUNDED,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.REFUNDED],
+          value: ORDER_PRODUCT_STATUS.REFUNDED,
         },
       ],
-      defaultValue: ITEM_STATUS.ORDERED,
     },
     {
-      name: 'price_snapshot',
+      name: 'priceSnapshot',
       type: 'number',
       label: '주문 시 상품 금액',
       admin: {
         disableBulkEdit: true,
         readOnly: true,
       },
-      defaultValue: 0,
+      required: true,
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
           return '가격을 입력해주세요';
@@ -76,10 +75,10 @@ export const OrderProduct: CollectionConfig = {
       },
     },
     {
-      name: 'product_delivery_fee',
+      name: 'productDeliveryFee',
       type: 'number',
       label: '상품 배송비',
-      defaultValue: 0,
+      required: true,
       admin: {
         disableBulkEdit: true,
         readOnly: true,
@@ -116,14 +115,14 @@ export const OrderProduct: CollectionConfig = {
       },
     },
     {
-      name: 'cashback_rate',
+      name: 'cashbackRate',
       type: 'number',
       label: '주문 시 카드결제 적립금 비율',
       admin: {
         disableBulkEdit: true,
         readOnly: true,
       },
-      defaultValue: 0,
+      required: true,
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
           return '카드 결제 적립금 비율을 입력해주세요';
@@ -139,14 +138,14 @@ export const OrderProduct: CollectionConfig = {
       },
     },
     {
-      name: 'cashback_rate_for_bank',
+      name: 'cashbackRateForBank',
       type: 'number',
       label: '주문 시 무통장 입금 적립금 비율',
       admin: {
         disableBulkEdit: true,
         readOnly: true,
       },
-      defaultValue: 0,
+      required: true,
       validate: (value: number | null | undefined) => {
         if (value === null || value === undefined) {
           return '무통장 입금 적립금 비율을 입력해주세요';

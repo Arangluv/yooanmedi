@@ -123,6 +123,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
               usedPoint={pointStatus.usedPoint}
               userId={user.id}
               minOrderPrice={minOrderPrice}
+              amount={payablePrice - pointStatus.usedPoint}
             />
             <Button
               size="lg"

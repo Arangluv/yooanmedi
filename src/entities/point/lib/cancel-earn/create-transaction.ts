@@ -7,7 +7,7 @@ import { validateCancelEarnPoint } from './validate';
 
 interface CreateCancelEarnPointTransactionParams {
   userId: number;
-  orderId: number;
+  orderProductId: number;
 }
 
 /**
@@ -17,16 +17,16 @@ interface CreateCancelEarnPointTransactionParams {
  */
 export const createCancelEarnPointTransaction = async ({
   userId,
-  orderId,
+  orderProductId,
 }: CreateCancelEarnPointTransactionParams) => {
   try {
-    const { payload, user, order } = await getPointTransactionContext({
+    const { payload, user, orderProduct } = await getPointTransactionContext({
       userId,
-      orderId,
+      orderProductId,
     });
 
     const { docs: previousPointTransaction } = await payload.find({
-      collection: 'point-transactions',
+      collection: 'point-transaction',
       select: {
         amount: true,
       },
@@ -35,7 +35,7 @@ export const createCancelEarnPointTransaction = async ({
           equals: user.id,
         },
         order: {
-          equals: order.id,
+          equals: orderProduct.id,
         },
         type: {
           equals: POINT_ACTION_TYPE.EARN,
@@ -49,12 +49,12 @@ export const createCancelEarnPointTransaction = async ({
     const { amount: previousPointTransactionAmount } = previousPointTransaction[0];
 
     await payload.create({
-      collection: 'point-transactions',
+      collection: 'point-transaction',
       data: {
         user: userId,
-        order: orderId,
+        orderProduct: orderProduct.id,
         type: POINT_ACTION_TYPE.CANCEL_EARN,
-        reason: `주문취소로 인한 적립금 취소 - 주문 아이디 : ${order.id}`,
+        reason: `주문취소로 인한 적립금 취소 - 주문 상품 아이디 : ${orderProduct.id}`,
         amount: previousPointTransactionAmount,
       },
     });

@@ -12,10 +12,21 @@ import {
   createEarnPointTransaction,
   getPointWhenUsingCard,
 } from '@/entities/point';
-import { type CreateOrderDto } from '@/entities/order';
 import { ORDER_STATUS, createOrder } from '@/entities/order';
+import { type CreateOrderDto } from '@/entities/order';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price';
 import { PAYMENTS_METHOD } from '@/entities/order';
+import {
+  createOrderProduct,
+  CreateOrderProductDto,
+  ORDER_PRODUCT_STATUS,
+} from '@/entities/order-product';
+import {
+  createRecentPurchasedHistory,
+  CreateRecentPurchasedHistoryDto,
+} from '@/entities/recent-purchased-history';
+import { createPayment } from '@/entities/payment';
+import type { CreatePaymentDto } from '@/entities/payment';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -49,11 +60,38 @@ export async function POST(request: NextRequest) {
       minOrderPrice,
     } = registerResultSchema.parse(data);
 
+    // 결제 승인 요청
     const approveData = await paymentsApproval({
       authorizationId,
       shopOrderNo,
     });
 
+    // 주문 생성
+    const DEFAULT_ORDER_DELIVERY_FEE = 0;
+    const createOrderDto: CreateOrderDto = {
+      user: userId,
+      orderNo: shopOrderNo,
+      orderStatus: ORDER_STATUS.PREPARING,
+      orderRequest: deliveryRequest,
+      finalPrice: approveData.amount,
+      orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE, // 묶음 배송 처리 시 사용하는 필드 -> 고도화 예정
+      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      usedPoint: usedPoint,
+    };
+    const order = await createOrder({
+      dto: createOrderDto,
+    });
+
+    // 결제 내역 생성
+    const createPaymentDto: CreatePaymentDto = {
+      order: order.id,
+      amount: approveData.amount,
+      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      pgCno: approveData.pgCno,
+    };
+    await createPayment(createPaymentDto);
+
+    // 주문 상품 생성
     const inventory = await transformOrderListToInventory(orderList);
     const totalPriceWithoutDeliveryFee = inventory.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
@@ -69,32 +107,35 @@ export async function POST(request: NextRequest) {
         inventoryItem,
         freeDeliveryFlg,
       });
+      // 주문 상품 생성
+      const createOrderProductDto: CreateOrderProductDto = {
+        product: inventoryItem.product.id,
+        order: order.id,
+        orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
+        priceSnapshot: inventoryItem.product.price,
+        productDeliveryFee: productDeliveryFee,
+        quantity: inventoryItem.quantity,
+        cashbackRate: inventoryItem.product.cashback_rate,
+        cashbackRateForBank: inventoryItem.product.cashback_rate_for_bank,
+      };
+      const orderProduct = await createOrderProduct({
+        dto: createOrderProductDto,
+      });
 
-      const orderDto = {
+      // 히스토리 생성
+      const createRecentPurchasedHistoryDto: CreateRecentPurchasedHistoryDto = {
         user: userId,
         product: inventoryItem.product.id,
         quantity: inventoryItem.quantity,
-        price: inventoryItem.product.price,
-        cashback_rate: inventoryItem.product.cashback_rate,
-        cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
-        delivery_fee: productDeliveryFee,
-        pgCno: approveData.pgCno,
-        orderNo: shopOrderNo,
-        paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-        orderCreatedAt: approveData.paymentInfo.approvalDate,
-        orderStatus: ORDER_STATUS.PREPARING,
-        orderRequest: deliveryRequest,
-      } as CreateOrderDto;
-
-      const order = await createOrder({
-        dto: orderDto,
-      });
+        amount: inventoryItem.product.price,
+      };
+      await createRecentPurchasedHistory(createRecentPurchasedHistoryDto);
 
       // 사용 포인트 차감
       if (usedPoint) {
         await createUsePointTransaction({
           userId,
-          orderId: order.id,
+          orderProductId: orderProduct.id,
           amount: pointList[i],
         });
       }
@@ -102,7 +143,7 @@ export async function POST(request: NextRequest) {
       // 구매 포인트 적립
       await createEarnPointTransaction({
         userId,
-        orderId: order.id,
+        orderProductId: orderProduct.id,
         amount: getPointWhenUsingCard(inventoryItem.product),
       });
     }

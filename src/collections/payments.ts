@@ -1,6 +1,6 @@
 import { CollectionConfig } from 'payload';
 
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 
 export const Payments: CollectionConfig = {
   slug: 'payment',
@@ -17,7 +17,7 @@ export const Payments: CollectionConfig = {
       required: true,
     },
     {
-      name: 'pg_cno',
+      name: 'pgCno',
       type: 'text',
       label: 'PG 주문번호',
       required: true,
@@ -29,7 +29,7 @@ export const Payments: CollectionConfig = {
       required: true,
     },
     {
-      name: 'payments_method',
+      name: 'paymentsMethod',
       type: 'select',
       label: '결제 방법',
       admin: {

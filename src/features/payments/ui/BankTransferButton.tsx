@@ -30,6 +30,7 @@ interface BankTransferButtonProps {
   usedPoint: number;
   userId: number;
   minOrderPrice: number;
+  amount: number;
 }
 
 const BankTransferButton = ({
@@ -38,6 +39,7 @@ const BankTransferButton = ({
   usedPoint,
   userId,
   minOrderPrice,
+  amount,
 }: BankTransferButtonProps) => {
   const { isOpen, onOpen } = useDisclosure();
 
@@ -48,6 +50,7 @@ const BankTransferButton = ({
     usedPoint,
     userId,
     minOrderPrice,
+    amount,
   };
 
   const { mutate } = useMutation({

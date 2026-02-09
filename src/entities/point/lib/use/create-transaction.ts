@@ -7,7 +7,7 @@ import { validateUsePoint } from './validate';
 
 interface CreateUsePointTransactionParams {
   userId: number;
-  orderId: number;
+  orderProductId: number;
   amount: number;
 }
 
@@ -16,31 +16,31 @@ interface CreateUsePointTransactionParams {
  */
 export const createUsePointTransaction = async ({
   userId,
-  orderId,
+  orderProductId,
   amount,
 }: CreateUsePointTransactionParams) => {
   try {
-    const { payload, user, order } = await getPointTransactionContext({
+    const { payload, user, orderProduct } = await getPointTransactionContext({
       userId,
-      orderId,
+      orderProductId,
     });
 
     validateUsePoint({ user, amount });
 
     await payload.create({
-      collection: 'point-transactions',
+      collection: 'point-transaction',
       data: {
-        user: userId,
-        order: orderId,
+        user: user.id,
+        orderProduct: orderProduct.id,
         type: POINT_ACTION_TYPE.USE,
-        reason: `적립금 사용 - 주문 아이디 : ${order.id}`,
+        reason: `적립금 사용 - 주문 상품 아이디 : ${orderProduct.id}`,
         amount: amount,
       },
     });
 
     await payload.update({
       collection: 'users',
-      id: userId,
+      id: user.id,
       data: {
         point: normalizePoint(user.point) - amount,
       },
