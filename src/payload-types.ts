@@ -82,7 +82,11 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    order: {
+      orderProducts: 'order-product';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     image: ImageSelect<false> | ImageSelect<true>;
@@ -294,6 +298,11 @@ export interface ProductPrice {
 export interface Order {
   id: number;
   user: number | User;
+  orderProducts?: {
+    docs?: (number | OrderProduct)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   paymentsMethod: 'creditCard' | 'bankTransfer';
   orderStatus: 'preparing' | 'shipping' | 'delivered' | 'partial_cancelled' | 'cancelled' | 'pending';
   orderDeliveryFee?: number | null;
@@ -574,6 +583,7 @@ export interface ProductPriceSelect<T extends boolean = true> {
  */
 export interface OrderSelect<T extends boolean = true> {
   user?: T;
+  orderProducts?: T;
   paymentsMethod?: T;
   orderStatus?: T;
   orderDeliveryFee?: T;

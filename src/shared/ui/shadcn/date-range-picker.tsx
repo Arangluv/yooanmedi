@@ -12,15 +12,11 @@ import { Calendar } from './calendar';
 import { Popover, PopoverTrigger, PopoverContent } from './popover';
 
 interface DateRangePickerProps {
-  onChange: (date: DateRange | undefined) => void;
-  defaultDate: {
-    from: Date;
-    to: Date;
-  };
+  date: DateRange | undefined;
+  setDate: (date: DateRange | undefined) => void;
 }
 
-const DateRangePicker = ({ onChange, defaultDate }: DateRangePickerProps) => {
-  const [date, setDate] = useState<DateRange | undefined>(defaultDate);
+const DateRangePicker = ({ date, setDate }: DateRangePickerProps) => {
   const [timeZone, setTimeZone] = useState<string | undefined>('Asia/Seoul');
 
   useEffect(() => {
@@ -54,16 +50,7 @@ const DateRangePicker = ({ onChange, defaultDate }: DateRangePickerProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="range"
-          timeZone={timeZone}
-          selected={date}
-          onSelect={(date) => {
-            setDate(date);
-            onChange(date);
-          }}
-          locale={ko}
-        />
+        <Calendar mode="range" timeZone={timeZone} selected={date} onSelect={setDate} locale={ko} />
       </PopoverContent>
     </Popover>
   );
