@@ -1,14 +1,22 @@
+'use client';
+
+import { Divider } from '@heroui/react';
+
 import OrderListTitle from './OrderListTitle';
 import OrderListSearch from './OrderListSearch';
-import OrderListTable from './OrderListTable';
+import OrderList from './OrderList';
 
-const OrderListView = () => {
+const OrderListView = ({ orderList }: { orderList: any }) => {
+  console.log('orderList');
+  console.log(orderList);
+
   return (
     <div className="flex min-h-[calc(100vh-415px)] w-full justify-center">
       <div className="flex w-5xl flex-col gap-4">
         <OrderListTitle />
+        <Divider />
         <OrderListSearch />
-        <OrderListTable />
+        <OrderList />
       </div>
     </div>
   );
