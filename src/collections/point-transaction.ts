@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload';
 
-export const PointTransactions: CollectionConfig = {
-  slug: 'point-transactions',
+export const PointTransaction: CollectionConfig = {
+  slug: 'point-transaction',
   labels: {
     singular: '적립금 거래 내역',
     plural: '적립금 거래 내역',

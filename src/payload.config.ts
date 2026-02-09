@@ -14,12 +14,12 @@ import { s3Storage } from '@payloadcms/storage-s3';
 import { translations as ko } from '@lib/payload/utils/translation';
 import { Product } from './collections/Product';
 import { ProductCategory } from './collections/ProductCategory';
-import { PointHistory } from './collections/PointHistory';
-import { OrderStatus } from './collections/OrderStatus';
-import { Order } from './collections/Order';
 import { MetaSetting } from './collections/MetaSetting';
 import { ProductPrice } from './collections/ProductPrice';
-import { PointTransactions } from './collections/point-transactions';
+import { Order } from './collections/order';
+import { PointTransaction } from './collections/point-transaction';
+import { OrderProduct } from './collections/order-product';
+import { Payments } from './collections/payments';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -47,11 +47,11 @@ export default buildConfig({
     Files,
     Product,
     ProductCategory,
-    PointHistory,
-    OrderStatus,
-    Order,
     ProductPrice,
-    PointTransactions,
+    Order,
+    OrderProduct,
+    Payments,
+    PointTransaction,
   ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),

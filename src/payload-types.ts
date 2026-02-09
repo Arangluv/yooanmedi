@@ -72,11 +72,7 @@ export interface Config {
     files: File;
     product: Product;
     'product-category': ProductCategory;
-    'point-history': PointHistory;
-    'order-status': OrderStatus;
-    order: Order;
     'product-price': ProductPrice;
-    'point-transactions': PointTransaction;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -88,11 +84,7 @@ export interface Config {
     files: FilesSelect<false> | FilesSelect<true>;
     product: ProductSelect<false> | ProductSelect<true>;
     'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
-    'point-history': PointHistorySelect<false> | PointHistorySelect<true>;
-    'order-status': OrderStatusSelect<false> | OrderStatusSelect<true>;
-    order: OrderSelect<false> | OrderSelect<true>;
     'product-price': ProductPriceSelect<false> | ProductPriceSelect<true>;
-    'point-transactions': PointTransactionsSelect<false> | PointTransactionsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -279,54 +271,6 @@ export interface ProductCategory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-history".
- */
-export interface PointHistory {
-  id: number;
-  user: number | User;
-  type: 'earn' | 'use' | 'cancel';
-  balanceAfter?: number | null;
-  reason: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order-status".
- */
-export interface OrderStatus {
-  id: number;
-  name: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order".
- */
-export interface Order {
-  id: number;
-  user: number | User;
-  product: number | Product;
-  orderCreatedAt: string;
-  paymentsMethod: 'creditCard' | 'bankTransfer';
-  /**
-   * 신용카드 결제 시 생성되는 PG사 주문번호입니다.
-   */
-  pgCno?: string | null;
-  quantity: number;
-  orderStatus: number | OrderStatus;
-  orderRequest?: string | null;
-  orderNo: string;
-  price?: number | null;
-  delivery_fee?: number | null;
-  cashback_rate?: number | null;
-  cashback_rate_for_bank?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "product-price".
  */
 export interface ProductPrice {
@@ -334,20 +278,6 @@ export interface ProductPrice {
   product: number | Product;
   user: number | User;
   price: number;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-transactions".
- */
-export interface PointTransaction {
-  id: number;
-  user?: (number | null) | User;
-  order?: (number | null) | Order;
-  type: 'USE' | 'EARN' | 'CANCEL_USE' | 'CANCEL_EARN';
-  reason?: string | null;
-  amount: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -379,24 +309,8 @@ export interface PayloadLockedDocument {
         value: number | ProductCategory;
       } | null)
     | ({
-        relationTo: 'point-history';
-        value: number | PointHistory;
-      } | null)
-    | ({
-        relationTo: 'order-status';
-        value: number | OrderStatus;
-      } | null)
-    | ({
-        relationTo: 'order';
-        value: number | Order;
-      } | null)
-    | ({
         relationTo: 'product-price';
         value: number | ProductPrice;
-      } | null)
-    | ({
-        relationTo: 'point-transactions';
-        value: number | PointTransaction;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -546,67 +460,12 @@ export interface ProductCategorySelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-history_select".
- */
-export interface PointHistorySelect<T extends boolean = true> {
-  user?: T;
-  type?: T;
-  balanceAfter?: T;
-  reason?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order-status_select".
- */
-export interface OrderStatusSelect<T extends boolean = true> {
-  name?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order_select".
- */
-export interface OrderSelect<T extends boolean = true> {
-  user?: T;
-  product?: T;
-  orderCreatedAt?: T;
-  paymentsMethod?: T;
-  pgCno?: T;
-  quantity?: T;
-  orderStatus?: T;
-  orderRequest?: T;
-  orderNo?: T;
-  price?: T;
-  delivery_fee?: T;
-  cashback_rate?: T;
-  cashback_rate_for_bank?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "product-price_select".
  */
 export interface ProductPriceSelect<T extends boolean = true> {
   product?: T;
   user?: T;
   price?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-transactions_select".
- */
-export interface PointTransactionsSelect<T extends boolean = true> {
-  user?: T;
-  order?: T;
-  type?: T;
-  reason?: T;
-  amount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
