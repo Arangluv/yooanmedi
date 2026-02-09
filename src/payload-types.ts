@@ -73,6 +73,11 @@ export interface Config {
     product: Product;
     'product-category': ProductCategory;
     'product-price': ProductPrice;
+    order: Order;
+    'order-product': OrderProduct;
+    'recent-purchased-history': RecentPurchasedHistory;
+    payment: Payment;
+    'point-transaction': PointTransaction;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -85,6 +90,11 @@ export interface Config {
     product: ProductSelect<false> | ProductSelect<true>;
     'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
     'product-price': ProductPriceSelect<false> | ProductPriceSelect<true>;
+    order: OrderSelect<false> | OrderSelect<true>;
+    'order-product': OrderProductSelect<false> | OrderProductSelect<true>;
+    'recent-purchased-history': RecentPurchasedHistorySelect<false> | RecentPurchasedHistorySelect<true>;
+    payment: PaymentSelect<false> | PaymentSelect<true>;
+    'point-transaction': PointTransactionSelect<false> | PointTransactionSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -279,6 +289,80 @@ export interface ProductPrice {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order".
+ */
+export interface Order {
+  id: number;
+  user: number | User;
+  paymentsMethod: 'creditCard' | 'bankTransfer';
+  orderStatus: 'preparing' | 'shipping' | 'delivered' | 'partial_cancelled' | 'cancelled' | 'pending';
+  orderDeliveryFee?: number | null;
+  orderRequest?: string | null;
+  orderNo: string;
+  finalPrice: number;
+  usedPoint: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-product".
+ */
+export interface OrderProduct {
+  id: number;
+  product: number | Product;
+  order: number | Order;
+  orderProductStatus: 'ordered' | 'cancelled' | 'refunded';
+  priceSnapshot: number;
+  productDeliveryFee: number;
+  quantity: number;
+  cashbackRate: number;
+  cashbackRateForBank: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recent-purchased-history".
+ */
+export interface RecentPurchasedHistory {
+  id: number;
+  user: number | User;
+  product: number | Product;
+  quantity: number;
+  amount: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment".
+ */
+export interface Payment {
+  id: number;
+  order: number | Order;
+  pgCno: string;
+  amount: number;
+  paymentsMethod: 'creditCard';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-transaction".
+ */
+export interface PointTransaction {
+  id: number;
+  user?: (number | null) | User;
+  orderProduct?: (number | null) | OrderProduct;
+  type: 'USE' | 'EARN' | 'CANCEL_USE' | 'CANCEL_EARN';
+  reason?: string | null;
+  amount: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -307,6 +391,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'product-price';
         value: number | ProductPrice;
+      } | null)
+    | ({
+        relationTo: 'order';
+        value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'order-product';
+        value: number | OrderProduct;
+      } | null)
+    | ({
+        relationTo: 'recent-purchased-history';
+        value: number | RecentPurchasedHistory;
+      } | null)
+    | ({
+        relationTo: 'payment';
+        value: number | Payment;
+      } | null)
+    | ({
+        relationTo: 'point-transaction';
+        value: number | PointTransaction;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -461,6 +565,75 @@ export interface ProductPriceSelect<T extends boolean = true> {
   product?: T;
   user?: T;
   price?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order_select".
+ */
+export interface OrderSelect<T extends boolean = true> {
+  user?: T;
+  paymentsMethod?: T;
+  orderStatus?: T;
+  orderDeliveryFee?: T;
+  orderRequest?: T;
+  orderNo?: T;
+  finalPrice?: T;
+  usedPoint?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-product_select".
+ */
+export interface OrderProductSelect<T extends boolean = true> {
+  product?: T;
+  order?: T;
+  orderProductStatus?: T;
+  priceSnapshot?: T;
+  productDeliveryFee?: T;
+  quantity?: T;
+  cashbackRate?: T;
+  cashbackRateForBank?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recent-purchased-history_select".
+ */
+export interface RecentPurchasedHistorySelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
+  quantity?: T;
+  amount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment_select".
+ */
+export interface PaymentSelect<T extends boolean = true> {
+  order?: T;
+  pgCno?: T;
+  amount?: T;
+  paymentsMethod?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-transaction_select".
+ */
+export interface PointTransactionSelect<T extends boolean = true> {
+  user?: T;
+  orderProduct?: T;
+  type?: T;
+  reason?: T;
+  amount?: T;
   updatedAt?: T;
   createdAt?: T;
 }

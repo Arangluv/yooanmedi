@@ -6,7 +6,7 @@ import { normalizePoint } from '../helper';
 
 interface CreateEarnPointTransactionParams {
   userId: number;
-  orderId: number;
+  orderProductId: number;
   amount: number;
 }
 
@@ -15,22 +15,22 @@ interface CreateEarnPointTransactionParams {
  */
 export const createEarnPointTransaction = async ({
   userId,
-  orderId,
+  orderProductId,
   amount,
 }: CreateEarnPointTransactionParams) => {
   try {
-    const { payload, user, order } = await getPointTransactionContext({
+    const { payload, user, orderProduct } = await getPointTransactionContext({
       userId,
-      orderId,
+      orderProductId,
     });
 
     await payload.create({
-      collection: 'point-transactions',
+      collection: 'point-transaction',
       data: {
-        user: userId,
-        order: orderId,
+        user: user.id,
+        orderProduct: orderProduct.id,
         type: POINT_ACTION_TYPE.EARN,
-        reason: `주문 완료 적립 - 주문 아이디 : ${order.id}`,
+        reason: `주문 완료 적립 - 주문 상품 아이디 : ${orderProduct.id}`,
         amount: amount,
       },
     });

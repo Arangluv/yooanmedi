@@ -5,10 +5,10 @@ import Image from 'next/image';
 import { Image as ImageIcon } from 'lucide-react';
 import { Divider } from '@heroui/react';
 
-import { CurrentPurchaseInfo } from '@/features/order';
 import { EmptyProductDetail, DetailDefaultRow, DetailDeliveryFeeRow } from '@/entities/product';
 import { DetailPointBenefitRow } from '@/entities/point';
 import { useAuthStore } from '@/entities/user';
+import { RecentPurchasesTable } from '@/entities/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
 import { isPayloadImageRenderable } from '@/shared';
 import DetailQuantityInputRow from './DetailQuantityInputRow';
@@ -72,8 +72,7 @@ const ProductAsideDetail = () => {
             isAccent={clieckedProduct.returnable ? true : false}
             variant={clieckedProduct.returnable ? 'brand' : 'default'}
           />
-          {/*TODO: AuthGuard를 사용하기때문에 반드시 user는 보장된다 하지만 typescript는 이를 모르는데 refactoring 필요 */}
-          <CurrentPurchaseInfo product={clieckedProduct} user={user!} />
+          <RecentPurchasesTable product={clieckedProduct} user={user} />
           <Divider className="my-2" />
           <DetailPointBenefitRow product={clieckedProduct} />
           <DetailQuantityInputRow />

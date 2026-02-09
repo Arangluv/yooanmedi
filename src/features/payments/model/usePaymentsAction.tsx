@@ -29,7 +29,7 @@ const usePaymentsAction = ({
   userRequest,
 }: UsePaymentsActionProps) => {
   const dto = {
-    amount,
+    amount: amount - usedPoint,
     clientTypeCode: '00',
     payMethodTypeCode: '11',
     currency: '00',

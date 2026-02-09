@@ -4,7 +4,7 @@ import { getPayload } from '@/shared';
 
 interface GetPointTransactionContextParams {
   userId: number;
-  orderId: number;
+  orderProductId: number;
 }
 
 /**
@@ -12,7 +12,7 @@ interface GetPointTransactionContextParams {
  */
 export const getPointTransactionContext = async ({
   userId,
-  orderId,
+  orderProductId,
 }: GetPointTransactionContextParams) => {
   const payload = await getPayload();
 
@@ -25,22 +25,20 @@ export const getPointTransactionContext = async ({
       },
     });
 
-    const order = await payload.findByID({
-      collection: 'order',
-      id: orderId,
-      select: {
-        orderNo: true,
-      },
+    const orderProduct = await payload.findByID({
+      collection: 'order-product',
+      id: orderProductId,
+      select: {},
     });
 
-    if (!user || !order) {
+    if (!user || !orderProduct) {
       throw new Error('유저 또는 주문 정보가 없습니다');
     }
 
     return {
       payload,
       user,
-      order,
+      orderProduct,
     };
   } catch (error) {
     console.log(error);
