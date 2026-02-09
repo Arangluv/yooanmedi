@@ -1,4 +1,3 @@
-import { PAYMENTS_METHOD } from '@/entities/order';
 import { z } from 'zod';
 
 export const orderBankTransferSchema = z.object({
@@ -15,6 +14,7 @@ export const orderBankTransferSchema = z.object({
   ),
   usedPoint: z.number(),
   userId: z.number(),
+  amount: z.number(),
   minOrderPrice: z.number(),
 });
 

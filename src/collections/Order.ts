@@ -1,6 +1,7 @@
 import { CollectionConfig } from 'payload';
 
-import { ORDER_STATUS, ORDER_STATUS_NAME, PAYMENTS_METHOD } from '@/entities/order';
+import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 
 export const Order: CollectionConfig = {
   slug: 'order',
@@ -24,7 +25,7 @@ export const Order: CollectionConfig = {
       },
     },
     {
-      name: 'payments_method',
+      name: 'paymentsMethod',
       type: 'select',
       label: '결제 방법',
       admin: {
@@ -44,7 +45,7 @@ export const Order: CollectionConfig = {
       required: true,
     },
     {
-      name: 'order_status',
+      name: 'orderStatus',
       type: 'select',
       label: '주문상태',
       required: true,
@@ -81,7 +82,7 @@ export const Order: CollectionConfig = {
       defaultValue: ORDER_STATUS.PENDING,
     },
     {
-      name: 'order_delivery_fee',
+      name: 'orderDeliveryFee',
       type: 'number',
       label: '주문 배송비',
       admin: {
@@ -91,7 +92,7 @@ export const Order: CollectionConfig = {
       defaultValue: 0,
     },
     {
-      name: 'order_request',
+      name: 'orderRequest',
       type: 'text',
       label: '배송 요청사항',
       admin: {
@@ -100,7 +101,7 @@ export const Order: CollectionConfig = {
       },
     },
     {
-      name: 'order_no',
+      name: 'orderNo',
       type: 'text',
       label: '주문번호',
       admin: {
@@ -110,7 +111,7 @@ export const Order: CollectionConfig = {
       required: true,
     },
     {
-      name: 'final_price',
+      name: 'finalPrice',
       type: 'number',
       label: '최종 주문 금액',
       admin: {
@@ -121,7 +122,7 @@ export const Order: CollectionConfig = {
       required: true,
     },
     {
-      name: 'used_point',
+      name: 'usedPoint',
       type: 'number',
       label: '사용 포인트',
       admin: {

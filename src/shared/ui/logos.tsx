@@ -1,9 +1,8 @@
 import Image from 'next/image';
-
-import BrandLogoImage from '@public/v1_logo_full.png';
-import LogoSmall from '@public/v1_logo_small.png';
-
 import { Home } from 'lucide-react';
+
+export const LOGO_FULL = '/v1_logo_full.png';
+export const LOGO_SMALL = '/v1_logo_small.png';
 
 const BrandLogo = ({
   width = 140,
@@ -16,16 +15,7 @@ const BrandLogo = ({
 }) => {
   return (
     <div className={className}>
-      <Image
-        src={BrandLogoImage}
-        alt="brand logo"
-        width={width}
-        height={height}
-        onError={(e) => {
-          console.error('Error loading image:', e);
-        }}
-        unoptimized
-      />
+      <Image src={LOGO_FULL} alt="brand logo" width={width} height={height} unoptimized />
     </div>
   );
 };
@@ -41,7 +31,7 @@ const BrandLogoSmall = ({
 }) => {
   return (
     <div className={className}>
-      <Image src={LogoSmall} alt="brand logo" width={width} height={height} unoptimized />
+      <Image src={LOGO_SMALL} alt="brand logo" width={width} height={height} unoptimized />
     </div>
   );
 };

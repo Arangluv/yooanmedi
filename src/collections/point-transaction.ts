@@ -18,10 +18,10 @@ export const PointTransaction: CollectionConfig = {
       relationTo: 'users',
     },
     {
-      name: 'order',
+      name: 'orderProduct',
       type: 'relationship',
-      label: '주문',
-      relationTo: 'order',
+      label: '주문 상품',
+      relationTo: 'order-product',
     },
     {
       name: 'type',

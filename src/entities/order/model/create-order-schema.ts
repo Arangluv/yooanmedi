@@ -2,27 +2,23 @@ import { z } from 'zod';
 
 import { PAYMENTS_METHOD } from '../constants/payments-options';
 import { ORDER_STATUS } from '../constants/order-status';
+// TODO :: REMOVE
 import { transformApprovalDateToISOString } from '@/shared/lib/date';
 
 const createBaseOrderSchema = z.object({
   user: z.number(),
-  product: z.number(),
-  quantity: z.number(),
-  price: z.number(),
-  cashback_rate: z.number(),
-  cashback_rate_for_bank: z.number(),
-  delivery_fee: z.number(),
   orderNo: z.string(),
-  orderCreatedAt: z.string().transform((val) => transformApprovalDateToISOString(val)),
-  orderStatus: z.enum(ORDER_STATUS),
+  orderStatus: z.enum(Object.values(ORDER_STATUS)),
   orderRequest: z
     .string()
     .optional()
     .transform((val) => val ?? ''),
+  orderDeliveryFee: z.number().optional().default(0),
+  finalPrice: z.number(),
+  usedPoint: z.number(),
 });
 
 const createCreditCardOrderSchema = createBaseOrderSchema.extend({
-  pgCno: z.string(),
   paymentsMethod: z.literal(PAYMENTS_METHOD.CREDIT_CARD),
 });
 

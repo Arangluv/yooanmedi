@@ -7,7 +7,7 @@ import { validateCancelUsePoint } from './validate';
 
 interface CreateCancelUsePointTransactionParams {
   userId: number;
-  orderId: number;
+  orderProductId: number;
 }
 
 /**
@@ -15,16 +15,16 @@ interface CreateCancelUsePointTransactionParams {
  */
 export const createCancelUsePointTransaction = async ({
   userId,
-  orderId,
+  orderProductId,
 }: CreateCancelUsePointTransactionParams) => {
   try {
-    const { payload, user, order } = await getPointTransactionContext({
+    const { payload, user, orderProduct } = await getPointTransactionContext({
       userId,
-      orderId,
+      orderProductId,
     });
 
     const { docs: previousPointTransaction } = await payload.find({
-      collection: 'point-transactions',
+      collection: 'point-transaction',
       select: {
         amount: true,
       },
@@ -32,8 +32,8 @@ export const createCancelUsePointTransaction = async ({
         user: {
           equals: user.id,
         },
-        order: {
-          equals: order.id,
+        orderProduct: {
+          equals: orderProduct.id,
         },
         type: {
           equals: POINT_ACTION_TYPE.USE,
@@ -46,12 +46,12 @@ export const createCancelUsePointTransaction = async ({
     const { amount: previousPointTransactionAmount } = previousPointTransaction[0];
 
     await payload.create({
-      collection: 'point-transactions',
+      collection: 'point-transaction',
       data: {
-        user: userId,
-        order: orderId,
+        user: user.id,
+        orderProduct: orderProduct.id,
         type: POINT_ACTION_TYPE.CANCEL_USE,
-        reason: `주문취소로 인한 적립금 사용 취소 - 주문 아이디 : ${order.id}`,
+        reason: `주문취소로 인한 적립금 사용 취소 - 주문 상품 아이디 : ${orderProduct.id}`,
         amount: previousPointTransactionAmount,
       },
     });

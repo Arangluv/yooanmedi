@@ -1,18 +1,23 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
+import { useQuery } from '@tanstack/react-query';
 
-import type { ProductItem } from '@/entities/product/@x/order';
-import type { User } from '@/entities/user/@x/order';
+import type { User } from '@/entities/user/@x/recent-purchased-history';
+import type { ProductItem } from '@/entities/product/@x/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
 
-import { getCurrentUserOrder } from '../api/get-current-user-order';
+import { getRecentPurchasedHistory } from '../api/get-recent-purchased-history';
 
-const CurrentPurchaseInfo = ({ product, user }: { product: ProductItem; user: User }) => {
+type RecentPurchasesTableProps = {
+  user: User;
+  product: ProductItem;
+};
+
+const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {
   const { data } = useQuery({
-    queryKey: ['order-history', product.id],
-    queryFn: () => getCurrentUserOrder({ prod_id: product.id, user_id: user.id }),
+    queryKey: ['recent-purchased-history', user.id, product.id],
+    queryFn: () => getRecentPurchasedHistory({ user, product }),
   });
 
   if (!data || data.length === 0) {
@@ -34,12 +39,10 @@ const CurrentPurchaseInfo = ({ product, user }: { product: ProductItem; user: Us
           {data?.map((item) => (
             <tr key={item.id} className="border-foreground-200 border-1 text-xs">
               <td className="border-foreground-200 border-r-1 py-1 text-center">
-                {moment(item.orderCreatedAt).format('YYYY-MM-DD')}
+                {moment(item.createdAt).format('YYYY-MM-DD')}
               </td>
               <td className="border-foreground-200 border-r-1 text-center">{item.quantity}</td>
-              {/* TODO :: isPayloadImageRenderable처럼 type 가드가 필요할 수 있습니다 */}
-              {/* @ts-ignore */}
-              <td className="text-center">{formatNumberWithCommas(item.product?.price)}원</td>
+              <td className="text-center">{formatNumberWithCommas(item.amount)}원</td>
             </tr>
           ))}
         </tbody>
@@ -48,4 +51,4 @@ const CurrentPurchaseInfo = ({ product, user }: { product: ProductItem; user: Us
   );
 };
 
-export default CurrentPurchaseInfo;
+export default RecentPurchasesTable;

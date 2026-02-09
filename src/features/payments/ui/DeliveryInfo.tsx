@@ -5,11 +5,6 @@ import { useAuthStore } from '@/entities/user';
 const DeliveryInfo = () => {
   const { user } = useAuthStore();
 
-  // TODO :: 보일러 플레이트 제거하기
-  if (!user) {
-    return null;
-  }
-
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-xl font-bold">주문자 정보</span>

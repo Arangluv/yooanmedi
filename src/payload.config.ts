@@ -20,6 +20,7 @@ import { Order } from './collections/order';
 import { PointTransaction } from './collections/point-transaction';
 import { OrderProduct } from './collections/order-product';
 import { Payments } from './collections/payments';
+import { RecentPurchasedHistory } from './collections/recent-purchased-history';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -40,7 +41,6 @@ export default buildConfig({
       },
     },
   },
-
   collections: [
     Users,
     Image,
@@ -50,6 +50,7 @@ export default buildConfig({
     ProductPrice,
     Order,
     OrderProduct,
+    RecentPurchasedHistory,
     Payments,
     PointTransaction,
   ],
