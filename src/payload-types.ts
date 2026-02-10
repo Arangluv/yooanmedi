@@ -308,7 +308,7 @@ export interface Order {
     totalDocs?: number;
   };
   paymentsMethod: 'creditCard' | 'bankTransfer';
-  orderStatus: 'preparing' | 'shipping' | 'delivered' | 'partial_cancelled' | 'cancelled' | 'pending';
+  orderStatus: 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'pending';
   orderDeliveryFee?: number | null;
   orderRequest?: string | null;
   orderNo: string;
@@ -326,6 +326,7 @@ export interface OrderProduct {
   product: number | Product;
   order: number | Order;
   orderProductStatus: 'ordered' | 'cancelled' | 'refunded';
+  productNameSnapshot?: string | null;
   priceSnapshot: number;
   productDeliveryFee: number;
   quantity: number;
@@ -607,6 +608,7 @@ export interface OrderProductSelect<T extends boolean = true> {
   product?: T;
   order?: T;
   orderProductStatus?: T;
+  productNameSnapshot?: T;
   priceSnapshot?: T;
   productDeliveryFee?: T;
   quantity?: T;

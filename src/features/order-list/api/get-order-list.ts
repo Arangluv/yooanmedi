@@ -1,77 +1,134 @@
 'use server';
 
-import type { Order } from '@/entities/order';
+import { Where } from 'payload';
+
+import type { User } from '@/entities/user';
+import { OrderProduct } from '@/entities/order-product';
+import { Order } from '@/entities/order';
 import { getPayload } from '@/shared';
 
-import { OrderListSearchParamsType } from '../model/sever-search-params';
+import type { OrderListSearchParamsType } from '../model/sever-search-params';
+import { orderListSchema } from '../model/order-list-schema';
+import { normalizeOrder, OrderListItem } from '../lib/normalization';
 
-// type OrderListDto = {
-//   userId: number;
-//   searchParams: OrderListSearchParamsType;
-// };
+type GetOrdersDto = {
+  user: User | null;
+  searchParams: OrderListSearchParamsType;
+};
 
-// type OrderListSuccessResponse = {
-//   success: true;
-//   data: Array<Pick<Order, 'id' | 'orderCreatedAt' | 'quantity' | 'product'>>;
-// };
+export type OrderListItemBeforeNormalize = Pick<
+  Order,
+  'id' | 'paymentsMethod' | 'orderStatus' | 'orderNo' | 'finalPrice'
+> & {
+  orderProducts: {
+    docs: Pick<
+      OrderProduct,
+      | 'id'
+      | 'product'
+      | 'orderProductStatus'
+      | 'productNameSnapshot'
+      | 'priceSnapshot'
+      | 'productDeliveryFee'
+      | 'quantity'
+    >[];
+    hasNextPage?: boolean;
+  };
+};
 
-// type OrderListErrorResponse = {
-//   success: false;
-//   message: string;
-// };
+type OrderListSuccessResponse = {
+  success: true;
+  data: OrderListItem[];
+};
 
-// export type OrderListResponse = OrderListSuccessResponse | OrderListErrorResponse;
+type OrderListFailureResponse = {
+  success: false;
+  data: null;
+  message: string;
+};
 
-// export const getOrderList = async ({
-//   userId,
-//   searchParams,
-// }: OrderListDto): Promise<OrderListResponse> => {
-//   try {
-//     const payload = await getPayload();
+export const getOrderList = async (
+  dto: GetOrdersDto,
+): Promise<OrderListSuccessResponse | OrderListFailureResponse> => {
+  // TODO :: 보일러플레이트 코드 -> 제거하기
+  if (!dto.user) {
+    throw new Error('유저 정보가 없습니다');
+  }
 
-//     const { docs: orderList } = await payload.find({
-//       collection: 'order',
-//       select: {
-//         id: true,
-//         quantity: true,
-//         product: true,
-//         price: true,
-//         delivery_fee: true,
-//         cashback_rate: true,
-//         cashback_rate_for_bank: true,
-//         orderStatus: true,
-//         orderCreatedAt: true,
-//       },
-//       where: {
-//         user: {
-//           equals: userId,
-//         },
-//       },
-//       populate: {
-//         product: {
-//           name: true,
-//           manufacturer: true,
-//           specification: true,
-//         },
-//       },
-//       sort: 'createdAt',
-//       limit: 0,
-//     });
-//     return { success: true, data: orderList } as OrderListSuccessResponse;
-//   } catch (error) {
-//     return {
-//       success: false,
-//       message: '주문내역을 조회하는데 문제가 발생했습니다',
-//     } as OrderListErrorResponse;
-//   }
-// };
+  try {
+    const payload = await getPayload();
 
-export const getOrderList = async () => {
-  const payload = await getPayload();
+    const searchCondition = orderListSchema.parse(dto.searchParams);
+    const where: Where = {
+      createdAt: {
+        greater_than_equal: searchCondition.from,
+        less_than_equal: searchCondition.to,
+      },
+      user: {
+        equals: dto.user.id,
+      },
+    };
 
-  const { docs: orderList } = await payload.find({
-    collection: 'order',
-  });
+    if (searchCondition.orderStatus) {
+      where.orderStatus = {
+        equals: searchCondition.orderStatus,
+      };
+    }
 
-  return orderList;
+    const { docs: orderList } = await payload.find({
+      collection: 'order',
+      select: {
+        finalPrice: true,
+        orderNo: true,
+        orderStatus: true,
+        paymentsMethod: true,
+        orderProducts: true,
+      },
+      populate: {
+        'order-product': {
+          productNameSnapshot: true,
+          priceSnapshot: true,
+          product: true,
+          quantity: true,
+          productDeliveryFee: true,
+          orderProductStatus: true,
+        },
+      },
+      where,
+    });
+
+    // 키워드가 있다면 필터링
+    if (searchCondition.productName) {
+      const filteredOrderList = orderList.filter((order) => {
+        const orderProducts = order.orderProducts?.docs as OrderProduct[];
+
+        if (!orderProducts || orderProducts.length === 0) {
+          return false;
+        }
+
+        let keywordContainFlg = false;
+        orderProducts.forEach((orderProduct) => {
+          if (orderProduct.productNameSnapshot?.includes(searchCondition.productName)) {
+            keywordContainFlg = true;
+          }
+        });
+
+        return keywordContainFlg;
+      });
+
+      return {
+        success: true,
+        data: filteredOrderList.map((order) =>
+          normalizeOrder(order as OrderListItemBeforeNormalize),
+        ),
+      };
+    }
+
+    return {
+      success: true,
+      data: orderList.map((order) => normalizeOrder(order as OrderListItemBeforeNormalize)),
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: null, message: '주문내역을 조회하는데 문제가 발생했습니다' };
+  }
 };

@@ -113,6 +113,7 @@ export async function POST(request: NextRequest) {
         order: order.id,
         orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
         priceSnapshot: inventoryItem.product.price,
+        productNameSnapshot: inventoryItem.product.name,
         productDeliveryFee: productDeliveryFee,
         quantity: inventoryItem.quantity,
         cashbackRate: inventoryItem.product.cashback_rate,
