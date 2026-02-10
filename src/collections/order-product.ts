@@ -56,6 +56,15 @@ export const OrderProduct: CollectionConfig = {
       ],
     },
     {
+      name: 'productNameSnapshot',
+      type: 'text',
+      label: '주문 시 상품 이름',
+      admin: {
+        disableBulkEdit: true,
+        readOnly: true,
+      },
+    },
+    {
       name: 'priceSnapshot',
       type: 'number',
       label: '주문 시 상품 금액',

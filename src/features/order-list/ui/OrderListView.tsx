@@ -6,7 +6,9 @@ import OrderListTitle from './OrderListTitle';
 import OrderListSearch from './OrderListSearch';
 import OrderList from './OrderList';
 
-const OrderListView = ({ orderList }: { orderList: any }) => {
+import type { OrderListItem } from '../lib/normalization';
+
+const OrderListView = ({ orderList }: { orderList: OrderListItem[] }) => {
   console.log('orderList');
   console.log(orderList);
 

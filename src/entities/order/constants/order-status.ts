@@ -10,7 +10,6 @@ export const ORDER_STATUS = {
   PREPARING: 'preparing', // 상품준비
   SHIPPING: 'shipping', // 배송시작
   DELIVERED: 'delivered', // 배송완료
-  PARTIAL_CANCELLED: 'partial_cancelled', // 부분 취소
   CANCELLED: 'cancelled', // 주문 취소
   PENDING: 'pending', // 결제 대기
 } as const;
@@ -19,7 +18,6 @@ export const ORDER_STATUS_NAME = {
   [ORDER_STATUS.PREPARING]: '상품준비',
   [ORDER_STATUS.SHIPPING]: '배송시작',
   [ORDER_STATUS.DELIVERED]: '배송완료',
-  [ORDER_STATUS.PARTIAL_CANCELLED]: '부분 취소',
   [ORDER_STATUS.CANCELLED]: '주문 취소',
   [ORDER_STATUS.PENDING]: '결제 대기',
 } as const;
