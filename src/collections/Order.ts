@@ -74,10 +74,6 @@ export const Order: CollectionConfig = {
           value: ORDER_STATUS.DELIVERED,
         },
         {
-          label: ORDER_STATUS_NAME[ORDER_STATUS.PARTIAL_CANCELLED],
-          value: ORDER_STATUS.PARTIAL_CANCELLED,
-        },
-        {
           label: ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED],
           value: ORDER_STATUS.CANCELLED,
         },

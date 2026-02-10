@@ -17,6 +17,7 @@ const useOrderListSearchFilter = () => {
     },
     {
       history: 'push',
+      shallow: false,
     },
   );
 
