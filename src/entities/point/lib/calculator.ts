@@ -89,7 +89,8 @@ export const getUsedPointListCalculatedWeight = ({
       return REMAINING_POINT;
     }
 
-    const calculatedUsedPoint = Math.floor(usedPoint * (weight / 100));
+    // 사용포인트가 있다면 각 상품에서 최소 1원은 사용되어야 합니다
+    const calculatedUsedPoint = Math.max(1, Math.floor(usedPoint * (weight / 100)));
     REMAINING_POINT -= calculatedUsedPoint;
     return calculatedUsedPoint;
   });

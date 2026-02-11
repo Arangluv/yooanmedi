@@ -325,13 +325,12 @@ export interface OrderProduct {
   id: number;
   product: number | Product;
   order: number | Order;
-  orderProductStatus: 'ordered' | 'cancelled' | 'refunded';
+  orderProductStatus: 'ordered' | 'cancel_request' | 'cancelled';
   productNameSnapshot?: string | null;
   priceSnapshot: number;
+  totalAmount: number;
   productDeliveryFee: number;
   quantity: number;
-  cashbackRate: number;
-  cashbackRateForBank: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -610,10 +609,9 @@ export interface OrderProductSelect<T extends boolean = true> {
   orderProductStatus?: T;
   productNameSnapshot?: T;
   priceSnapshot?: T;
+  totalAmount?: T;
   productDeliveryFee?: T;
   quantity?: T;
-  cashbackRate?: T;
-  cashbackRateForBank?: T;
   updatedAt?: T;
   createdAt?: T;
 }

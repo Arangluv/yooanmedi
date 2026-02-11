@@ -53,6 +53,11 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         inventoryItem,
         freeDeliveryFlg,
       });
+      let totalProductAmount = inventoryItem.product.price * inventoryItem.quantity;
+      if (usedPoint) {
+        totalProductAmount -= pointList[i];
+      }
+
       // 주문 상품 생성
       const createOrderProductDto: CreateOrderProductDto = {
         product: inventoryItem.product.id,
@@ -60,10 +65,9 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
+        totalAmount: totalProductAmount,
         productDeliveryFee: productDeliveryFee,
         quantity: inventoryItem.quantity,
-        cashbackRate: inventoryItem.product.cashback_rate,
-        cashbackRateForBank: inventoryItem.product.cashback_rate_for_bank,
       };
       const orderProduct = await createOrderProduct({
         dto: createOrderProductDto,
