@@ -30,6 +30,7 @@ export const Order: CollectionConfig = {
       label: '주문 상품 목록',
       collection: 'order-product',
       on: 'order',
+      maxDepth: 3,
     },
     {
       name: 'paymentsMethod',

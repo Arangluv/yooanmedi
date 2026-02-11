@@ -25,6 +25,11 @@ export const createCancelEarnPointTransaction = async ({
       orderProductId,
     });
 
+    console.log('user');
+    console.log(user);
+    console.log('orderProduct');
+    console.log(orderProduct);
+
     const { docs: previousPointTransaction } = await payload.find({
       collection: 'point-transaction',
       select: {
@@ -34,7 +39,7 @@ export const createCancelEarnPointTransaction = async ({
         user: {
           equals: user.id,
         },
-        order: {
+        orderProduct: {
           equals: orderProduct.id,
         },
         type: {
@@ -66,7 +71,11 @@ export const createCancelEarnPointTransaction = async ({
         point: normalizePoint(user.point) - previousPointTransactionAmount,
       },
     });
+
+    return previousPointTransactionAmount;
   } catch (error) {
+    console.log('error');
+    console.log(error);
     // todo :: error 핸들링
     throw new Error('적립금 취소 거래 내역을 생성하는데 실패했습니다');
   }

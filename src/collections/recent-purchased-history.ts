@@ -3,8 +3,8 @@ import { CollectionConfig } from 'payload';
 export const RecentPurchasedHistory: CollectionConfig = {
   slug: 'recent-purchased-history',
   labels: {
-    singular: '상품 구매내역',
-    plural: '상품 구매내역',
+    singular: '상품 최근 구매내역',
+    plural: '상품 최근 구매내역',
   },
   admin: {
     defaultColumns: ['user', 'product', 'quantity', 'amount'],
@@ -13,7 +13,6 @@ export const RecentPurchasedHistory: CollectionConfig = {
   },
   access: {
     create: () => false,
-    delete: () => false,
   },
   fields: [
     {

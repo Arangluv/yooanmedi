@@ -103,6 +103,11 @@ export async function POST(request: NextRequest) {
     for (let i = 0; i < inventory.length; i++) {
       const inventoryItem = inventory[i];
 
+      let totalProductAmount = inventoryItem.product.price * inventoryItem.quantity;
+      if (usedPoint) {
+        totalProductAmount -= pointList[i];
+      }
+
       const productDeliveryFee = getDeliveryFeeFromProductCosiderFlg({
         inventoryItem,
         freeDeliveryFlg,
@@ -116,8 +121,7 @@ export async function POST(request: NextRequest) {
         productNameSnapshot: inventoryItem.product.name,
         productDeliveryFee: productDeliveryFee,
         quantity: inventoryItem.quantity,
-        cashbackRate: inventoryItem.product.cashback_rate,
-        cashbackRateForBank: inventoryItem.product.cashback_rate_for_bank,
+        totalAmount: totalProductAmount,
       };
       const orderProduct = await createOrderProduct({
         dto: createOrderProductDto,
