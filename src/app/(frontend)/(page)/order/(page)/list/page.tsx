@@ -1,7 +1,7 @@
 import type { SearchParams } from 'nuqs/server';
 
-import { OrderListView, loadSearchParams } from '@/features/order-list';
-import { getOrderList } from '@/features/order-list';
+import { OrderListView, loadSearchParams } from '@/features/order';
+import { getOrderList } from '@/features/order';
 import { Navbar } from '@/entities/order';
 import { getUserByHeader } from '@/entities/user';
 

@@ -43,6 +43,9 @@ export const createEarnPointTransaction = async ({
       },
     });
   } catch (error) {
+    console.log('error');
+    console.log(error);
+
     // todo :: error 핸들링
     throw new Error('적립금 거래 내역을 생성하는데 실패했습니다');
   }

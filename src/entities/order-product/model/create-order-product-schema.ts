@@ -7,11 +7,10 @@ export const createOrderProductSchema = z.object({
   order: z.number(),
   orderProductStatus: z.enum(Object.values(ORDER_PRODUCT_STATUS)),
   priceSnapshot: z.number(),
+  totalAmount: z.number(),
   productNameSnapshot: z.string(),
   productDeliveryFee: z.number(),
   quantity: z.number(),
-  cashbackRate: z.number(),
-  cashbackRateForBank: z.number(),
 });
 
 export type CreateOrderProductDto = z.input<typeof createOrderProductSchema>;

@@ -112,6 +112,7 @@ export async function cancelOrderForCard({
 }): Promise<{ success: boolean; message: string; userPoint?: number }> {
   const payload = await getPayload({ config: config });
   const dbTransactionID = await payload.db.beginTransaction();
+
   try {
     let userPoint = null;
     const order = (await payload.findByID({

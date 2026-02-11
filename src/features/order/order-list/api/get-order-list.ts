@@ -1,10 +1,11 @@
 'use server';
 
 import { Where } from 'payload';
+import type { Image } from '@/payload-types';
 
 import type { User } from '@/entities/user';
 import { OrderProduct } from '@/entities/order-product';
-import { Order } from '@/entities/order';
+import { Order, PAYMENTS_METHOD } from '@/entities/order';
 import { getPayload } from '@/shared';
 
 import type { OrderListSearchParamsType } from '../model/sever-search-params';
@@ -16,21 +17,29 @@ type GetOrdersDto = {
   searchParams: OrderListSearchParamsType;
 };
 
+type OrderProductType = {
+  id: number;
+  image: Image;
+  manufacturer: string;
+};
+
 export type OrderListItemBeforeNormalize = Pick<
   Order,
-  'id' | 'paymentsMethod' | 'orderStatus' | 'orderNo' | 'finalPrice'
+  'id' | 'orderStatus' | 'orderNo' | 'finalPrice' | 'createdAt'
 > & {
+  paymentsMethod: (typeof PAYMENTS_METHOD)[keyof typeof PAYMENTS_METHOD];
   orderProducts: {
-    docs: Pick<
+    docs: (Pick<
       OrderProduct,
       | 'id'
-      | 'product'
       | 'orderProductStatus'
       | 'productNameSnapshot'
       | 'priceSnapshot'
       | 'productDeliveryFee'
       | 'quantity'
-    >[];
+    > & {
+      product: OrderProductType;
+    })[];
     hasNextPage?: boolean;
   };
 };
@@ -82,18 +91,24 @@ export const getOrderList = async (
         orderStatus: true,
         paymentsMethod: true,
         orderProducts: true,
+        createdAt: true,
       },
       populate: {
         'order-product': {
           productNameSnapshot: true,
           priceSnapshot: true,
-          product: true,
           quantity: true,
           productDeliveryFee: true,
           orderProductStatus: true,
+          product: true,
+        },
+        product: {
+          manufacturer: true,
+          image: true,
         },
       },
       where,
+      depth: 4,
     });
 
     // 키워드가 있다면 필터링
