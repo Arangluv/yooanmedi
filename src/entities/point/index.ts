@@ -6,7 +6,6 @@ export { default as useUsedPoint } from './model/useUsedPoint';
 export {
   getTotalPointWhenUsingCardPayments,
   getTotalPointWhenUsingBankTransfer,
-  getUsedPointListCalculatedWeight,
   getMaxPointOnPurchase,
   getPointWhenUsingCard,
   getPointWhenUsingBankTransfer,

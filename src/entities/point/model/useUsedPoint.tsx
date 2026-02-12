@@ -67,7 +67,7 @@ const useUsedPoint = ({ user }: { user: User }) => {
 
     setPointStatus({
       ...pointStatus,
-      usedPoint: pointStatus.usedPoint,
+      usedPoint: normalizePoint(user.point),
     });
   };
 

@@ -7,7 +7,6 @@ import {
 } from '@/features/payments';
 import { transformOrderListToInventory } from '@/entities/inventory';
 import {
-  getUsedPointListCalculatedWeight,
   createUsePointTransaction,
   createEarnPointTransaction,
   getPointWhenUsingCard,
@@ -27,6 +26,7 @@ import {
 } from '@/entities/recent-purchased-history';
 import { createPayment } from '@/entities/payment';
 import type { CreatePaymentDto } from '@/entities/payment';
+import { PointUseEstimator } from '@/entities/point/lib/use/point-use-estimator';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -98,14 +98,14 @@ export async function POST(request: NextRequest) {
       0,
     );
     const freeDeliveryFlg = totalPriceWithoutDeliveryFee >= minOrderPrice;
-    const pointList = getUsedPointListCalculatedWeight({ inventory, usedPoint }); // TODO :: 변수명 변경이 필요합니다
+    const pointUseEstimator = new PointUseEstimator(inventory, usedPoint, freeDeliveryFlg);
 
     for (let i = 0; i < inventory.length; i++) {
       const inventoryItem = inventory[i];
 
       let totalProductAmount = inventoryItem.product.price * inventoryItem.quantity;
       if (usedPoint) {
-        totalProductAmount -= pointList[i];
+        totalProductAmount -= pointUseEstimator.getUsedPoint(inventoryItem.product.id);
       }
 
       const productDeliveryFee = getDeliveryFeeFromProductCosiderFlg({
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
         await createUsePointTransaction({
           userId,
           orderProductId: orderProduct.id,
-          amount: pointList[i],
+          amount: pointUseEstimator.getUsedPoint(inventoryItem.product.id),
         });
       }
 

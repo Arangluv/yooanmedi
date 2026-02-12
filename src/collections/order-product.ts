@@ -8,6 +8,17 @@ export const OrderProduct: CollectionConfig = {
     singular: '주문 상품',
     plural: '주문 상품',
   },
+  admin: {
+    defaultColumns: [
+      'productNameSnapshot',
+      'priceSnapshot',
+      'totalAmount',
+      'productDeliveryFee',
+      'quantity',
+      'totalAmount',
+    ],
+    useAsTitle: 'productNameSnapshot',
+  },
   fields: [
     {
       name: 'product',

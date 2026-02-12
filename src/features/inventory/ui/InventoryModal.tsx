@@ -68,7 +68,7 @@ const InventoryModal = () => {
                   <td className="border-foreground-200 border-r-1 pr-2 text-end">
                     {formatNumberWithCommas(product.price)}원
                   </td>
-                  <td>
+                  <td className="border-foreground-200 border-r-1 text-end">
                     <InventoryQuantityEditCell inventoryItem={{ product, quantity }} />
                   </td>
                   <td className="border-foreground-200 border-r-1 pr-2 text-end">
