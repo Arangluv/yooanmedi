@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 
 export const createPaymentSchema = z.object({
   order: z.number(),

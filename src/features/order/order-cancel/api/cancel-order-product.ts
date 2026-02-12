@@ -1,7 +1,7 @@
 'use server';
 
 import { getPayload } from '@/shared';
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import { cancelOrderProductSchema } from '@/entities/order-product';
 import { cancelBankTransferStrategy } from '../lib/cancel-banktransfer/strategy';
 import { cancelCardPaymentStrategy } from '../lib/cancel-card-strategy';
