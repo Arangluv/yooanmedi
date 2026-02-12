@@ -14,7 +14,7 @@ import {
 import { ORDER_STATUS, createOrder } from '@/entities/order';
 import { type CreateOrderDto } from '@/entities/order';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price';
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import {
   createOrderProduct,
   CreateOrderProductDto,

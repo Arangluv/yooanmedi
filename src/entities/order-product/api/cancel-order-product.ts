@@ -6,9 +6,9 @@ import moment from 'moment-timezone';
 import {
   createCancelEarnPointTransaction,
   createCancelUsePointTransaction,
-  getUsedPoint,
 } from '@/entities/point';
-import { ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
+import { ORDER_STATUS } from '@/entities/order/constants/order-status';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import { getPayload, getUuidWithoutHyphen } from '@/shared';
 
 import {
