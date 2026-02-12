@@ -12,6 +12,9 @@ export const createOrderProduct = async ({ dto }: { dto: CreateOrderProductDto }
   try {
     const payload = await getPayload();
 
+    console.log('createOrderProduct dto');
+    console.log(dto);
+
     const data: CreateOrderProductParseResult = createOrderProductSchema.parse(dto);
     const orderProduct = await payload.create({
       collection: 'order-product',
@@ -20,6 +23,7 @@ export const createOrderProduct = async ({ dto }: { dto: CreateOrderProductDto }
 
     return orderProduct;
   } catch (error) {
+    console.log(error);
     // TODO :: error 핸들링
     throw new Error('주문 상품을 생성하는데 문제가 발생했습니다');
   }

@@ -1,7 +1,7 @@
 'use server';
 
 import { transformOrderListToInventory } from '@/entities/inventory';
-import { createUsePointTransaction, getUsedPointListCalculatedWeight } from '@/entities/point';
+import { createUsePointTransaction } from '@/entities/point';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price';
 import { createOrder, CreateOrderDto, ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
 import { getNowISOString } from '@/shared'; // TODO :: REMOVE
@@ -15,6 +15,7 @@ import {
   CreateRecentPurchasedHistoryDto,
 } from '@/entities/recent-purchased-history';
 
+import { PointUseEstimator } from '@/entities/point/lib/use/point-use-estimator';
 import { type OrderBankTransferDto } from '../model/order-banktransfer-schema';
 
 export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
@@ -28,7 +29,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       0,
     );
     const freeDeliveryFlg = totalPriceWithoutDeliveryFee >= minOrderPrice;
-    const pointList = getUsedPointListCalculatedWeight({ inventory, usedPoint });
+    const pointUseEstimator = new PointUseEstimator(inventory, usedPoint, freeDeliveryFlg);
 
     // 주문 생성
     const DEFAULT_ORDER_DELIVERY_FEE = 0;
@@ -53,15 +54,16 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         inventoryItem,
         freeDeliveryFlg,
       });
-      let totalProductAmount = inventoryItem.product.price * inventoryItem.quantity;
-      if (usedPoint) {
-        totalProductAmount -= pointList[i];
-      }
+
+      let totalProductAmount =
+        inventoryItem.product.price * inventoryItem.quantity + productDeliveryFee;
+
+      totalProductAmount -= pointUseEstimator.getUsedPoint(inventoryItem.product.id);
 
       // 주문 상품 생성
       const createOrderProductDto: CreateOrderProductDto = {
-        product: inventoryItem.product.id,
         order: order.id,
+        product: inventoryItem.product.id,
         orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
@@ -69,6 +71,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         productDeliveryFee: productDeliveryFee,
         quantity: inventoryItem.quantity,
       };
+
       const orderProduct = await createOrderProduct({
         dto: createOrderProductDto,
       });
@@ -87,7 +90,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         await createUsePointTransaction({
           userId,
           orderProductId: orderProduct.id,
-          amount: pointList[i],
+          amount: pointUseEstimator.getUsedPoint(inventoryItem.product.id),
         });
       }
     }
