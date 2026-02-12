@@ -1,15 +1,10 @@
 'use client';
 
 import useAuthStore from '../model/useAuthStore';
-
 import { formatNumberWithCommas } from '@/shared';
 
 const UserInfo = () => {
   const { user } = useAuthStore();
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <div className="flex h-full w-full justify-end">
