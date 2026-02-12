@@ -1,8 +1,28 @@
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
+@import 'tw-animate-css';
+
 /* Support Payload’s dark mode toggle by adding a custom variant */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: none;
+}
+
+/* Chrome, Safari, Edge */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -86,10 +106,14 @@ a[href='/admin/forgot'] {
   @apply whitespace-pre-line;
 }
 
-button {
-  @apply border-none outline-none;
-}
-
 .relationship-add-new {
   @apply hidden;
+}
+
+li {
+  @apply list-none;
+}
+
+a {
+  @apply no-underline;
 }
