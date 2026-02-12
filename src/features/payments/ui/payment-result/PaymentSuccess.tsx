@@ -1,9 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 
 import { CircleCheckBig } from 'lucide-react';
 import moment from 'moment';
 
 import { formatNumberWithCommas } from '@/shared';
+import useAuthStore from '@/entities/user/model/useAuthStore';
+import { useEffect } from 'react';
 
 const PaymentSuccess = ({
   amount,
@@ -14,6 +18,12 @@ const PaymentSuccess = ({
   approvalDate: string;
   shopOrderNo: string;
 }) => {
+  const { refreshUser } = useAuthStore();
+
+  useEffect(() => {
+    refreshUser();
+  }, []);
+
   return (
     <div className="flex h-[calc(100vh-469px)] w-full flex-col items-center justify-center gap-4 py-12">
       <span className="text-success-500 flex items-center gap-1 text-xl font-bold">

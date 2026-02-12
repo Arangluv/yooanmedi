@@ -39,9 +39,9 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       orderStatus: ORDER_STATUS.PENDING,
       orderRequest: deliveryRequest,
       finalPrice: amount,
-      usedPoint: usedPoint,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
       orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE,
+      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
+      usedPoint: usedPoint,
     } as CreateOrderDto;
 
     const order = await createOrder({
