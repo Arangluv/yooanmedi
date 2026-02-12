@@ -72,25 +72,33 @@ export interface Config {
     files: File;
     product: Product;
     'product-category': ProductCategory;
-    'point-history': PointHistory;
-    'order-status': OrderStatus;
-    order: Order;
     'product-price': ProductPrice;
+    order: Order;
+    'order-product': OrderProduct;
+    'recent-purchased-history': RecentPurchasedHistory;
+    payment: Payment;
+    'point-transaction': PointTransaction;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    order: {
+      orderProducts: 'order-product';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     image: ImageSelect<false> | ImageSelect<true>;
     files: FilesSelect<false> | FilesSelect<true>;
     product: ProductSelect<false> | ProductSelect<true>;
     'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
-    'point-history': PointHistorySelect<false> | PointHistorySelect<true>;
-    'order-status': OrderStatusSelect<false> | OrderStatusSelect<true>;
-    order: OrderSelect<false> | OrderSelect<true>;
     'product-price': ProductPriceSelect<false> | ProductPriceSelect<true>;
+    order: OrderSelect<false> | OrderSelect<true>;
+    'order-product': OrderProductSelect<false> | OrderProductSelect<true>;
+    'recent-purchased-history': RecentPurchasedHistorySelect<false> | RecentPurchasedHistorySelect<true>;
+    payment: PaymentSelect<false> | PaymentSelect<true>;
+    'point-transaction': PointTransactionSelect<false> | PointTransactionSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -236,7 +244,7 @@ export interface Product {
   /**
    * 반품가능여부를 선택해주세요 (체크 시 반품가능)
    */
-  returnable?: boolean | null;
+  returnable: boolean;
   price: number;
   /**
    * 카드 결제 적립금 비율을 퍼센트로 입력해주세요 (ex: 1.5)
@@ -252,12 +260,12 @@ export interface Product {
   /**
    * 수량 당 배송비를 계산할지에 대한 여부를 설정할 수 있습니다. 활성화 시 배송비는 수량 * 배송비로 계산됩니다.
    */
-  is_cost_per_unit?: boolean | null;
+  is_cost_per_unit: boolean;
   /**
    * 최소 주문 금액 이상 시 배송비 무료 여부를 선택해주세요
    *  활성화 시 최소주문 금액 이상 주문건에 대한 배송비는 0원으로 처리됩니다
    */
-  is_free_delivery?: boolean | null;
+  is_free_delivery: boolean;
   updatedAt: string;
   createdAt: string;
 }
@@ -273,24 +281,13 @@ export interface ProductCategory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-history".
+ * via the `definition` "product-price".
  */
-export interface PointHistory {
+export interface ProductPrice {
   id: number;
+  product: number | Product;
   user: number | User;
-  type: 'earn' | 'use' | 'cancel';
-  balanceAfter?: number | null;
-  reason: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order-status".
- */
-export interface OrderStatus {
-  id: number;
-  name: string;
+  price: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -301,30 +298,75 @@ export interface OrderStatus {
 export interface Order {
   id: number;
   user: number | User;
-  product: number | Product;
-  orderCreatedAt: string;
+  orderProducts?: {
+    docs?: (number | OrderProduct)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   paymentsMethod: 'creditCard' | 'bankTransfer';
-  pgCno?: string | null;
-  quantity: number;
-  orderStatus: number | OrderStatus;
+  orderStatus: 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'pending';
+  orderDeliveryFee?: number | null;
   orderRequest?: string | null;
-  refundUsedPointAmount?: number | null;
-  price?: number | null;
-  delivery_fee?: number | null;
-  cashback_rate?: number | null;
-  cashback_rate_for_bank?: number | null;
+  orderNo: string;
+  finalPrice: number;
+  usedPoint: number;
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "product-price".
+ * via the `definition` "order-product".
  */
-export interface ProductPrice {
+export interface OrderProduct {
   id: number;
   product: number | Product;
+  order: number | Order;
+  orderProductStatus: 'ordered' | 'cancel_request' | 'cancelled';
+  productNameSnapshot?: string | null;
+  priceSnapshot: number;
+  totalAmount: number;
+  productDeliveryFee: number;
+  quantity: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recent-purchased-history".
+ */
+export interface RecentPurchasedHistory {
+  id: number;
   user: number | User;
-  price: number;
+  product: number | Product;
+  quantity: number;
+  amount: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment".
+ */
+export interface Payment {
+  id: number;
+  order: number | Order;
+  pgCno: string;
+  amount: number;
+  paymentsMethod: 'creditCard';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-transaction".
+ */
+export interface PointTransaction {
+  id: number;
+  user?: (number | null) | User;
+  orderProduct?: (number | null) | OrderProduct;
+  type: 'USE' | 'EARN' | 'CANCEL_USE' | 'CANCEL_EARN';
+  reason?: string | null;
+  amount: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -356,20 +398,28 @@ export interface PayloadLockedDocument {
         value: number | ProductCategory;
       } | null)
     | ({
-        relationTo: 'point-history';
-        value: number | PointHistory;
-      } | null)
-    | ({
-        relationTo: 'order-status';
-        value: number | OrderStatus;
+        relationTo: 'product-price';
+        value: number | ProductPrice;
       } | null)
     | ({
         relationTo: 'order';
         value: number | Order;
       } | null)
     | ({
-        relationTo: 'product-price';
-        value: number | ProductPrice;
+        relationTo: 'order-product';
+        value: number | OrderProduct;
+      } | null)
+    | ({
+        relationTo: 'recent-purchased-history';
+        value: number | RecentPurchasedHistory;
+      } | null)
+    | ({
+        relationTo: 'payment';
+        value: number | Payment;
+      } | null)
+    | ({
+        relationTo: 'point-transaction';
+        value: number | PointTransaction;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -518,22 +568,12 @@ export interface ProductCategorySelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-history_select".
+ * via the `definition` "product-price_select".
  */
-export interface PointHistorySelect<T extends boolean = true> {
+export interface ProductPriceSelect<T extends boolean = true> {
+  product?: T;
   user?: T;
-  type?: T;
-  balanceAfter?: T;
-  reason?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order-status_select".
- */
-export interface OrderStatusSelect<T extends boolean = true> {
-  name?: T;
+  price?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -543,29 +583,67 @@ export interface OrderStatusSelect<T extends boolean = true> {
  */
 export interface OrderSelect<T extends boolean = true> {
   user?: T;
-  product?: T;
-  orderCreatedAt?: T;
+  orderProducts?: T;
   paymentsMethod?: T;
-  pgCno?: T;
-  quantity?: T;
   orderStatus?: T;
+  orderDeliveryFee?: T;
   orderRequest?: T;
-  refundUsedPointAmount?: T;
-  price?: T;
-  delivery_fee?: T;
-  cashback_rate?: T;
-  cashback_rate_for_bank?: T;
+  orderNo?: T;
+  finalPrice?: T;
+  usedPoint?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "product-price_select".
+ * via the `definition` "order-product_select".
  */
-export interface ProductPriceSelect<T extends boolean = true> {
+export interface OrderProductSelect<T extends boolean = true> {
   product?: T;
+  order?: T;
+  orderProductStatus?: T;
+  productNameSnapshot?: T;
+  priceSnapshot?: T;
+  totalAmount?: T;
+  productDeliveryFee?: T;
+  quantity?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recent-purchased-history_select".
+ */
+export interface RecentPurchasedHistorySelect<T extends boolean = true> {
   user?: T;
-  price?: T;
+  product?: T;
+  quantity?: T;
+  amount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment_select".
+ */
+export interface PaymentSelect<T extends boolean = true> {
+  order?: T;
+  pgCno?: T;
+  amount?: T;
+  paymentsMethod?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-transaction_select".
+ */
+export interface PointTransactionSelect<T extends boolean = true> {
+  user?: T;
+  orderProduct?: T;
+  type?: T;
+  reason?: T;
+  amount?: T;
   updatedAt?: T;
   createdAt?: T;
 }

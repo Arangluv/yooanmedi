@@ -1,6 +1,4 @@
-// storage-adapter-import-placeholder
 import { postgresAdapter } from '@payloadcms/db-postgres';
-// import { en } from '@payloadcms/translations/languages/en'
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { buildConfig } from 'payload';
@@ -16,11 +14,13 @@ import { s3Storage } from '@payloadcms/storage-s3';
 import { translations as ko } from '@lib/payload/utils/translation';
 import { Product } from './collections/Product';
 import { ProductCategory } from './collections/ProductCategory';
-import { PointHistory } from './collections/PointHistory';
-import { OrderStatus } from './collections/OrderStatus';
-import { Order } from './collections/Order';
 import { MetaSetting } from './collections/MetaSetting';
 import { ProductPrice } from './collections/ProductPrice';
+import { Order } from './collections/order';
+import { PointTransaction } from './collections/point-transaction';
+import { OrderProduct } from './collections/order-product';
+import { Payments } from './collections/payments';
+import { RecentPurchasedHistory } from './collections/recent-purchased-history';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -36,22 +36,23 @@ export default buildConfig({
     },
     components: {
       graphics: {
-        Icon: '@/config/Logo#HomeIcon',
-        Logo: '@/config/Logo#BrandLogoSmall',
+        Icon: '@/shared/ui/logos#HomeIcon',
+        Logo: '@/shared/ui/logos#BrandLogoSmall',
       },
     },
   },
-
   collections: [
     Users,
     Image,
     Files,
     Product,
     ProductCategory,
-    PointHistory,
-    OrderStatus,
-    Order,
     ProductPrice,
+    Order,
+    OrderProduct,
+    RecentPurchasedHistory,
+    Payments,
+    PointTransaction,
   ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),

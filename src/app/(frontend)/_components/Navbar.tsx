@@ -1,17 +1,17 @@
-import Link from 'next/link'
-import { BrandLogo } from '@/config/Logo'
+import Link from 'next/link';
+import { BrandLogo } from '@/shared';
 
 export default function Navbar() {
   return (
-    <div className="w-full flex justify-center items-center h-[72px]">
-      <nav className="w-full h-full max-w-7xl flex items-center">
-        <div className="w-[140px] h-[40px] flex justify-center items-center">
+    <div className="flex h-[72px] w-full items-center justify-center">
+      <nav className="flex h-full w-full max-w-7xl items-center">
+        <div className="flex h-[40px] w-[140px] items-center justify-center">
           <h1 className="sr-only">유안메디팜</h1>
-          <Link href="/" className="w-[140px] h-[40px] flex justify-center items-center">
-            <BrandLogo width={140} height={40} className="w-[140px] h-[40px]" />
+          <Link href="/" className="flex h-[40px] w-[140px] items-center justify-center">
+            <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
           </Link>
         </div>
       </nav>
     </div>
-  )
+  );
 }
