@@ -32,7 +32,7 @@ export const getTotalPointWhenUsingCardPayments = (inventory: Inventory) => {
   let totalPoint = 0;
 
   inventory.forEach(({ product, quantity }) => {
-    totalPoint += Math.floor(product.price * (product.cashback_rate / 100) * quantity);
+    totalPoint += getPointWhenUsingCard(product) * quantity;
   });
 
   return totalPoint;
@@ -45,13 +45,8 @@ export const getTotalPointWhenUsingBankTransfer = (inventory: Inventory) => {
   let totalPoint = 0;
 
   inventory.forEach(({ product, quantity }) => {
-    totalPoint += Math.floor(product.price * (product.cashback_rate_for_bank / 100) * quantity);
+    totalPoint += getPointWhenUsingBankTransfer(product) * quantity;
   });
 
   return totalPoint;
 };
-
-/**
- * @description 구매 적립금을 가중치에 따라 계산
- * @description 가중치를 통해 적립된 적립금은 환불 포인트와 관계가 있습니다 -> TODO ::이름 수정이 필요할 수 있습니다
- */

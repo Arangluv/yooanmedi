@@ -91,7 +91,6 @@ export async function POST(request: NextRequest) {
     };
     await createPayment(createPaymentDto);
 
-    // 주문 상품 생성
     const inventory = await transformOrderListToInventory(orderList);
     const totalPriceWithoutDeliveryFee = inventory.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
@@ -100,29 +99,31 @@ export async function POST(request: NextRequest) {
     const freeDeliveryFlg = totalPriceWithoutDeliveryFee >= minOrderPrice;
     const pointUseEstimator = new PointUseEstimator(inventory, usedPoint, freeDeliveryFlg);
 
+    // 주문 상품 생성
     for (let i = 0; i < inventory.length; i++) {
       const inventoryItem = inventory[i];
-
-      let totalProductAmount = inventoryItem.product.price * inventoryItem.quantity;
-      if (usedPoint) {
-        totalProductAmount -= pointUseEstimator.getUsedPoint(inventoryItem.product.id);
-      }
-
       const productDeliveryFee = getDeliveryFeeFromProductCosiderFlg({
         inventoryItem,
         freeDeliveryFlg,
       });
+
+      let totalProductAmount =
+        inventoryItem.product.price * inventoryItem.quantity + productDeliveryFee;
+
+      totalProductAmount -= pointUseEstimator.getUsedPoint(inventoryItem.product.id);
+
       // 주문 상품 생성
       const createOrderProductDto: CreateOrderProductDto = {
-        product: inventoryItem.product.id,
         order: order.id,
+        product: inventoryItem.product.id,
         orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
+        totalAmount: totalProductAmount,
         productDeliveryFee: productDeliveryFee,
         quantity: inventoryItem.quantity,
-        totalAmount: totalProductAmount,
       };
+
       const orderProduct = await createOrderProduct({
         dto: createOrderProductDto,
       });
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
       await createEarnPointTransaction({
         userId,
         orderProductId: orderProduct.id,
-        amount: getPointWhenUsingCard(inventoryItem.product),
+        amount: getPointWhenUsingCard(inventoryItem.product) * inventoryItem.quantity,
       });
     }
 

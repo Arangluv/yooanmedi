@@ -69,7 +69,8 @@ export class PointUseEstimator {
     const weight = Math.floor((price / this.originalPrice) * 100);
     this.remainingWeightSum -= weight;
 
-    return weight;
+    // 최소 weight를 보장해줘야함
+    return Math.max(1, weight);
   }
 
   private calculateUsedPoint(weight: number) {
@@ -112,7 +113,7 @@ export class PointUseEstimator {
       const calculatedRedistributePoint = Math.floor((this.remainingPoint * weight) / 100);
       const maximumRedistributePoint = value.totalPrice - value.usedPoint;
       const redistributablePoint = Math.min(calculatedRedistributePoint, maximumRedistributePoint);
-
+      // TODO :: 이 부분 정말로 필요한가 최소 1원은 보장해주고 싶어서 작성했지만, 불필요해보임
       const newUsedPoint = Math.max(1, Math.min(redistributablePoint, this.remainingPoint));
 
       this.remainingPoint -= newUsedPoint;
