@@ -7,7 +7,7 @@ import {
   createCancelUsePointTransaction,
 } from '@/entities/point';
 import { cancelPgPayment, createPayment } from '@/entities/payment';
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 
 type CancelCardPaymentStrategyParams = {
   payload: BasePayload;

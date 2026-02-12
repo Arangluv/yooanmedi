@@ -12,9 +12,6 @@ export const createOrderProduct = async ({ dto }: { dto: CreateOrderProductDto }
   try {
     const payload = await getPayload();
 
-    console.log('createOrderProduct dto');
-    console.log(dto);
-
     const data: CreateOrderProductParseResult = createOrderProductSchema.parse(dto);
     const orderProduct = await payload.create({
       collection: 'order-product',
