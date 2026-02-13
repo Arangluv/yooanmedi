@@ -18,7 +18,7 @@ const PaymentSuccess = ({
   approvalDate: string;
   shopOrderNo: string;
 }) => {
-  const { refreshUser } = useAuthStore();
+  const refreshUser = useAuthStore((state) => state.refreshUser);
 
   useEffect(() => {
     refreshUser();

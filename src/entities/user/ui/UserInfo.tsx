@@ -4,7 +4,7 @@ import useAuthStore from '../model/useAuthStore';
 import { formatNumberWithCommas } from '@/shared';
 
 const UserInfo = () => {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <div className="flex h-full w-full justify-end">
