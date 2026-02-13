@@ -25,11 +25,6 @@ export const createCancelEarnPointTransaction = async ({
       orderProductId,
     });
 
-    console.log('user');
-    console.log(user);
-    console.log('orderProduct');
-    console.log(orderProduct);
-
     const { docs: previousPointTransaction } = await payload.find({
       collection: 'point-transaction',
       select: {
