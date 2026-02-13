@@ -22,6 +22,8 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import Link from 'next/link';
+import { PhoneVerificationButton } from '@/features/phone-verification';
+import { USAGE_CODE } from '@/features/phone-verification/constants/usage-code';
 
 const inputProps = {
   radius: 'sm',
@@ -509,6 +511,7 @@ function PersonalInfoContent({
           return true;
         }}
       />
+      <PhoneVerificationButton usageCode="SIGNUP" />
       <Input
         name="faxNumber"
         label="FAX번호(선택)"
