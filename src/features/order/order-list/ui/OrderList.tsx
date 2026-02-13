@@ -123,7 +123,7 @@ const OrderProductItem = ({
   paymentsMethod: (typeof PAYMENTS_METHOD)[keyof typeof PAYMENTS_METHOD];
 }) => {
   const [optimisticUpdateFlg, setOptimisticUpdateFlg] = useState(false);
-  const { refreshUser } = useAuthStore();
+  const refreshUser = useAuthStore((state) => state.refreshUser);
 
   const getOrderProductStatusName = () => {
     if (optimisticUpdateFlg) {

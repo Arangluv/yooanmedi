@@ -92,8 +92,8 @@ export class PointUseEstimator {
   }
 
   // 남은 잔여 포인트가 있을때 가중치를 고려하여 추가 분배한다.
-  private normalizeUsedPointMap() {
-    if (this.remainingPoint === 0) {
+  private normalizeUsedPointMap(maxStep: number) {
+    if (this.remainingPoint === 0 || maxStep === 4) {
       return;
     }
 
@@ -110,11 +110,15 @@ export class PointUseEstimator {
 
     targets.forEach(([key, value]) => {
       const weight = Math.floor((value.weight / TOTAL_WEIGHT_SUM) * 100);
-      const calculatedRedistributePoint = Math.floor((this.remainingPoint * weight) / 100);
+      const calculatedRedistributePoint = Math.max(
+        1,
+        Math.floor((this.remainingPoint * weight) / 100),
+      );
+
       const maximumRedistributePoint = value.totalPrice - value.usedPoint;
       const redistributablePoint = Math.min(calculatedRedistributePoint, maximumRedistributePoint);
-      // TODO :: 이 부분 정말로 필요한가 최소 1원은 보장해주고 싶어서 작성했지만, 불필요해보임
-      const newUsedPoint = Math.max(1, Math.min(redistributablePoint, this.remainingPoint));
+
+      const newUsedPoint = Math.min(redistributablePoint, this.remainingPoint);
 
       this.remainingPoint -= newUsedPoint;
 
@@ -129,7 +133,7 @@ export class PointUseEstimator {
     });
 
     // 남은 포인트가 있으면 정규화 함수를 재귀 호출
-    this.normalizeUsedPointMap();
+    this.normalizeUsedPointMap(maxStep + 1);
   }
 
   private estimate() {
@@ -138,7 +142,7 @@ export class PointUseEstimator {
     }
 
     if (this.usedPoint !== 0 && this.remainingPoint !== 0) {
-      this.normalizeUsedPointMap();
+      this.normalizeUsedPointMap(0);
     }
   }
 

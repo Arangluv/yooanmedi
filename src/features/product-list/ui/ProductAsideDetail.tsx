@@ -16,7 +16,7 @@ import useProductDetailStore from '../model/useProductDetailStore';
 
 const ProductAsideDetail = () => {
   const { clieckedProduct } = useProductDetailStore();
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   if (!clieckedProduct) {
     return <EmptyProductDetail />;

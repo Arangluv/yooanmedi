@@ -21,7 +21,7 @@ import BankTransferButton from './BankTransferButton';
 const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
   const { inventory } = useInventoryStore();
   const { minOrderPrice } = useSiteMetaStore();
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   const { originalPrice, originalDeliveryFee, discountedPrice, payablePrice } = usePrice({
     inventory,
