@@ -12,11 +12,11 @@ import {
   ProductCategotyNavigation,
   ProductAsideDetail,
 } from '@/features/product-list';
-import { InventoryModal, InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
+import { InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
 
 /** entities */
 import { generateSearchParams, getProductCategory } from '@/entities/product';
-import { UserInfo } from '@/entities/user';
+import OrderLink from '@/entities/order/ui/OrderLink';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -33,8 +33,7 @@ export default async function OrderPage({ searchParams }: PageProps) {
 
   return (
     <Wrapper>
-      <div className="sticky top-0 z-10 flex w-full bg-white py-6">
-        <div className="w-[calc((100%-1024px)/2)]" />
+      <div className="sticky top-0 z-10 flex w-full justify-center bg-white py-4">
         <div className="h-full w-5xl">
           <header className="relative flex h-full w-full items-center justify-between">
             <Link href="/order" prefetch={false}>
@@ -42,17 +41,11 @@ export default async function OrderPage({ searchParams }: PageProps) {
             </Link>
             {/* search area */}
             <ProductSearchForm />
-            <div className="flex gap-4 text-lg">
+            <div className="flex gap-2">
               <InventoryBtnAsLink />
-              <Link href="/order/list" className="text-foreground-700">
-                주문내역확인
-              </Link>
+              <OrderLink />
             </div>
           </header>
-        </div>
-        {/* aside info */}
-        <div className="w-[calc((100%-1024px)/2)] pr-8">
-          <UserInfo />
         </div>
       </div>
       {/* divider */}
@@ -79,7 +72,6 @@ export default async function OrderPage({ searchParams }: PageProps) {
         <ProductAsideDetail />
       </div>
       <InventoryBottomBtn />
-      <InventoryModal />
     </Wrapper>
   );
 }
