@@ -13,6 +13,7 @@ type RegisterProductDto = {
 
 export async function registerProduct(dto: RegisterProductDto[]) {
   const payload = await getPayload({ config: config });
+
   const products = Promise.all(
     dto.map(async (item) => {
       const product = await payload.create({
@@ -21,6 +22,8 @@ export async function registerProduct(dto: RegisterProductDto[]) {
           ...item,
           cashback_rate: 0,
           cashback_rate_for_bank: 0,
+          is_cost_per_unit: false,
+          is_free_delivery: false,
           stock: 999,
           delivery_fee: 0,
           returnable: false,

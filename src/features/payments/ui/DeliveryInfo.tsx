@@ -3,7 +3,7 @@
 import { useAuthStore } from '@/entities/user';
 
 const DeliveryInfo = () => {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <div className="flex w-full flex-col gap-2">
