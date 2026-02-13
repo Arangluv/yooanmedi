@@ -24,6 +24,9 @@ export const ProductPrice: CollectionConfig = {
       label: '제품',
       relationTo: 'product',
       required: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'user',
@@ -31,6 +34,9 @@ export const ProductPrice: CollectionConfig = {
       label: '유저',
       relationTo: 'users',
       required: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'price',
