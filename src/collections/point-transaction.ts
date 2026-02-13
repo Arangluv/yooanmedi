@@ -3,12 +3,12 @@ import { CollectionConfig } from 'payload';
 export const PointTransaction: CollectionConfig = {
   slug: 'point-transaction',
   labels: {
-    singular: '적립금 거래 내역',
-    plural: '적립금 거래 내역',
+    singular: '적립금 내역',
+    plural: '적립금 내역',
   },
   admin: {
     defaultColumns: ['user', 'type', 'amount', 'reason'],
-    group: '홈페이지 컨텐츠',
+    group: '주문 관리',
   },
   fields: [
     {
