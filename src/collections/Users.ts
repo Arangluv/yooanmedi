@@ -16,7 +16,7 @@ export const Users: CollectionConfig = {
       'adjust_price_btn',
     ],
     useAsTitle: 'hospitalName',
-    group: '홈페이지 설정',
+    group: '유저 관리',
     components: {
       views: {
         list: {

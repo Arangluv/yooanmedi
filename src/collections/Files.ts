@@ -1,10 +1,9 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload';
 
 export const Files: CollectionConfig = {
   slug: 'files',
   access: {
     read: () => true,
-    create: () => true,
   },
   admin: {
     group: '파일 & 이미지',
@@ -15,4 +14,4 @@ export const Files: CollectionConfig = {
   },
   upload: {},
   fields: [],
-}
+};

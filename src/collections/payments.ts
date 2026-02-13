@@ -5,8 +5,11 @@ import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 export const Payments: CollectionConfig = {
   slug: 'payment',
   labels: {
-    singular: '결제 내역',
-    plural: '결제 내역',
+    singular: '카드 결제 내역',
+    plural: '카드 결제 내역',
+  },
+  admin: {
+    group: '주문 관리',
   },
   fields: [
     {
