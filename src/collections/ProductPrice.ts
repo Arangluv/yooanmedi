@@ -3,12 +3,13 @@ import { CollectionConfig } from 'payload';
 export const ProductPrice: CollectionConfig = {
   slug: 'product-price',
   labels: {
-    singular: '제품 가격',
-    plural: '제품 가격',
+    singular: '개별 설정 가격',
+    plural: '개별 설정 가격',
   },
   admin: {
-    useAsTitle: 'id',
-    // hidden: true,
+    useAsTitle: 'price',
+    defaultColumns: ['user', 'product', 'price'],
+    group: '유저 관리',
   },
   indexes: [
     {
@@ -34,6 +35,7 @@ export const ProductPrice: CollectionConfig = {
     {
       name: 'price',
       type: 'number',
+      label: '설정 가격',
       required: true,
       defaultValue: 0,
       validate: (value: number | null | undefined) => {

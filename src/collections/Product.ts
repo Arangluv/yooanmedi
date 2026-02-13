@@ -3,12 +3,12 @@ import { CollectionConfig, CustomComponent } from 'payload';
 export const Product: CollectionConfig = {
   slug: 'product',
   labels: {
-    singular: '제품',
-    plural: '제품',
+    singular: '상품',
+    plural: '상품',
   },
   lockDocuments: false,
   admin: {
-    group: '홈페이지 컨텐츠',
+    group: '상품 관리',
     defaultColumns: ['manufacturer', 'name', 'category', 'price', 'is_best_product', 'stock'],
     useAsTitle: 'name',
     components: {

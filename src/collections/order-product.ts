@@ -5,8 +5,8 @@ import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/orde
 export const OrderProduct: CollectionConfig = {
   slug: 'order-product',
   labels: {
-    singular: '주문 상품',
-    plural: '주문 상품',
+    singular: '고객 주문 상품',
+    plural: '고객 주문 상품',
   },
   admin: {
     defaultColumns: [
@@ -18,6 +18,7 @@ export const OrderProduct: CollectionConfig = {
       'totalAmount',
     ],
     useAsTitle: 'productNameSnapshot',
+    group: '주문 관리',
   },
   fields: [
     {

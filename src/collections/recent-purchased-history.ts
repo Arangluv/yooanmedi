@@ -8,7 +8,7 @@ export const RecentPurchasedHistory: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['user', 'product', 'quantity', 'amount'],
-    group: '홈페이지 컨텐츠',
+    group: '유저 관리',
     useAsTitle: 'id',
   },
   access: {
