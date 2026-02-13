@@ -2,8 +2,6 @@ import { z } from 'zod';
 
 import { PAYMENTS_METHOD } from '../constants/payments-options';
 import { ORDER_STATUS } from '../constants/order-status';
-// TODO :: REMOVE
-import { transformApprovalDateToISOString } from '@/shared/lib/date';
 
 const createBaseOrderSchema = z.object({
   user: z.number(),

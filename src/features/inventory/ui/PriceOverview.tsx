@@ -9,10 +9,12 @@ import { usePrice } from '@/entities/price';
 import { formatNumberWithCommas } from '@/shared';
 
 import DiscountAlertBox from './DiscountAlertBox';
+import useInventoryOpenStateStore from '../model/useInventoryOpenStateStore';
 
 const PriceOverview = ({ minOrderPrice }: { minOrderPrice: number }) => {
   const router = useRouter();
   const { inventory } = useInventoryStore();
+  const { onOpenChange } = useInventoryOpenStateStore();
   const { originalPrice, originalDeliveryFee, discountedPrice, payablePrice } = usePrice({
     inventory,
     minOrderPrice,
@@ -52,7 +54,10 @@ const PriceOverview = ({ minOrderPrice }: { minOrderPrice: number }) => {
         size="lg"
         radius="sm"
         isDisabled={inventory.length === 0}
-        onPress={() => router.push('/order/payments')}
+        onPress={() => {
+          router.push('/order/payments');
+          onOpenChange(false);
+        }}
       >
         총 {inventory?.length ?? 0}개의 상품 구매하기
       </Button>

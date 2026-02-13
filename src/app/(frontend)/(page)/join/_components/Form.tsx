@@ -511,7 +511,7 @@ function PersonalInfoContent({
           return true;
         }}
       />
-      <PhoneVerificationButton usageCode="SIGNUP" />
+      {/* <PhoneVerificationButton usageCode="SIGNUP" /> */}
       <Input
         name="faxNumber"
         label="FAX번호(선택)"

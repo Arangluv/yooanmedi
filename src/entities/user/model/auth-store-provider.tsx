@@ -1,19 +1,20 @@
 'use client';
 
 import { createContext, useState } from 'react';
-
 import { createStore } from 'zustand';
+import { redirect } from 'next/navigation';
+import { toast } from 'sonner';
 
 import type { User } from './type';
+import { logout } from '../api/auth/logout';
+import { getUserByHeader } from '../api/get-user-by-header';
 
 export interface AuthProps {
   user: User;
 }
 
 export interface AuthState extends AuthProps {
-  // TODO : 추후 Refactoing 시 추가
-  // login: (user: User) => void;
-  // logout: () => void;
+  logout: () => void;
   refreshUser: () => Promise<void>;
 }
 
@@ -21,20 +22,20 @@ const createUseAuthStore = (initProps: AuthProps) => {
   return createStore<AuthState>((set) => ({
     user: initProps.user,
     refreshUser: async () => {
-      const res = await fetch('/api/auth/me', {
-        credentials: 'include',
-        cache: 'no-store',
-      });
-
-      // 타입 단언을 반드시 사용해야 하는가?
-      const newUser = (await res.json()) as User | null;
-
-      // TODO :: 이 부분 개선하기
+      const newUser = await getUserByHeader();
       if (!newUser) {
         return set({ user: initProps.user });
       }
 
       return set({ user: newUser });
+    },
+    logout: async () => {
+      const res = await logout();
+      if (res.success) {
+        return redirect('/');
+      } else {
+        toast.error(res.message);
+      }
     },
   }));
 };
