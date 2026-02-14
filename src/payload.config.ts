@@ -21,6 +21,7 @@ import { PointTransaction } from './collections/point-transaction';
 import { OrderProduct } from './collections/order-product';
 import { Payments } from './collections/payments';
 import { RecentPurchasedHistory } from './collections/recent-purchased-history';
+import { Favorites } from './collections/favorites';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -53,6 +54,7 @@ export default buildConfig({
     RecentPurchasedHistory,
     Payments,
     PointTransaction,
+    Favorites,
   ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),

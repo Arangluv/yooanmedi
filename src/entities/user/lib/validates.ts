@@ -22,6 +22,14 @@ export const checkAuthValidate = (user: User | null): CheckAuthValidateResult =>
     };
   }
 
+  if (user.role === 'admin') {
+    return {
+      isValid: false,
+      message: '일반 유저만 접근할 수 있습니다',
+      user: null,
+    };
+  }
+
   if (!user.isApproved) {
     return {
       isValid: false,

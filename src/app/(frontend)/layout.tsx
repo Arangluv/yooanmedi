@@ -11,9 +11,10 @@ import { Toaster } from 'sonner';
 import { Check, Info } from 'lucide-react';
 import Popup from './_components/Popup';
 import QueryProvider from './query-provider';
+import { TooltipProvider } from '@/shared/ui/shadcn/tooltip';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// export const dynamic = 'force-dynamic';
+// export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: '유안메디팜',
@@ -53,20 +54,27 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body className={clsx('text-foreground bg-background min-h-screen antialiased')}>
         <Providers>
           <QueryProvider>
-            <Toaster
-              toastOptions={{
-                duration: 4000,
-              }}
-              position="bottom-center"
-              richColors
-              icons={{
-                success: <Check className="text-success-500 h-4 w-4" />,
-                info: <Info className="text-brandWeek h-4 w-4" />,
-              }}
-            />
-            <Popup popup={popup} />
-            <main>{children}</main>
-            <Footer />
+            <TooltipProvider>
+              <Toaster
+                toastOptions={{
+                  duration: 4000,
+                  className: pretendard.className,
+                  classNames: {
+                    title: 'text-sm',
+                    icon: 'bg-muted rounded-full !size-6 !flex !items-center !justify-center',
+                    error: '!text-red-500',
+                  },
+                }}
+                position="bottom-center"
+                icons={{
+                  success: <Check className="size-5 text-green-500" />,
+                  info: <Info className="text-primary size-4" />,
+                }}
+              />
+              <Popup popup={popup} />
+              <main>{children}</main>
+              <Footer />
+            </TooltipProvider>
           </QueryProvider>
         </Providers>
       </body>

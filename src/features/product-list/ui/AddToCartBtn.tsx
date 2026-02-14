@@ -2,11 +2,11 @@
 
 import useInventoryStore from '@/entities/inventory/model/useInventoryStore';
 import { toast } from 'sonner';
-import { Tooltip } from '@heroui/react';
 import { ShoppingCart } from 'lucide-react';
 
 import type { ProductItem } from '@/entities/product';
 import { AddedProductToast, ExistingProductToast } from '@/entities/product';
+import CardActionButton from '@/shared/ui/CardActionButton';
 
 const AddToCartBtn = ({ product }: { product: ProductItem }) => {
   const { inventory, addInventory, isExistingProduct } = useInventoryStore();
@@ -21,15 +21,11 @@ const AddToCartBtn = ({ product }: { product: ProductItem }) => {
   };
 
   return (
-    <button
-      className="absolute right-2 bottom-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-neutral-100"
-      style={{ boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)' }}
+    <CardActionButton
+      icon={<ShoppingCart className="h-4 w-4 text-white" strokeWidth={1.5} />}
+      description="장바구니 담기"
       onClick={handleAddToInventory}
-    >
-      <Tooltip content="장바구니 담기" showArrow={true} classNames={{ content: 'text-brandWeek' }}>
-        <ShoppingCart className="text-brand h-5 w-5" />
-      </Tooltip>
-    </button>
+    />
   );
 };
 

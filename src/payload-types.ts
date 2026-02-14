@@ -78,6 +78,7 @@ export interface Config {
     'recent-purchased-history': RecentPurchasedHistory;
     payment: Payment;
     'point-transaction': PointTransaction;
+    favorites: Favorite;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -99,6 +100,7 @@ export interface Config {
     'recent-purchased-history': RecentPurchasedHistorySelect<false> | RecentPurchasedHistorySelect<true>;
     payment: PaymentSelect<false> | PaymentSelect<true>;
     'point-transaction': PointTransactionSelect<false> | PointTransactionSelect<true>;
+    favorites: FavoritesSelect<false> | FavoritesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -376,6 +378,17 @@ export interface PointTransaction {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "favorites".
+ */
+export interface Favorite {
+  id: number;
+  user: number | User;
+  product: number | Product;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -424,6 +437,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'point-transaction';
         value: number | PointTransaction;
+      } | null)
+    | ({
+        relationTo: 'favorites';
+        value: number | Favorite;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -649,6 +666,16 @@ export interface PointTransactionSelect<T extends boolean = true> {
   type?: T;
   reason?: T;
   amount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "favorites_select".
+ */
+export interface FavoritesSelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
   updatedAt?: T;
   createdAt?: T;
 }
