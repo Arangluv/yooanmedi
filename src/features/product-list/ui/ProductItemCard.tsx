@@ -11,6 +11,7 @@ import { isPayloadImageRenderable } from '@/shared/lib/validation';
 
 import AddToCartBtn from './AddToCartBtn';
 import useProductDetailStore from '../model/useProductDetailStore';
+import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
 
 const ProductItemCard = ({ product }: { product: ProductItem }) => {
   const { setClieckedProduct } = useProductDetailStore();
@@ -37,7 +38,10 @@ const ProductItemCard = ({ product }: { product: ProductItem }) => {
               <span className="text-foreground-600 text-sm">상품 이미지를 준비중입니다.</span>
             </div>
           )}
-          <AddToCartBtn product={product} />
+          <div className="absolute right-2 bottom-2 flex items-center justify-center gap-2">
+            <AddToCartBtn product={product} />
+            <FavoriteButton product={product} />
+          </div>
         </div>
         <span className="text-foreground-600 text-xs">{product.manufacturer}</span>
         <span>{product.name}</span>
