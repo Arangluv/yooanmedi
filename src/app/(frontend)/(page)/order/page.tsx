@@ -17,6 +17,7 @@ import { InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
 /** entities */
 import { generateSearchParams, getProductCategory } from '@/entities/product';
 import OrderLink from '@/entities/order/ui/OrderLink';
+import ProductListView from '@/features/product-list/ui/view/ProductListView';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -58,17 +59,14 @@ export default async function OrderPage({ searchParams }: PageProps) {
       {/* 메인 컨텐츠 영역 */}
       <div className="flex w-full">
         <div className="w-[calc((100%-1024px)/2)]"></div>
-        {serverSearchParams.keyword ? (
-          <ProductSearchResultView
-            products={productList}
-            totalPages={totalProductPages}
-            totalProducts={totalProductDocs}
-            condition={serverSearchParams.condition as 'pn' | 'cn'}
-            keyword={serverSearchParams.keyword ?? ''}
-          />
-        ) : (
-          <ProductDefaultView products={productList} totalPages={totalProductPages} />
-        )}
+        <ProductListView
+          products={productList}
+          totalPages={totalProductPages}
+          totalProducts={totalProductDocs}
+          condition={serverSearchParams.condition}
+          keyword={serverSearchParams.keyword}
+          opt={serverSearchParams.opt}
+        />
         <ProductAsideDetail />
       </div>
       <InventoryBottomBtn />

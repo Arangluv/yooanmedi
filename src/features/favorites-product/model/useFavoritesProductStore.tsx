@@ -1,18 +1,13 @@
 'use client';
 
 import { create } from 'zustand';
-
-type FavoritesValue = {
-  id: number;
-  userId: number;
-  productId: number;
-};
+import type { FavoriteValue } from './types';
 
 type FavoritesProductStore = {
-  favoritesList: Map<number, FavoritesValue>;
-  setFavoritesList: (favoritesList: Map<number, FavoritesValue>) => void;
-  addFavoritesProduct: (favorites: FavoritesValue) => void;
-  removeFavoritesProduct: (favorites: FavoritesValue) => void;
+  favoritesList: Map<number, FavoriteValue>;
+  setFavoritesList: (favoritesList: Map<number, FavoriteValue>) => void;
+  addFavoritesProduct: (favorites: FavoriteValue) => void;
+  removeFavoritesProduct: (favorites: FavoriteValue) => void;
 };
 
 const useFavoritesProductStore = create<FavoritesProductStore>((set, get) => ({

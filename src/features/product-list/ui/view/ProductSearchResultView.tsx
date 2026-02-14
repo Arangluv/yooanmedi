@@ -5,8 +5,8 @@ import { Search, CircleArrowRight } from 'lucide-react';
 import { EmptySearchResult } from '@/entities/product';
 import type { ProductItem } from '@/entities/product';
 
-import ProductListPagination from './ProductListPagination';
-import ProductList from './ProductList';
+import ProductListPagination from '../ProductListPagination';
+import ProductList from '../ProductList';
 
 interface SearchResultProps {
   products: ProductItem[];

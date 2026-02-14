@@ -11,6 +11,7 @@ const targetFiltersSearchParams = {
   ),
   page: parseAsInteger.withDefault(1),
   category: parseAsInteger,
+  opt: parseAsStringLiteral(['favorites']),
 };
 
 export type ProductSearchParamsType = Awaited<ReturnType<typeof generateSearchParams>>;

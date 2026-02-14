@@ -1,7 +1,7 @@
 import type { ProductItem } from '@/entities/product';
-import ProductList from './ProductList';
+import ProductList from '../ProductList';
 
-import ProductListPagination from './ProductListPagination';
+import ProductListPagination from '../ProductListPagination';
 
 import EmptyProductList from '@/entities/product/ui/EmptyProductList';
 import EmptyRankingProductList from '@/entities/product/ui/EmptyRankingProductList';
