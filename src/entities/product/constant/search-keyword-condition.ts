@@ -1,5 +1,5 @@
 export const KEYWORD_SEARCH_CONDITION_KEY = ['pn', 'cn'] as const;
-// readonly ['pn', 'cn']
+
 export type KeywordSearchConditionKey = (typeof KEYWORD_SEARCH_CONDITION_KEY)[number];
 
 export const KEYWORD_SEARCH_CONDITION_LABEL: Record<KeywordSearchConditionKey, string> = {

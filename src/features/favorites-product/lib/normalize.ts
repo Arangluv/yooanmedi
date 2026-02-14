@@ -1,18 +1,3 @@
-// [
-//   {
-//     id: 3, user: {id: 3}, product: {id: 3}
-//   }
-// ]
-
-// -->
-
-// {
-//   [productId] : {
-//     id: number;
-//     userId: number;
-//     productId: number;
-//   }
-// }
 
 export type BeforeNormalizeFavoritesProduct = {
   id: number;

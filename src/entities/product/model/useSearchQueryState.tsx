@@ -15,6 +15,7 @@ const targetFilters = {
   ),
   page: parseAsInteger.withDefault(1),
   category: parseAsInteger,
+  opt: parseAsStringLiteral(['favorites']),
 };
 
 const useSearchQueryState = () => {
@@ -37,6 +38,8 @@ const useSearchQueryState = () => {
     setFilters({
       condition,
       keyword,
+      opt: null,
+      category: null,
       page: 1,
     });
   };
@@ -45,12 +48,23 @@ const useSearchQueryState = () => {
     setFilters({
       page: 1,
       category,
+      opt: null,
     });
   };
 
   const updatePage = (page: number) => {
     setFilters({
       page,
+    });
+  };
+
+  const updateFavorites = () => {
+    setFilters({
+      keyword: '',
+      condition: KEYWORD_SEARCH_CONDITION_KEY[0],
+      page: 1,
+      category: null,
+      opt: 'favorites',
     });
   };
 
@@ -68,6 +82,7 @@ const useSearchQueryState = () => {
     updateKeyword,
     updateCategory,
     updatePage,
+    updateFavorites,
     resetFilters,
   };
 };
