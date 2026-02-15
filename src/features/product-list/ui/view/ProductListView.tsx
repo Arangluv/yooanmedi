@@ -1,4 +1,5 @@
 import { ProductItem } from '@/entities/product';
+import { KeywordSearchConditionKey } from '@/entities/product/constant/search-keyword-condition';
 
 import ProductDefaultView from './ProductDefaultView';
 import FavoritesView from './FavoritesView';
@@ -9,7 +10,7 @@ interface ProductListViewProps {
   products: ProductItem[];
   totalPages: number;
   totalProducts: number;
-  condition: 'pn' | 'cn';
+  condition: KeywordSearchConditionKey;
   keyword: string;
   opt: 'favorites' | null;
 }

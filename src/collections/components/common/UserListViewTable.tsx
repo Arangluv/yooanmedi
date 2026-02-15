@@ -210,11 +210,6 @@ function ProductListDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  // 이렇게 작성하면 ProductSetSection과 강하게 이어진다
-                  // data-state={
-                  //   products.some((product) => parseInt(product.id) === parseInt(row.id)) &&
-                  //   'selected'
-                  // }
                   onClick={() =>
                     handleRowSelectionChange({
                       row: row as Row<Product>,

@@ -33,7 +33,11 @@ const ListSection = ({ products }: { products: ProductItem[] }) => {
       <h2 className="text-2xl font-bold">
         <span className="text-brand">관심상품</span>
       </h2>
-      {products.length > 0 ? <ProductList products={products} /> : <EmptyProductList />}
+      {products.length > 0 ? (
+        <ProductList products={products} />
+      ) : (
+        <EmptyProductList title="등록된 관심상품이 없습니다." description="등록된 관심상품이 없습니다." />
+      )}
     </div>
   );
 };
