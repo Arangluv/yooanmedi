@@ -8,7 +8,6 @@ export interface Product {
   id: number;
   name: string;
   manufacturer: string;
-  ingredient: string;
   price: number;
 }
 
@@ -77,10 +76,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'manufacturer',
     header: '제조사명',
-  },
-  {
-    accessorKey: 'ingredient',
-    header: '성분명',
   },
   {
     accessorKey: 'price',

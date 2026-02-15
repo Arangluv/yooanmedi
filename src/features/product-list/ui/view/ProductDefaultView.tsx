@@ -4,7 +4,7 @@ import ProductList from '../ProductList';
 import ProductListPagination from '../ProductListPagination';
 
 import EmptyProductList from '@/entities/product/ui/EmptyProductList';
-import EmptyRankingProductList from '@/entities/product/ui/EmptyRankingProductList';
+import RankingListSection from '../RankingListSection';
 
 const ProductDefaultView = ({
   products,
@@ -15,21 +15,10 @@ const ProductDefaultView = ({
 }) => {
   return (
     <section className="mt-16 flex w-5xl flex-shrink-0 flex-col gap-16">
-      <RankingListSection products={products} />
+      <RankingListSection />
       <DefaultListSection products={products} />
       <ProductListPagination totalPages={totalPages} />
     </section>
-  );
-};
-
-const RankingListSection = ({ products }: { products: ProductItem[] }) => {
-  return (
-    <div className="flex w-full flex-col gap-6">
-      <h2 className="text-2xl font-bold">
-        실시간 <span className="text-brand">인기상품</span>
-      </h2>
-      {products.length > 0 ? <ProductList products={products} /> : <EmptyRankingProductList />}
-    </div>
   );
 };
 
@@ -39,7 +28,14 @@ const DefaultListSection = ({ products }: { products: ProductItem[] }) => {
       <h2 className="text-2xl font-bold">
         <span className="text-brand">전체상품</span> 살펴보기
       </h2>
-      {products.length > 0 ? <ProductList products={products} /> : <EmptyProductList />}
+      {products.length > 0 ? (
+        <ProductList products={products} />
+      ) : (
+        <EmptyProductList
+          title="상품이 없습니다"
+          description="등록된 상품이 없습니다. 다른 조건으로 검색해보세요"
+        />
+      )}
     </div>
   );
 };

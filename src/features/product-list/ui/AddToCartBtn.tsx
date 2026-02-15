@@ -9,7 +9,7 @@ import { AddedProductToast, ExistingProductToast } from '@/entities/product';
 import CardActionButton from '@/shared/ui/CardActionButton';
 
 const AddToCartBtn = ({ product }: { product: ProductItem }) => {
-  const { inventory, addInventory, isExistingProduct } = useInventoryStore();
+  const { addInventory, isExistingProduct } = useInventoryStore();
 
   const handleAddToInventory = () => {
     if (isExistingProduct(product.id)) {

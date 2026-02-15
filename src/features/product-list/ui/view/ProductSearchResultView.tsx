@@ -2,8 +2,9 @@ import Link from 'next/link';
 
 import { Search, CircleArrowRight } from 'lucide-react';
 
-import { EmptySearchResult } from '@/entities/product';
+import { EmptyProductList } from '@/entities/product';
 import type { ProductItem } from '@/entities/product';
+import { KeywordSearchConditionKey } from '@/entities/product/constant/search-keyword-condition';
 
 import ProductListPagination from '../ProductListPagination';
 import ProductList from '../ProductList';
@@ -12,7 +13,7 @@ interface SearchResultProps {
   products: ProductItem[];
   totalPages: number;
   keyword: string;
-  condition: 'pn' | 'cn';
+  condition: KeywordSearchConditionKey;
   totalProducts: number;
 }
 
@@ -57,7 +58,14 @@ const ProductSearchResultView = ({
         </div>
       </div>
       {/* product list section */}
-      {products.length > 0 ? <ProductList products={products} /> : <EmptySearchResult />}
+      {products.length > 0 ? (
+        <ProductList products={products} />
+      ) : (
+        <EmptyProductList
+          title="검색 결과가 없습니다."
+          description="검색어 혹은 다른 조건으로 검색해보세요."
+        />
+      )}
       {/* pagination */}
       <ProductListPagination totalPages={totalPages} />
     </section>
