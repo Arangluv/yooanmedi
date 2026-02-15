@@ -11,6 +11,7 @@ import type { User } from '@/entities/user';
 
 /** shared */
 import { getPayload } from '@shared/lib/get-payload';
+import { getProductRankingList } from '@/entities/product/api/get-product-list';
 
 const getCustomPrice = async (user: User): Promise<CustomPriceTable[]> => {
   const payload = await getPayload();
@@ -35,17 +36,45 @@ const getCustomPrice = async (user: User): Promise<CustomPriceTable[]> => {
 };
 
 export const getCustomPriceList = async (searchParams: ProductSearchParamsType) => {
-  const { productList, totalProductPages, totalProductDocs } = await getProductList(searchParams);
+  try {
+    const { productList, totalProductPages, totalProductDocs } = await getProductList(searchParams);
 
-  const user = await getUserByHeader();
+    const user = await getUserByHeader();
 
-  // TODO : Error Handling
-  if (!user) {
-    throw new Error('User not found');
+    // TODO : Error Handling
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const customPriceTable = await getCustomPrice(user as User);
+    const convertedProductList = convertToCustomPrice(productList, customPriceTable);
+
+    return { productList: convertedProductList, totalProductPages, totalProductDocs };
+  } catch (error) {
+    console.error(error);
+    return { productList: [], totalProductPages: 0, totalProductDocs: 0 };
   }
+};
 
-  const customPriceTable = await getCustomPrice(user as User);
-  const convertedProductList = convertToCustomPrice(productList, customPriceTable);
+export const getProductListConvertedToCustomPrice = async () => {
+  try {
+    // 3초대기하는 테스트
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  return { productList: convertedProductList, totalProductPages, totalProductDocs };
+    const { productList } = await getProductRankingList();
+    const user = await getUserByHeader();
+
+    // TODO : Error Handling
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const customPriceTable = await getCustomPrice(user as User);
+    const convertedProductList = convertToCustomPrice(productList, customPriceTable);
+
+    return convertedProductList;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };

@@ -17,7 +17,7 @@ const DialogProvider = ({ children }: { children: React.ReactNode }) => {
     <Dialog>
       {children}
       <DialogContent
-        className="!w-full !max-w-[1400px]"
+        className="bg-background border-border !w-full !max-w-[1400px] border"
         showCloseButton={false}
         onInteractOutside={(e) => e.preventDefault()}
       >
@@ -30,12 +30,12 @@ const DialogProvider = ({ children }: { children: React.ReactNode }) => {
           </DialogDescription>
         </DialogHeader>
         {/* Main Content */}
-        <div className="mt-4 flex min-h-[650px] w-full gap-8">
+        <div className="mt-4 flex min-h-[650px] w-full gap-4">
           <ProductSection />
           <SettingSection />
         </div>
         {/* Divider */}
-        <div className="h-px w-full bg-neutral-200"></div>
+        <div className="bg-border h-px w-full"></div>
         <CustomDialogFooter />
       </DialogContent>
     </Dialog>
@@ -44,7 +44,7 @@ const DialogProvider = ({ children }: { children: React.ReactNode }) => {
 
 const ProductSection = () => {
   return (
-    <div className="flex h-full w-[60%] flex-col gap-4 rounded-md">
+    <div className="bg-card border-border flex h-full w-[60%] flex-col gap-4 rounded-md border p-4">
       <ProductDataTable />
     </div>
   );
@@ -52,7 +52,7 @@ const ProductSection = () => {
 
 const SettingSection = () => {
   return (
-    <div className="flex h-full w-[40%] flex-col gap-4 rounded-md bg-white">
+    <div className="bg-background flex h-full w-[40%] flex-col gap-4 rounded-md">
       <TargetUserInfo />
       <ProductPriceSetSection />
     </div>

@@ -17,21 +17,21 @@ export default function ProductPriceSetSection() {
   const { onSaveCustomPrice, errors, isPendingForCreateCustomPrice } = useCreateCustomPrice();
 
   return (
-    <div className="flex w-full flex-col justify-between gap-4 rounded-md border border-neutral-200 p-4">
+    <div className="bg-card border-border flex w-full flex-col justify-between gap-4 rounded-md border p-4">
       <div className="flex h-[48px] flex-col justify-center gap-1">
         <span className="text-lg font-bold">가격 설정</span>
-        <span className="text-foreground/80 text-sm">
+        <span className="text-muted-foreground text-sm">
           선택된 상품의 가격을 변경할 수 있으며{' '}
-          <span className="text-brand font-medium">
+          <span className="text-primary font-medium">
             선택되지 않은 상품의 가격은 기존 가격으로 유지
           </span>
           됩니다.
         </span>
       </div>
       {/* 테이블 영역 */}
-      <ScrollArea className="max-h-[400px] border border-neutral-200">
+      <ScrollArea className="max-h-[400px]">
         <table className="w-full">
-          <thead className="text-foreground/60 rounded-md bg-neutral-100 text-sm">
+          <thead className="text-card-foreground bg-muted rounded-md text-sm">
             <tr>
               <th className="p-2 text-start">상품명</th>
               <th className="text-start">기존 가격</th>
@@ -102,7 +102,7 @@ const TableRow = ({
     <tr
       data-id={product.id}
       data-error={isError}
-      className="border-b border-neutral-200 font-normal text-neutral-800 data-[error=true]:bg-red-50"
+      className="border-border text-card-foreground border-b font-normal data-[error=true]:bg-red-50"
     >
       <td className="px-2 py-1 text-start font-medium">{product.name}</td>
       <PriceCell price={product.price} />
@@ -158,9 +158,6 @@ const DeleteCell = ({
   product: Product;
   removeProduct: (removeProduct: Product) => void;
 }) => {
-  // 1. store에서 제거하고
-  // 2. 삭제 버튼 클릭 시 체크박스에서 체크가 해제
-
   return (
     <td className="px-2 py-1 text-end">
       <Button
@@ -169,7 +166,7 @@ const DeleteCell = ({
         className="text-destructive hover:text-destructive/80 cursor-pointer border-none"
         onClick={() => removeProduct(product)}
       >
-        <TrashIcon className="size-4 text-red-400" />
+        <TrashIcon className="text-destructive size-4" />
       </Button>
     </td>
   );

@@ -6,8 +6,6 @@ import type { SearchParams } from 'nuqs';
 /** features */
 import { getCustomPriceList } from '@/features/custom-price';
 import {
-  ProductSearchResultView,
-  ProductDefaultView,
   ProductSearchForm,
   ProductCategotyNavigation,
   ProductAsideDetail,

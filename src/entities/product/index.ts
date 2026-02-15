@@ -24,6 +24,4 @@ export { default as DetailDefaultRow } from './ui/DetailDefaultRow';
 export { default as DetailDeliveryFeeRow } from './ui/DetailDeliveryFeeRow';
 export { default as EmptyProductDetail } from './ui/EmptyProductDetail';
 export { default as EmptyProductList } from './ui/EmptyProductList';
-export { default as EmptyRankingProductList } from './ui/EmptyRankingProductList';
-export { default as EmptySearchResult } from './ui/EmptySearchResult';
 export { ExistingProductToast, AddedProductToast, QuantityChangedToast } from './ui/toast-items';
