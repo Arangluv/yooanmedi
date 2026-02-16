@@ -36,10 +36,18 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
+      Nav: '@/shared/ui/admin/Sidebar',
+      // root dash 보드 바꿀때 사용
+      // views: {
+      //   dashboard: {
+      //     Component: '@/shared/ui/admin/Sidebar',
+      //   },
+      // },
       graphics: {
         Icon: '@/shared/ui/logos#HomeIcon',
         Logo: '@/shared/ui/logos#BrandLogoSmall',
       },
+      providers: ['@/shared/ui/shadcn/sidebar#SidebarProvider'],
     },
   },
   collections: [

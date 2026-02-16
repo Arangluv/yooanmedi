@@ -32,8 +32,10 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_62822d1fca684579ea845f3f896686f1 } from '@/collections/components/common/ArrayLabel'
+import { default as default_d46a1e3bf14b45864986c27b309e99b6 } from '@/shared/ui/admin/Sidebar'
 import { HomeIcon as HomeIcon_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
 import { BrandLogoSmall as BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
+import { SidebarProvider as SidebarProvider_801876da243d73cf659db9066352ca94 } from '@/shared/ui/shadcn/sidebar'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
@@ -71,7 +73,9 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#TableFeatureClient": TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/collections/components/common/ArrayLabel#default": default_62822d1fca684579ea845f3f896686f1,
+  "@/shared/ui/admin/Sidebar#default": default_d46a1e3bf14b45864986c27b309e99b6,
   "@/shared/ui/logos#HomeIcon": HomeIcon_c4ed48037aede40cf46fe21deda1067f,
   "@/shared/ui/logos#BrandLogoSmall": BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f,
+  "@/shared/ui/shadcn/sidebar#SidebarProvider": SidebarProvider_801876da243d73cf659db9066352ca94,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

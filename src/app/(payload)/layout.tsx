@@ -4,11 +4,12 @@ import config from '@payload-config';
 import '@payloadcms/next/css';
 import type { ServerFunctionClient } from 'payload';
 import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts';
+import QueryProvider from '../(frontend)/query-provider';
 import React from 'react';
 import { importMap } from './admin/importMap.js';
-import './custom.scss';
+
 import './payloadStyles.css';
-import QueryProvider from '../(frontend)/query-provider';
+import './custom.scss';
 
 type Args = {
   children: React.ReactNode;
