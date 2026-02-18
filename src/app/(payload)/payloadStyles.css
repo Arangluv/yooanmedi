@@ -1,4 +1,4 @@
-@layer theme, base, components, utilities;
+@layer theme, base, components, payload-default, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'tw-animate-css';
@@ -234,18 +234,34 @@ a {
   @apply no-underline;
 }
 
-button {
-  @apply cursor-pointer border-none bg-inherit outline-none;
+.checkbox-input__input input {
+  @apply border border-solid;
 }
 
 @layer payload-default {
+  *,
+  :after,
+  :before,
+  ::backdrop {
+    border: 0 solid;
+    margin: 0;
+    padding: 0;
+  }
+
   button {
-    @apply cursor-pointer border-none bg-inherit text-inherit outline-none;
+    @apply cursor-pointer bg-inherit text-inherit outline-none;
   }
 
   ol,
   ul {
     @apply list-none;
     @apply p-0;
+  }
+  .nav-toggler {
+    @apply hidden;
+  }
+
+  .template-default {
+    @apply flex h-full flex-col;
   }
 }

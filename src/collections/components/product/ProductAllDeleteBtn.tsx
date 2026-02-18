@@ -17,9 +17,7 @@ export default function ProductAllDeleteBtn() {
   });
 
   const handleAllDelete = () => {
-    const ok = confirm(
-      '제품을 전체 삭제하시겠습니까? 임시기능이며 이후 해당 기능은 삭제될 예정입니다.',
-    );
+    const ok = confirm('제품을 전체 삭제하시겠습니까? 임시기능이며 해당 기능은 삭제될 예정입니다.');
 
     if (ok) {
       deleteAllProductsMutation();

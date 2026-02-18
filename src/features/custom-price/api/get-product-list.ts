@@ -58,9 +58,6 @@ export const getCustomPriceList = async (searchParams: ProductSearchParamsType) 
 
 export const getProductListConvertedToCustomPrice = async () => {
   try {
-    // 3초대기하는 테스트
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
     const { productList } = await getProductRankingList();
     const user = await getUserByHeader();
 
