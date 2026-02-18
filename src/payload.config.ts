@@ -15,13 +15,11 @@ import { translations as ko } from '@lib/payload/utils/translation';
 import { Product } from './collections/Product';
 import { ProductCategory } from './collections/ProductCategory';
 import { MetaSetting } from './collections/MetaSetting';
-import { ProductPrice } from './collections/product-price';
-import { Order } from './collections/order';
+import { Order } from './collections/Order';
 import { PointTransaction } from './collections/point-transaction';
 import { OrderProduct } from './collections/order-product';
 import { Payments } from './collections/payments';
 import { RecentPurchasedHistory } from './collections/recent-purchased-history';
-import { Favorites } from './collections/favorites';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -36,18 +34,18 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
-      Nav: '@/shared/ui/admin/Sidebar',
-      // root dash 보드 바꿀때 사용
-      // views: {
-      //   dashboard: {
-      //     Component: '@/shared/ui/admin/Sidebar',
-      //   },
-      // },
+      Nav: '@/shared/ui/admin/sidebar/EmptyPayloadNav',
+      header: ['@/shared/ui/admin/Header'],
+      views: {
+        dashboard: {
+          Component: '@/shared/ui/admin/DashBoard',
+        },
+      },
       graphics: {
         Icon: '@/shared/ui/logos#HomeIcon',
         Logo: '@/shared/ui/logos#BrandLogoSmall',
       },
-      providers: ['@/shared/ui/shadcn/sidebar#SidebarProvider'],
+      providers: ['@/shared/ui/admin/sidebar/sidebar-provider'],
     },
   },
   collections: [
@@ -56,13 +54,11 @@ export default buildConfig({
     Files,
     Product,
     ProductCategory,
-    ProductPrice,
     Order,
     OrderProduct,
     RecentPurchasedHistory,
     Payments,
     PointTransaction,
-    Favorites,
   ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),

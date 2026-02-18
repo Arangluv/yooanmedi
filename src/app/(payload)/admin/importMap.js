@@ -32,11 +32,13 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client';
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client';
 import { default as default_62822d1fca684579ea845f3f896686f1 } from '@/collections/components/common/ArrayLabel';
-import { default as default_d46a1e3bf14b45864986c27b309e99b6 } from '@/shared/ui/admin/Sidebar';
+import { default as default_c39be30a9f2d76895202e71dab5a55b0 } from '@/shared/ui/admin/sidebar/EmptyPayloadNav';
+import { default as default_aef67b4deff124b3ff804f69e784ddcb } from '@/shared/ui/admin/Header';
 import { HomeIcon as HomeIcon_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos';
 import { BrandLogoSmall as BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos';
-import { SidebarProvider as SidebarProvider_801876da243d73cf659db9066352ca94 } from '@/shared/ui/shadcn/sidebar';
+import { default as default_0cb5b8c223db30118049548a6d9feb72 } from '@/shared/ui/admin/sidebar/sidebar-provider';
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client';
+import { default as default_e6814a5f635b63fec039d334c0b6b274 } from '@/shared/ui/admin/DashBoard';
 
 export const importMap = {
   '@/collections/components/common/SeparatorLine#default': default_d3da62deca79bd822a814c94269e7325,
@@ -105,10 +107,12 @@ export const importMap = {
   '@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient':
     FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@/collections/components/common/ArrayLabel#default': default_62822d1fca684579ea845f3f896686f1,
-  '@/shared/ui/admin/Sidebar#default': default_d46a1e3bf14b45864986c27b309e99b6,
+  '@/shared/ui/admin/sidebar/EmptyPayloadNav#default': default_c39be30a9f2d76895202e71dab5a55b0,
+  '@/shared/ui/admin/Header#default': default_aef67b4deff124b3ff804f69e784ddcb,
   '@/shared/ui/logos#HomeIcon': HomeIcon_c4ed48037aede40cf46fe21deda1067f,
   '@/shared/ui/logos#BrandLogoSmall': BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f,
-  '@/shared/ui/shadcn/sidebar#SidebarProvider': SidebarProvider_801876da243d73cf659db9066352ca94,
+  '@/shared/ui/admin/sidebar/sidebar-provider#default': default_0cb5b8c223db30118049548a6d9feb72,
   '@payloadcms/storage-s3/client#S3ClientUploadHandler':
     S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
+  '@/shared/ui/admin/DashBoard#default': default_e6814a5f635b63fec039d334c0b6b274,
 };

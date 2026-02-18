@@ -18,6 +18,9 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  Button,
+} from '@collections/components/shadcn';
+import {
   Select,
   SelectTrigger,
   SelectValue,
@@ -25,8 +28,7 @@ import {
   SelectGroup,
   SelectLabel,
   SelectItem,
-  Button,
-} from '@collections/components/shadcn';
+} from '@/shared/ui/shadcn/select';
 import { SetStateAction, Dispatch, useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from 'lucide-react';
 import { columns, Product } from './Columns';
@@ -274,7 +276,7 @@ function DataTableSearchField({
         <InputGroupInput id="keyword" name="keyword" placeholder="키워드를 입력해주세요." />
       </InputGroup>
       <Select defaultValue={'pn'} name="condition">
-        <SelectTrigger className="w-fit items-center justify-start !border">
+        <SelectTrigger className="w-fit items-center justify-start">
           <span className="text-foreground/60 text-sm">검색조건</span>
           <SelectValue className="!text-brand" />
         </SelectTrigger>
