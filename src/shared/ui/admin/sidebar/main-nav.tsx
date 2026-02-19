@@ -128,11 +128,11 @@ const data = [
         submenu: [
           {
             label: '이미지',
-            href: `${GLOBAL_BASE_URL}/terms?breadcrumbs=이미지`,
+            href: `${COLLECTION_BASE_URL}/image?breadcrumbs=이미지`,
           },
           {
             label: '파일',
-            href: `${GLOBAL_BASE_URL}/privacy-policy?breadcrumbs=파일`,
+            href: `${COLLECTION_BASE_URL}/files?breadcrumbs=파일`,
           },
         ],
       },

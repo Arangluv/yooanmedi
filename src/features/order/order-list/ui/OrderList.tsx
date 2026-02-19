@@ -76,12 +76,7 @@ const OrderItem = ({ order }: { order: OrderListItem }) => {
       {/* 구매 상품 리스트 영역 */}
       <div className="flex flex-col gap-6">
         {order.orderProducts.map((orderProduct) => (
-          <OrderProductItem
-            key={orderProduct.id}
-            paymentsMethod={order.paymentsMethod}
-            orderProduct={orderProduct}
-            orderStatus={order.orderStatus}
-          />
+          <OrderProductItem key={orderProduct.id} orderProduct={orderProduct} />
         ))}
       </div>
     </div>
@@ -113,37 +108,13 @@ const BankTransferPendingAlert = () => {
   );
 };
 
-const OrderProductItem = ({
-  orderProduct,
-  orderStatus,
-  paymentsMethod,
-}: {
-  orderProduct: OrderProductItem;
-  orderStatus: (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
-  paymentsMethod: (typeof PAYMENTS_METHOD)[keyof typeof PAYMENTS_METHOD];
-}) => {
+const OrderProductItem = ({ orderProduct }: { orderProduct: OrderProductItem }) => {
   const [optimisticUpdateFlg, setOptimisticUpdateFlg] = useState(false);
   const refreshUser = useAuthStore((state) => state.refreshUser);
 
-  const getOrderProductStatusName = () => {
-    if (optimisticUpdateFlg) {
-      if (
-        paymentsMethod === PAYMENTS_METHOD.BANK_TRANSFER &&
-        orderStatus === ORDER_STATUS.PREPARING
-      ) {
-        return ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.CANCEL_REQUEST];
-      }
-
-      return ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.CANCELLED];
-    }
-
-    return orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.ORDERED
-      ? ORDER_STATUS_NAME[orderStatus]
-      : ORDER_PRODUCT_STATUS_NAME[orderProduct.orderProductStatus];
-  };
-
   const { mutate: cancelOrderMutation } = useMutation({
-    mutationFn: (orderProductId: number) => cancelOrderProduct(orderProductId),
+    mutationFn: ({ orderProductId }: { orderProductId: number }) =>
+      cancelOrderProduct({ orderProductId, clientSideFlg: true }),
     onSuccess: (data) => {
       if (data?.success) {
         setOptimisticUpdateFlg(true);
@@ -158,7 +129,9 @@ const OrderProductItem = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="font-bold">{getOrderProductStatusName()}</span>
+      <span className="font-bold">
+        {ORDER_PRODUCT_STATUS_NAME[orderProduct.orderProductStatus]}
+      </span>
       <div className="flex w-full items-center gap-6">
         {/* 상품이미지 */}
         <div className="flex aspect-square w-[100px] shrink-0 items-center justify-center rounded-md border border-neutral-100 bg-neutral-50">
@@ -214,7 +187,7 @@ const OrderProductItem = ({
               orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCEL_REQUEST ||
               optimisticUpdateFlg
             }
-            onClick={() => cancelOrderMutation(orderProduct.id)}
+            onClick={() => cancelOrderMutation({ orderProductId: orderProduct.id })}
           >
             주문취소
           </Button>

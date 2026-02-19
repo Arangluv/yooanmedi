@@ -1,4 +1,5 @@
 'use client'
+
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, animate } from 'motion/react'
 import Image from 'next/image'

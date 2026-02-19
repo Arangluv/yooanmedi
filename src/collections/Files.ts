@@ -4,6 +4,7 @@ export const Files: CollectionConfig = {
   slug: 'files',
   access: {
     read: () => true,
+    create: () => true,
   },
   admin: {
     group: '파일 & 이미지',

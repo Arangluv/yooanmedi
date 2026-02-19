@@ -64,7 +64,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       const createOrderProductDto: CreateOrderProductDto = {
         order: order.id,
         product: inventoryItem.product.id,
-        orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
+        orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
         totalAmount: totalProductAmount,

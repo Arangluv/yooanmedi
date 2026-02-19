@@ -327,7 +327,7 @@ export interface OrderProduct {
   id: number;
   product: number | Product;
   order: number | Order;
-  orderProductStatus: 'ordered' | 'cancel_request' | 'cancelled';
+  orderProductStatus: 'pending' | 'preparing' | 'shipping' | 'delivered' | 'cancel_request' | 'cancelled';
   productNameSnapshot?: string | null;
   priceSnapshot: number;
   totalAmount: number;
