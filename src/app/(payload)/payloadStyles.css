@@ -238,6 +238,10 @@ a {
   @apply border border-solid;
 }
 
+.doc-tabs__tabs {
+  @apply hidden;
+}
+
 @layer payload-default {
   *,
   :after,

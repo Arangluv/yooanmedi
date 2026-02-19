@@ -96,8 +96,7 @@ export async function join(formData: FormData) {
       //   collection: 'users',
       //   errors: [ { message: '해당 이메일은 이미 등록되어 있습니다', path: 'email' } ]
       // }
-      console.log('error');
-      console.log(error.data);
+      console.log(error);
 
       if (error.data.errors[0].path === 'user_id') {
         return { success: false, message: '이미 사용중인 아이디입니다.' };

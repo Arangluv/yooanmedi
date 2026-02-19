@@ -11,6 +11,8 @@ import {
   ModalFooter,
   useDisclosure,
 } from '@heroui/react';
+import { Button as ShadcnButton } from '@/shared/ui/shadcn/button';
+
 import { Checkbox } from '@heroui/checkbox';
 import { ChevronRight, Info, Upload, FileText, Image as ImageIcon, Trash } from 'lucide-react';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
@@ -24,6 +26,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PhoneVerificationButton } from '@/features/phone-verification';
 import { USAGE_CODE } from '@/features/phone-verification/constants/usage-code';
+import { PhoneVerificationResult } from '@/features/phone-verification/model/types';
 
 const inputProps = {
   radius: 'sm',
@@ -58,6 +61,7 @@ export default function JoinForm() {
     address: '',
     addressDetail: '',
   });
+  const router = useRouter();
 
   // 주소
   const [fullAddress, setFullAddress] = useState('');
@@ -68,6 +72,8 @@ export default function JoinForm() {
   const [fileList, setFileList] = useState<File[]>([]);
   // loading state
   const [isLoading, setIsLoading] = useState(false);
+  // phone number
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const { mutate: joinMutation } = useMutation({
     mutationFn: (formData: FormData) => join(formData),
@@ -107,6 +113,7 @@ export default function JoinForm() {
       formData.append('fileList', file);
     });
     formData.append('fullAddress', fullAddress);
+    formData.append('phoneNumber', phoneNumber);
 
     if (!isTermsAgreed || !isPrivacyAgreed) {
       setModalContent({
@@ -198,10 +205,18 @@ export default function JoinForm() {
       return;
     }
 
+    if (formData.get('phoneNumber') === '') {
+      setModalContent({
+        header: <ModalErrorHeader />,
+        content: <ModdalErrorContent message="전화번호를 인증해주세요." />,
+      });
+      onOpen();
+      setIsLoading(false);
+      return;
+    }
+
     joinMutation(formData);
   };
-
-  const router = useRouter();
 
   return (
     <>
@@ -219,6 +234,8 @@ export default function JoinForm() {
           setErrors={setErrors}
           fileList={fileList}
           setFileList={setFileList}
+          phoneNumber={phoneNumber}
+          setPhoneNumber={setPhoneNumber}
         />
         <JoinTermsContent
           isTermsAgreed={isTermsAgreed}
@@ -386,6 +403,8 @@ function PersonalInfoContent({
   setErrors,
   fileList,
   setFileList,
+  phoneNumber,
+  setPhoneNumber,
 }: {
   fullAddress: string;
   setFullAddress: (value: string) => void;
@@ -400,7 +419,15 @@ function PersonalInfoContent({
   >;
   fileList: File[];
   setFileList: (value: File[]) => void;
+  phoneNumber: string;
+  setPhoneNumber: (value: string) => void;
 }) {
+  const onPhoneVerificationResult = (result: PhoneVerificationResult) => {
+    if (result.success) {
+      setPhoneNumber(result.data.userPhone);
+    }
+  };
+
   return (
     <div className="flex w-full flex-col gap-6">
       <span className="text-foreground-800 text-lg font-bold">개인정보</span>
@@ -494,24 +521,32 @@ function PersonalInfoContent({
         {...inputProps}
         isRequired
       />
-      <Input
-        name="phoneNumber"
-        label="전화번호"
-        placeholder="전화번호를 입력해주세요."
-        type="number"
-        description="예: 01012345678"
-        {...inputProps}
-        validate={(value: string) => {
-          if (!value) {
-            return '전화번호를 입력해주세요.';
-          }
-          if (isNaN(Number(value))) {
-            return '전화번호는 10자리 숫자로 입력해주세요.';
-          }
-          return true;
-        }}
-      />
-      {/* <PhoneVerificationButton usageCode="SIGNUP" /> */}
+      <div className="flex items-end gap-2">
+        <Input
+          name="phoneNumber"
+          label="전화번호"
+          placeholder="전화번호를 인증을 완료해주세요."
+          type="number"
+          value={phoneNumber}
+          {...inputProps}
+          isDisabled={true}
+          validate={(value: string) => {
+            if (!value) {
+              return '전화번호를 입력해주세요.';
+            }
+            if (isNaN(Number(value))) {
+              return '전화번호는 10자리 숫자로 입력해주세요.';
+            }
+            return true;
+          }}
+        />
+        <PhoneVerificationButton
+          usageCode={USAGE_CODE.SIGNUP}
+          onResult={onPhoneVerificationResult}
+          isDisabled={phoneNumber !== ''}
+          className="h-10 cursor-pointer"
+        />
+      </div>
       <Input
         name="faxNumber"
         label="FAX번호(선택)"
@@ -648,9 +683,9 @@ function AddressInput({
             errorMessage: 'hidden',
           }}
         />
-        <Button className="bg-brand h-10 text-white" radius="sm" onPress={sample2_execDaumPostcode}>
+        <ShadcnButton className="h-10" onClick={sample2_execDaumPostcode}>
           주소검색
-        </Button>
+        </ShadcnButton>
         {/* 주소 모달창 */}
         <div
           id="layer"

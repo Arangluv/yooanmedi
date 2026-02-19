@@ -11,6 +11,7 @@ export const Order: CollectionConfig = {
   },
   admin: {
     group: '주문 관리',
+    useAsTitle: 'orderNo',
     defaultColumns: [
       'user',
       'paymentsMethod',
