@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       const createOrderProductDto: CreateOrderProductDto = {
         order: order.id,
         product: inventoryItem.product.id,
-        orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
+        orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
         totalAmount: totalProductAmount,

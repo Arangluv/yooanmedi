@@ -31,8 +31,6 @@ export const getUsedPoint = async ({ userId, orderProductId }: GetUsedPointParam
       limit: 1,
     });
 
-    console.log(pointTransaction);
-
     return pointTransaction;
   } catch (error) {
     console.log(error);

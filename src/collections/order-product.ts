@@ -54,8 +54,20 @@ export const OrderProduct: CollectionConfig = {
       },
       options: [
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.ORDERED],
-          value: ORDER_PRODUCT_STATUS.ORDERED,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.PENDING],
+          value: ORDER_PRODUCT_STATUS.PENDING,
+        },
+        {
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.PREPARING],
+          value: ORDER_PRODUCT_STATUS.PREPARING,
+        },
+        {
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.SHIPPING],
+          value: ORDER_PRODUCT_STATUS.SHIPPING,
+        },
+        {
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.DELIVERED],
+          value: ORDER_PRODUCT_STATUS.DELIVERED,
         },
         {
           label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.CANCEL_REQUEST],

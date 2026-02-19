@@ -12,10 +12,11 @@ import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 type CancelCardPaymentStrategyParams = {
   payload: BasePayload;
   orderProduct: CancelOrderProduct;
+  clientSideFlg: boolean;
 };
 
 export const cancelCardPaymentStrategy = {
-  execute: async ({ payload, orderProduct }: CancelCardPaymentStrategyParams) => {
+  execute: async ({ payload, orderProduct, clientSideFlg }: CancelCardPaymentStrategyParams) => {
     try {
       validateCancellableOrderProduct(orderProduct);
 
