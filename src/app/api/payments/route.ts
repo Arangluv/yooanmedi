@@ -27,6 +27,8 @@ import {
 import { createPayment } from '@/entities/payment';
 import type { CreatePaymentDto } from '@/entities/payment';
 import { PointUseEstimator } from '@/entities/point/lib/use/point-use-estimator';
+import { FLG_STATUS } from '@/entities/order/constants/flg-status';
+import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -72,6 +74,8 @@ export async function POST(request: NextRequest) {
       user: userId,
       orderNo: shopOrderNo,
       orderStatus: ORDER_STATUS.PREPARING,
+      flgStatus: FLG_STATUS.INIT_NORMAL,
+      paymentStatus: PAYMENT_STATUS.COMPLETE,
       orderRequest: deliveryRequest,
       finalPrice: approveData.amount,
       orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE, // 묶음 배송 처리 시 사용하는 필드 -> 고도화 예정

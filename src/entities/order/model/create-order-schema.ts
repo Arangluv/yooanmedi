@@ -2,11 +2,15 @@ import { z } from 'zod';
 
 import { PAYMENTS_METHOD } from '../constants/payments-options';
 import { ORDER_STATUS } from '../constants/order-status';
+import { FLG_STATUS } from '../constants/flg-status';
+import { PAYMENT_STATUS } from '../constants/payment-status';
 
 const createBaseOrderSchema = z.object({
   user: z.number(),
   orderNo: z.string(),
   orderStatus: z.enum(Object.values(ORDER_STATUS)),
+  flgStatus: z.enum(Object.values(FLG_STATUS)),
+  paymentStatus: z.enum(Object.values(PAYMENT_STATUS)),
   orderRequest: z
     .string()
     .optional()

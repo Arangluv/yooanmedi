@@ -306,7 +306,9 @@ export interface Order {
     totalDocs?: number;
   };
   paymentsMethod: 'creditCard' | 'bankTransfer';
-  orderStatus: 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'pending';
+  orderStatus: 'pending' | 'preparing' | 'shipping' | 'delivered' | 'cancel_request' | 'cancelled';
+  flgStatus: 'INIT_NORMAL' | 'NEED_PROCESS' | 'COMPLETE';
+  paymentStatus: 'PENDING' | 'COMPLETE' | 'PARTIAL_CANCEL' | 'TOTAL_CANCEL';
   orderDeliveryFee?: number | null;
   orderRequest?: string | null;
   orderNo: string;
@@ -603,6 +605,8 @@ export interface OrderSelect<T extends boolean = true> {
   orderProducts?: T;
   paymentsMethod?: T;
   orderStatus?: T;
+  flgStatus?: T;
+  paymentStatus?: T;
   orderDeliveryFee?: T;
   orderRequest?: T;
   orderNo?: T;
