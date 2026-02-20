@@ -9,3 +9,6 @@ export const FLG_STATUS_NAME = {
   [FLG_STATUS.NEED_PROCESS]: '처리필요',
   [FLG_STATUS.COMPLETE]: '완료',
 } as const;
+
+export type FlgStatus = (typeof FLG_STATUS)[keyof typeof FLG_STATUS];
+export type FlgStatusKey = keyof typeof FLG_STATUS;
