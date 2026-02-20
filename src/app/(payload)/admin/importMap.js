@@ -6,7 +6,7 @@ import { default as default_673c7e47019e6bb6267348408d8ac86c } from '@/collectio
 import { default as default_3ff702871335ccd8d9267c18cfef4ccb } from '@/collections/components/common/UserListViewSetDialog'
 import { default as default_97a89a2354d8899aef171a5f425d689f } from '@/collections/components/common/cells/BestProductCell'
 import { default as default_f36f12dd4d6ebd30112d75266a5c524f } from '@collections/components/product/ProductListBulkUploadBtn'
-import { default as default_0be121c6a549b3b573a39cdd38df8937 } from '@/entities/order/ui/admin/CollectionDocumentView'
+import { default as default_3650fc6fd593cbc190c171def65a4851 } from '@/features/order/admin/ui/CollectionView'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -50,7 +50,7 @@ export const importMap = {
   "@/collections/components/common/UserListViewSetDialog#default": default_3ff702871335ccd8d9267c18cfef4ccb,
   "@/collections/components/common/cells/BestProductCell#default": default_97a89a2354d8899aef171a5f425d689f,
   "@collections/components/product/ProductListBulkUploadBtn#default": default_f36f12dd4d6ebd30112d75266a5c524f,
-  "@/entities/order/ui/admin/CollectionDocumentView#default": default_0be121c6a549b3b573a39cdd38df8937,
+  "@/features/order/admin/ui/CollectionView#default": default_3650fc6fd593cbc190c171def65a4851,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,

@@ -24,3 +24,6 @@ export const ORDER_STATUS_NAME = {
   [ORDER_STATUS.CANCEL_REQUEST]: '취소 요청',
   [ORDER_STATUS.CANCELLED]: '주문 취소',
 } as const;
+
+export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
+export type OrderStatusKey = keyof typeof ORDER_STATUS;

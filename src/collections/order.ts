@@ -26,7 +26,7 @@ export const Order: CollectionConfig = {
       views: {
         edit: {
           default: {
-            Component: '@/entities/order/ui/admin/CollectionDocumentView',
+            Component: '@/features/order/admin/ui/CollectionView',
           },
         },
         // list: {

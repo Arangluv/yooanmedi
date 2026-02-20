@@ -87,6 +87,7 @@ export const OrderProduct: CollectionConfig = {
         disableBulkEdit: true,
         readOnly: true,
       },
+      required: true,
     },
     {
       name: 'priceSnapshot',

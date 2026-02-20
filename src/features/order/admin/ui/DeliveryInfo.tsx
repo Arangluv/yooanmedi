@@ -1,6 +1,11 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/shadcn/card';
+'use client';
 
-const DeliveryInfoOverview = () => {
+import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/shadcn/card';
+import { useOrderCollection } from '../model/order-provider';
+
+const DeliveryInfo = () => {
+  const { deliveryInfo } = useOrderCollection();
+
   return (
     <Card>
       <CardHeader>
@@ -10,11 +15,13 @@ const DeliveryInfoOverview = () => {
         <div className="flex flex-col gap-2 text-lg">
           <div className="flex items-center justify-between">
             <span>배송지</span>
-            <span className="font-medium">서울시 강남구 역삼동 123-123</span>
+            <span className="font-medium">{deliveryInfo?.address}</span>
           </div>
           <div className="flex items-center justify-between">
             <span>배송 요청사항</span>
-            <span className="font-medium">문 앞에 놓아주세요</span>
+            <span className="font-medium">
+              {deliveryInfo?.orderRequest ? deliveryInfo.orderRequest : '없음'}
+            </span>
           </div>
         </div>
       </CardContent>
@@ -22,4 +29,4 @@ const DeliveryInfoOverview = () => {
   );
 };
 
-export default DeliveryInfoOverview;
+export default DeliveryInfo;
