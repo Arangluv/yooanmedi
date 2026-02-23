@@ -70,3 +70,59 @@ export const statusToPreparingHandler = {
     });
   },
 };
+
+export const updateOrderProductStatusHandler = {
+  async validate({
+    orderProductId,
+    orderStatus,
+  }: {
+    orderProductId: number;
+    orderStatus: OrderProductStatus;
+  }) {
+    const payload = await getPayload();
+
+    const orderProduct = await payload.findByID({
+      collection: 'order-product',
+      id: orderProductId,
+      select: {
+        orderProductStatus: true,
+      },
+    });
+
+    if (!orderProduct) {
+      return {
+        success: false,
+        message: '주문 상품을 찾을 수 없습니다.',
+      };
+    }
+
+    if (orderProduct.orderProductStatus === orderStatus) {
+      return {
+        success: false,
+        message: `이미 ${orderStatus} 상태입니다.`,
+      };
+    }
+
+    return {
+      success: true,
+    };
+  },
+
+  updateStatus: async ({
+    orderProductId,
+    orderStatus,
+  }: {
+    orderProductId: number;
+    orderStatus: OrderProductStatus;
+  }) => {
+    const payload = await getPayload();
+
+    await payload.update({
+      collection: 'order-product',
+      id: orderProductId,
+      data: {
+        orderProductStatus: orderStatus,
+      },
+    });
+  },
+};

@@ -11,13 +11,16 @@ import {
 import {
   getOrderUserId,
   getTargetOrderProductIds,
-  validate,
+  validateContext,
   changeOrderListStatusToPreparing,
-  changeOrderStatusToPreparing,
+  updateOrderStatus,
+  updateOrderListStatus,
 } from '../lib/order-status-handler';
 import { Button } from '@/shared/ui/shadcn/button';
 import { Spinner } from '@/shared/ui/shadcn/spinner';
 import { useQueryClient } from '@tanstack/react-query';
+import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
+import { validateBeforeAction } from '../lib/validate';
 
 interface ProgressOrderActionButtonProps {
   orderStatus: OrderStatus;
@@ -25,9 +28,9 @@ interface ProgressOrderActionButtonProps {
 }
 
 type NextStep = {
-  btnText: string;
+  btnText?: string;
   hasNext: boolean;
-  onAction: () => Promise<void>;
+  onAction?: () => Promise<void>;
 };
 
 const ProgressOrderActionButton = ({
@@ -40,6 +43,26 @@ const ProgressOrderActionButton = ({
 
   const queryClient = useQueryClient();
 
+  const getChangeOrderStatusContext = async (orderStatus: OrderStatus) => {
+    const userId = await getOrderUserId(orderId);
+    const orderProductIds = await getTargetOrderProductIds(orderId, orderStatus);
+
+    const validateResult = await validateContext({
+      orderProductIds,
+      orderId,
+      userId,
+    });
+
+    if (!validateResult.success) {
+      throw new Error(validateResult.message);
+    }
+
+    return {
+      userId,
+      orderProductIds,
+    };
+  };
+
   useEffect(() => {
     switch (orderStatus) {
       case ORDER_STATUS.PENDING:
@@ -48,19 +71,15 @@ const ProgressOrderActionButton = ({
           hasNext: true,
           onAction: async () => {
             setIsLoading(true);
+            const { userId, orderProductIds } = await getChangeOrderStatusContext(orderStatus);
 
-            const userId = await getOrderUserId(orderId);
-            const orderProductIds = await getTargetOrderProductIds(orderId);
-
-            const validateResult = await validate({
-              orderProductIds,
+            const validateBeforeActionResult = await validateBeforeAction({
               orderId,
-              userId,
+              currentOrderStatus: orderStatus,
             });
 
-            // TODO:: 에러핸들링 개선
-            if (!validateResult.success) {
-              throw new Error(validateResult.message);
+            if (!validateBeforeActionResult.success) {
+              throw new Error(validateBeforeActionResult.message);
             }
 
             const changeOrderProductStatusToPreparingResult =
@@ -73,7 +92,11 @@ const ProgressOrderActionButton = ({
               throw new Error(changeOrderProductStatusToPreparingResult.message);
             }
 
-            await changeOrderStatusToPreparing(orderId);
+            await updateOrderStatus({
+              orderId,
+              orderStatus: ORDER_STATUS.PREPARING,
+              paymentStatus: PAYMENT_STATUS.COMPLETE,
+            });
             await queryClient.invalidateQueries({ queryKey: ['order', orderId] });
           },
         });
@@ -82,25 +105,81 @@ const ProgressOrderActionButton = ({
         setNextStep({
           btnText: ORDER_STATUS_NAME[ORDER_STATUS.SHIPPING],
           hasNext: true,
-          onAction: async () => {},
+          onAction: async () => {
+            const { orderProductIds } = await getChangeOrderStatusContext(orderStatus);
+
+            const validateBeforeActionResult = await validateBeforeAction({
+              orderId,
+              currentOrderStatus: orderStatus,
+            });
+
+            if (!validateBeforeActionResult.success) {
+              throw new Error(validateBeforeActionResult.message);
+            }
+
+            const updateOrderListStatusResult = await updateOrderListStatus({
+              orderProductIds,
+              orderStatus: ORDER_STATUS.SHIPPING,
+            });
+
+            if (!updateOrderListStatusResult.success) {
+              throw new Error(updateOrderListStatusResult.message);
+            }
+
+            await updateOrderStatus({
+              orderId,
+              orderStatus: ORDER_STATUS.SHIPPING,
+              paymentStatus: PAYMENT_STATUS.COMPLETE,
+            });
+            await queryClient.invalidateQueries({ queryKey: ['order', orderId] });
+          },
         });
         break;
       case ORDER_STATUS.SHIPPING:
         setNextStep({
           btnText: ORDER_STATUS_NAME[ORDER_STATUS.DELIVERED],
           hasNext: true,
-          onAction: async () => {},
+          onAction: async () => {
+            const { orderProductIds } = await getChangeOrderStatusContext(orderStatus);
+
+            const validateBeforeActionResult = await validateBeforeAction({
+              orderId,
+              currentOrderStatus: orderStatus,
+            });
+
+            if (!validateBeforeActionResult.success) {
+              throw new Error(validateBeforeActionResult.message);
+            }
+
+            const updateOrderListStatusResult = await updateOrderListStatus({
+              orderProductIds,
+              orderStatus: ORDER_STATUS.DELIVERED,
+            });
+
+            if (!updateOrderListStatusResult.success) {
+              throw new Error(updateOrderListStatusResult.message);
+            }
+
+            await updateOrderStatus({
+              orderId,
+              orderStatus: ORDER_STATUS.DELIVERED,
+              paymentStatus: PAYMENT_STATUS.COMPLETE, // todo:: Paymentstatus를 넘겨줄 필요가 있을까? 해당 시점에서는 반드시 complete다
+            });
+            await queryClient.invalidateQueries({ queryKey: ['order', orderId] });
+          },
         });
         break;
       case ORDER_STATUS.DELIVERED:
         setNextStep({
-          btnText: ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED],
           hasNext: false,
-          onAction: async () => {},
         });
         break;
     }
   }, [orderStatus]);
+
+  if (!nextStep?.hasNext) {
+    return null;
+  }
 
   return (
     <Button
