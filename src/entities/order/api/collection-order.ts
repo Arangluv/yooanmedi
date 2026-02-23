@@ -43,6 +43,7 @@ export const getCollectionOrderById = async (id: number) => {
           orderProductStatus: true,
         },
       },
+      depth: 4,
     });
 
     return order;

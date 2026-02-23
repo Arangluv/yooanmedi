@@ -331,6 +331,8 @@ export interface OrderProduct {
   totalAmount: number;
   productDeliveryFee: number;
   quantity: number;
+  cashback_rate: number;
+  cashback_rate_for_bank: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -628,6 +630,8 @@ export interface OrderProductSelect<T extends boolean = true> {
   totalAmount?: T;
   productDeliveryFee?: T;
   quantity?: T;
+  cashback_rate?: T;
+  cashback_rate_for_bank?: T;
   updatedAt?: T;
   createdAt?: T;
 }

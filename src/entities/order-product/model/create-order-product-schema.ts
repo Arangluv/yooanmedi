@@ -11,6 +11,8 @@ export const createOrderProductSchema = z.object({
   productNameSnapshot: z.string(),
   productDeliveryFee: z.number(),
   quantity: z.number(),
+  cashback_rate: z.number(),
+  cashback_rate_for_bank: z.number(),
 });
 
 export type CreateOrderProductDto = z.input<typeof createOrderProductSchema>;
