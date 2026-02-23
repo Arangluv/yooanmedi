@@ -6,6 +6,9 @@ import {
 
 import type { CancelBankTransferStrategyParams } from './strategy';
 import { BANK_TRANSFER_SCENARIO } from './scenario';
+import { ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
+import { FLG_STATUS } from '@/entities/order/constants/flg-status';
 
 export const bankTransferScenarioActions: Record<
   (typeof BANK_TRANSFER_SCENARIO)[keyof typeof BANK_TRANSFER_SCENARIO],
@@ -53,6 +56,23 @@ export const bankTransferScenarioActions: Record<
   },
   // USECASE 3. 입금된 이후 취소 (client side)
   [BANK_TRANSFER_SCENARIO.CANCEL_AFTER_DEPOSIT_CLIENT_SIDE]: async ({ payload, orderProduct }) => {
+    // TODO :: validation
+    // order update
+    await payload.update({
+      collection: 'order',
+      where: {
+        id: {
+          equals: orderProduct.orderId,
+        },
+      },
+      data: {
+        orderStatus: ORDER_STATUS.CANCEL_REQUEST,
+        paymentStatus: PAYMENT_STATUS.PARTIAL_CANCEL,
+        flgStatus: FLG_STATUS.NEED_PROCESS,
+      },
+    });
+
+    // order product update
     await payload.update({
       collection: 'order-product',
       where: {
