@@ -16,6 +16,8 @@ export const cancelBankTransferStrategy = {
       validateCancellableOrderProduct(orderProduct);
 
       const scenario = bankTransferScenarioResolver(orderProduct, clientSideFlg);
+      console.log('scenario');
+      console.log(scenario);
       await bankTransferScenarioActions[scenario]({ payload, orderProduct, clientSideFlg });
     } catch (error) {
       throw error;

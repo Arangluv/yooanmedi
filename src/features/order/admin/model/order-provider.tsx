@@ -19,7 +19,7 @@ export const useOrderCollection = () => {
   const context = useContext(OrderCollectionContext);
 
   if (!context) {
-    throw new Error('useOrderCollection must be used within a OrderCollectionProvider');
+    throw new Error('useOrderCollection는 OrderCollectionProvider 내에서만 사용할 수 있습니다.');
   }
 
   return context;

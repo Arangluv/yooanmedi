@@ -1,3 +1,6 @@
+'use client';
+
+import { useOrderAlertDialog } from '../model/dialog-provider';
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -8,25 +11,20 @@ import {
   AlertDialogTitle,
 } from '@/shared/ui/shadcn/alert-dialog';
 
-interface OrderAlertDialogContentProps {
-  title: string;
-  description: string;
-  onCancel: () => void;
-  onConfirm: () => void;
-}
-
 const OrderAlertDialogContent = () => {
+  const { content, onConfirm } = useOrderAlertDialog();
+
   return (
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>10개의 상품을 배송 처리 하시겠습니까?</AlertDialogTitle>
-        <AlertDialogDescription className="text-base">
-          선택한 주문의 상태가 일괄 변경됩니다
-        </AlertDialogDescription>
+        <AlertDialogTitle>{content.title}</AlertDialogTitle>
+        <AlertDialogDescription className="text-base">{content.description}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>취소</AlertDialogCancel>
-        <AlertDialogAction>배송 처리</AlertDialogAction>
+        <AlertDialogAction onClick={async () => await onConfirm()}>
+          {content.confirmText}
+        </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   );
