@@ -4,11 +4,15 @@ import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-stat
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 import { getPayload } from '@/shared/lib/get-payload';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
-import { statusToPreparingHandler as statusToPreparingOrderProductHandler } from '@/entities/order-product/lib/status-handler';
+import {
+  statusToPreparingHandler as statusToPreparingOrderProductHandler,
+  updateOrderProductStatusHandler,
+} from '@/entities/order-product/lib/status-handler';
 import { User } from '@/entities/user';
-import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
+import { PAYMENT_STATUS, PaymentStatus } from '@/entities/order/constants/payment-status';
+import { FlgStatus } from '@/entities/order/constants/flg-status';
 
-export const getTargetOrderProductIds = async (orderId: number) => {
+export const getTargetOrderProductIds = async (orderId: number, orderStatus: OrderStatus) => {
   const payload = await getPayload();
   const orderProducts = await payload.find({
     collection: 'order-product',
@@ -18,7 +22,7 @@ export const getTargetOrderProductIds = async (orderId: number) => {
         equals: orderId,
       },
       orderProductStatus: {
-        equals: ORDER_PRODUCT_STATUS.PENDING,
+        equals: orderStatus,
       },
     },
   });
@@ -42,7 +46,7 @@ export const getOrderUserId = async (orderId: number) => {
   return (order.user as User).id;
 };
 
-export const validate = async ({
+export const validateContext = async ({
   orderProductIds,
   orderId,
   userId,
@@ -52,15 +56,15 @@ export const validate = async ({
   userId: number;
 }) => {
   const payload = await getPayload();
-  const targetOrderProducts = await payload.findByID({
-    collection: 'order',
-    id: orderId,
-    select: {
-      paymentStatus: true,
-      orderStatus: true,
-      paymentsMethod: true,
-    },
-  });
+  // const targetOrderProducts = await payload.findByID({
+  //   collection: 'order',
+  //   id: orderId,
+  //   select: {
+  //     paymentStatus: true,
+  //     orderStatus: true,
+  //     paymentsMethod: true,
+  //   },
+  // });
 
   if (!userId) {
     return {
@@ -76,26 +80,26 @@ export const validate = async ({
     };
   }
 
-  if (targetOrderProducts.paymentsMethod !== PAYMENTS_METHOD.BANK_TRANSFER) {
-    return {
-      success: false,
-      message: '무통장입금 결제에서만 사용가능한 기능입니다.',
-    };
-  }
+  // if (targetOrderProducts.paymentsMethod !== PAYMENTS_METHOD.BANK_TRANSFER) {
+  //   return {
+  //     success: false,
+  //     message: '무통장입금 결제에서만 사용가능한 기능입니다.',
+  //   };
+  // }
 
-  if (targetOrderProducts.orderStatus === ORDER_STATUS.PREPARING) {
-    return {
-      success: false,
-      message: '이미 상품준비중 상태입니다.',
-    };
-  }
+  // if (targetOrderProducts.orderStatus === ORDER_STATUS.PREPARING) {
+  //   return {
+  //     success: false,
+  //     message: '이미 상품준비중 상태입니다.',
+  //   };
+  // }
 
-  if (targetOrderProducts.orderStatus !== ORDER_STATUS.PENDING) {
-    return {
-      success: false,
-      message: '상품준비중 상태는 입금확인중 상태에서만 변경할 수 있습니다.',
-    };
-  }
+  // if (targetOrderProducts.orderStatus !== ORDER_STATUS.PENDING) {
+  //   return {
+  //     success: false,
+  //     message: '상품준비중 상태는 입금확인중 상태에서만 변경할 수 있습니다.',
+  //   };
+  // }
 
   return {
     success: true,
@@ -129,15 +133,53 @@ export const changeOrderListStatusToPreparing = async ({
   };
 };
 
-export const changeOrderStatusToPreparing = async (orderId: number) => {
+export const updateOrderListStatus = async ({
+  orderProductIds,
+  orderStatus,
+}: {
+  orderProductIds: number[];
+  orderStatus: OrderStatus;
+}) => {
+  for (const orderProductId of orderProductIds) {
+    const validateResult = await updateOrderProductStatusHandler.validate({
+      orderProductId,
+      orderStatus,
+    });
+    if (!validateResult.success) {
+      return {
+        success: false,
+        message: validateResult.message,
+      };
+    }
+
+    await updateOrderProductStatusHandler.updateStatus({
+      orderProductId,
+      orderStatus,
+    });
+  }
+
+  return {
+    success: true,
+  };
+};
+
+export const updateOrderStatus = async ({
+  orderId,
+  orderStatus,
+  paymentStatus,
+}: {
+  orderId: number;
+  orderStatus: OrderStatus;
+  paymentStatus: PaymentStatus;
+}) => {
   const payload = await getPayload();
 
   await payload.update({
     collection: 'order',
     id: orderId,
     data: {
-      paymentStatus: PAYMENT_STATUS.COMPLETE,
-      orderStatus: ORDER_STATUS.PREPARING,
+      orderStatus,
+      paymentStatus,
     },
   });
 };
