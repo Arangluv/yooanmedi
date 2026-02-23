@@ -15,17 +15,20 @@ import { isPayloadImageRenderable } from '@/shared';
 export type CollectionViewOrderData = {
   orderInfo: {
     progressOrder: {
+      id: number;
       date: string;
       orderNo: string;
       orderStatus: OrderStatus;
       orderProducts: CollectionViewOrderProduct[];
     };
     cancelRequestOrder: {
+      id: number;
       date: string;
       orderNo: string;
       orderProducts: CollectionViewOrderProduct[];
     };
     cancelledOrder: {
+      id: number;
       orderNo: string;
       orderProducts: CollectionViewOrderProduct[];
     };
@@ -80,17 +83,20 @@ export type CollectionViewOrderProduct = {
 const createCollectionViewOrderProductsInfo = (orderRowData: Order) => {
   const orderInfo = {
     progressOrder: {
+      id: orderRowData.id,
       date: orderRowData.createdAt,
       orderNo: orderRowData.orderNo,
       orderStatus: '' as OrderStatus,
       orderProducts: [] as CollectionViewOrderProduct[],
     },
     cancelRequestOrder: {
+      id: orderRowData.id,
       date: orderRowData.updatedAt,
       orderNo: orderRowData.orderNo,
       orderProducts: [] as CollectionViewOrderProduct[],
     },
     cancelledOrder: {
+      id: orderRowData.id,
       orderNo: orderRowData.orderNo,
       orderProducts: [] as CollectionViewOrderProduct[],
     },

@@ -1,0 +1,72 @@
+import { ORDER_PRODUCT_STATUS, OrderProductStatus } from '../constants/order-product-status';
+import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-transaction'; // TODO:: 이 부분 참조 잘못됨 -> 개선필요
+import { getPayload } from '@/shared/lib/get-payload';
+
+type OrderProductStatusHandlerParams = {
+  orderProductId: number;
+  userId: number;
+};
+
+export const statusToPreparingHandler = {
+  validate: async (orderProductId: number) => {
+    const payload = await getPayload();
+
+    const orderProduct = await payload.findByID({
+      collection: 'order-product',
+      id: orderProductId,
+      select: {
+        orderProductStatus: true,
+      },
+    });
+
+    if (!orderProduct) {
+      return {
+        success: false,
+        message: '주문 상품을 찾을 수 없습니다.',
+      };
+    }
+
+    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.PREPARING) {
+      return {
+        success: false,
+        message: '이미 상품준비중 상태입니다.',
+      };
+    }
+
+    if (orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.PENDING) {
+      return {
+        success: false,
+        message: '상품준비중 상태는 입금확인중 상태에서만 변경할 수 있습니다.',
+      };
+    }
+
+    return {
+      success: true,
+    };
+  },
+
+  changeStatusToPreparing: async ({ orderProductId, userId }: OrderProductStatusHandlerParams) => {
+    const payload = await getPayload();
+
+    const orderProduct = await payload.update({
+      collection: 'order-product',
+      id: orderProductId,
+      data: {
+        orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
+      },
+    });
+
+    // TODO:: getPointWhenUsingBankTransfer 함수가 있지만 params 타입이 다음
+    // product와 snapshot product는 다른 도메인 객체다
+    // 한번에 관리가 되도록 할 수는 없을까?
+    const pointAmount =
+      Math.floor((orderProduct.cashback_rate_for_bank / 100) * orderProduct.priceSnapshot) *
+      orderProduct.quantity;
+
+    await createEarnPointTransaction({
+      userId,
+      orderProductId,
+      amount: pointAmount,
+    });
+  },
+};

@@ -74,6 +74,8 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         totalAmount: totalProductAmount,
         productDeliveryFee: productDeliveryFee,
         quantity: inventoryItem.quantity,
+        cashback_rate: inventoryItem.product.cashback_rate,
+        cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
       };
 
       const orderProduct = await createOrderProduct({

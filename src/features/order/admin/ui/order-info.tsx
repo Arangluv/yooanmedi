@@ -20,6 +20,7 @@ import { ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
 import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 
 import OrderProductItem from './OrderProductItem';
+import ProgressOrderActionButton from './ProgressOrderActionButton';
 
 export const OrderProgressInfo = ({ title }: { title: string }) => {
   const { orderInfo } = useOrderCollection();
@@ -67,11 +68,15 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
           )}
         </ItemGroup>
       </CardContent>
-      {/* 버튼 resolver 필요 */}
       {isEmpty ? null : (
         <CardFooter className="justify-end">
           <AlertDialogTrigger asChild>
-            <Button className="text-lg font-normal">배송 처리</Button>
+            {orderInfo?.progressOrder?.orderStatus && (
+              <ProgressOrderActionButton
+                orderStatus={orderInfo.progressOrder.orderStatus}
+                orderId={orderInfo.progressOrder.id}
+              />
+            )}
           </AlertDialogTrigger>
         </CardFooter>
       )}
