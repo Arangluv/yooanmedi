@@ -167,5 +167,43 @@ export const OrderProduct: CollectionConfig = {
         return true;
       },
     },
+    {
+      name: 'cashback_rate',
+      type: 'number',
+      label: '카드 적립금 비율',
+      required: true,
+      admin: {
+        disableBulkEdit: true,
+        readOnly: true,
+      },
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return '카드 적립금 비율을 입력해주세요';
+        }
+        if (value < 0) {
+          return '카드 적립금 비율은 0 이상이어야 합니다.';
+        }
+        return true;
+      },
+    },
+    {
+      name: 'cashback_rate_for_bank',
+      type: 'number',
+      label: '무통장 입금 적립금 비율',
+      required: true,
+      admin: {
+        disableBulkEdit: true,
+        readOnly: true,
+      },
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return '무통장 입금 적립금 비율을 입력해주세요';
+        }
+        if (value < 0) {
+          return '무통장 입금 적립금 비율은 0 이상이어야 합니다.';
+        }
+        return true;
+      },
+    },
   ],
 };
