@@ -188,9 +188,8 @@ const ProgressOrderActionButton = ({
       onClick={async (e) => {
         try {
           setIsLoading(true);
-          e.preventDefault();
           props.onClick?.(e);
-          await nextStep?.onAction?.();
+          // await nextStep?.onAction?.();
 
           toast.success(`${nextStep?.btnText} 처리되었습니다`);
         } catch (error) {

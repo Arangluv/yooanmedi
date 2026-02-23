@@ -70,14 +70,14 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
       </CardContent>
       {isEmpty ? null : (
         <CardFooter className="justify-end">
-          <AlertDialogTrigger asChild>
-            {orderInfo?.progressOrder?.orderStatus && (
+          {orderInfo?.progressOrder?.orderStatus && (
+            <AlertDialogTrigger asChild>
               <ProgressOrderActionButton
                 orderStatus={orderInfo.progressOrder.orderStatus}
                 orderId={orderInfo.progressOrder.id}
               />
-            )}
-          </AlertDialogTrigger>
+            </AlertDialogTrigger>
+          )}
         </CardFooter>
       )}
     </Card>
@@ -134,7 +134,6 @@ export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
           </ItemGroup>
         )}
       </CardContent>
-      {/* 버튼 resolver 필요 */}
       {isEmpty ? null : (
         <CardFooter className="justify-end">
           <AlertDialogTrigger asChild>
@@ -182,7 +181,7 @@ export const OrderCancelledInfo = ({ title }: { title: string }) => {
 
               return (
                 <Fragment key={orderProduct.id}>
-                  <OrderProductItem idx={idx} orderProduct={orderProduct} isCancelAction={true} />
+                  <OrderProductItem idx={idx} orderProduct={orderProduct} isCancelAction={false} />
                   <ItemSeparator />
                 </Fragment>
               );
