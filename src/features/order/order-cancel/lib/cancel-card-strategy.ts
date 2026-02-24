@@ -16,7 +16,7 @@ type CancelCardPaymentStrategyParams = {
 };
 
 export const cancelCardPaymentStrategy = {
-  execute: async ({ payload, orderProduct, clientSideFlg }: CancelCardPaymentStrategyParams) => {
+  execute: async ({ payload, orderProduct }: CancelCardPaymentStrategyParams) => {
     try {
       validateCancellableOrderProduct(orderProduct);
 
