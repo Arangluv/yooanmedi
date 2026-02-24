@@ -21,8 +21,8 @@ export const ORDER_STATUS_NAME = {
   [ORDER_STATUS.PREPARING]: '상품준비',
   [ORDER_STATUS.SHIPPING]: '배송시작',
   [ORDER_STATUS.DELIVERED]: '배송완료',
-  [ORDER_STATUS.CANCEL_REQUEST]: '취소 요청',
-  [ORDER_STATUS.CANCELLED]: '주문 취소',
+  [ORDER_STATUS.CANCEL_REQUEST]: '취소요청',
+  [ORDER_STATUS.CANCELLED]: '주문취소',
 } as const;
 
 export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];

@@ -1,6 +1,8 @@
+import { createCancelUsePointTransaction } from '@/entities/point/lib/cancel-use/create-transaction';
 import { ORDER_PRODUCT_STATUS, OrderProductStatus } from '../constants/order-product-status';
 import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-transaction'; // TODO:: 이 부분 참조 잘못됨 -> 개선필요
 import { getPayload } from '@/shared/lib/get-payload';
+import { createCancelEarnPointTransaction } from '@/entities/point/lib/cancel-earn/create-transaction';
 
 type OrderProductStatusHandlerParams = {
   orderProductId: number;
@@ -67,6 +69,80 @@ export const statusToPreparingHandler = {
       userId,
       orderProductId,
       amount: pointAmount,
+    });
+  },
+};
+
+export const cancelRequestToCancelledHandler = {
+  validate: async (orderProductId: number) => {
+    const payload = await getPayload();
+
+    const orderProduct = await payload.findByID({
+      collection: 'order-product',
+      id: orderProductId,
+      select: {
+        orderProductStatus: true,
+      },
+    });
+
+    if (!orderProduct) {
+      return {
+        success: false,
+        message: '주문 상품을 찾을 수 없습니다.',
+      };
+    }
+
+    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED) {
+      return {
+        success: false,
+        message: '이미 주문취소 된 상품입니다',
+      };
+    }
+
+    return {
+      success: true,
+    };
+  },
+  changeStatusToCancelled: async ({ orderProductId, userId }: OrderProductStatusHandlerParams) => {
+    const payload = await getPayload();
+
+    const orderProduct = await payload.update({
+      collection: 'order-product',
+      id: orderProductId,
+      select: {
+        order: true,
+      },
+      populate: {
+        order: {
+          usedPoint: true,
+        },
+      },
+      data: {
+        orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+      },
+    });
+
+    if (typeof orderProduct.order === 'number') {
+      return {
+        success: false,
+        message: '주문을 취소하는데 문제가 발생했습니다',
+      };
+    }
+
+    const { id: orderId, usedPoint } = orderProduct.order;
+
+    // 사용한 적립금 환불 처리
+    if (usedPoint > 0) {
+      await createCancelUsePointTransaction({
+        userId,
+        orderProductId,
+      });
+    }
+
+    // 적립된 적립금 환수 처리
+    await createCancelEarnPointTransaction({
+      userId,
+      orderProductId,
     });
   },
 };

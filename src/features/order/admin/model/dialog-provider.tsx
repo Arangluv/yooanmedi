@@ -2,6 +2,7 @@
 
 import { AlertDialog } from '@/shared/ui/shadcn/alert-dialog';
 import { createContext, useContext, useMemo, useState } from 'react';
+import { OrderStatus } from '@/entities/order/constants/order-status';
 
 type OrderAlertDialogContextProps = {
   content: {
@@ -10,8 +11,14 @@ type OrderAlertDialogContextProps = {
     confirmText: string;
   };
   setContent: (content: { title: string; description: string; confirmText: string }) => void;
-  setOnConfirm: (onConfirm: () => Promise<void>) => void;
-  onConfirm: () => Promise<void>;
+  targetOrder: {
+    status: OrderStatus;
+    id: number;
+  } | null;
+  setTargetOrder: (order: { status: OrderStatus; id: number }) => void;
+  open: boolean;
+  onOpen: () => void;
+  onClose: () => void;
 };
 
 const OrderAlertDialogContext = createContext<OrderAlertDialogContextProps | null>(null);
@@ -27,25 +34,32 @@ export const useOrderAlertDialog = () => {
 };
 
 const AlertDialogProvider = ({ children }: { children: React.ReactNode }) => {
+  const [open, setOpen] = useState(false);
+  const onOpen = () => setOpen(true);
+  const onClose = () => setOpen(false);
+
   const [content, setContent] = useState<OrderAlertDialogContextProps['content']>({
     title: '',
     description: '',
     confirmText: '',
   });
-  const [onConfirm, setOnConfirm] = useState<() => Promise<void>>(async () => {});
+  const [targetOrder, setTargetOrder] = useState<{ status: OrderStatus; id: number } | null>(null);
 
   const value = useMemo(
     () => ({
       content,
       setContent,
-      onConfirm,
-      setOnConfirm,
+      targetOrder,
+      setTargetOrder,
+      open,
+      onOpen,
+      onClose,
     }),
-    [content, onConfirm, setContent, setOnConfirm],
+    [content, targetOrder, setContent, setTargetOrder, open, onOpen, onClose],
   );
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <OrderAlertDialogContext.Provider value={value}>{children}</OrderAlertDialogContext.Provider>
     </AlertDialog>
   );
