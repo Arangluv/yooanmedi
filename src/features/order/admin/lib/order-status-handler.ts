@@ -64,16 +64,6 @@ export const checkAllOrderProductCancelled = async (orderId: number) => {
 
   const orderProducts = order.orderProducts?.docs as OrderProduct[];
 
-  console.log('orderProducts는?');
-  console.log(orderProducts);
-
-  const test = orderProducts?.every(
-    (orderProduct) => orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED,
-  );
-
-  console.log('모든 품목이?');
-  console.log(test);
-
   return orderProducts?.every(
     (orderProduct) => orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED,
   );

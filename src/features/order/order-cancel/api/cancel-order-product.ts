@@ -40,6 +40,7 @@ export const cancelOrderProduct = async ({
         },
       },
     });
+
     const targetOrderProduct = cancelOrderProductSchema.parse(orderProduct);
     const strategy =
       targetOrderProduct.paymentsMethod === PAYMENTS_METHOD.CREDIT_CARD

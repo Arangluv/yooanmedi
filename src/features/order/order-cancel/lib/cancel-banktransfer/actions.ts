@@ -28,6 +28,7 @@ export const bankTransferScenarioActions: Record<
       },
     });
   },
+
   // USECASE 2. 입금된 이후 취소
   [BANK_TRANSFER_SCENARIO.CANCEL_AFTER_DEPOSIT]: async ({ payload, orderProduct }) => {
     await payload.update({
@@ -38,7 +39,7 @@ export const bankTransferScenarioActions: Record<
         },
       },
       data: {
-        orderProductStatus: ORDER_PRODUCT_STATUS.CANCEL_REQUEST,
+        orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
       },
     });
 
@@ -54,6 +55,7 @@ export const bankTransferScenarioActions: Record<
       orderProductId: orderProduct.orderProductId,
     });
   },
+
   // USECASE 3. 입금된 이후 취소 (client side)
   [BANK_TRANSFER_SCENARIO.CANCEL_AFTER_DEPOSIT_CLIENT_SIDE]: async ({ payload, orderProduct }) => {
     // TODO :: validation
