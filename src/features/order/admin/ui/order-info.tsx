@@ -2,6 +2,7 @@
 
 import { Fragment } from 'react';
 import moment from 'moment';
+import { toast } from 'sonner';
 
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import {
@@ -16,11 +17,12 @@ import { ItemGroup, ItemSeparator } from '@/shared/ui/shadcn/item';
 import { Button } from '@/shared/ui/shadcn/button';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
 import { useOrderCollection } from '../model/order-provider';
-import { ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
+import { ORDER_STATUS, ORDER_STATUS_NAME, PAYMENTS_METHOD } from '@/entities/order';
 import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 
 import OrderProductItem from './OrderProductItem';
 import ProgressOrderActionButton from './ProgressOrderActionButton';
+import { useOrderAlertDialog } from '../model/dialog-provider';
 
 export const OrderProgressInfo = ({ title }: { title: string }) => {
   const { orderInfo } = useOrderCollection();
@@ -86,6 +88,7 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
 
 export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
   const { orderInfo, paymentInfo } = useOrderCollection();
+  const { setContent, setTargetOrder } = useOrderAlertDialog();
 
   if (paymentInfo?.paymentMethod === PAYMENTS_METHOD.CREDIT_CARD) {
     return null;
@@ -137,7 +140,26 @@ export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
       {isEmpty ? null : (
         <CardFooter className="justify-end">
           <AlertDialogTrigger asChild>
-            <Button className="text-lg font-normal" variant="destructive">
+            <Button
+              className="text-lg font-normal"
+              variant="destructive"
+              onClick={() => {
+                if (!orderInfo?.cancelRequestOrder?.id) {
+                  toast.error('주문취소 요청이 없습니다');
+                  return;
+                }
+
+                setContent({
+                  title: `${orderInfo.cancelRequestOrder.orderProducts.length}개의 상품을 ${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리하시겠습니까?`,
+                  description: '선택한 주문의 상태가 일괄 변경됩니다',
+                  confirmText: '주문취소 처리',
+                });
+                setTargetOrder({
+                  status: ORDER_STATUS.CANCEL_REQUEST,
+                  id: orderInfo.cancelRequestOrder.id,
+                });
+              }}
+            >
               주문취소 처리
             </Button>
           </AlertDialogTrigger>

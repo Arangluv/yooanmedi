@@ -87,6 +87,14 @@ export const validateBeforeAction = async ({
         };
       }
       break;
+    case ORDER_STATUS.CANCEL_REQUEST:
+      if (targetOrder.orderStatus === ORDER_STATUS.CANCELLED) {
+        return {
+          success: false,
+          message: '이미 주문취소 상태입니다.',
+        };
+      }
+      break;
   }
 
   return { success: true };

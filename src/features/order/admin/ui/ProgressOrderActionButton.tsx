@@ -1,26 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 import {
   ORDER_STATUS,
   ORDER_STATUS_NAME,
   type OrderStatus,
 } from '@/entities/order/constants/order-status';
-import {
-  getOrderUserId,
-  getTargetOrderProductIds,
-  validateContext,
-  changeOrderListStatusToPreparing,
-  updateOrderStatus,
-  updateOrderListStatus,
-} from '../lib/order-status-handler';
+
 import { Button } from '@/shared/ui/shadcn/button';
-import { Spinner } from '@/shared/ui/shadcn/spinner';
-import { useQueryClient } from '@tanstack/react-query';
-import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
-import { validateBeforeAction } from '../lib/validate';
+import { useOrderAlertDialog } from '../model/dialog-provider';
+import { useOrderCollection } from '../model/order-provider';
 
 interface ProgressOrderActionButtonProps {
   orderStatus: OrderStatus;
@@ -30,7 +20,7 @@ interface ProgressOrderActionButtonProps {
 type NextStep = {
   btnText?: string;
   hasNext: boolean;
-  onAction?: () => Promise<void>;
+  onClick?: () => void;
 };
 
 const ProgressOrderActionButton = ({
@@ -38,172 +28,91 @@ const ProgressOrderActionButton = ({
   orderId,
   ...props
 }: ProgressOrderActionButtonProps & React.ComponentProps<typeof Button>) => {
-  const [nextStep, setNextStep] = useState<NextStep | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { orderInfo } = useOrderCollection();
+  const { setContent, setTargetOrder } = useOrderAlertDialog();
 
-  const queryClient = useQueryClient();
-
-  const getChangeOrderStatusContext = async (orderStatus: OrderStatus) => {
-    const userId = await getOrderUserId(orderId);
-    const orderProductIds = await getTargetOrderProductIds(orderId, orderStatus);
-
-    const validateResult = await validateContext({
-      orderProductIds,
-      orderId,
-      userId,
-    });
-
-    if (!validateResult.success) {
-      throw new Error(validateResult.message);
-    }
-
-    return {
-      userId,
-      orderProductIds,
-    };
-  };
+  const [btnStatus, setBtnStatus] = useState<NextStep | null>(null);
 
   useEffect(() => {
+    const targetOrderProductCount = orderInfo?.progressOrder.orderProducts.length;
+
     switch (orderStatus) {
       case ORDER_STATUS.PENDING:
-        setNextStep({
+        setBtnStatus({
           btnText: ORDER_STATUS_NAME[ORDER_STATUS.PREPARING],
           hasNext: true,
-          onAction: async () => {
-            setIsLoading(true);
-            const { userId, orderProductIds } = await getChangeOrderStatusContext(orderStatus);
-
-            const validateBeforeActionResult = await validateBeforeAction({
-              orderId,
-              currentOrderStatus: orderStatus,
+          onClick: () => {
+            setContent({
+              title: `${targetOrderProductCount}개의 상품을 ${ORDER_STATUS_NAME[ORDER_STATUS.PREPARING]} 처리하시겠습니까?`,
+              description: '선택한 주문의 상태가 일괄 변경됩니다',
+              confirmText: '상품준비중 처리',
             });
 
-            if (!validateBeforeActionResult.success) {
-              throw new Error(validateBeforeActionResult.message);
-            }
-
-            const changeOrderProductStatusToPreparingResult =
-              await changeOrderListStatusToPreparing({
-                orderProductIds,
-                userId,
-              });
-
-            if (!changeOrderProductStatusToPreparingResult.success) {
-              throw new Error(changeOrderProductStatusToPreparingResult.message);
-            }
-
-            await updateOrderStatus({
-              orderId,
-              orderStatus: ORDER_STATUS.PREPARING,
-              paymentStatus: PAYMENT_STATUS.COMPLETE,
+            setTargetOrder({
+              status: ORDER_STATUS.PENDING,
+              id: orderId,
             });
-            await queryClient.invalidateQueries({ queryKey: ['order', orderId] });
           },
         });
         break;
       case ORDER_STATUS.PREPARING:
-        setNextStep({
+        setBtnStatus({
           btnText: ORDER_STATUS_NAME[ORDER_STATUS.SHIPPING],
           hasNext: true,
-          onAction: async () => {
-            const { orderProductIds } = await getChangeOrderStatusContext(orderStatus);
-
-            const validateBeforeActionResult = await validateBeforeAction({
-              orderId,
-              currentOrderStatus: orderStatus,
+          onClick: () => {
+            setContent({
+              title: `${targetOrderProductCount}개의 상품을 ${ORDER_STATUS_NAME[ORDER_STATUS.SHIPPING]} 처리하시겠습니까?`,
+              description: '선택한 주문의 상태가 일괄 변경됩니다',
+              confirmText: '배송중 처리',
             });
 
-            if (!validateBeforeActionResult.success) {
-              throw new Error(validateBeforeActionResult.message);
-            }
-
-            const updateOrderListStatusResult = await updateOrderListStatus({
-              orderProductIds,
-              orderStatus: ORDER_STATUS.SHIPPING,
+            setTargetOrder({
+              status: ORDER_STATUS.PREPARING,
+              id: orderId,
             });
-
-            if (!updateOrderListStatusResult.success) {
-              throw new Error(updateOrderListStatusResult.message);
-            }
-
-            await updateOrderStatus({
-              orderId,
-              orderStatus: ORDER_STATUS.SHIPPING,
-              paymentStatus: PAYMENT_STATUS.COMPLETE,
-            });
-            await queryClient.invalidateQueries({ queryKey: ['order', orderId] });
           },
         });
         break;
       case ORDER_STATUS.SHIPPING:
-        setNextStep({
+        setBtnStatus({
           btnText: ORDER_STATUS_NAME[ORDER_STATUS.DELIVERED],
           hasNext: true,
-          onAction: async () => {
-            const { orderProductIds } = await getChangeOrderStatusContext(orderStatus);
-
-            const validateBeforeActionResult = await validateBeforeAction({
-              orderId,
-              currentOrderStatus: orderStatus,
+          onClick: () => {
+            setContent({
+              title: `${targetOrderProductCount}개의 상품을 ${ORDER_STATUS_NAME[ORDER_STATUS.DELIVERED]} 처리하시겠습니까?`,
+              description: '선택한 주문의 상태가 일괄 변경됩니다',
+              confirmText: '배송완료 처리',
             });
 
-            if (!validateBeforeActionResult.success) {
-              throw new Error(validateBeforeActionResult.message);
-            }
-
-            const updateOrderListStatusResult = await updateOrderListStatus({
-              orderProductIds,
-              orderStatus: ORDER_STATUS.DELIVERED,
+            setTargetOrder({
+              status: ORDER_STATUS.SHIPPING,
+              id: orderId,
             });
-
-            if (!updateOrderListStatusResult.success) {
-              throw new Error(updateOrderListStatusResult.message);
-            }
-
-            await updateOrderStatus({
-              orderId,
-              orderStatus: ORDER_STATUS.DELIVERED,
-              paymentStatus: PAYMENT_STATUS.COMPLETE, // todo:: Paymentstatus를 넘겨줄 필요가 있을까? 해당 시점에서는 반드시 complete다
-            });
-            await queryClient.invalidateQueries({ queryKey: ['order', orderId] });
           },
         });
         break;
       case ORDER_STATUS.DELIVERED:
-        setNextStep({
+        setBtnStatus({
           hasNext: false,
         });
         break;
     }
   }, [orderStatus]);
 
-  if (!nextStep?.hasNext) {
+  if (!btnStatus?.hasNext) {
     return null;
   }
 
   return (
     <Button
       className="text-lg font-normal"
-      disabled={!nextStep?.hasNext || isLoading}
-      onClick={async (e) => {
-        try {
-          setIsLoading(true);
-          props.onClick?.(e);
-          // await nextStep?.onAction?.();
-
-          toast.success(`${nextStep?.btnText} 처리되었습니다`);
-        } catch (error) {
-          let errorMessage =
-            error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
-
-          toast.error(errorMessage);
-        } finally {
-          setIsLoading(false);
-        }
+      disabled={!btnStatus?.hasNext}
+      onClick={(e) => {
+        btnStatus?.onClick?.();
+        props.onClick?.(e);
       }}
     >
-      {isLoading && <Spinner className="size-4" />}
-      {nextStep?.btnText} 처리
+      {btnStatus?.btnText} 처리
     </Button>
   );
 };
