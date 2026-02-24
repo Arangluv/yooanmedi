@@ -9,11 +9,10 @@ import {
   ItemDescription,
   ItemActions,
 } from '@/shared/ui/shadcn/item';
-import { Button } from '@/shared/ui/shadcn/button';
-import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { CollectionViewOrderProduct } from '../lib/normalize';
 import { isPayloadImageRenderable } from '@/shared/lib/validation';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
+import CancelItemAction from './CancelItemAction';
 
 interface OrderProductItemProps {
   orderProduct: CollectionViewOrderProduct;
@@ -70,15 +69,7 @@ const OrderProductItem = ({ orderProduct, idx, isCancelAction }: OrderProductIte
           </div>
         </div>
       </ItemContent>
-      {isCancelAction && (
-        <ItemActions>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <PackageX className="size-6" strokeWidth={1.5} />
-            </Button>
-          </AlertDialogTrigger>
-        </ItemActions>
-      )}
+      {isCancelAction && <CancelItemAction orderProductId={orderProduct.id} />}
     </Item>
   );
 };
