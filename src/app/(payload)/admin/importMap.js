@@ -6,6 +6,12 @@ import { default as default_673c7e47019e6bb6267348408d8ac86c } from '@/collectio
 import { default as default_3ff702871335ccd8d9267c18cfef4ccb } from '@/collections/components/common/UserListViewSetDialog'
 import { default as default_97a89a2354d8899aef171a5f425d689f } from '@/collections/components/common/cells/BestProductCell'
 import { default as default_f36f12dd4d6ebd30112d75266a5c524f } from '@collections/components/product/ProductListBulkUploadBtn'
+import { default as default_4fbe8acfbf93c256fd3e1c13531aa6d8 } from '@/features/admin/order-list/ui/cell/OrderStatusCell'
+import { default as default_f61d7405200ae20c3bdcc28da65d9c9b } from '@/features/admin/order-list/ui/cell/FlgStatusCell'
+import { default as default_02d6a644192bc11e0a9391a3ecbe81b5 } from '@/features/admin/order-list/ui/cell/PriceCell'
+import { default as default_0c30f9124d673b06c1d01dfbad198689 } from '@/features/admin/order-list/ui/cell/CreatedAtCell'
+import { default as default_91a2ff3ee7c673ff794d1e8528f1bb80 } from '@/features/admin/order-list/ui/OrderStatusTab'
+import { default as default_fd594c314fc9d73b54177decb06eba73 } from '@/features/admin/order-list/ui/OrderListTableBehavior'
 import { default as default_3650fc6fd593cbc190c171def65a4851 } from '@/features/order/admin/ui/CollectionView'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -51,6 +57,12 @@ export const importMap = {
   "@/collections/components/common/UserListViewSetDialog#default": default_3ff702871335ccd8d9267c18cfef4ccb,
   "@/collections/components/common/cells/BestProductCell#default": default_97a89a2354d8899aef171a5f425d689f,
   "@collections/components/product/ProductListBulkUploadBtn#default": default_f36f12dd4d6ebd30112d75266a5c524f,
+  "@/features/admin/order-list/ui/cell/OrderStatusCell#default": default_4fbe8acfbf93c256fd3e1c13531aa6d8,
+  "@/features/admin/order-list/ui/cell/FlgStatusCell#default": default_f61d7405200ae20c3bdcc28da65d9c9b,
+  "@/features/admin/order-list/ui/cell/PriceCell#default": default_02d6a644192bc11e0a9391a3ecbe81b5,
+  "@/features/admin/order-list/ui/cell/CreatedAtCell#default": default_0c30f9124d673b06c1d01dfbad198689,
+  "@/features/admin/order-list/ui/OrderStatusTab#default": default_91a2ff3ee7c673ff794d1e8528f1bb80,
+  "@/features/admin/order-list/ui/OrderListTableBehavior#default": default_fd594c314fc9d73b54177decb06eba73,
   "@/features/order/admin/ui/CollectionView#default": default_3650fc6fd593cbc190c171def65a4851,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
