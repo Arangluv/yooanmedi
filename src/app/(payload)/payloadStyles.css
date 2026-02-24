@@ -274,3 +274,17 @@ a {
     @apply flex h-full flex-col;
   }
 }
+
+/* order collection list table header 조정 */
+
+#heading-finalPrice .sort-column {
+  @apply justify-end;
+}
+
+#heading-finalPrice .sort-column__buttons {
+  @apply hidden;
+}
+
+#heading-orderNo .sort-column__buttons {
+  @apply hidden;
+}
