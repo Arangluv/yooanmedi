@@ -314,8 +314,8 @@ export interface Order {
   orderNo: string;
   finalPrice: number;
   usedPoint: number;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -614,8 +614,8 @@ export interface OrderSelect<T extends boolean = true> {
   orderNo?: T;
   finalPrice?: T;
   usedPoint?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

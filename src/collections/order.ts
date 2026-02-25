@@ -16,28 +16,24 @@ export const Order: CollectionConfig = {
     useAsTitle: 'orderNo',
     defaultColumns: [
       'orderNo',
+      'user',
       'orderStatus',
       'paymentStatus',
       'createdAt',
       'flgStatus',
-      'user',
       'finalPrice',
       'paymentsMethod',
     ],
     components: {
-      beforeListTable: [
-        '@/features/admin/order-list/ui/OrderStatusTab',
-        '@/features/admin/order-list/ui/OrderListTableBehavior',
-      ],
       views: {
         edit: {
           default: {
             Component: '@/features/order/admin/ui/CollectionView',
           },
         },
-        // list: {
-        //   Component: '@/entities/order/ui/admin/CollectionDocumentView',
-        // },
+        list: {
+          Component: '@/features/admin/order-list/ui/ListView',
+        },
       },
     },
   },
@@ -92,9 +88,6 @@ export const Order: CollectionConfig = {
       admin: {
         disableBulkEdit: true,
         readOnly: true,
-        components: {
-          Cell: '@/features/admin/order-list/ui/cell/OrderStatusCell',
-        },
       },
       options: [
         {
@@ -129,11 +122,6 @@ export const Order: CollectionConfig = {
       label: '처리상태',
       type: 'select',
       required: true,
-      admin: {
-        components: {
-          Cell: '@/features/admin/order-list/ui/cell/FlgStatusCell',
-        },
-      },
       options: [
         {
           label: FLG_STATUS_NAME[FLG_STATUS.INIT_NORMAL],
@@ -209,9 +197,6 @@ export const Order: CollectionConfig = {
       admin: {
         disableBulkEdit: true,
         readOnly: true,
-        components: {
-          Cell: '@/features/admin/order-list/ui/cell/PriceCell',
-        },
       },
       defaultValue: 0,
       required: true,
@@ -226,16 +211,6 @@ export const Order: CollectionConfig = {
       },
       defaultValue: 0,
       required: true,
-    },
-    {
-      name: 'createdAt',
-      type: 'date',
-      label: '주문 일시',
-      admin: {
-        components: {
-          Cell: '@/features/admin/order-list/ui/cell/CreatedAtCell',
-        },
-      },
     },
   ],
 };
