@@ -48,6 +48,7 @@ export default buildConfig({
       providers: [
         '@/shared/ui/admin/sidebar/sidebar-provider',
         '@/shared/ui/admin/toast/toast-provider',
+        '@/shared/model/admin/nuqs-provider',
       ],
     },
   },
