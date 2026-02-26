@@ -2,6 +2,17 @@
 
 import { AlertDialog } from '@/shared/ui/shadcn/alert-dialog';
 import { createContext, useContext, useMemo, useState } from 'react';
+import { CancelScenario, UpdateScenario } from '../constants/scenario';
+
+export type UpdateActionType = {
+  type: 'update';
+  scenario: UpdateScenario;
+};
+
+export type CancelActionType = {
+  type: 'cancel';
+  scenario: CancelScenario;
+};
 
 type DialogContextProps = {
   onOpen: () => void;
@@ -12,6 +23,10 @@ type DialogContextProps = {
     confirmText: string;
   };
   setContent: (content: { title: string; description: string; confirmText: string }) => void;
+  actionType: UpdateActionType | CancelActionType | null;
+  setActionType: (actionType: UpdateActionType | CancelActionType) => void;
+  targetOrderIds: number[];
+  setTargetOrderIds: (targetOrderIds: number[]) => void;
 };
 
 const DialogContext = createContext<DialogContextProps | null>(null);
@@ -32,12 +47,23 @@ const OrderListDialogProvider = ({ children }: { children: React.ReactNode }) =>
     description: '',
     confirmText: '',
   });
+  const [actionType, setActionType] = useState<UpdateActionType | CancelActionType | null>(null);
+  const [targetOrderIds, setTargetOrderIds] = useState<number[]>([]);
 
   const onOpen = () => setOpen(true);
   const onClose = () => setOpen(false);
 
   const value = useMemo(
-    () => ({ onOpen, onClose, content, setContent }),
+    () => ({
+      onOpen,
+      onClose,
+      content,
+      setContent,
+      actionType,
+      setActionType,
+      targetOrderIds,
+      setTargetOrderIds,
+    }),
     [onOpen, onClose, content, setContent],
   );
 

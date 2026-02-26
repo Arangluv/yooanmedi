@@ -1,13 +1,18 @@
 'use client';
 
-import { Button } from '@/shared/ui/shadcn/button';
-import { useOrderListDialog } from '../model/dialog-providers';
-import useOrderListSearch from '../model/useOrderListSearch';
 import { RowSelectionState } from '@tanstack/react-table';
+
+import { Button } from '@/shared/ui/shadcn/button';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
 
+import { CancelOrderActionType } from '../model/types';
+import { useOrderListDialog } from '../model/dialog-providers';
+import useOrderListSearch from '../model/useOrderListSearch';
+import { cancelScenarioResolver } from '../lib/cancel/scenario-resolver';
+
 const CancelOrderListButton = ({ selectedRows }: { selectedRows: RowSelectionState }) => {
-  const { setContent, onOpen } = useOrderListDialog();
+  const { setContent, onOpen, setActionType, setTargetOrderIds } = useOrderListDialog();
+  const { filters } = useOrderListSearch();
 
   return (
     <Button
@@ -19,6 +24,11 @@ const CancelOrderListButton = ({ selectedRows }: { selectedRows: RowSelectionSta
           description: '선택한 주문의 상태가 일괄 변경됩니다',
           confirmText: '취소처리',
         });
+        setActionType({
+          type: 'cancel',
+          scenario: cancelScenarioResolver(filters.orderStatus as CancelOrderActionType),
+        });
+        setTargetOrderIds(Object.keys(selectedRows).map((key) => parseInt(key)));
         onOpen();
       }}
     >

@@ -73,6 +73,43 @@ export const statusToPreparingHandler = {
   },
 };
 
+export const beforePaymentToCancelledHandler = {
+  validate: async (orderProductId: number) => {
+    const payload = await getPayload();
+
+    const orderProduct = await payload.findByID({
+      collection: 'order-product',
+      id: orderProductId,
+      select: {
+        orderProductStatus: true,
+      },
+    });
+
+    if (orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.PENDING) {
+      return {
+        success: false,
+        message: '입금확인중 상태에서만 취소할 수 있습니다.',
+      };
+    }
+
+    return {
+      success: true,
+    };
+  },
+
+  changeStatusToCancelled: async ({ orderProductId }: { orderProductId: number }) => {
+    const payload = await getPayload();
+
+    await payload.update({
+      collection: 'order-product',
+      id: orderProductId,
+      data: {
+        orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+      },
+    });
+  },
+};
+
 export const cancelRequestToCancelledHandler = {
   validate: async (orderProductId: number) => {
     const payload = await getPayload();

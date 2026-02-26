@@ -8,6 +8,8 @@ import {
   updateOrderListStatus,
   cancelRequestToCancelled,
   checkAllOrderProductCancelled,
+  findInProgressOrderProduct,
+  beforePaymentToCancelled,
 } from './order-status-handler';
 import { validateBeforeAction } from './validate';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
@@ -18,6 +20,8 @@ export const STATUS_SCENARIO = {
   PREPARING_TO_SHIPPING: 'PREPARING_TO_SHIPPING',
   SHIPPING_TO_DELIVERED: 'SHIPPING_TO_DELIVERED',
   CANCEL_REQUEST_TO_CANCELLED: 'CANCEL_REQUEST_TO_CANCELLED',
+  PAID_ORDER_TO_CANCELLED: 'PAID_ORDER_TO_CANCELLED', // use in order-list cancel -> todo :: 한곳으로 합치기
+  BEFORE_PAYMENT_TO_CANCELLED: 'BEFORE_PAYMENT_TO_CANCELLED', // use in order-list cancel -> todo :: 한곳으로 합치기
 } as const;
 
 export type StatusScenario = (typeof STATUS_SCENARIO)[keyof typeof STATUS_SCENARIO];
@@ -93,6 +97,7 @@ export const statusUpdateScenario = {
       paymentStatus: PAYMENT_STATUS.COMPLETE,
     });
   },
+
   [STATUS_SCENARIO.PREPARING_TO_SHIPPING]: async ({
     orderStatus,
     orderId,
@@ -197,9 +202,60 @@ export const statusUpdateScenario = {
         paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
       });
     } else {
+      const inProgressOrderProductStatus = await findInProgressOrderProduct(orderId);
+
       await updateOrderStatus({
         orderId,
         flgStatus: FLG_STATUS.COMPLETE,
+        orderStatus: inProgressOrderProductStatus as OrderStatus,
+        paymentStatus: PAYMENT_STATUS.PARTIAL_CANCEL,
+      });
+    }
+  },
+  [STATUS_SCENARIO.PAID_ORDER_TO_CANCELLED]: async ({
+    orderId,
+    orderStatus,
+  }: {
+    orderId: number;
+    orderStatus: OrderStatus;
+  }) => {
+    // const { orderProductIds, userId } = await getChangeOrderStatusContext(orderId, orderStatus);
+    // TODO :: validate를 뺐다.  beforeActionValidate는 update status에서만 유효하다 -> 개선 필요
+  },
+  [STATUS_SCENARIO.BEFORE_PAYMENT_TO_CANCELLED]: async ({
+    orderId,
+    orderStatus,
+  }: {
+    orderId: number;
+    orderStatus: OrderStatus;
+  }) => {
+    const userId = await getOrderUserId(orderId);
+    const orderProductIds = await getTargetOrderProductIds(orderId, orderStatus);
+
+    const beforePaymentToCancelledResult = await beforePaymentToCancelled({
+      orderProductIds,
+      userId,
+    });
+
+    if (!beforePaymentToCancelledResult.success) {
+      throw new Error(beforePaymentToCancelledResult.message);
+    }
+
+    const isAllOrderProductCancelled = await checkAllOrderProductCancelled(orderId);
+
+    if (isAllOrderProductCancelled) {
+      await updateOrderStatus({
+        orderId,
+        orderStatus: ORDER_STATUS.CANCELLED,
+        flgStatus: FLG_STATUS.COMPLETE,
+        paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
+      });
+    } else {
+      const inProgressOrderProductStatus = await findInProgressOrderProduct(orderId);
+      await updateOrderStatus({
+        orderId,
+        flgStatus: FLG_STATUS.COMPLETE,
+        orderStatus: inProgressOrderProductStatus as OrderStatus,
         paymentStatus: PAYMENT_STATUS.PARTIAL_CANCEL,
       });
     }

@@ -1,8 +1,11 @@
+'use client';
+
 import useOrderListSearch from '../model/useOrderListSearch';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import OrderStatusActionButton from './orderStatusActionButton';
 import CancelOrderListButton from './cancelOrderListButton';
 import { RowSelectionState } from '@tanstack/react-table';
+import { Button } from '@/shared';
 
 const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) => {
   const { filters } = useOrderListSearch();
@@ -19,7 +22,7 @@ const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) =
 
   return (
     <div className="fixed right-1/2 bottom-12 z-50 translate-x-1/2">
-      <div className="bg-foreground flex items-center gap-4 rounded-xl p-4">
+      <div className="bg-foreground dark:bg-background flex items-center gap-4 rounded-xl p-4">
         <OrderStatusActionButton selectedRows={selectedRows} />
         <CancelOrderListButton selectedRows={selectedRows} />
       </div>
