@@ -1,13 +1,17 @@
 'use client';
 
 import { Sheet, SlidersHorizontal } from 'lucide-react';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/shared/ui/shadcn/tooltip';
+
+import { ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
 import { Button } from '@/shared/ui/shadcn/button';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/shared/ui/shadcn/collapsible';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/shared/ui/shadcn/tooltip';
+
+import useOrderListSearch from '../../model/useOrderListSearch';
 
 const TableHeader = ({ totalCount }: { totalCount: number }) => {
   return (
@@ -22,10 +26,14 @@ const TableHeader = ({ totalCount }: { totalCount: number }) => {
 };
 
 const TabTitle = ({ totalCount }: { totalCount: number }) => {
+  const { filters } = useOrderListSearch();
+
   return (
     <div className="flex items-center gap-3">
       {/* Table Header */}
-      <span className="text-2xl font-bold">전체</span>
+      <span className="text-2xl font-bold">
+        {filters.orderStatus === 'all' ? '전체' : ORDER_STATUS_NAME[filters.orderStatus]}
+      </span>
       <span className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full p-1 text-sm">
         {totalCount}
       </span>
