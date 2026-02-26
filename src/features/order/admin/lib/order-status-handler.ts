@@ -3,6 +3,7 @@
 import { OrderStatus } from '@/entities/order/constants/order-status';
 import { getPayload } from '@/shared/lib/get-payload';
 import {
+  beforePaymentToCancelledHandler,
   cancelRequestToCancelledHandler,
   statusToPreparingHandler as statusToPreparingOrderProductHandler,
   updateOrderProductStatusHandler,
@@ -67,6 +68,34 @@ export const checkAllOrderProductCancelled = async (orderId: number) => {
   return orderProducts?.every(
     (orderProduct) => orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED,
   );
+};
+
+// checkAllOrderProductCancelled가 false면 아직 진행중인 주문이 남아 있다는 것
+// 어떤 진행상태가 남아 있는지 찾는 함수
+export const findInProgressOrderProduct = async (orderId: number) => {
+  const payload = await getPayload();
+  const order = await payload.findByID({
+    collection: 'order',
+    id: orderId,
+    select: {
+      orderProducts: true,
+    },
+    populate: {
+      'order-product': {
+        orderProductStatus: true,
+      },
+    },
+  });
+
+  const orderProducts = order.orderProducts?.docs as OrderProduct[];
+  const filteredOrderProductNotCancelled = orderProducts?.filter(
+    (orderProduct) =>
+      orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.CANCELLED &&
+      orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.CANCEL_REQUEST,
+  );
+
+  // 개별 주문 관리 시스템은 지원하지 않으므로 첫번째 상품의 status를 반환
+  return filteredOrderProductNotCancelled?.[0]?.orderProductStatus;
 };
 
 export const validateContext = async ({
@@ -145,6 +174,53 @@ export const cancelRequestToCancelled = async ({
     });
   }
 
+  return {
+    success: true,
+  };
+};
+
+export const beforePaymentToCancelled = async ({
+  orderProductIds,
+  userId,
+}: {
+  orderProductIds: number[];
+  userId: number;
+}) => {
+  try {
+    for (const orderProductId of orderProductIds) {
+      const validateResult = await beforePaymentToCancelledHandler.validate(orderProductId);
+      if (!validateResult.success) {
+        return {
+          success: false,
+          message: validateResult.message,
+        };
+      }
+
+      await beforePaymentToCancelledHandler.changeStatusToCancelled({
+        orderProductId,
+      });
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다',
+    };
+  }
+};
+
+export const paidOrderToCancelled = async ({
+  orderProductIds,
+  userId,
+}: {
+  orderProductIds: number[];
+  userId: number;
+}) => {
+  for (const orderProductId of orderProductIds) {
+  }
   return {
     success: true,
   };

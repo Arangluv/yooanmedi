@@ -16,12 +16,18 @@ import { Spinner } from '@/shared/ui/shadcn/spinner';
 
 import { useOrderListDialog } from '../model/dialog-providers';
 import { useQueryClient } from '@tanstack/react-query';
+import { updateStrategy } from '../lib/update/strategy';
+import { cancelStrategy } from '../lib/cancel/strategy';
 
 const StatusChangeDialogContent = () => {
   const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState(false);
-  const { content, onClose } = useOrderListDialog();
+  const { content, onClose, actionType, targetOrderIds } = useOrderListDialog();
+
+  if (!actionType) {
+    return null;
+  }
 
   return (
     <AlertDialogContent>
@@ -34,16 +40,33 @@ const StatusChangeDialogContent = () => {
         <AlertDialogAction
           disabled={isLoading}
           onClick={async (e) => {
+            setIsLoading(true);
             e.stopPropagation();
             e.preventDefault();
 
-            setIsLoading(true);
+            try {
+              if (actionType.type === 'update') {
+                await updateStrategy.execute({
+                  scenario: actionType.scenario,
+                  targetOrderIds: targetOrderIds,
+                });
+              } else {
+                await cancelStrategy.execute({
+                  scenario: actionType.scenario,
+                  targetOrderIds: targetOrderIds,
+                });
+              }
 
-            await new Promise((resolve) => setTimeout(resolve, 3000));
-            toast.success('주문 상태가 변경되었습니다');
-            queryClient.invalidateQueries({ queryKey: ['orders'] });
-            setIsLoading(false);
-            onClose();
+              toast.success('주문 상태가 변경되었습니다');
+              queryClient.invalidateQueries({ queryKey: ['orders'] });
+            } catch (error) {
+              const errorMessage =
+                error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
+              toast.error(errorMessage);
+            } finally {
+              setIsLoading(false);
+              onClose();
+            }
           }}
         >
           {isLoading && <Spinner className="size-4" />}
