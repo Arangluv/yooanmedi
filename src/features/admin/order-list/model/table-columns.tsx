@@ -11,6 +11,7 @@ import { Checkbox } from '@/shared/ui/shadcn/checkbox';
 
 import FlgStatusBadge from '../ui/badge/FlgStatusBadge';
 import { OrderListItem } from './order-list-schema';
+import Link from 'next/link';
 
 export const columns: ColumnDef<OrderListItem>[] = [
   {
@@ -36,6 +37,19 @@ export const columns: ColumnDef<OrderListItem>[] = [
   {
     accessorKey: 'orderNo',
     header: '주문번호',
+    cell: ({ row }) => {
+      return (
+        <Link
+          className="hover:text-primary !hover:underline"
+          href={`/admin/collections/order/${row.original.id}`}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          {row.original.orderNo}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: 'orderUser',

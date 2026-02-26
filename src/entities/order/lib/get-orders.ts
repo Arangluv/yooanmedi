@@ -35,7 +35,7 @@ export const getOrders = async (orderStatus: OrderStatus | 'all', page: number) 
       },
       where,
       page,
-      limit: 1,
+      limit: 25,
     });
 
     return orders;

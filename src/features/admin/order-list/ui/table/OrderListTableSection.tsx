@@ -3,7 +3,6 @@
 import TableHeader from './TableHeader';
 import OrderListDataTable from './OrderListDataTable';
 import { columns } from '../../model/table-columns';
-import { OrderList } from '../../model/order-list-schema';
 import useOrderList from '../../model/useOrderList';
 
 const OrderListTableSection = () => {
