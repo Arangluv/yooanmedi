@@ -6,7 +6,15 @@ import { cancelOrderProductSchema } from '@/entities/order-product';
 import { cancelBankTransferStrategy } from '../lib/cancel-banktransfer/strategy';
 import { cancelCardPaymentStrategy } from '../lib/cancel-card-strategy';
 
-export const cancelOrderProduct = async (orderProductId: number) => {
+type CancelOrderProductParams = {
+  orderProductId: number;
+  clientSideFlg: boolean;
+};
+
+export const cancelOrderProduct = async ({
+  orderProductId,
+  clientSideFlg,
+}: CancelOrderProductParams) => {
   try {
     const payload = await getPayload();
 
@@ -32,13 +40,14 @@ export const cancelOrderProduct = async (orderProductId: number) => {
         },
       },
     });
+
     const targetOrderProduct = cancelOrderProductSchema.parse(orderProduct);
     const strategy =
       targetOrderProduct.paymentsMethod === PAYMENTS_METHOD.CREDIT_CARD
         ? cancelCardPaymentStrategy
         : cancelBankTransferStrategy;
 
-    await strategy.execute({ payload, orderProduct: targetOrderProduct });
+    await strategy.execute({ payload, orderProduct: targetOrderProduct, clientSideFlg });
     return {
       success: true,
     };

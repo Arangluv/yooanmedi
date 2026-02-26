@@ -17,6 +17,8 @@ import {
 
 import { PointUseEstimator } from '@/entities/point/lib/use/point-use-estimator';
 import { type OrderBankTransferDto } from '../model/order-banktransfer-schema';
+import { FLG_STATUS } from '@/entities/order/constants/flg-status';
+import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 
 export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
   try {
@@ -37,6 +39,8 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       user: userId,
       orderNo: shopOrderNo,
       orderStatus: ORDER_STATUS.PENDING,
+      flgStatus: FLG_STATUS.INIT_NORMAL,
+      paymentStatus: PAYMENT_STATUS.PENDING,
       orderRequest: deliveryRequest,
       finalPrice: amount,
       orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE,
@@ -64,12 +68,14 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       const createOrderProductDto: CreateOrderProductDto = {
         order: order.id,
         product: inventoryItem.product.id,
-        orderProductStatus: ORDER_PRODUCT_STATUS.ORDERED,
+        orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
         totalAmount: totalProductAmount,
         productDeliveryFee: productDeliveryFee,
         quantity: inventoryItem.quantity,
+        cashback_rate: inventoryItem.product.cashback_rate,
+        cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
       };
 
       const orderProduct = await createOrderProduct({

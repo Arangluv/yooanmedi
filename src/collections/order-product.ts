@@ -54,8 +54,20 @@ export const OrderProduct: CollectionConfig = {
       },
       options: [
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.ORDERED],
-          value: ORDER_PRODUCT_STATUS.ORDERED,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.PENDING],
+          value: ORDER_PRODUCT_STATUS.PENDING,
+        },
+        {
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.PREPARING],
+          value: ORDER_PRODUCT_STATUS.PREPARING,
+        },
+        {
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.SHIPPING],
+          value: ORDER_PRODUCT_STATUS.SHIPPING,
+        },
+        {
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.DELIVERED],
+          value: ORDER_PRODUCT_STATUS.DELIVERED,
         },
         {
           label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.CANCEL_REQUEST],
@@ -75,6 +87,7 @@ export const OrderProduct: CollectionConfig = {
         disableBulkEdit: true,
         readOnly: true,
       },
+      required: true,
     },
     {
       name: 'priceSnapshot',
@@ -150,6 +163,44 @@ export const OrderProduct: CollectionConfig = {
         }
         if (value < 1) {
           return '수량은 1 이상이어야 합니다.';
+        }
+        return true;
+      },
+    },
+    {
+      name: 'cashback_rate',
+      type: 'number',
+      label: '카드 적립금 비율',
+      required: true,
+      admin: {
+        disableBulkEdit: true,
+        readOnly: true,
+      },
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return '카드 적립금 비율을 입력해주세요';
+        }
+        if (value < 0) {
+          return '카드 적립금 비율은 0 이상이어야 합니다.';
+        }
+        return true;
+      },
+    },
+    {
+      name: 'cashback_rate_for_bank',
+      type: 'number',
+      label: '무통장 입금 적립금 비율',
+      required: true,
+      admin: {
+        disableBulkEdit: true,
+        readOnly: true,
+      },
+      validate: (value: number | null | undefined) => {
+        if (value === null || value === undefined) {
+          return '무통장 입금 적립금 비율을 입력해주세요';
+        }
+        if (value < 0) {
+          return '무통장 입금 적립금 비율은 0 이상이어야 합니다.';
         }
         return true;
       },

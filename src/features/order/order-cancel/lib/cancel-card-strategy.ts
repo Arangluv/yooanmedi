@@ -12,6 +12,7 @@ import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 type CancelCardPaymentStrategyParams = {
   payload: BasePayload;
   orderProduct: CancelOrderProduct;
+  clientSideFlg: boolean;
 };
 
 export const cancelCardPaymentStrategy = {

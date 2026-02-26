@@ -6,6 +6,8 @@ import { default as default_673c7e47019e6bb6267348408d8ac86c } from '@/collectio
 import { default as default_3ff702871335ccd8d9267c18cfef4ccb } from '@/collections/components/common/UserListViewSetDialog'
 import { default as default_97a89a2354d8899aef171a5f425d689f } from '@/collections/components/common/cells/BestProductCell'
 import { default as default_f36f12dd4d6ebd30112d75266a5c524f } from '@collections/components/product/ProductListBulkUploadBtn'
+import { default as default_3650fc6fd593cbc190c171def65a4851 } from '@/features/order/admin/ui/CollectionView'
+import { default as default_adf9059d316f1b42abbd2352126e7ec4 } from '@/features/admin/order-list/ui/ListView'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -37,6 +39,8 @@ import { default as default_aef67b4deff124b3ff804f69e784ddcb } from '@/shared/ui
 import { HomeIcon as HomeIcon_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
 import { BrandLogoSmall as BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
 import { default as default_0cb5b8c223db30118049548a6d9feb72 } from '@/shared/ui/admin/sidebar/sidebar-provider'
+import { default as default_67cd43dc2ce7b608e28b2da50527c106 } from '@/shared/ui/admin/toast/toast-provider'
+import { default as default_eef19a8d1ea2713d577d6c096fc25519 } from '@/shared/model/admin/nuqs-provider'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { default as default_e6814a5f635b63fec039d334c0b6b274 } from '@/shared/ui/admin/DashBoard'
 
@@ -49,6 +53,8 @@ export const importMap = {
   "@/collections/components/common/UserListViewSetDialog#default": default_3ff702871335ccd8d9267c18cfef4ccb,
   "@/collections/components/common/cells/BestProductCell#default": default_97a89a2354d8899aef171a5f425d689f,
   "@collections/components/product/ProductListBulkUploadBtn#default": default_f36f12dd4d6ebd30112d75266a5c524f,
+  "@/features/order/admin/ui/CollectionView#default": default_3650fc6fd593cbc190c171def65a4851,
+  "@/features/admin/order-list/ui/ListView#default": default_adf9059d316f1b42abbd2352126e7ec4,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -80,6 +86,8 @@ export const importMap = {
   "@/shared/ui/logos#HomeIcon": HomeIcon_c4ed48037aede40cf46fe21deda1067f,
   "@/shared/ui/logos#BrandLogoSmall": BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f,
   "@/shared/ui/admin/sidebar/sidebar-provider#default": default_0cb5b8c223db30118049548a6d9feb72,
+  "@/shared/ui/admin/toast/toast-provider#default": default_67cd43dc2ce7b608e28b2da50527c106,
+  "@/shared/model/admin/nuqs-provider#default": default_eef19a8d1ea2713d577d6c096fc25519,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@/shared/ui/admin/DashBoard#default": default_e6814a5f635b63fec039d334c0b6b274
 }

@@ -47,7 +47,11 @@ export default buildConfig({
         Icon: '@/shared/ui/logos#HomeIcon',
         Logo: '@/shared/ui/logos#BrandLogoSmall',
       },
-      providers: ['@/shared/ui/admin/sidebar/sidebar-provider'],
+      providers: [
+        '@/shared/ui/admin/sidebar/sidebar-provider',
+        '@/shared/ui/admin/toast/toast-provider',
+        '@/shared/model/admin/nuqs-provider',
+      ],
     },
   },
   collections: [

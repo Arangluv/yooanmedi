@@ -306,7 +306,9 @@ export interface Order {
     totalDocs?: number;
   };
   paymentsMethod: 'creditCard' | 'bankTransfer';
-  orderStatus: 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'pending';
+  orderStatus: 'pending' | 'preparing' | 'shipping' | 'delivered' | 'cancel_request' | 'cancelled';
+  flgStatus: 'INIT_NORMAL' | 'NEED_PROCESS' | 'COMPLETE';
+  paymentStatus: 'PENDING' | 'COMPLETE' | 'PARTIAL_CANCEL' | 'TOTAL_CANCEL';
   orderDeliveryFee?: number | null;
   orderRequest?: string | null;
   orderNo: string;
@@ -323,12 +325,14 @@ export interface OrderProduct {
   id: number;
   product: number | Product;
   order: number | Order;
-  orderProductStatus: 'ordered' | 'cancel_request' | 'cancelled';
-  productNameSnapshot?: string | null;
+  orderProductStatus: 'pending' | 'preparing' | 'shipping' | 'delivered' | 'cancel_request' | 'cancelled';
+  productNameSnapshot: string;
   priceSnapshot: number;
   totalAmount: number;
   productDeliveryFee: number;
   quantity: number;
+  cashback_rate: number;
+  cashback_rate_for_bank: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -603,6 +607,8 @@ export interface OrderSelect<T extends boolean = true> {
   orderProducts?: T;
   paymentsMethod?: T;
   orderStatus?: T;
+  flgStatus?: T;
+  paymentStatus?: T;
   orderDeliveryFee?: T;
   orderRequest?: T;
   orderNo?: T;
@@ -624,6 +630,8 @@ export interface OrderProductSelect<T extends boolean = true> {
   totalAmount?: T;
   productDeliveryFee?: T;
   quantity?: T;
+  cashback_rate?: T;
+  cashback_rate_for_bank?: T;
   updatedAt?: T;
   createdAt?: T;
 }

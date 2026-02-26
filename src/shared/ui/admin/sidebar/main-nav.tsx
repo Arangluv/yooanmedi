@@ -13,6 +13,7 @@ import {
   Settings,
   ReceiptText,
   Folder,
+  Bug,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -23,7 +24,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarMenuAction,
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
@@ -128,17 +128,43 @@ const data = [
         submenu: [
           {
             label: '이미지',
-            href: `${GLOBAL_BASE_URL}/terms?breadcrumbs=이미지`,
+            href: `${COLLECTION_BASE_URL}/image?breadcrumbs=이미지`,
           },
           {
             label: '파일',
-            href: `${GLOBAL_BASE_URL}/privacy-policy?breadcrumbs=파일`,
+            href: `${COLLECTION_BASE_URL}/files?breadcrumbs=파일`,
           },
         ],
       },
     ],
   },
 ];
+
+const onlyDevMenu = {
+  groupLabel: '개발',
+  menu: [
+    {
+      label: '주문상품 리스트',
+      icon: Bug,
+      href: `${COLLECTION_BASE_URL}/order-product?breadcrumbs=주문상품 리스트`,
+    },
+    {
+      label: '결제내역',
+      icon: Bug,
+      href: `${COLLECTION_BASE_URL}/payment?breadcrumbs=결제내역`,
+    },
+    {
+      label: '적립금 내역',
+      icon: Bug,
+      href: `${COLLECTION_BASE_URL}/point-transaction?breadcrumbs=적립금 내역`,
+    },
+    {
+      label: '최근 구매 내역',
+      icon: Bug,
+      href: `${COLLECTION_BASE_URL}/recent-purchased-history?breadcrumbs=최근 구매 내역`,
+    },
+  ],
+};
 
 const MainNav = () => {
   return (
@@ -170,6 +196,23 @@ const MainNav = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       ))}
+      {process.env.NODE_ENV === 'development' && (
+        <SidebarGroup>
+          <SidebarGroupLabel>{onlyDevMenu.groupLabel}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {onlyDevMenu.menu.map((menu) => (
+                <SigleMenuItem
+                  key={menu.label}
+                  label={menu.label}
+                  Icon={menu.icon}
+                  href={menu.href}
+                />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      )}
     </Fragment>
   );
 };

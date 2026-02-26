@@ -7,15 +7,17 @@ import { bankTransferScenarioActions } from './actions';
 export type CancelBankTransferStrategyParams = {
   payload: BasePayload;
   orderProduct: CancelOrderProduct;
+  clientSideFlg: boolean;
 };
 
 export const cancelBankTransferStrategy = {
-  execute: async ({ payload, orderProduct }: CancelBankTransferStrategyParams) => {
+  execute: async ({ payload, orderProduct, clientSideFlg }: CancelBankTransferStrategyParams) => {
     try {
       validateCancellableOrderProduct(orderProduct);
 
-      const scenario = bankTransferScenarioResolver(orderProduct);
-      await bankTransferScenarioActions[scenario]({ payload, orderProduct });
+      const scenario = bankTransferScenarioResolver(orderProduct, clientSideFlg);
+
+      await bankTransferScenarioActions[scenario]({ payload, orderProduct, clientSideFlg });
     } catch (error) {
       throw error;
     }

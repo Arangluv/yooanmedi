@@ -2,6 +2,8 @@ import { CollectionConfig } from 'payload';
 
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { FLG_STATUS, FLG_STATUS_NAME } from '@/entities/order/constants/flg-status';
+import { PAYMENT_STATUS, PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
 
 export const Order: CollectionConfig = {
   slug: 'order',
@@ -11,14 +13,29 @@ export const Order: CollectionConfig = {
   },
   admin: {
     group: '주문 관리',
+    useAsTitle: 'orderNo',
     defaultColumns: [
-      'user',
-      'paymentsMethod',
-      'orderStatus',
-      'orderRequest',
       'orderNo',
+      'user',
+      'orderStatus',
+      'paymentStatus',
+      'createdAt',
+      'flgStatus',
       'finalPrice',
+      'paymentsMethod',
     ],
+    components: {
+      views: {
+        edit: {
+          default: {
+            Component: '@/features/order/admin/ui/CollectionView',
+          },
+        },
+        list: {
+          Component: '@/features/admin/order-list/ui/ListView',
+        },
+      },
+    },
   },
   access: {
     create: () => false,
@@ -74,6 +91,10 @@ export const Order: CollectionConfig = {
       },
       options: [
         {
+          label: ORDER_STATUS_NAME[ORDER_STATUS.PENDING],
+          value: ORDER_STATUS.PENDING,
+        },
+        {
           label: ORDER_STATUS_NAME[ORDER_STATUS.PREPARING],
           value: ORDER_STATUS.PREPARING,
         },
@@ -86,15 +107,59 @@ export const Order: CollectionConfig = {
           value: ORDER_STATUS.DELIVERED,
         },
         {
+          label: ORDER_STATUS_NAME[ORDER_STATUS.CANCEL_REQUEST],
+          value: ORDER_STATUS.CANCEL_REQUEST,
+        },
+        {
           label: ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED],
           value: ORDER_STATUS.CANCELLED,
         },
-        {
-          label: ORDER_STATUS_NAME[ORDER_STATUS.PENDING],
-          value: ORDER_STATUS.PENDING,
-        },
       ],
       defaultValue: ORDER_STATUS.PENDING,
+    },
+    {
+      name: 'flgStatus',
+      label: '처리상태',
+      type: 'select',
+      required: true,
+      options: [
+        {
+          label: FLG_STATUS_NAME[FLG_STATUS.INIT_NORMAL],
+          value: FLG_STATUS.INIT_NORMAL,
+        },
+        {
+          label: FLG_STATUS_NAME[FLG_STATUS.NEED_PROCESS],
+          value: FLG_STATUS.NEED_PROCESS,
+        },
+        {
+          label: FLG_STATUS_NAME[FLG_STATUS.COMPLETE],
+          value: FLG_STATUS.COMPLETE,
+        },
+      ],
+    },
+    {
+      name: 'paymentStatus',
+      label: '결제상태',
+      type: 'select',
+      required: true,
+      options: [
+        {
+          label: PAYMENT_STATUS_NAME[PAYMENT_STATUS.PENDING],
+          value: PAYMENT_STATUS.PENDING,
+        },
+        {
+          label: PAYMENT_STATUS_NAME[PAYMENT_STATUS.COMPLETE],
+          value: PAYMENT_STATUS.COMPLETE,
+        },
+        {
+          label: PAYMENT_STATUS_NAME[PAYMENT_STATUS.PARTIAL_CANCEL],
+          value: PAYMENT_STATUS.PARTIAL_CANCEL,
+        },
+        {
+          label: PAYMENT_STATUS_NAME[PAYMENT_STATUS.TOTAL_CANCEL],
+          value: PAYMENT_STATUS.TOTAL_CANCEL,
+        },
+      ],
     },
     {
       name: 'orderDeliveryFee',
