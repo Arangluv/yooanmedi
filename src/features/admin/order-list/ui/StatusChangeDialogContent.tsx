@@ -18,11 +18,14 @@ import { useOrderListDialog } from '../model/dialog-providers';
 import { useQueryClient } from '@tanstack/react-query';
 import { updateStrategy } from '../lib/update/strategy';
 import { cancelStrategy } from '../lib/cancel/strategy';
+import { OnlyPaidOrderCancelOrderActionType } from '../model/types';
+import useOrderListSearch from '../model/useOrderListSearch';
 
 const StatusChangeDialogContent = () => {
   const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState(false);
+  const { filters } = useOrderListSearch();
   const { content, onClose, actionType, targetOrderIds } = useOrderListDialog();
 
   if (!actionType) {
@@ -51,9 +54,16 @@ const StatusChangeDialogContent = () => {
                   targetOrderIds: targetOrderIds,
                 });
               } else {
+                console.log('여기가 실행됨');
+                console.log('그때의 actionType');
+                console.log(actionType);
+                console.log('그때의 주문 상태');
+                console.log(filters.orderStatus);
+
                 await cancelStrategy.execute({
                   scenario: actionType.scenario,
                   targetOrderIds: targetOrderIds,
+                  currentOrderStatus: filters.orderStatus as OnlyPaidOrderCancelOrderActionType,
                 });
               }
 

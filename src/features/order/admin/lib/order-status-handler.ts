@@ -5,6 +5,7 @@ import { getPayload } from '@/shared/lib/get-payload';
 import {
   beforePaymentToCancelledHandler,
   cancelRequestToCancelledHandler,
+  paidOrderToCancelledHandler,
   statusToPreparingHandler as statusToPreparingOrderProductHandler,
   updateOrderProductStatusHandler,
 } from '@/entities/order-product/lib/status-handler';
@@ -179,13 +180,7 @@ export const cancelRequestToCancelled = async ({
   };
 };
 
-export const beforePaymentToCancelled = async ({
-  orderProductIds,
-  userId,
-}: {
-  orderProductIds: number[];
-  userId: number;
-}) => {
+export const beforePaymentToCancelled = async (orderProductIds: number[]) => {
   try {
     for (const orderProductId of orderProductIds) {
       const validateResult = await beforePaymentToCancelledHandler.validate(orderProductId);
@@ -212,15 +207,21 @@ export const beforePaymentToCancelled = async ({
   }
 };
 
-export const paidOrderToCancelled = async ({
-  orderProductIds,
-  userId,
-}: {
-  orderProductIds: number[];
-  userId: number;
-}) => {
+export const paidOrderToCancelled = async ({ orderProductIds }: { orderProductIds: number[] }) => {
   for (const orderProductId of orderProductIds) {
+    const validateResult = await paidOrderToCancelledHandler.validate(orderProductId);
+    if (!validateResult.success) {
+      return {
+        success: false,
+        message: validateResult.message,
+      };
+    }
+
+    await paidOrderToCancelledHandler.changeStatusToCancelled({
+      orderProductId,
+    });
   }
+
   return {
     success: true,
   };
