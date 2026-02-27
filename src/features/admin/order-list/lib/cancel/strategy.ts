@@ -13,8 +13,6 @@ export const cancelStrategy = {
     currentOrderStatus: OnlyPaidOrderCancelOrderActionType;
   }) => {
     if (scenario === CANCEL_SCENARIO.PAID_ORDER_TO_CANCELLED) {
-      console.log('시나리오를 탑니다');
-      
       await cancelAction[scenario]({ targetOrderIds, orderStatus: currentOrderStatus });
       return;
     }

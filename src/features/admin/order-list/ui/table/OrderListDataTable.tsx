@@ -68,8 +68,8 @@ const OrderListDataTable = <TData, TValue>({
   }, [filters.orderStatus]);
 
   return (
-    <div className="overflow-hidden">
-      <ScrollArea className="h-[500px]">
+    <div className="flex h-full flex-col overflow-hidden">
+      <ScrollArea className="min-h-0 flex-1">
         <Table className="text-base">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -111,7 +111,7 @@ const OrderListDataTable = <TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="text-center">
                   <TableEmpty />
                 </TableCell>
               </TableRow>
@@ -119,7 +119,6 @@ const OrderListDataTable = <TData, TValue>({
           </TableBody>
         </Table>
       </ScrollArea>
-
       <TablePagination totalPages={totalPages} />
       <FloatActionBox selectedRows={rowSelection} />
     </div>
