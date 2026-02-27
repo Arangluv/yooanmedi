@@ -54,12 +54,6 @@ const StatusChangeDialogContent = () => {
                   targetOrderIds: targetOrderIds,
                 });
               } else {
-                console.log('여기가 실행됨');
-                console.log('그때의 actionType');
-                console.log(actionType);
-                console.log('그때의 주문 상태');
-                console.log(filters.orderStatus);
-
                 await cancelStrategy.execute({
                   scenario: actionType.scenario,
                   targetOrderIds: targetOrderIds,

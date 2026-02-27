@@ -7,12 +7,12 @@ import useOrderListSearch from '../../model/useOrderListSearch';
 const TablePagination = ({ totalPages }: { totalPages: number }) => {
   const { filters, updatePage } = useOrderListSearch();
 
-  // if (totalPages === 1) {
-  //   return null;
-  // }
+  if (totalPages === 1) {
+    return null;
+  }
 
   return (
-    <Pagination className="mt-8">
+    <Pagination className="mt-8 shrink-0">
       <PaginationContent>
         {Array.from({ length: totalPages }).map((_, index) => (
           <PaginationItem key={index}>

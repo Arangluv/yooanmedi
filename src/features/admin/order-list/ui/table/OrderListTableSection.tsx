@@ -9,7 +9,7 @@ const OrderListTableSection = () => {
   const { items, totalCount, totalPages } = useOrderList();
 
   return (
-    <div className="bg-background flex flex-col gap-8 rounded-lg p-4">
+    <div className="bg-background flex min-h-0 flex-1 flex-col gap-8 rounded-lg p-4">
       <TableHeader totalCount={totalCount} />
       <OrderListDataTable columns={columns} data={items} totalPages={totalPages} />
     </div>
