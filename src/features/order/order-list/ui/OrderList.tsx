@@ -1,35 +1,31 @@
 'use client';
 
+import { useState } from 'react';
+import Image from 'next/image';
 import { Divider } from '@heroui/react';
 import { ImageIcon, Info } from 'lucide-react';
 import moment from 'moment';
 import { toast } from 'sonner';
+import { useMutation } from '@tanstack/react-query';
 
+import { cancelOrderProduct } from '@/features/order';
 import { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/entities/order';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
-import { ExcelExportButton, formatNumberWithCommas, isPayloadImageRenderable } from '@/shared';
+import { useAuthStore } from '@/entities/user';
+import { formatNumberWithCommas, isPayloadImageRenderable } from '@/shared';
 import { Button } from '@/shared';
 
 import OrderListEmpty from './OrderListEmpty';
 import type { OrderListItem, OrderProductItem } from '../lib/normalization';
-import Image from 'next/image';
-
-import { useMutation } from '@tanstack/react-query';
-import { cancelOrderProduct } from '@/features/order';
-import { useState } from 'react';
-import { useAuthStore } from '@/entities/user';
+import ExcelExportButton from './ExcelExportButton';
 
 const OrderList = ({ orderList }: { orderList: OrderListItem[] }) => {
   return (
     <div className="flex w-full flex-col gap-4">
       <div className="flex items-center justify-between">
         <span className="text-xl font-bold">주문목록</span>
-        <ExcelExportButton
-          onClick={() => {
-            console.log('엑셀 다운로드');
-          }}
-        />
+        <ExcelExportButton data={orderList} />
       </div>
       <div className="flex w-full flex-col gap-4">
         {orderList.length > 0 ? (
