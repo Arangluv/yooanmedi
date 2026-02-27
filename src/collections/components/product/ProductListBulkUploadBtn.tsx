@@ -6,7 +6,6 @@ import * as xlsx from 'xlsx';
 import { registerProduct } from '@collections/actions';
 import { useMutation } from '@tanstack/react-query';
 import Loading from '../common/Loading';
-import ProductAllDeleteBtn from './ProductAllDeleteBtn';
 import { useRouter } from 'next/navigation';
 
 export default function ProductListBulkUploadBtn() {
@@ -20,7 +19,6 @@ export default function ProductListBulkUploadBtn() {
       >
         엑셀 대량 업로드
       </button>
-      <ProductAllDeleteBtn />
       <ExcelUploadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

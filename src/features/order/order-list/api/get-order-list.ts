@@ -22,6 +22,7 @@ type OrderProductType = {
   id: number;
   image: Image;
   manufacturer: string;
+  insurance_code: string | null;
 };
 
 export type OrderListItemBeforeNormalize = Pick<
@@ -105,6 +106,7 @@ export const getOrderList = async (
         },
         product: {
           manufacturer: true,
+          insurance_code: true,
           image: true,
         },
       },
