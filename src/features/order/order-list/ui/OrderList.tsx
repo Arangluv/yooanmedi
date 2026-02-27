@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { cancelOrderProduct } from '@/features/order';
 import { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/entities/order';
-import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order';
+import { ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
 import { useAuthStore } from '@/entities/user';
 import { formatNumberWithCommas, isPayloadImageRenderable } from '@/shared';
