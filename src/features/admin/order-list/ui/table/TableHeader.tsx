@@ -12,6 +12,7 @@ import {
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/shared/ui/shadcn/tooltip';
 
 import useOrderListSearch from '../../model/useOrderListSearch';
+import { ExportExcel } from '../../lib/excel-export';
 
 const TableHeader = ({ totalCount }: { totalCount: number }) => {
   return (
@@ -74,7 +75,7 @@ const ExcelExportButton = () => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button variant="ghost" size="icon-lg">
+        <Button variant="ghost" size="icon-lg" onClick={async () => await ExportExcel()}>
           <Sheet className="text-muted-foreground !h-5 !w-5" />
         </Button>
       </TooltipTrigger>
