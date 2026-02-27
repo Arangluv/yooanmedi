@@ -13,6 +13,7 @@ export type OrderProductItem = Pick<
   orderProductStatus: (typeof ORDER_PRODUCT_STATUS)[keyof typeof ORDER_PRODUCT_STATUS];
   product: {
     manufacturer: string;
+    insurance_code: string;
     image: Image;
   };
 };
@@ -37,6 +38,7 @@ export const normalizeOrder = (order: OrderListItemBeforeNormalize): OrderListIt
           id: orderProduct.product.id,
           manufacturer: orderProduct.product.manufacturer,
           image: orderProduct.product.image,
+          insurance_code: orderProduct.product.insurance_code ?? '',
         },
         orderProductStatus: orderProduct.orderProductStatus,
         productNameSnapshot: orderProduct.productNameSnapshot,
