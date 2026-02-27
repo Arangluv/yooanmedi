@@ -3,6 +3,7 @@ import { ORDER_PRODUCT_STATUS, OrderProductStatus } from '../constants/order-pro
 import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-transaction'; // TODO:: 이 부분 참조 잘못됨 -> 개선필요
 import { getPayload } from '@/shared/lib/get-payload';
 import { createCancelEarnPointTransaction } from '@/entities/point/lib/cancel-earn/create-transaction';
+import { cancelOrderProduct } from '@/features/order/order-cancel/api/cancel-order-product';
 
 type OrderProductStatusHandlerParams = {
   orderProductId: number;
@@ -85,6 +86,13 @@ export const beforePaymentToCancelledHandler = {
       },
     });
 
+    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED) {
+      return {
+        success: false,
+        message: '이미 주문취소 된 상품입니다',
+      };
+    }
+
     if (orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.PENDING) {
       return {
         success: false,
@@ -107,6 +115,35 @@ export const beforePaymentToCancelledHandler = {
         orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
       },
     });
+  },
+};
+
+export const paidOrderToCancelledHandler = {
+  validate: async (orderProductId: number) => {
+    const payload = await getPayload();
+
+    const orderProduct = await payload.findByID({
+      collection: 'order-product',
+      id: orderProductId,
+      select: {
+        orderProductStatus: true,
+      },
+    });
+
+    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED) {
+      return {
+        success: false,
+        message: '이미 주문취소 된 상품입니다',
+      };
+    }
+
+    return {
+      success: true,
+    };
+  },
+
+  changeStatusToCancelled: async ({ orderProductId }: { orderProductId: number }) => {
+    await cancelOrderProduct({ orderProductId, clientSideFlg: false });
   },
 };
 

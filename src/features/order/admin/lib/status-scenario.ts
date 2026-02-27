@@ -10,6 +10,7 @@ import {
   checkAllOrderProductCancelled,
   findInProgressOrderProduct,
   beforePaymentToCancelled,
+  paidOrderToCancelled,
 } from './order-status-handler';
 import { validateBeforeAction } from './validate';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
@@ -130,6 +131,7 @@ export const statusUpdateScenario = {
       paymentStatus: PAYMENT_STATUS.COMPLETE,
     });
   },
+
   [STATUS_SCENARIO.SHIPPING_TO_DELIVERED]: async ({
     orderId,
     orderStatus,
@@ -163,7 +165,9 @@ export const statusUpdateScenario = {
       paymentStatus: PAYMENT_STATUS.COMPLETE, // todo:: Paymentstatus를 넘겨줄 필요가 있을까? 해당 시점에서는 반드시 complete다
     });
   },
+};
 
+export const cancelScenario = {
   [STATUS_SCENARIO.CANCEL_REQUEST_TO_CANCELLED]: async ({
     orderId,
     orderStatus,
@@ -219,8 +223,30 @@ export const statusUpdateScenario = {
     orderId: number;
     orderStatus: OrderStatus;
   }) => {
-    // const { orderProductIds, userId } = await getChangeOrderStatusContext(orderId, orderStatus);
-    // TODO :: validate를 뺐다.  beforeActionValidate는 update status에서만 유효하다 -> 개선 필요
+    const orderProductIds = await getTargetOrderProductIds(orderId, orderStatus);
+
+    const paidOrderToCancelledResult = await paidOrderToCancelled({ orderProductIds });
+    if (!paidOrderToCancelledResult.success) {
+      throw new Error(paidOrderToCancelledResult.message);
+    }
+
+    const isAllOrderProductCancelled = await checkAllOrderProductCancelled(orderId);
+    if (isAllOrderProductCancelled) {
+      await updateOrderStatus({
+        orderId,
+        orderStatus: ORDER_STATUS.CANCELLED,
+        flgStatus: FLG_STATUS.COMPLETE,
+        paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
+      });
+    } else {
+      const inProgressOrderProductStatus = await findInProgressOrderProduct(orderId);
+      await updateOrderStatus({
+        orderId,
+        flgStatus: FLG_STATUS.COMPLETE,
+        orderStatus: inProgressOrderProductStatus as OrderStatus,
+        paymentStatus: PAYMENT_STATUS.PARTIAL_CANCEL,
+      });
+    }
   },
   [STATUS_SCENARIO.BEFORE_PAYMENT_TO_CANCELLED]: async ({
     orderId,
@@ -229,13 +255,9 @@ export const statusUpdateScenario = {
     orderId: number;
     orderStatus: OrderStatus;
   }) => {
-    const userId = await getOrderUserId(orderId);
     const orderProductIds = await getTargetOrderProductIds(orderId, orderStatus);
 
-    const beforePaymentToCancelledResult = await beforePaymentToCancelled({
-      orderProductIds,
-      userId,
-    });
+    const beforePaymentToCancelledResult = await beforePaymentToCancelled(orderProductIds);
 
     if (!beforePaymentToCancelledResult.success) {
       throw new Error(beforePaymentToCancelledResult.message);

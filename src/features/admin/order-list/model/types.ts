@@ -11,3 +11,8 @@ export type CancelOrderActionType =
   | typeof ORDER_STATUS.SHIPPING
   | typeof ORDER_STATUS.DELIVERED
   | typeof ORDER_STATUS.CANCEL_REQUEST;
+
+export type OnlyPaidOrderCancelOrderActionType =
+  | typeof ORDER_STATUS.PREPARING
+  | typeof ORDER_STATUS.SHIPPING
+  | typeof ORDER_STATUS.DELIVERED;
