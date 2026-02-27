@@ -11,7 +11,7 @@ const OrderStatusTab = () => {
   const { filters, updateOrderStatus } = useOrderListSearch();
 
   return (
-    <div className="bg-background w-full rounded-lg p-4">
+    <div className="bg-background flex w-full items-center justify-between rounded-lg p-4">
       <Tabs value={filters.orderStatus ?? 'all'}>
         <TabsList variant="line">
           <TabsTrigger value="all" className="text-base" onClick={() => updateOrderStatus('all')}>
@@ -30,7 +30,7 @@ const OrderStatusTab = () => {
         </TabsList>
       </Tabs>
       {process.env.NODE_ENV === 'development' && (
-        <Button className="bg-muted rounded-xl px-4 py-6" onClick={deleteAllOrder}>
+        <Button className="rounded-xl px-4 py-6" onClick={deleteAllOrder}>
           주문 삭제
         </Button>
       )}
