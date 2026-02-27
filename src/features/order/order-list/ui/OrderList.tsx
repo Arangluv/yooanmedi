@@ -114,7 +114,11 @@ const OrderProductItem = ({ orderProduct }: { orderProduct: OrderProductItem }) 
     onSuccess: (data) => {
       if (data?.success) {
         setOptimisticUpdateFlg(true);
-        toast.success('주문이 취소되었습니다');
+        const successMessage =
+          orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED
+            ? '주문이 취소되었습니다'
+            : '주문 취소 요청이 완료되었습니다';
+        toast.success(successMessage);
         refreshUser();
       } else {
         toast.error(data?.message || '주문 취소에 실패했습니다');
@@ -183,7 +187,13 @@ const OrderProductItem = ({ orderProduct }: { orderProduct: OrderProductItem }) 
               orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCEL_REQUEST ||
               optimisticUpdateFlg
             }
-            onClick={() => cancelOrderMutation({ orderProductId: orderProduct.id })}
+            onClick={() => {
+              const isConfirmed = confirm('주문을 취소하시겠습니까?');
+
+              if (isConfirmed) {
+                cancelOrderMutation({ orderProductId: orderProduct.id });
+              }
+            }}
           >
             주문취소
           </Button>
