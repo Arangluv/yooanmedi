@@ -1,10 +1,11 @@
 'use client';
 
-import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/shadcn/tabs';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
-import useOrderListSearch from '../model/useOrderListSearch';
-import { deleteAllOrder } from '../lib/test';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/shadcn/tabs';
 import { Button } from '@/shared';
+
+import useOrderListSearch from '../model/useOrderListSearch';
+import { deleteAllOrder } from '../lib/dev-delete';
 
 const OrderStatusTab = () => {
   const { filters, updateOrderStatus } = useOrderListSearch();
@@ -28,9 +29,11 @@ const OrderStatusTab = () => {
           ))}
         </TabsList>
       </Tabs>
-      <Button className="bg-muted rounded-xl px-4 py-6" onClick={deleteAllOrder}>
-        주문 삭제
-      </Button>
+      {process.env.NODE_ENV === 'development' && (
+        <Button className="bg-muted rounded-xl px-4 py-6" onClick={deleteAllOrder}>
+          주문 삭제
+        </Button>
+      )}
     </div>
   );
 };
