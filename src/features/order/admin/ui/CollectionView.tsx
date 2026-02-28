@@ -5,6 +5,7 @@ import { OrderCollectionProvider } from '../model/order-provider';
 import OrderAlertDialogContent from './OrderAlertDialogContent';
 import { OrderCancelledInfo, OrderCancelRequestInfo, OrderProgressInfo } from './order-info';
 import AlertDialogProvider from '../model/dialog-provider';
+import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface CollectionDocumentViewProps {
   doc: {
@@ -15,7 +16,7 @@ interface CollectionDocumentViewProps {
 const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
   return (
     <OrderCollectionProvider orderId={doc.id}>
-      <AlertDialogProvider>
+      <OrderAction>
         <div className="bg-muted dark:bg-background h-full w-full px-[60px] py-[30px]">
           <div className="flex gap-12">
             <section className="flex w-[70%] flex-col gap-6">
@@ -33,9 +34,9 @@ const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
               <DeliveryInfo />
             </section>
           </div>
-          <OrderAlertDialogContent />
+          {/* <OrderAlertDialogContent /> */}
         </div>
-      </AlertDialogProvider>
+      </OrderAction>
     </OrderCollectionProvider>
   );
 };
