@@ -4,7 +4,6 @@ import { Fragment } from 'react';
 import moment from 'moment';
 import { toast } from 'sonner';
 
-import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import {
   Card,
   CardHeader,
@@ -23,6 +22,7 @@ import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 import OrderProductItem from './OrderProductItem';
 import ProgressOrderActionButton from './ProgressOrderActionButton';
 import { useOrderAlertDialog } from '../model/dialog-provider';
+import { OrderAction } from '../model/order-action-dialog-provider';
 
 export const OrderProgressInfo = ({ title }: { title: string }) => {
   const { orderInfo } = useOrderCollection();
@@ -73,12 +73,24 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
       {isEmpty ? null : (
         <CardFooter className="justify-end">
           {orderInfo?.progressOrder?.orderStatus && (
-            <AlertDialogTrigger asChild>
-              <ProgressOrderActionButton
-                orderStatus={orderInfo.progressOrder.orderStatus}
-                orderId={orderInfo.progressOrder.id}
+            <Fragment>
+              <OrderAction.ProceedTrigger
+                display={{
+                  count: orderInfo.progressOrder.orderProducts.length,
+                  viewType: 'order-detail',
+                }}
+                targetOrderIds={[orderInfo.progressOrder.id]}
+                currentStatus={orderInfo.progressOrder.orderStatus}
               />
-            </AlertDialogTrigger>
+              <OrderAction.ProceedContent />
+            </Fragment>
+
+            // <AlertDialogTrigger asChild>
+            //   <ProgressOrderActionButton
+            //     orderStatus={orderInfo.progressOrder.orderStatus}
+            //     orderId={orderInfo.progressOrder.id}
+            //   />
+            // </AlertDialogTrigger>
           )}
         </CardFooter>
       )}
@@ -88,7 +100,7 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
 
 export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
   const { orderInfo, paymentInfo } = useOrderCollection();
-  const { setContent, setTargetOrder } = useOrderAlertDialog();
+  // const { setContent, setTargetOrder } = useOrderAlertDialog();
 
   if (paymentInfo?.paymentMethod === PAYMENTS_METHOD.CREDIT_CARD) {
     return null;
@@ -139,7 +151,18 @@ export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
       </CardContent>
       {isEmpty ? null : (
         <CardFooter className="justify-end">
-          <AlertDialogTrigger asChild>
+          <Fragment>
+            <OrderAction.CancelTrigger
+              display={{
+                count: orderInfo?.cancelRequestOrder?.orderProducts.length ?? 0,
+                viewType: 'order-detail',
+              }}
+              targetOrderIds={[orderInfo?.cancelRequestOrder?.id ?? 0]}
+              currentStatus={ORDER_STATUS.CANCEL_REQUEST}
+            />
+            <OrderAction.CancelContent />
+          </Fragment>
+          {/* <AlertDialogTrigger asChild>
             <Button
               className="text-lg font-normal"
               variant="destructive"
@@ -162,7 +185,7 @@ export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
             >
               주문취소 처리
             </Button>
-          </AlertDialogTrigger>
+          </AlertDialogTrigger> */}
         </CardFooter>
       )}
     </Card>
