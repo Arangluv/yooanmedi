@@ -3,6 +3,6 @@ export const ORDER_ACTION = {
   CANCEL_BEFORE_PAYMENT: 'CANCEL_BEFORE_PAYMENT',
   CANCEL_AFTER_PAYMENT: 'CANCEL_AFTER_PAYMENT',
   CANCEL_REQUEST: 'CANCEL_REQUEST',
-};
+} as const;
 
 export type OrderAction = (typeof ORDER_ACTION)[keyof typeof ORDER_ACTION];

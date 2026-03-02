@@ -2,9 +2,7 @@ import PaymentInfo from './PaymentInfo';
 import OrderUserInfo from './OrderUserInfo';
 import DeliveryInfo from './DeliveryInfo';
 import { OrderCollectionProvider } from '../model/order-provider';
-import OrderAlertDialogContent from './OrderAlertDialogContent';
 import { OrderCancelledInfo, OrderCancelRequestInfo, OrderProgressInfo } from './order-info';
-import AlertDialogProvider from '../model/dialog-provider';
 import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface CollectionDocumentViewProps {
@@ -34,7 +32,6 @@ const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
               <DeliveryInfo />
             </section>
           </div>
-          {/* <OrderAlertDialogContent /> */}
         </div>
       </OrderAction>
     </OrderCollectionProvider>
