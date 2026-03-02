@@ -1,6 +1,9 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
+import { toast } from 'sonner';
+
+import useProceedActionExecute from '@/features/order/order-proceed/model/useProceedActionExecute'; // todo: 잘못된 참조방식
 import {
   ActionUiConfig,
   CANCEL_ACTION_UI_CONFIG,
@@ -8,6 +11,12 @@ import {
 } from '@/entities/order/config/action-ui-config';
 import { OrderStatus } from '@/entities/order/constants/order-status';
 
+import { Button } from '@/shared/ui/shadcn/button';
+import { Spinner } from '@/shared/ui/shadcn/spinner';
+import {
+  ORDER_ACTION,
+  type OrderAction as OrderActionType,
+} from '@/entities/order/constants/order-action';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,26 +27,22 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/shared/ui/shadcn/alert-dialog';
-import { Button } from '@/shared/ui/shadcn/button';
-import { Spinner } from '@/shared/ui/shadcn/spinner';
-import { toast } from 'sonner';
-// import { OrderAction } from '@/entities/order/constants/order-action';
+import { ExecuteActionResult } from '../../order-proceed/model/types';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface OrderActionDialogContextValue {
   open: boolean;
   dialogConfig: ActionUiConfig | null;
   targetOrderIds: number[];
   setTargetOrderIds: (targetOrderIds: number[]) => void;
-  actionType: DialogActionType | null;
+  action: OrderActionType | null;
   currentStatus: OrderStatus | null;
   setCurrentStatus: (status: OrderStatus) => void;
   display: Display | null;
   setDisplay: (display: Display) => void;
-  onOpen: (config: ActionUiConfig, type: DialogActionType) => void;
+  onOpen: (config: ActionUiConfig, action: OrderActionType) => void;
   onClose: () => void;
 }
-
-type DialogActionType = 'proceed' | 'cancel';
 
 type Display = {
   count: number;
@@ -64,20 +69,20 @@ interface OrderActionDialogProviderProps {
 export const OrderAction = ({ children }: OrderActionDialogProviderProps) => {
   const [open, _setOpen] = useState(false);
   const [dialogConfig, setDialogConfig] = useState<ActionUiConfig | null>(null);
-  const [actionType, setActionType] = useState<DialogActionType | null>(null);
+  const [action, setAction] = useState<OrderActionType | null>(null);
   const [targetOrderIds, setTargetOrderIds] = useState<number[]>([]);
   const [currentStatus, setCurrentStatus] = useState<OrderStatus | null>(null);
   const [display, setDisplay] = useState<Display | null>(null);
 
-  const onOpen = (config: ActionUiConfig, type: DialogActionType) => {
+  const onOpen = (config: ActionUiConfig, action: OrderActionType) => {
     setDialogConfig(config);
-    setActionType(type);
+    setAction(action);
     _setOpen(true);
   };
 
   const onClose = () => {
     setDialogConfig(null);
-    setActionType(null);
+    setAction(null);
     _setOpen(false);
   };
 
@@ -88,7 +93,7 @@ export const OrderAction = ({ children }: OrderActionDialogProviderProps) => {
         dialogConfig,
         targetOrderIds,
         setTargetOrderIds,
-        actionType,
+        action,
         currentStatus,
         setCurrentStatus,
         display,
@@ -105,7 +110,7 @@ export const OrderAction = ({ children }: OrderActionDialogProviderProps) => {
 };
 
 // Dialog Open & Close Trigger
-interface OrderActionDialogTriggerProps {
+interface ProceedActionDialogTriggerProps {
   targetOrderIds: number[];
   currentStatus: OrderStatus;
   display: Display;
@@ -118,7 +123,7 @@ OrderAction.ProceedTrigger = function ProceedTrigger({
   currentStatus,
   display,
   children,
-}: OrderActionDialogTriggerProps) {
+}: ProceedActionDialogTriggerProps) {
   const { onOpen, setCurrentStatus, setTargetOrderIds, setDisplay } = useOrderActionDialog();
   const uiConfig = PROCEED_ACTION_UI_CONFIG[currentStatus];
 
@@ -128,7 +133,7 @@ OrderAction.ProceedTrigger = function ProceedTrigger({
     setTargetOrderIds(targetOrderIds);
     setCurrentStatus(currentStatus);
     setDisplay(display);
-    onOpen({ ...uiConfig }, 'proceed');
+    onOpen({ ...uiConfig }, ORDER_ACTION.PROCEED);
   };
 
   if (children) {
@@ -138,13 +143,23 @@ OrderAction.ProceedTrigger = function ProceedTrigger({
   return <Button onClick={handleTriggerClick}>{uiConfig.buttonText}</Button>;
 };
 
+// Dialog Open & Close Trigger
+interface CancelActionDialogTriggerProps {
+  targetOrderIds: number[];
+  currentStatus: OrderStatus;
+  display: Display;
+  action: OrderActionType;
+  children?: React.ReactNode;
+}
+
 // 주문취소 Dialog Trigger
 OrderAction.CancelTrigger = function CancelTrigger({
   targetOrderIds,
   currentStatus,
   display,
+  action,
   children,
-}: OrderActionDialogTriggerProps) {
+}: CancelActionDialogTriggerProps) {
   const { onOpen, setCurrentStatus, setTargetOrderIds, setDisplay } = useOrderActionDialog();
   const uiConfig = CANCEL_ACTION_UI_CONFIG[currentStatus];
 
@@ -154,7 +169,7 @@ OrderAction.CancelTrigger = function CancelTrigger({
     setTargetOrderIds(targetOrderIds);
     setCurrentStatus(currentStatus);
     setDisplay(display);
-    onOpen({ ...uiConfig }, 'cancel');
+    onOpen({ ...uiConfig }, action);
   };
 
   if (children) {
@@ -166,11 +181,12 @@ OrderAction.CancelTrigger = function CancelTrigger({
 
 // Content (Dialog 내용)
 OrderAction.ProceedContent = function ProceedContent() {
-  const [isLoading, setIsLoading] = useState(false);
-  const { dialogConfig, actionType, currentStatus, targetOrderIds, display, onClose } =
+  const queryClient = useQueryClient();
+  const { executeSingle, executeMultiple, isLoading } = useProceedActionExecute();
+  const { dialogConfig, action, currentStatus, targetOrderIds, display, onClose } =
     useOrderActionDialog();
 
-  if (!dialogConfig || !display) return null;
+  if (!dialogConfig || !display || !action || !currentStatus) return null;
 
   return (
     <AlertDialogContent>
@@ -187,18 +203,31 @@ OrderAction.ProceedContent = function ProceedContent() {
           onClick={async (e) => {
             e.stopPropagation();
             e.preventDefault();
-
             try {
-              setIsLoading(true);
-              // 3초 대기 테스트
-              await new Promise((resolve) => setTimeout(resolve, 3000));
-              toast.success('진행 액션이 들어갑니다');
+              let result: ExecuteActionResult;
+              if (targetOrderIds.length === 1) {
+                result = await executeSingle({ action, currentStatus, orderId: targetOrderIds[0] });
+              } else {
+                result = await executeMultiple({ action, currentStatus, orderIds: targetOrderIds });
+              }
+
+              if (!result.success) {
+                toast.error(result.message);
+                return;
+              }
+
+              toast.success(result.message);
+
+              if (targetOrderIds.length === 1) {
+                queryClient.invalidateQueries({ queryKey: ['order'] });
+              } else {
+                queryClient.invalidateQueries({ queryKey: ['orders'] });
+              }
             } catch (error) {
               const errorMessage =
                 error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
               toast.error(errorMessage);
             } finally {
-              setIsLoading(false);
               onClose();
             }
           }}
@@ -213,7 +242,7 @@ OrderAction.ProceedContent = function ProceedContent() {
 
 OrderAction.CancelContent = function CancelContent() {
   const [isLoading, setIsLoading] = useState(false);
-  const { dialogConfig, actionType, currentStatus, targetOrderIds, display, onClose } =
+  const { dialogConfig, action, currentStatus, targetOrderIds, display, onClose } =
     useOrderActionDialog();
 
   if (!dialogConfig || !display) return null;

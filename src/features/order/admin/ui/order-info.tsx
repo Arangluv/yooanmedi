@@ -2,8 +2,12 @@
 
 import { Fragment } from 'react';
 import moment from 'moment';
-import { toast } from 'sonner';
 
+import OrderStatusBadge from '@/entities/order/ui/admin/badge';
+import { useOrderCollection } from '../model/order-provider';
+import { ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
+import { ORDER_ACTION } from '@/entities/order/constants/order-action';
+import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 import {
   Card,
   CardHeader,
@@ -13,15 +17,8 @@ import {
   CardFooter,
 } from '@/shared/ui/shadcn/card';
 import { ItemGroup, ItemSeparator } from '@/shared/ui/shadcn/item';
-import { Button } from '@/shared/ui/shadcn/button';
-import OrderStatusBadge from '@/entities/order/ui/admin/badge';
-import { useOrderCollection } from '../model/order-provider';
-import { ORDER_STATUS, ORDER_STATUS_NAME, PAYMENTS_METHOD } from '@/entities/order';
-import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 
 import OrderProductItem from './OrderProductItem';
-import ProgressOrderActionButton from './ProgressOrderActionButton';
-import { useOrderAlertDialog } from '../model/dialog-provider';
 import { OrderAction } from '../model/order-action-dialog-provider';
 
 export const OrderProgressInfo = ({ title }: { title: string }) => {
@@ -84,13 +81,6 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
               />
               <OrderAction.ProceedContent />
             </Fragment>
-
-            // <AlertDialogTrigger asChild>
-            //   <ProgressOrderActionButton
-            //     orderStatus={orderInfo.progressOrder.orderStatus}
-            //     orderId={orderInfo.progressOrder.id}
-            //   />
-            // </AlertDialogTrigger>
           )}
         </CardFooter>
       )}
@@ -100,7 +90,6 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
 
 export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
   const { orderInfo, paymentInfo } = useOrderCollection();
-  // const { setContent, setTargetOrder } = useOrderAlertDialog();
 
   if (paymentInfo?.paymentMethod === PAYMENTS_METHOD.CREDIT_CARD) {
     return null;
@@ -153,6 +142,7 @@ export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
         <CardFooter className="justify-end">
           <Fragment>
             <OrderAction.CancelTrigger
+              action={ORDER_ACTION.CANCEL_AFTER_PAYMENT}
               display={{
                 count: orderInfo?.cancelRequestOrder?.orderProducts.length ?? 0,
                 viewType: 'order-detail',
