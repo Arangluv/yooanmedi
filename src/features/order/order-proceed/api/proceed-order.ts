@@ -61,11 +61,15 @@ export const proceedMultipleOrder = async (
       message: '[orderStatusMachine] 해당 상태에서는 해당 액션을 수행할 수 없습니다',
     };
   }
+  console.log('[Server Action] target order ids');
+  console.log(targetOrderIds);
 
   const command = ProceedCommandFactory.createCommand(currentStatus as OrderStatus);
   const results = await Promise.allSettled(
     targetOrderIds.map(async (targetOrderId) => {
       const commandResult = await command.execute(targetOrderId);
+      console.log('[Server Action] commandResult');
+      console.log(commandResult);
 
       if (!commandResult.success) {
         return Promise.reject(commandResult.message);
