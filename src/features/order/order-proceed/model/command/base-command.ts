@@ -17,19 +17,9 @@ export interface CommandResult {
 export abstract class BaseProceedCommand implements OrderCommand {
   constructor() {
     this.payload = null;
-    this.orderProductIds = [];
   }
 
   protected payload: BasePayload | null;
-  protected orderProductIds: number[];
-
-  protected setOrderProductIds(orderProductIds: number[]) {
-    if (orderProductIds.length === 0) {
-      throw new Error('주문 상품이 존재하지 않습니다');
-    }
-
-    this.orderProductIds = orderProductIds;
-  }
 
   protected async updateOrderStatus(orderId: number, toStatus: OrderStatus) {
     if (!this.payload) {
@@ -79,6 +69,8 @@ export abstract class BaseProceedCommand implements OrderCommand {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
+
+      console.log('base payload execute에서 에러를 캐치했습니다');
       return {
         success: false,
         message: errorMessage,

@@ -1,6 +1,5 @@
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
-import { getPayload } from '@/shared/lib/get-payload';
 
 import { BaseProceedCommand, CommandResult } from './base-command';
 import { findOrderProductIdsByStatus } from '../../lib/find-order-product-ids-by-status';
@@ -12,15 +11,16 @@ export class ProceedToDeliveredCommand extends BaseProceedCommand {
 
   async runProceed(targetOrderId: number): Promise<CommandResult> {
     try {
-      this.setOrderProductIds(
-        await findOrderProductIdsByStatus(targetOrderId, ORDER_STATUS.SHIPPING),
-      );
-
       if (!this.payload) {
         throw new Error('payload 객체가 존재하지 않습니다');
       }
 
-      for (const orderProductId of this.orderProductIds) {
+      const orderProductIds = await findOrderProductIdsByStatus(
+        targetOrderId,
+        ORDER_STATUS.SHIPPING,
+      );
+
+      for (const orderProductId of orderProductIds) {
         // step 1. update orderProduct status to shipping
         await this.payload.update({
           collection: 'order-product',

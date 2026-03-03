@@ -48,7 +48,6 @@ const useProceedActionExecute = () => {
   }: ExecuteMultipleParams): Promise<ExecuteActionResult> => {
     try {
       setIsLoading(true);
-
       const result = await proceedMultipleOrder(action, currentStatus, orderIds);
       return result;
     } catch (error) {
