@@ -11,17 +11,6 @@ import { findOrderUserId } from '../../lib/find-order-user-id';
 export class ProceedToPreparingCommand extends BaseProceedCommand {
   constructor() {
     super();
-    this.userId = 0;
-  }
-
-  private userId: number;
-
-  setUserId(userId: number) {
-    if (!userId) {
-      throw new Error('주문자 정보를 찾을 수 없습니다');
-    }
-
-    this.userId = userId;
   }
 
   protected getAdditionalOrderUpdateData() {
@@ -36,12 +25,13 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
         throw new Error('payload 객체가 존재하지 않습니다');
       }
 
-      this.setOrderProductIds(
-        await findOrderProductIdsByStatus(targetOrderId, ORDER_STATUS.PENDING),
+      const orderProductIds = await findOrderProductIdsByStatus(
+        targetOrderId,
+        ORDER_STATUS.PENDING,
       );
-      this.setUserId(await findOrderUserId(targetOrderId));
+      const orderUserId = await findOrderUserId(targetOrderId);
 
-      for (const orderProductId of this.orderProductIds) {
+      for (const orderProductId of orderProductIds) {
         // step 1. update orderProduct status to preparing
         const updatedOrderProduct = await this.payload.update({
           collection: 'order-product',
@@ -57,7 +47,7 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
             (updatedOrderProduct.cashback_rate_for_bank / 100) * updatedOrderProduct.priceSnapshot,
           ) * updatedOrderProduct.quantity;
         await createEarnPointTransaction({
-          userId: this.userId,
+          userId: orderUserId,
           orderProductId,
           amount: pointAmount,
         });
