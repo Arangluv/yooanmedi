@@ -241,6 +241,8 @@ OrderAction.ProceedContent = function ProceedContent() {
 };
 
 OrderAction.CancelContent = function CancelContent() {
+  const queryClient = useQueryClient();
+
   const [isLoading, setIsLoading] = useState(false);
   const { dialogConfig, action, currentStatus, targetOrderIds, display, onClose } =
     useOrderActionDialog();

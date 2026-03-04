@@ -21,6 +21,29 @@ export abstract class BaseProceedCommand implements OrderCommand {
 
   protected payload: BasePayload | null;
 
+  abstract runProceed(targetOrderId: number): Promise<CommandResult>;
+
+  async execute(targetOrderId: number): Promise<CommandResult> {
+    try {
+      this.payload = await getPayload();
+      const result = await this.runProceed(targetOrderId);
+
+      return {
+        success: true,
+        message: result.message,
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
+
+      console.log('base payload execute에서 에러를 캐치했습니다');
+      return {
+        success: false,
+        message: errorMessage,
+      };
+    }
+  }
+
   protected async updateOrderStatus(orderId: number, toStatus: OrderStatus) {
     if (!this.payload) {
       throw new Error('payload 객체가 존재하지 않습니다');
@@ -53,28 +76,5 @@ export abstract class BaseProceedCommand implements OrderCommand {
 
   protected getAdditionalOrderUpdateData() {
     return {};
-  }
-
-  abstract runProceed(targetOrderId: number): Promise<CommandResult>;
-
-  async execute(targetOrderId: number): Promise<CommandResult> {
-    try {
-      this.payload = await getPayload();
-      const result = await this.runProceed(targetOrderId);
-
-      return {
-        success: true,
-        message: result.message,
-      };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
-
-      console.log('base payload execute에서 에러를 캐치했습니다');
-      return {
-        success: false,
-        message: errorMessage,
-      };
-    }
   }
 }
