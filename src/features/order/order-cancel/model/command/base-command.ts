@@ -1,29 +1,21 @@
 import { BasePayload } from 'payload';
-
 import { getPayload } from '@/shared/lib/get-payload';
-import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-status';
-import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
+import {
+  orderProductsDocsSchema,
+  OrderStateTransitionManager,
+  OrderStateTransitionStrategy,
+  summarizeOrderStatus,
+} from '../order-state-transition';
 
 export interface CommandResult {
   success: boolean;
   message: string;
 }
 
-export interface TotalCancelRunResult {
+export interface CancelRunResult {
   success: boolean;
   message: string;
 }
-
-export type PartialCancelRunResult =
-  | {
-      success: true;
-      message: string;
-      nextStatus: OrderStatus;
-    }
-  | {
-      success: false;
-      message: string;
-    };
 
 export interface OrderCommand {
   totalCancelExecute(targetOrderId: number): Promise<CommandResult>;
@@ -31,23 +23,26 @@ export interface OrderCommand {
 }
 
 export abstract class BaseCancelCommand implements OrderCommand {
-  constructor() {
+  protected payload: BasePayload | null;
+  protected stateTransitionManager: OrderStateTransitionManager;
+
+  constructor(stateTransitionStrategy: OrderStateTransitionStrategy) {
     this.payload = null;
+    this.stateTransitionManager = new OrderStateTransitionManager(stateTransitionStrategy);
   }
 
-  protected payload: BasePayload | null;
-
-  abstract runTotalCancel(targetOrderId: number): Promise<TotalCancelRunResult>;
+  abstract runTotalCancel(targetOrderId: number): Promise<CancelRunResult>;
   abstract runPartialCancel(
     targetOrderId: number,
     orderProductIds: number[],
-  ): Promise<PartialCancelRunResult>;
+  ): Promise<CancelRunResult>;
 
   async totalCancelExecute(targetOrderId: number): Promise<CommandResult> {
     try {
       this.payload = await getPayload();
 
       const result = await this.runTotalCancel(targetOrderId);
+
       if (!result.success) {
         throw new Error(result.message);
       }
@@ -72,13 +67,14 @@ export abstract class BaseCancelCommand implements OrderCommand {
   ): Promise<CommandResult> {
     try {
       this.payload = await getPayload();
+
       const result = await this.runPartialCancel(targetOrderId, orderProductIds);
 
       if (!result.success) {
         throw new Error(result.message);
       }
 
-      await this.updateOrderStatusForPartialCancel(targetOrderId, result.nextStatus);
+      await this.updateOrderStatusForPartialCancel(targetOrderId);
 
       return {
         success: true,
@@ -100,25 +96,38 @@ export abstract class BaseCancelCommand implements OrderCommand {
       throw new Error('payload 객체가 존재하지 않습니다');
     }
 
+    const states = this.stateTransitionManager.getStateForTotalCancel();
+
     await this.payload.update({
       collection: 'order',
       id: orderId,
-      data: {
-        orderStatus: ORDER_STATUS.CANCELLED,
-        paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
-      },
+      data: states,
     });
   }
 
-  protected async updateOrderStatusForPartialCancel(orderId: number, toStatus: OrderStatus) {
+  protected async updateOrderStatusForPartialCancel(orderId: number) {
     if (!this.payload) {
       throw new Error('payload 객체가 존재하지 않습니다');
     }
 
-    // .. some action
-    // await this.payload.update({
-    //   collection: 'order',
+    const orderProducts = await this.payload.find({
+      collection: 'order-product',
+      select: {
+        orderProductStatus: true,
+      },
+      where: {
+        order: { equals: orderId },
+      },
+    });
 
-    // })
+    const orderProductsData = orderProductsDocsSchema.parse(orderProducts.docs);
+    const summary = summarizeOrderStatus(orderProductsData);
+    const states = this.stateTransitionManager.getStateForPartialCancel(summary);
+
+    await this.payload.update({
+      collection: 'order',
+      id: orderId,
+      data: states,
+    });
   }
 }

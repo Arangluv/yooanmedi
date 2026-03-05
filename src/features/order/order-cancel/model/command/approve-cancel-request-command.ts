@@ -1,0 +1,124 @@
+import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
+import { PAYMENTS_METHOD } from '@/entities/order';
+
+import { BaseCancelCommand, type CancelRunResult } from './base-command';
+import { PaymentCancelStrategyFactory } from '../strategies/strategy-factory';
+import { CancelContext } from '../strategies/cancel-strategy';
+import { AfterPaymentStateTransitionStrategy } from '../order-state-transition';
+
+export class ApproveCancelRequestCommand extends BaseCancelCommand {
+  constructor() {
+    super(new AfterPaymentStateTransitionStrategy());
+  }
+
+  async runTotalCancel(targetOrderId: number): Promise<CancelRunResult> {
+    if (!this.payload) {
+      throw new Error('payload 객체가 존재하지 않습니다');
+    }
+
+    const orderProducts = await this.payload.find({
+      collection: 'order-product',
+      select: {},
+      where: {
+        order: { equals: targetOrderId },
+        orderProductStatus: { not_equals: ORDER_PRODUCT_STATUS.CANCELLED },
+      },
+    });
+    const orderProductIds = orderProducts.docs.map((orderProduct) => orderProduct.id);
+
+    if (orderProductIds.length === 0) {
+      return {
+        success: false,
+        message: '취소처리 할 주문이 없습니다',
+      };
+    }
+
+    const strategy = PaymentCancelStrategyFactory.getStrategy(PAYMENTS_METHOD.BANK_TRANSFER);
+    const results = await Promise.allSettled(
+      orderProductIds.map(async (orderProductId) => {
+        const context: CancelContext = {
+          orderId: targetOrderId,
+          orderProductId: orderProductId,
+        };
+
+        const strategyExcuteResult = await strategy.execute(context);
+
+        if (!strategyExcuteResult.success) {
+          return Promise.reject(strategyExcuteResult.message);
+        }
+      }),
+    );
+
+    const successCount = results.filter((result) => result.status === 'fulfilled').length;
+    const failCount = results.length - successCount;
+
+    if (failCount > 0) {
+      return {
+        success: false,
+        message: `주문 취소 중 오류가 발생했습니다 (${successCount}건 성공, ${failCount}건 실패)`,
+      };
+    }
+
+    return {
+      success: true,
+      message: `${successCount}개의 주문상품이 취소처리되었습니다`,
+    };
+  }
+
+  async runPartialCancel(
+    targetOrderId: number,
+    orderProductIds: number[],
+  ): Promise<CancelRunResult> {
+    try {
+      if (!this.payload) {
+        throw new Error('payload 객체가 존재하지 않습니다');
+      }
+
+      if (orderProductIds.length === 0) {
+        return {
+          success: false,
+          message: '취소처리 할 주문이 없습니다',
+        };
+      }
+
+      const strategy = PaymentCancelStrategyFactory.getStrategy(PAYMENTS_METHOD.BANK_TRANSFER);
+      const results = await Promise.allSettled(
+        orderProductIds.map(async (orderProductId) => {
+          const context: CancelContext = {
+            orderId: targetOrderId,
+            orderProductId: orderProductId,
+          };
+
+          const strategyExcuteResult = await strategy.execute(context);
+
+          if (!strategyExcuteResult.success) {
+            return Promise.reject(strategyExcuteResult.message);
+          }
+        }),
+      );
+
+      const successCount = results.filter((result) => result.status === 'fulfilled').length;
+      const failCount = results.length - successCount;
+
+      if (failCount > 0) {
+        return {
+          success: false,
+          message: `주문 취소 중 오류가 발생했습니다 (${successCount}건 성공, ${failCount}건 실패)`,
+        };
+      }
+
+      return {
+        success: true,
+        message: `${successCount}개의 주문상품이 취소처리되었습니다`,
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
+
+      return {
+        success: false,
+        message: errorMessage,
+      };
+    }
+  }
+}
