@@ -58,7 +58,6 @@ export const bankTransferScenarioActions: Record<
 
   // USECASE 3. 입금된 이후 취소 (client side)
   [BANK_TRANSFER_SCENARIO.CANCEL_AFTER_DEPOSIT_CLIENT_SIDE]: async ({ payload, orderProduct }) => {
-    // TODO :: validation
     // order update
     await payload.update({
       collection: 'order',
