@@ -1,20 +1,16 @@
-import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 
-import {
-  BaseCancelCommand,
-  type TotalCancelRunResult,
-  type PartialCancelRunResult,
-} from './base-command';
+import { BaseCancelCommand, type CancelRunResult } from './base-command';
 import { PaymentCancelStrategyFactory } from '../strategies/strategy-factory';
 import { CancelContext } from '../strategies/cancel-strategy';
+import { AfterPaymentStateTransitionStrategy } from '../order-state-transition';
 
 export class CancelAfterPaymentCommand extends BaseCancelCommand {
   constructor() {
-    super();
+    super(new AfterPaymentStateTransitionStrategy());
   }
 
-  async runTotalCancel(targetOrderId: number): Promise<TotalCancelRunResult> {
+  async runTotalCancel(targetOrderId: number): Promise<CancelRunResult> {
     try {
       if (!this.payload) {
         throw new Error('payload 객체가 존재하지 않습니다');
@@ -88,7 +84,7 @@ export class CancelAfterPaymentCommand extends BaseCancelCommand {
   async runPartialCancel(
     targetOrderId: number,
     orderProductIds: number[],
-  ): Promise<PartialCancelRunResult> {
+  ): Promise<CancelRunResult> {
     try {
       if (!this.payload) {
         throw new Error('payload 객체가 존재하지 않습니다');
@@ -131,7 +127,6 @@ export class CancelAfterPaymentCommand extends BaseCancelCommand {
       return {
         success: true,
         message: `${successCount}개의 주문상품이 취소처리되었습니다`,
-        nextStatus: ORDER_STATUS.CANCELLED,
       };
     } catch (error) {
       const errorMessage =
