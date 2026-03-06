@@ -2,8 +2,10 @@
 
 import { createContext, useContext, useState } from 'react';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 import useProceedActionExecute from '@/features/order/order-proceed/model/useProceedActionExecute'; // todo: 잘못된 참조방식
+import useCancelActionExecute from '@/features/order/order-cancel/model/useCancelActionExecute';
 import {
   ActionUiConfig,
   CANCEL_ACTION_UI_CONFIG,
@@ -28,7 +30,6 @@ import {
   AlertDialogAction,
 } from '@/shared/ui/shadcn/alert-dialog';
 import { ExecuteActionResult } from '../../order-proceed/model/types';
-import { useQueryClient } from '@tanstack/react-query';
 
 interface OrderActionDialogContextValue {
   open: boolean;
@@ -40,7 +41,7 @@ interface OrderActionDialogContextValue {
   setCurrentStatus: (status: OrderStatus) => void;
   display: Display | null;
   setDisplay: (display: Display) => void;
-  onOpen: (config: ActionUiConfig, action: OrderActionType) => void;
+  onOpen: (config: ActionUiConfig) => void;
   onClose: () => void;
 }
 
@@ -74,9 +75,9 @@ export const OrderAction = ({ children }: OrderActionDialogProviderProps) => {
   const [currentStatus, setCurrentStatus] = useState<OrderStatus | null>(null);
   const [display, setDisplay] = useState<Display | null>(null);
 
-  const onOpen = (config: ActionUiConfig, action: OrderActionType) => {
+  const onOpen = (config: ActionUiConfig) => {
     setDialogConfig(config);
-    setAction(action);
+    setAction(config.action);
     _setOpen(true);
   };
 
@@ -133,7 +134,7 @@ OrderAction.ProceedTrigger = function ProceedTrigger({
     setTargetOrderIds(targetOrderIds);
     setCurrentStatus(currentStatus);
     setDisplay(display);
-    onOpen({ ...uiConfig }, ORDER_ACTION.PROCEED);
+    onOpen(uiConfig);
   };
 
   if (children) {
@@ -148,7 +149,6 @@ interface CancelActionDialogTriggerProps {
   targetOrderIds: number[];
   currentStatus: OrderStatus;
   display: Display;
-  action: OrderActionType;
   children?: React.ReactNode;
 }
 
@@ -157,7 +157,6 @@ OrderAction.CancelTrigger = function CancelTrigger({
   targetOrderIds,
   currentStatus,
   display,
-  action,
   children,
 }: CancelActionDialogTriggerProps) {
   const { onOpen, setCurrentStatus, setTargetOrderIds, setDisplay } = useOrderActionDialog();
@@ -169,14 +168,18 @@ OrderAction.CancelTrigger = function CancelTrigger({
     setTargetOrderIds(targetOrderIds);
     setCurrentStatus(currentStatus);
     setDisplay(display);
-    onOpen({ ...uiConfig }, action);
+    onOpen(uiConfig);
   };
 
   if (children) {
     return <div onClick={handleTriggerClick}>{children}</div>;
   }
 
-  return <Button onClick={handleTriggerClick}>{uiConfig.buttonText}</Button>;
+  return (
+    <Button variant="destructive" onClick={handleTriggerClick}>
+      {uiConfig.buttonText}
+    </Button>
+  );
 };
 
 // Content (Dialog 내용)
@@ -186,7 +189,8 @@ OrderAction.ProceedContent = function ProceedContent() {
   const { dialogConfig, action, currentStatus, targetOrderIds, display, onClose } =
     useOrderActionDialog();
 
-  if (!dialogConfig || !display || !action || !currentStatus) return null;
+  if (!dialogConfig || !display || !currentStatus || !action || action !== ORDER_ACTION.PROCEED)
+    return null;
 
   return (
     <AlertDialogContent>
@@ -205,10 +209,14 @@ OrderAction.ProceedContent = function ProceedContent() {
             e.preventDefault();
             try {
               let result: ExecuteActionResult;
+              let invalidateQueries: string[] = [];
+
               if (targetOrderIds.length === 1) {
                 result = await executeSingle({ action, currentStatus, orderId: targetOrderIds[0] });
+                invalidateQueries.push('order');
               } else {
                 result = await executeMultiple({ action, currentStatus, orderIds: targetOrderIds });
+                invalidateQueries.push('orders');
               }
 
               if (!result.success) {
@@ -217,12 +225,7 @@ OrderAction.ProceedContent = function ProceedContent() {
               }
 
               toast.success(result.message);
-
-              if (targetOrderIds.length === 1) {
-                queryClient.invalidateQueries({ queryKey: ['order'] });
-              } else {
-                queryClient.invalidateQueries({ queryKey: ['orders'] });
-              }
+              queryClient.invalidateQueries({ queryKey: invalidateQueries });
             } catch (error) {
               const errorMessage =
                 error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
@@ -242,12 +245,13 @@ OrderAction.ProceedContent = function ProceedContent() {
 
 OrderAction.CancelContent = function CancelContent() {
   const queryClient = useQueryClient();
+  const { executeCancelOrders, executeCancelOrderProduct, isLoading } = useCancelActionExecute();
 
-  const [isLoading, setIsLoading] = useState(false);
   const { dialogConfig, action, currentStatus, targetOrderIds, display, onClose } =
     useOrderActionDialog();
 
-  if (!dialogConfig || !display) return null;
+  if (!dialogConfig || !display || !currentStatus || !action || action === ORDER_ACTION.PROCEED)
+    return null;
 
   return (
     <AlertDialogContent>
@@ -266,16 +270,35 @@ OrderAction.CancelContent = function CancelContent() {
             e.preventDefault();
 
             try {
-              setIsLoading(true);
-              // 3초 대기 테스트
-              await new Promise((resolve) => setTimeout(resolve, 3000));
-              toast.success('취소 액션이 들어갑니다');
+              let result: ExecuteActionResult;
+              let invalidateQueries: string[] = [];
+
+              // if (targetOrderIds.length === 1) {
+              //   // result = await executeSingle({ action, currentStatus, orderId: targetOrderIds[0] });
+              //   console.log('#1');
+              //   invalidateQueries.push('order');
+              // } else {
+              //   result = await executeCancelOrders({
+              //     action,
+              //     currentStatus,
+              //     orderIds: targetOrderIds,
+              //   });
+              //   invalidateQueries.push('orders');
+              // }
+
+              // if (!result.success) {
+              //   toast.error(result.message);
+              //   return;
+              // }
+
+              // toast.success(result.message);
+              alert('test');
+              // queryClient.invalidateQueries({ queryKey: invalidateQueries });
             } catch (error) {
               const errorMessage =
                 error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
               toast.error(errorMessage);
             } finally {
-              setIsLoading(false);
               onClose();
             }
           }}

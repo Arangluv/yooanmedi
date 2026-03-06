@@ -7,39 +7,39 @@ import { ExecuteActionResult } from '../model/types';
 import { OrderStateMachine } from '@/entities/order/model/order-state-machine';
 import { CancelCommandFactory } from '../model/cancel-command-factory';
 
-export const cancelSingleOrder = async ({
-  action,
-  currentStatus,
-  targetOrderId,
-}: {
-  action: OrderAction;
-  currentStatus: OrderStatus;
-  targetOrderId: number;
-}): Promise<ExecuteActionResult> => {
-  try {
-    const orderStatusMachine = new OrderStateMachine(currentStatus as OrderStatus);
-    if (!orderStatusMachine.canExecuteAction(action as OrderAction)) {
-      return {
-        success: false,
-        message: '[orderStatusMachine] 해당 상태에서는 해당 액션을 수행할 수 없습니다',
-      };
-    }
+// export const cancelSingleOrder = async ({
+//   action,
+//   currentStatus,
+//   targetOrderId,
+// }: {
+//   action: OrderAction;
+//   currentStatus: OrderStatus;
+//   targetOrderId: number;
+// }): Promise<ExecuteActionResult> => {
+//   try {
+//     const orderStatusMachine = new OrderStateMachine(currentStatus as OrderStatus);
+//     if (!orderStatusMachine.canExecuteAction(action as OrderAction)) {
+//       return {
+//         success: false,
+//         message: '[orderStatusMachine] 해당 상태에서는 해당 액션을 수행할 수 없습니다',
+//       };
+//     }
 
-    const command = CancelCommandFactory.createCommand(currentStatus, action);
-    const result = await command.totalCancelExecute(targetOrderId);
+//     const command = CancelCommandFactory.createCommand(currentStatus, action);
+//     const result = await command.totalCancelExecute(targetOrderId);
 
-    return result;
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
+//     return result;
+//   } catch (error) {
+//     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
 
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
-};
+//     return {
+//       success: false,
+//       message: errorMessage,
+//     };
+//   }
+// };
 
-export const cancelMultipleOrder = async ({
+export const cancelOrders = async ({
   action,
   currentStatus,
   targetOrderIds,
@@ -69,6 +69,7 @@ export const cancelMultipleOrder = async ({
 
     const successCount = results.filter((result) => result.status === 'fulfilled').length;
     const failCount = results.length - successCount;
+
     if (failCount > 0) {
       return {
         success: false,
@@ -89,16 +90,16 @@ export const cancelMultipleOrder = async ({
   }
 };
 
-export const partialCancelOrder = async ({
+export const cancelOrderProduct = async ({
   action,
   currentStatus,
   targetOrderId,
-  orderProductIds,
+  orderProductId,
 }: {
   action: OrderAction;
   currentStatus: OrderStatus;
   targetOrderId: number;
-  orderProductIds: number[];
+  orderProductId: number;
 }) => {
   try {
     const orderStatusMachine = new OrderStateMachine(currentStatus as OrderStatus);
@@ -110,7 +111,7 @@ export const partialCancelOrder = async ({
     }
 
     const command = CancelCommandFactory.createCommand(currentStatus, action);
-    const result = await command.partialCancelExecute(targetOrderId, orderProductIds);
+    const result = await command.partialCancelExecute(targetOrderId, orderProductId);
 
     return result;
   } catch (error) {

@@ -32,6 +32,7 @@ export class CancelAfterPaymentCommand extends BaseCancelCommand {
           orderProductStatus: { not_equals: ORDER_PRODUCT_STATUS.CANCELLED },
         },
       });
+
       const orderProductIds = orderProducts.docs.map((orderProduct) => orderProduct.id);
 
       if (orderProductIds.length === 0) {
@@ -81,10 +82,7 @@ export class CancelAfterPaymentCommand extends BaseCancelCommand {
     }
   }
 
-  async runPartialCancel(
-    targetOrderId: number,
-    orderProductIds: number[],
-  ): Promise<CancelRunResult> {
+  async runPartialCancel(targetOrderId: number, orderProductId: number): Promise<CancelRunResult> {
     try {
       if (!this.payload) {
         throw new Error('payload 객체가 존재하지 않습니다');
@@ -98,36 +96,15 @@ export class CancelAfterPaymentCommand extends BaseCancelCommand {
         },
       });
 
-      const strategy = PaymentCancelStrategyFactory.getStrategy(order.paymentsMethod);
-      const results = await Promise.allSettled(
-        orderProductIds.map(async (orderProductId) => {
-          const context: CancelContext = {
-            orderId: targetOrderId,
-            orderProductId: orderProductId,
-          };
-
-          const strategyExcuteResult = await strategy.execute(context);
-
-          if (!strategyExcuteResult.success) {
-            return Promise.reject(strategyExcuteResult.message);
-          }
-        }),
-      );
-
-      const successCount = results.filter((result) => result.status === 'fulfilled').length;
-      const failCount = results.length - successCount;
-
-      if (failCount > 0) {
-        return {
-          success: false,
-          message: `주문 취소 중 오류가 발생했습니다 (${successCount}건 성공, ${failCount}건 실패)`,
-        };
-      }
-
-      return {
-        success: true,
-        message: `${successCount}개의 주문상품이 취소처리되었습니다`,
+      const context: CancelContext = {
+        orderId: targetOrderId,
+        orderProductId: orderProductId,
       };
+
+      const strategy = PaymentCancelStrategyFactory.getStrategy(order.paymentsMethod);
+      const strategyExcuteResult = await strategy.execute(context);
+
+      return strategyExcuteResult;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';

@@ -1,11 +1,4 @@
-type ExecuteSuccessResult = {
-  success: true;
+export type ExecuteActionResult = {
+  success: boolean;
   message: string;
 };
-
-interface ExecuteErrorResult {
-  success: false;
-  message: string;
-}
-
-export type ExecuteActionResult = ExecuteSuccessResult | ExecuteErrorResult;

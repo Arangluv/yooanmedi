@@ -83,7 +83,7 @@ export const CANCEL_ACTION_UI_CONFIG: Record<OrderStatus, ActionUiConfig | null>
     dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
   },
   [ORDER_STATUS.CANCEL_REQUEST]: {
-    action: ORDER_ACTION.CANCEL_AFTER_PAYMENT,
+    action: ORDER_ACTION.APPROVE_CANCEL_REQUEST,
     buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
     dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
