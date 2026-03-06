@@ -53,29 +53,24 @@ export class CancelBeforePaymentCommand extends BaseCancelCommand {
     }
   }
 
-  async runPartialCancel(
-    targetOrderId: number,
-    targetOrderProductIds: number[],
-  ): Promise<CancelRunResult> {
+  async runPartialCancel(_: never, orderProductId: number): Promise<CancelRunResult> {
     try {
       if (!this.payload) {
         throw new Error('payload 객체가 존재하지 않습니다');
       }
 
       // step 1. update orderProduct status to cancelled
-      for (const orderProductId of targetOrderProductIds) {
-        await this.payload.update({
-          collection: 'order-product',
-          id: orderProductId,
-          data: {
-            orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
-          },
-        });
-      }
+      await this.payload.update({
+        collection: 'order-product',
+        id: orderProductId,
+        data: {
+          orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+        },
+      });
 
       return {
         success: true,
-        message: `${targetOrderProductIds.length}개의 주문상품이 취소처리되었습니다`,
+        message: '주문상품이 취소처리되었습니다',
       };
     } catch (error) {
       const errorMessage =

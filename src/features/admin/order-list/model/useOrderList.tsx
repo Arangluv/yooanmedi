@@ -17,9 +17,6 @@ const useOrderList = () => {
     },
   });
 
-  console.log('[Client] orderList');
-  console.log(orderList);
-
   return {
     items: orderList?.items ?? [],
     totalCount: orderList?.totalCount ?? 0,

@@ -13,7 +13,7 @@ export class CancelCommandFactory {
       case ORDER_STATUS.PENDING:
         return new CancelBeforePaymentCommand();
       case ORDER_STATUS.PREPARING:
-        if (action === ORDER_ACTION.CANCEL_REQUEST) {
+        if (action === ORDER_ACTION.CREATE_CANCEL_REQUEST) {
           return new CreateCancelRequestCommand();
         }
 

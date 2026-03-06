@@ -8,14 +8,14 @@ interface StateTransition {
 
 const ORDER_STATE_MACHINE: Record<OrderStatus, StateTransition> = {
   [ORDER_STATUS.PENDING]: {
-    allowedActions: [
-      ORDER_ACTION.PROCEED,
-      ORDER_ACTION.CANCEL_BEFORE_PAYMENT, // Admin에서는 이걸 사용
-      ORDER_ACTION.CANCEL_REQUEST, // 유저가 사용하는 환경에서는 이걸 사용
-    ],
+    allowedActions: [ORDER_ACTION.PROCEED, ORDER_ACTION.CANCEL_BEFORE_PAYMENT],
   },
   [ORDER_STATUS.PREPARING]: {
-    allowedActions: [ORDER_ACTION.PROCEED, ORDER_ACTION.CANCEL_AFTER_PAYMENT],
+    allowedActions: [
+      ORDER_ACTION.PROCEED,
+      ORDER_ACTION.CANCEL_AFTER_PAYMENT,
+      ORDER_ACTION.CREATE_CANCEL_REQUEST,
+    ],
   },
   [ORDER_STATUS.SHIPPING]: {
     allowedActions: [ORDER_ACTION.PROCEED, ORDER_ACTION.CANCEL_AFTER_PAYMENT],
@@ -24,7 +24,7 @@ const ORDER_STATE_MACHINE: Record<OrderStatus, StateTransition> = {
     allowedActions: [ORDER_ACTION.CANCEL_AFTER_PAYMENT],
   },
   [ORDER_STATUS.CANCEL_REQUEST]: {
-    allowedActions: [ORDER_ACTION.CANCEL_AFTER_PAYMENT],
+    allowedActions: [ORDER_ACTION.APPROVE_CANCEL_REQUEST],
   },
   [ORDER_STATUS.CANCELLED]: {
     allowedActions: [],
