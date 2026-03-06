@@ -34,7 +34,6 @@ const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) =
         />
         <OrderAction.ProceedContent />
         <OrderAction.CancelTrigger
-          action={ORDER_ACTION.CANCEL_BEFORE_PAYMENT}
           display={{
             count: Object.keys(selectedRows).length,
             viewType: 'order-list',
@@ -42,6 +41,7 @@ const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) =
           targetOrderIds={Object.keys(selectedRows).map((key) => parseInt(key))}
           currentStatus={filters.orderStatus as OrderStatus}
         />
+        <OrderAction.CancelContent />
       </div>
     </div>
   );

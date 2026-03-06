@@ -15,7 +15,7 @@ export class CreateCancelRequestCommand extends BaseCancelCommand {
     };
   }
 
-  async runPartialCancel(_: never, orderProductIds: number[]): Promise<CancelRunResult> {
+  async runPartialCancel(_: never, orderProductId: number): Promise<CancelRunResult> {
     try {
       if (!this.payload) {
         throw new Error('payload 객체가 존재하지 않습니다');
@@ -25,7 +25,7 @@ export class CreateCancelRequestCommand extends BaseCancelCommand {
         collection: 'order-product',
         where: {
           id: {
-            equals: orderProductIds,
+            equals: orderProductId,
           },
         },
         data: {

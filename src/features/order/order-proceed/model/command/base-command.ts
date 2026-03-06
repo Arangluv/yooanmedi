@@ -36,7 +36,6 @@ export abstract class BaseProceedCommand implements OrderCommand {
       const errorMessage =
         error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
 
-      console.log('base payload execute에서 에러를 캐치했습니다');
       return {
         success: false,
         message: errorMessage,
