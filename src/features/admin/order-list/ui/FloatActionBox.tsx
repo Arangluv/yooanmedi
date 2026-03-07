@@ -2,10 +2,12 @@
 
 import useOrderListSearch from '../model/useOrderListSearch';
 import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-status';
+import { RowSelectionState } from '@tanstack/react-table';
+import { OrderAction } from '@/features/admin/order-detail/model/order-action-dialog-provider';
+
+// todo : remove
 import OrderStatusActionButton from './orderStatusActionButton';
 import CancelOrderListButton from './cancelOrderListButton';
-import { RowSelectionState } from '@tanstack/react-table';
-import { OrderAction } from '@/features/order/admin/model/order-action-dialog-provider';
 import { ORDER_ACTION } from '@/entities/order/constants/order-action';
 
 const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) => {

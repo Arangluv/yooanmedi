@@ -12,15 +12,22 @@ import {
 import { CollectionViewOrderProduct } from '../lib/normalize';
 import { isPayloadImageRenderable } from '@/shared/lib/validation';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
-import CancelItemAction from './CancelItemAction';
+
+import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface OrderProductItemProps {
   orderProduct: CollectionViewOrderProduct;
+  orderId?: number;
   idx: number;
   isCancelAction: boolean;
 }
 
-const OrderProductItem = ({ orderProduct, idx, isCancelAction }: OrderProductItemProps) => {
+const OrderProductItem = ({
+  orderId,
+  orderProduct,
+  idx,
+  isCancelAction,
+}: OrderProductItemProps) => {
   return (
     <Item variant={idx % 2 === 0 ? 'default' : 'muted'}>
       <ItemMedia variant="image">
@@ -69,7 +76,15 @@ const OrderProductItem = ({ orderProduct, idx, isCancelAction }: OrderProductIte
           </div>
         </div>
       </ItemContent>
-      {isCancelAction && <CancelItemAction orderProductId={orderProduct.id} />}
+      {/* {isCancelAction && (
+        <OrderAction.CancelContent
+          targetOrderProductId={orderProduct.id}
+          display={{
+            count: 1,
+            viewType: 'order-detail',
+          }}
+        />
+      )} */}
     </Item>
   );
 };

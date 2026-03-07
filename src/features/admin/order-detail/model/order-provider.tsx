@@ -1,10 +1,10 @@
 'use client';
 
-import { getCollectionOrderById } from '@/entities/order/api/collection-order';
-import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext, useMemo } from 'react';
-import { normalizeOrderData } from '../lib/normalize';
-import { CollectionViewOrderData } from '../lib/normalize';
+import { useQuery } from '@tanstack/react-query';
+
+import { normalizeOrderData, type CollectionViewOrderData } from '../lib/normalize';
+import { getOrderDetailById } from '../lib/get-order-detail-by-id';
 
 type OrderCollectionContextProps = {
   orderInfo: CollectionViewOrderData['orderInfo'] | null;
@@ -32,17 +32,15 @@ export const OrderCollectionProvider = ({
   children: React.ReactNode;
   orderId: number;
 }) => {
-  const { data: rowOrderData } = useQuery({
+  const { data: orderDetailData } = useQuery({
     queryKey: ['order', orderId],
-    queryFn: () => getCollectionOrderById(orderId),
+    queryFn: () => getOrderDetailById(orderId),
     enabled: !!orderId,
   });
 
-  // TODO: 해당 부분 개선이 필요
-  // UI에서 바뀌는 사용자 액션에 따라 바뀌는 부분은 orderInfo와 paymentInfo임 -> 나머지는 고정
   const normalizedOrderData = useMemo(() => {
-    return normalizeOrderData(rowOrderData);
-  }, [rowOrderData]);
+    return normalizeOrderData(orderDetailData);
+  }, [orderDetailData]);
 
   return (
     <OrderCollectionContext.Provider
