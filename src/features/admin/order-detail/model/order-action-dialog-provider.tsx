@@ -8,7 +8,7 @@ import useProceedActionExecute from '@/features/order/order-proceed/model/usePro
 import useCancelActionExecute from '@/features/order/order-cancel/model/useCancelActionExecute';
 import {
   ActionUiConfig,
-  CANCEL_ACTION_UI_CONFIG,
+  CANCEL_ACTION_UI_CONFIG_FOR_ADMIN,
   PROCEED_ACTION_UI_CONFIG,
 } from '@/entities/order/config/action-ui-config';
 import { OrderStatus } from '@/entities/order/constants/order-status';
@@ -29,13 +29,15 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/shared/ui/shadcn/alert-dialog';
-import { ExecuteActionResult } from '../../order-proceed/model/types';
+import { ExecuteActionResult } from '@/features/order/order-proceed/model/types';
 
 interface OrderActionDialogContextValue {
   open: boolean;
   dialogConfig: ActionUiConfig | null;
   targetOrderIds: number[];
   setTargetOrderIds: (targetOrderIds: number[]) => void;
+  targetOrderProductId: number | null;
+  setTargetOrderProductId: (targetOrderProductId: number | null) => void;
   action: OrderActionType | null;
   currentStatus: OrderStatus | null;
   setCurrentStatus: (status: OrderStatus) => void;
@@ -49,6 +51,7 @@ type Display = {
   count: number;
   viewType: 'order-list' | 'order-detail';
 };
+
 const OrderActionDialogContext = createContext<OrderActionDialogContextValue | null>(null);
 
 const useOrderActionDialog = () => {
@@ -69,11 +72,14 @@ interface OrderActionDialogProviderProps {
 
 export const OrderAction = ({ children }: OrderActionDialogProviderProps) => {
   const [open, _setOpen] = useState(false);
-  const [dialogConfig, setDialogConfig] = useState<ActionUiConfig | null>(null);
-  const [action, setAction] = useState<OrderActionType | null>(null);
-  const [targetOrderIds, setTargetOrderIds] = useState<number[]>([]);
-  const [currentStatus, setCurrentStatus] = useState<OrderStatus | null>(null);
   const [display, setDisplay] = useState<Display | null>(null);
+  const [dialogConfig, setDialogConfig] = useState<ActionUiConfig | null>(null);
+
+  const [action, setAction] = useState<OrderActionType | null>(null);
+  const [currentStatus, setCurrentStatus] = useState<OrderStatus | null>(null);
+
+  const [targetOrderIds, setTargetOrderIds] = useState<number[]>([]);
+  const [targetOrderProductId, setTargetOrderProductId] = useState<number | null>(null);
 
   const onOpen = (config: ActionUiConfig) => {
     setDialogConfig(config);
@@ -94,6 +100,8 @@ export const OrderAction = ({ children }: OrderActionDialogProviderProps) => {
         dialogConfig,
         targetOrderIds,
         setTargetOrderIds,
+        targetOrderProductId,
+        setTargetOrderProductId,
         action,
         currentStatus,
         setCurrentStatus,
@@ -147,6 +155,7 @@ OrderAction.ProceedTrigger = function ProceedTrigger({
 // Dialog Open & Close Trigger
 interface CancelActionDialogTriggerProps {
   targetOrderIds: number[];
+  targetOrderProductId?: number | null;
   currentStatus: OrderStatus;
   display: Display;
   children?: React.ReactNode;
@@ -155,17 +164,20 @@ interface CancelActionDialogTriggerProps {
 // 주문취소 Dialog Trigger
 OrderAction.CancelTrigger = function CancelTrigger({
   targetOrderIds,
+  targetOrderProductId,
   currentStatus,
   display,
   children,
 }: CancelActionDialogTriggerProps) {
-  const { onOpen, setCurrentStatus, setTargetOrderIds, setDisplay } = useOrderActionDialog();
-  const uiConfig = CANCEL_ACTION_UI_CONFIG[currentStatus];
+  const { onOpen, setCurrentStatus, setTargetOrderIds, setTargetOrderProductId, setDisplay } =
+    useOrderActionDialog();
+  const uiConfig = CANCEL_ACTION_UI_CONFIG_FOR_ADMIN[currentStatus];
 
   if (!uiConfig) return null;
 
   const handleTriggerClick = () => {
     setTargetOrderIds(targetOrderIds);
+    setTargetOrderProductId(targetOrderProductId ?? null);
     setCurrentStatus(currentStatus);
     setDisplay(display);
     onOpen(uiConfig);
@@ -247,11 +259,19 @@ OrderAction.CancelContent = function CancelContent() {
   const queryClient = useQueryClient();
   const { executeCancelOrders, executeCancelOrderProduct, isLoading } = useCancelActionExecute();
 
-  const { dialogConfig, action, currentStatus, targetOrderIds, display, onClose } =
-    useOrderActionDialog();
+  const {
+    dialogConfig,
+    action,
+    currentStatus,
+    targetOrderIds,
+    targetOrderProductId,
+    display,
+    onClose,
+  } = useOrderActionDialog();
 
-  if (!dialogConfig || !display || !currentStatus || !action || action === ORDER_ACTION.PROCEED)
+  if (!dialogConfig || !display || !currentStatus || !action || action === ORDER_ACTION.PROCEED) {
     return null;
+  }
 
   return (
     <AlertDialogContent>
@@ -273,30 +293,37 @@ OrderAction.CancelContent = function CancelContent() {
               let result: ExecuteActionResult;
               let invalidateQueries: string[] = [];
 
-              // if (targetOrderIds.length === 1) {
-              //   // result = await executeSingle({ action, currentStatus, orderId: targetOrderIds[0] });
-              //   console.log('#1');
-              //   invalidateQueries.push('order');
-              // } else {
-              //   result = await executeCancelOrders({
-              //     action,
-              //     currentStatus,
-              //     orderIds: targetOrderIds,
-              //   });
-              //   invalidateQueries.push('orders');
-              // }
+              // 주문 상품 취소처리 (단건)
+              const isExecuteCancelOrderProduct = targetOrderProductId !== null;
+              if (isExecuteCancelOrderProduct) {
+                result = await executeCancelOrderProduct({
+                  action,
+                  currentStatus,
+                  orderId: targetOrderIds[0],
+                  orderProductId: targetOrderProductId,
+                });
+                invalidateQueries.push('order');
+              } else {
+                // 주문 취소처리 (일괄)
+                result = await executeCancelOrders({
+                  action,
+                  currentStatus,
+                  orderIds: targetOrderIds,
+                });
+                invalidateQueries.push('orders');
+              }
 
-              // if (!result.success) {
-              //   toast.error(result.message);
-              //   return;
-              // }
+              if (!result.success) {
+                toast.error(result.message);
+                return;
+              }
 
-              // toast.success(result.message);
-              alert('test');
+              toast.success(result.message);
               // queryClient.invalidateQueries({ queryKey: invalidateQueries });
             } catch (error) {
               const errorMessage =
                 error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
+
               toast.error(errorMessage);
             } finally {
               onClose();

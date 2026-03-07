@@ -15,6 +15,7 @@ import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { Button } from '@/shared/ui/shadcn/button';
 import { ItemActions } from '@/shared/ui/shadcn/item';
+import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface CancelItemActionProps {
   orderProductId: number;
@@ -59,20 +60,8 @@ const CancelItemAction = ({ orderProductId }: CancelItemActionProps) => {
   return (
     <Fragment>
       <ItemActions>
-        <AlertDialogTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              const isOk = confirm('선택한 상품을 주문취소 처리하시겠습니까?');
-              if (isOk) {
-                cancelOrderMutation({ orderProductId });
-              }
-            }}
-          >
-            <PackageX className="size-6" strokeWidth={1.5} />
-          </Button>
-        </AlertDialogTrigger>
+        {/* <OrderAction.CancelTrigger 
+        ></OrderAction.CancelTrigger> */}
       </ItemActions>
     </Fragment>
   );

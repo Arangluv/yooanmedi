@@ -52,8 +52,7 @@ export const PROCEED_ACTION_UI_CONFIG: Record<OrderStatus, ActionUiConfig | null
   [ORDER_STATUS.CANCELLED]: null,
 };
 
-export const CANCEL_ACTION_UI_CONFIG: Record<OrderStatus, ActionUiConfig | null> = {
-  // todo:: only admin use를 어떻게 구분할 수 있을까 고민
+export const CANCEL_ACTION_UI_CONFIG_FOR_ADMIN: Record<OrderStatus, ActionUiConfig | null> = {
   [ORDER_STATUS.PENDING]: {
     action: ORDER_ACTION.CANCEL_BEFORE_PAYMENT,
     buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
@@ -89,5 +88,26 @@ export const CANCEL_ACTION_UI_CONFIG: Record<OrderStatus, ActionUiConfig | null>
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
     dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
   },
+  [ORDER_STATUS.CANCELLED]: null,
+};
+
+export const CANCEL_ACTION_UI_CONFIG_FOR_CLIENT: Record<OrderStatus, ActionUiConfig | null> = {
+  [ORDER_STATUS.PENDING]: {
+    action: ORDER_ACTION.CANCEL_BEFORE_PAYMENT,
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+  },
+  [ORDER_STATUS.PREPARING]: {
+    action: ORDER_ACTION.CREATE_CANCEL_REQUEST,
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+  },
+  [ORDER_STATUS.SHIPPING]: null,
+  [ORDER_STATUS.DELIVERED]: null,
+  [ORDER_STATUS.CANCEL_REQUEST]: null,
   [ORDER_STATUS.CANCELLED]: null,
 };

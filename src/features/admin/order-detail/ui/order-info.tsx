@@ -50,6 +50,7 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
                 return (
                   <OrderProductItem
                     idx={idx}
+                    orderId={orderInfo.progressOrder.id}
                     orderProduct={orderProduct}
                     isCancelAction={true}
                     key={orderProduct.id}
@@ -59,7 +60,12 @@ export const OrderProgressInfo = ({ title }: { title: string }) => {
 
               return (
                 <Fragment key={orderProduct.id}>
-                  <OrderProductItem idx={idx} orderProduct={orderProduct} isCancelAction={true} />
+                  <OrderProductItem
+                    orderId={orderInfo.progressOrder.id}
+                    idx={idx}
+                    orderProduct={orderProduct}
+                    isCancelAction={true}
+                  />
                   <ItemSeparator />
                 </Fragment>
               );
@@ -142,7 +148,6 @@ export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
         <CardFooter className="justify-end">
           <Fragment>
             <OrderAction.CancelTrigger
-              action={ORDER_ACTION.CANCEL_AFTER_PAYMENT}
               display={{
                 count: orderInfo?.cancelRequestOrder?.orderProducts.length ?? 0,
                 viewType: 'order-detail',
@@ -152,30 +157,6 @@ export const OrderCancelRequestInfo = ({ title }: { title: string }) => {
             />
             <OrderAction.CancelContent />
           </Fragment>
-          {/* <AlertDialogTrigger asChild>
-            <Button
-              className="text-lg font-normal"
-              variant="destructive"
-              onClick={() => {
-                if (!orderInfo?.cancelRequestOrder?.id) {
-                  toast.error('주문취소 요청이 없습니다');
-                  return;
-                }
-
-                setContent({
-                  title: `${orderInfo.cancelRequestOrder.orderProducts.length}개의 상품을 ${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리하시겠습니까?`,
-                  description: '선택한 주문의 상태가 일괄 변경됩니다',
-                  confirmText: '주문취소 처리',
-                });
-                setTargetOrder({
-                  status: ORDER_STATUS.CANCEL_REQUEST,
-                  id: orderInfo.cancelRequestOrder.id,
-                });
-              }}
-            >
-              주문취소 처리
-            </Button>
-          </AlertDialogTrigger> */}
         </CardFooter>
       )}
     </Card>
