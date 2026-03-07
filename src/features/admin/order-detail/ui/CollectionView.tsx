@@ -2,7 +2,11 @@ import PaymentInfo from './PaymentInfo';
 import OrderUserInfo from './OrderUserInfo';
 import DeliveryInfo from './DeliveryInfo';
 import { OrderCollectionProvider } from '../model/order-provider';
-import { OrderCancelledInfo, OrderCancelRequestInfo, OrderProgressInfo } from './order-info';
+import {
+  OrderCancelledInfoCard,
+  OrderCancelRequestInfoCard,
+  OrderProgressInfoCard,
+} from './order-info-card';
 import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface CollectionDocumentViewProps {
@@ -19,9 +23,9 @@ const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
           <div className="flex gap-12">
             <section className="flex w-[70%] flex-col gap-6">
               {/* 주문 정보 */}
-              <OrderProgressInfo title="주문 정보" />
-              <OrderCancelRequestInfo title="주문취소 요청" />
-              <OrderCancelledInfo title="취소된 주문" />
+              <OrderProgressInfoCard />
+              <OrderCancelRequestInfoCard />
+              <OrderCancelledInfoCard />
             </section>
             <section className="flex w-[30%] flex-col gap-6">
               {/* 결제 정보 */}
