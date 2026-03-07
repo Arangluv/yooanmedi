@@ -28,7 +28,7 @@ export const Order: CollectionConfig = {
       views: {
         edit: {
           default: {
-            Component: '@/features/order/admin/ui/CollectionView',
+            Component: '@/features/admin/order-detail/ui/CollectionView',
           },
         },
         list: {
