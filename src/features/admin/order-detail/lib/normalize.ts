@@ -1,10 +1,5 @@
-import { Image } from '@/payload-types';
-
-import {
-  ORDER_PRODUCT_STATUS,
-  OrderProductStatus,
-} from '@/entities/order-product/constants/order-product-status';
-import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-status';
+import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
+import { OrderStatus } from '@/entities/order/constants/order-status';
 import type { Order } from '@/entities/order/model/type';
 
 import {

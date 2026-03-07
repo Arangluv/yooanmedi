@@ -9,15 +9,15 @@ import {
   ItemDescription,
   ItemActions,
 } from '@/shared/ui/shadcn/item';
-import { CollectionViewOrderProduct } from '../lib/normalize';
+import { OrderProduct } from '../model/order-detail-schema';
 import { isPayloadImageRenderable } from '@/shared/lib/validation';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 
 import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface OrderProductItemProps {
-  orderProduct: CollectionViewOrderProduct;
-  orderId?: number;
+  orderProduct: OrderProduct;
+  orderId: number;
   idx: number;
   isCancelAction: boolean;
 }
@@ -31,9 +31,9 @@ const OrderProductItem = ({
   return (
     <Item variant={idx % 2 === 0 ? 'default' : 'muted'}>
       <ItemMedia variant="image">
-        {isPayloadImageRenderable(orderProduct.image) ? (
+        {isPayloadImageRenderable(orderProduct.product.image) ? (
           <Image
-            src={orderProduct.image.url}
+            src={orderProduct.product.image.url}
             alt="주문 상품 이미지"
             width={100}
             height={100}
@@ -76,15 +76,17 @@ const OrderProductItem = ({
           </div>
         </div>
       </ItemContent>
-      {/* {isCancelAction && (
-        <OrderAction.CancelContent
+      {isCancelAction && (
+        <OrderAction.CancelTrigger
+          targetOrderIds={[orderId]}
           targetOrderProductId={orderProduct.id}
+          currentStatus={orderProduct.orderProductStatus}
           display={{
             count: 1,
             viewType: 'order-detail',
           }}
         />
-      )} */}
+      )}
     </Item>
   );
 };
