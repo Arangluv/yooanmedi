@@ -1,16 +1,17 @@
 'use client';
 
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { normalizeOrderData, type CollectionViewOrderData } from '../lib/normalize';
 import { getOrderDetailById } from '../lib/get-order-detail-by-id';
+import { placeholderData } from '../config/placeholder-data';
 
 type OrderCollectionContextProps = {
-  orderInfo: CollectionViewOrderData['orderInfo'] | null;
-  paymentInfo: CollectionViewOrderData['paymentInfo'] | null;
-  orderUserInfo: CollectionViewOrderData['orderUserInfo'] | null;
-  deliveryInfo: CollectionViewOrderData['deliveryInfo'] | null;
+  orderInfo: CollectionViewOrderData['orderInfo'];
+  paymentInfo: CollectionViewOrderData['paymentInfo'];
+  orderUserInfo: CollectionViewOrderData['orderUserInfo'];
+  deliveryInfo: CollectionViewOrderData['deliveryInfo'];
 };
 
 const OrderCollectionContext = createContext<OrderCollectionContextProps | null>(null);
@@ -38,20 +39,18 @@ export const OrderCollectionProvider = ({
     enabled: !!orderId,
   });
 
-  const normalizedOrderData = useMemo(() => {
-    return normalizeOrderData(orderDetailData);
+  const value = useMemo(() => {
+    const normalizedData = orderDetailData ? normalizeOrderData(orderDetailData) : placeholderData;
+
+    return {
+      orderInfo: normalizedData.orderInfo,
+      paymentInfo: normalizedData.paymentInfo,
+      orderUserInfo: normalizedData.orderUserInfo,
+      deliveryInfo: normalizedData.deliveryInfo,
+    };
   }, [orderDetailData]);
 
   return (
-    <OrderCollectionContext.Provider
-      value={{
-        orderInfo: normalizedOrderData?.orderInfo ?? null,
-        paymentInfo: normalizedOrderData?.paymentInfo ?? null,
-        orderUserInfo: normalizedOrderData?.orderUserInfo ?? null,
-        deliveryInfo: normalizedOrderData?.deliveryInfo ?? null,
-      }}
-    >
-      {children}
-    </OrderCollectionContext.Provider>
+    <OrderCollectionContext.Provider value={value}>{children}</OrderCollectionContext.Provider>
   );
 };

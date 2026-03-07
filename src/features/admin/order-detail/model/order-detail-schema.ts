@@ -32,7 +32,6 @@ export const orderInformationSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   orderNo: z.string(),
-  orderStatus: z.enum(Object.values(ORDER_STATUS)),
   progressOrder: z.object({
     inProgressOrderStatus: z.enum(Object.values(ORDER_STATUS)),
     orderProducts: orderProductsArraySchema,
