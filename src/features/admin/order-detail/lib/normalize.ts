@@ -4,7 +4,7 @@ import {
   ORDER_PRODUCT_STATUS,
   OrderProductStatus,
 } from '@/entities/order-product/constants/order-product-status';
-import { OrderStatus } from '@/entities/order/constants/order-status';
+import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-status';
 import type { Order } from '@/entities/order/model/type';
 
 import {
@@ -12,6 +12,7 @@ import {
   orderUserInfoSchema,
   paymentInfoSchema,
   deliveryInfoSchema,
+  orderInformationSchema,
 } from '../model/order-detail-schema';
 import type {
   OrderProduct,
@@ -30,11 +31,7 @@ export type CollectionViewOrderData = {
   deliveryInfo: DeliveryInfo;
 };
 
-export const normalizeOrderData = (orderRowData: Order | null | undefined) => {
-  if (!orderRowData) {
-    return null;
-  }
-
+export const normalizeOrderData = (orderRowData: Order) => {
   const orderInfo = createOrderProductsInfo(orderRowData);
   const paymentInfo = createPaymentInfo(orderRowData);
   const orderUserInfo = createOrderUserInfo(orderRowData);
@@ -100,7 +97,8 @@ const createOrderProductsInfo = (orderRowData: Order) => {
       progressOrderStatus[FIRST_INDEX_FOR_COMMON_PROGRESS];
   }
 
-  return orderProductsInfo;
+  const orderInformation = orderInformationSchema.parse(orderProductsInfo);
+  return orderInformation;
 };
 
 const createPaymentInfo = (orderRowData: Order) => {
