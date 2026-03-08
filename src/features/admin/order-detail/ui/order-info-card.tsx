@@ -87,6 +87,8 @@ export const OrderProgressInfoCard = () => {
     orderInfo: { progressOrder, orderNo, createdAt, id: orderId },
   } = useOrderCollection();
 
+  const isEmpty = progressOrder.orderProducts.length === 0;
+
   return (
     <OrderInfoCard
       type="progress"
@@ -96,17 +98,21 @@ export const OrderProgressInfoCard = () => {
       date={createdAt}
       orderProducts={progressOrder.orderProducts}
     >
-      <CardFooter className="justify-end">
-        <OrderAction.ProceedTrigger
-          display={{
-            count: progressOrder.orderProducts.length,
-            viewType: 'order-detail',
-          }}
-          targetOrderIds={[orderId]}
-          currentStatus={progressOrder.inProgressOrderStatus}
-        />
-        <OrderAction.ProceedContent />
-      </CardFooter>
+      {!isEmpty && (
+        <CardFooter className="justify-end">
+          <OrderAction.ProceedTrigger
+            display={{
+              count: progressOrder.orderProducts.length,
+              viewType: 'order-detail',
+            }}
+            targetOrderIds={[orderId]}
+            currentStatus={progressOrder.inProgressOrderStatus}
+          />
+        </CardFooter>
+      )}
+      {/* Dialog Modal Contents */}
+      <OrderAction.ProceedContent />
+      <OrderAction.CancelContent />
     </OrderInfoCard>
   );
 };
@@ -115,6 +121,8 @@ export const OrderCancelRequestInfoCard = () => {
   const {
     orderInfo: { cancelRequestOrder, orderNo, updatedAt, id: orderId },
   } = useOrderCollection();
+
+  const isEmpty = cancelRequestOrder.orderProducts.length === 0;
 
   return (
     <OrderInfoCard
@@ -125,17 +133,20 @@ export const OrderCancelRequestInfoCard = () => {
       orderNo={orderNo}
       orderProducts={cancelRequestOrder.orderProducts}
     >
-      <CardFooter className="justify-end">
-        <OrderAction.CancelTrigger
-          display={{
-            count: cancelRequestOrder.orderProducts.length,
-            viewType: 'order-detail',
-          }}
-          targetOrderIds={[orderId]}
-          currentStatus={ORDER_STATUS.CANCEL_REQUEST}
-        />
-        <OrderAction.CancelContent />
-      </CardFooter>
+      {!isEmpty && (
+        <CardFooter className="justify-end">
+          <OrderAction.CancelTrigger
+            display={{
+              count: cancelRequestOrder.orderProducts.length,
+              viewType: 'order-detail',
+            }}
+            targetOrderIds={[orderId]}
+            currentStatus={ORDER_STATUS.CANCEL_REQUEST}
+          />
+        </CardFooter>
+      )}
+      {/* Dialog Modal Contents */}
+      <OrderAction.CancelContent />
     </OrderInfoCard>
   );
 };
