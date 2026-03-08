@@ -1,7 +1,5 @@
 import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
-import { OrderListDialogProvider } from '../model/dialog-providers';
-import StatusChangeDialogContent from './StatusChangeDialogContent';
 import { OrderAction } from '@/features/admin/order-detail/model/order-action-dialog-provider';
 
 const ListView = () => {
@@ -15,7 +13,6 @@ const ListView = () => {
         <OrderStatusTab />
         <OrderListTableSection />
       </div>
-      {/* <StatusChangeDialogContent /> */}
     </OrderAction>
   );
 };

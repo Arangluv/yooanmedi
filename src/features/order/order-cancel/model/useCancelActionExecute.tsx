@@ -28,29 +28,6 @@ interface ExecuteCancelOrderProductParams {
 const useCancelActionExecute = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  // const executeSingle = async ({
-  //   action,
-  //   currentStatus,
-  //   orderId,
-  // }: ExecuteSingleParams): Promise<ExecuteActionResult> => {
-  //   try {
-  //     setIsLoading(true);
-
-  //     const result = await cancelSingleOrder({ action, currentStatus, targetOrderId: orderId });
-
-  //     return result;
-  //   } catch (error) {
-  //     const errorMessage =
-  //       error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
-  //     return {
-  //       success: false,
-  //       message: errorMessage,
-  //     };
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const executeCancelOrders = async ({
     action,
     currentStatus,

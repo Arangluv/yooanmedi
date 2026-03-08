@@ -1,12 +1,12 @@
 import PaymentInfo from './PaymentInfo';
 import OrderUserInfo from './OrderUserInfo';
 import DeliveryInfo from './DeliveryInfo';
-import { OrderCollectionProvider } from '../model/order-provider';
 import {
   OrderCancelledInfoCard,
   OrderCancelRequestInfoCard,
   OrderProgressInfoCard,
 } from './order-info-card';
+import { OrderCollectionProvider } from '../model/order-provider';
 import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface CollectionDocumentViewProps {

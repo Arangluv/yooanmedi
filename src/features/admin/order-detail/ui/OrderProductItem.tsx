@@ -12,6 +12,7 @@ import {
 import { OrderProduct } from '../model/order-detail-schema';
 import { isPayloadImageRenderable } from '@/shared/lib/validation';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
+import { Button } from '@/shared/ui/shadcn/button';
 
 import { OrderAction } from '../model/order-action-dialog-provider';
 
@@ -85,7 +86,11 @@ const OrderProductItem = ({
             count: 1,
             viewType: 'order-detail',
           }}
-        />
+        >
+          <Button variant="ghost" size="icon">
+            <PackageX className="size-6" strokeWidth={1.5} />
+          </Button>
+        </OrderAction.CancelTrigger>
       )}
     </Item>
   );
