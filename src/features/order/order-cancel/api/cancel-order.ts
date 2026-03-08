@@ -2,42 +2,9 @@
 
 import { OrderAction } from '@/entities/order/constants/order-action';
 import { OrderStatus } from '@/entities/order/constants/order-status';
-
-import { ExecuteActionResult } from '../model/types';
 import { OrderStateMachine } from '@/entities/order/model/order-state-machine';
+
 import { CancelCommandFactory } from '../model/cancel-command-factory';
-
-// export const cancelSingleOrder = async ({
-//   action,
-//   currentStatus,
-//   targetOrderId,
-// }: {
-//   action: OrderAction;
-//   currentStatus: OrderStatus;
-//   targetOrderId: number;
-// }): Promise<ExecuteActionResult> => {
-//   try {
-//     const orderStatusMachine = new OrderStateMachine(currentStatus as OrderStatus);
-//     if (!orderStatusMachine.canExecuteAction(action as OrderAction)) {
-//       return {
-//         success: false,
-//         message: '[orderStatusMachine] 해당 상태에서는 해당 액션을 수행할 수 없습니다',
-//       };
-//     }
-
-//     const command = CancelCommandFactory.createCommand(currentStatus, action);
-//     const result = await command.totalCancelExecute(targetOrderId);
-
-//     return result;
-//   } catch (error) {
-//     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
-
-//     return {
-//       success: false,
-//       message: errorMessage,
-//     };
-//   }
-// };
 
 export const cancelOrders = async ({
   action,
@@ -102,6 +69,7 @@ export const cancelOrderProduct = async ({
   orderProductId: number;
 }) => {
   try {
+    console.log('[Server action] cancelOrderProduct 실행');
     const orderStatusMachine = new OrderStateMachine(currentStatus as OrderStatus);
     if (!orderStatusMachine.canExecuteAction(action as OrderAction)) {
       return {
@@ -111,8 +79,10 @@ export const cancelOrderProduct = async ({
     }
 
     const command = CancelCommandFactory.createCommand(currentStatus, action);
-    const result = await command.partialCancelExecute(targetOrderId, orderProductId);
+    console.log('[Server action]  Create Command Result : ');
+    console.log(command);
 
+    const result = await command.partialCancelExecute(targetOrderId, orderProductId);
     return result;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';

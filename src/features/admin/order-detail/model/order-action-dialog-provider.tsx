@@ -9,6 +9,7 @@ import useCancelActionExecute from '@/features/order/order-cancel/model/useCance
 import {
   ActionUiConfig,
   CANCEL_ACTION_UI_CONFIG_FOR_ADMIN,
+  CANCEL_ACTION_UI_CONFIG_FOR_CLIENT,
   PROCEED_ACTION_UI_CONFIG,
 } from '@/entities/order/config/action-ui-config';
 import { OrderStatus } from '@/entities/order/constants/order-status';
@@ -158,6 +159,7 @@ interface CancelActionDialogTriggerProps {
   targetOrderProductId?: number | null;
   currentStatus: OrderStatus;
   display: Display;
+  mode?: 'admin' | 'client';
   children?: React.ReactNode;
 }
 
@@ -167,11 +169,17 @@ OrderAction.CancelTrigger = function CancelTrigger({
   targetOrderProductId,
   currentStatus,
   display,
+  mode = 'admin',
   children,
 }: CancelActionDialogTriggerProps) {
   const { onOpen, setCurrentStatus, setTargetOrderIds, setTargetOrderProductId, setDisplay } =
     useOrderActionDialog();
-  const uiConfig = CANCEL_ACTION_UI_CONFIG_FOR_ADMIN[currentStatus];
+
+  const configs = {
+    admin: CANCEL_ACTION_UI_CONFIG_FOR_ADMIN,
+    client: CANCEL_ACTION_UI_CONFIG_FOR_CLIENT,
+  };
+  const uiConfig = configs[mode][currentStatus];
 
   if (!uiConfig) return null;
 
@@ -284,6 +292,7 @@ OrderAction.CancelContent = function CancelContent() {
       <AlertDialogFooter>
         <AlertDialogCancel disabled={isLoading}>취소</AlertDialogCancel>
         <AlertDialogAction
+          variant="destructive"
           disabled={isLoading}
           onClick={async (e) => {
             e.stopPropagation();
@@ -296,6 +305,7 @@ OrderAction.CancelContent = function CancelContent() {
               // 주문 상품 취소처리 (단건)
               const isExecuteCancelOrderProduct = targetOrderProductId !== null;
               if (isExecuteCancelOrderProduct) {
+                console.log('[Dialog] executeCancelOrderProduct 실행 -> 단건상품취소');
                 result = await executeCancelOrderProduct({
                   action,
                   currentStatus,

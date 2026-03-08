@@ -1,18 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { Divider } from '@heroui/react';
 import { ImageIcon, Info } from 'lucide-react';
 import moment from 'moment';
-import { toast } from 'sonner';
-import { useMutation } from '@tanstack/react-query';
 
-import { cancelOrderProduct } from '@/features/order';
+import { OrderAction } from '@/features/admin/order-detail/model/order-action-dialog-provider';
 import { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/entities/order';
 import { ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
-import { useAuthStore } from '@/entities/user';
 import { formatNumberWithCommas, isPayloadImageRenderable } from '@/shared';
 import { Button } from '@/shared';
 
@@ -22,19 +18,22 @@ import ExcelExportButton from './ExcelExportButton';
 
 const OrderList = ({ orderList }: { orderList: OrderListItem[] }) => {
   return (
-    <div className="flex w-full flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <span className="text-xl font-bold">주문목록</span>
-        <ExcelExportButton data={orderList} />
-      </div>
+    <OrderAction>
       <div className="flex w-full flex-col gap-4">
-        {orderList.length > 0 ? (
-          orderList.map((order) => <OrderItem key={order.id} order={order} />)
-        ) : (
-          <OrderListEmpty />
-        )}
+        <div className="flex items-center justify-between">
+          <span className="text-xl font-bold">주문목록</span>
+          <ExcelExportButton data={orderList} />
+        </div>
+        <div className="flex w-full flex-col gap-4">
+          {orderList.length > 0 ? (
+            orderList.map((order) => <OrderItem key={order.id} order={order} />)
+          ) : (
+            <OrderListEmpty />
+          )}
+        </div>
       </div>
-    </div>
+      <OrderAction.CancelContent />
+    </OrderAction>
   );
 };
 
@@ -72,7 +71,7 @@ const OrderItem = ({ order }: { order: OrderListItem }) => {
       {/* 구매 상품 리스트 영역 */}
       <div className="flex flex-col gap-6">
         {order.orderProducts.map((orderProduct) => (
-          <OrderProductItem key={orderProduct.id} orderProduct={orderProduct} />
+          <OrderProductItem key={orderProduct.id} orderProduct={orderProduct} orderId={order.id} />
         ))}
       </div>
     </div>
@@ -104,28 +103,15 @@ const BankTransferPendingAlert = () => {
   );
 };
 
-const OrderProductItem = ({ orderProduct }: { orderProduct: OrderProductItem }) => {
-  const [optimisticUpdateFlg, setOptimisticUpdateFlg] = useState(false);
-  const refreshUser = useAuthStore((state) => state.refreshUser);
+interface OrderProductItemProps {
+  orderProduct: OrderProductItem;
+  orderId: number;
+}
 
-  const { mutate: cancelOrderMutation } = useMutation({
-    mutationFn: ({ orderProductId }: { orderProductId: number }) =>
-      cancelOrderProduct({ orderProductId, clientSideFlg: true }),
-    onSuccess: (data) => {
-      if (data?.success) {
-        setOptimisticUpdateFlg(true);
-        const successMessage =
-          orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED
-            ? '주문이 취소되었습니다'
-            : '주문 취소 요청이 완료되었습니다';
-        toast.success(successMessage);
-        refreshUser();
-      } else {
-        toast.error(data?.message || '주문 취소에 실패했습니다');
-      }
-    },
-    onError: () => {},
-  });
+const OrderProductItem = ({ orderProduct, orderId }: OrderProductItemProps) => {
+  const canCancelOrderProduct =
+    orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.PENDING ||
+    orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.PREPARING;
 
   return (
     <div className="flex flex-col gap-2">
@@ -178,25 +164,22 @@ const OrderProductItem = ({ orderProduct }: { orderProduct: OrderProductItem }) 
         </div>
         {/* 주문 액션 */}
         <div className="flex w-full items-center justify-end">
-          <Button
-            size="sm"
-            variant="destructive"
-            className="cursor-pointer disabled:cursor-not-allowed"
-            disabled={
-              orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED ||
-              orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCEL_REQUEST ||
-              optimisticUpdateFlg
-            }
-            onClick={() => {
-              const isConfirmed = confirm('주문을 취소하시겠습니까?');
-
-              if (isConfirmed) {
-                cancelOrderMutation({ orderProductId: orderProduct.id });
-              }
-            }}
-          >
-            주문취소
-          </Button>
+          {canCancelOrderProduct && (
+            <OrderAction.CancelTrigger
+              display={{
+                count: 1,
+                viewType: 'order-detail',
+              }}
+              mode="client"
+              targetOrderIds={[orderId]}
+              currentStatus={orderProduct.orderProductStatus}
+              targetOrderProductId={orderProduct.id}
+            >
+              <Button variant="destructive" size="sm" className="cursor-pointer">
+                주문취소
+              </Button>
+            </OrderAction.CancelTrigger>
+          )}
         </div>
       </div>
     </div>
