@@ -15,7 +15,7 @@ import { translations as ko } from '@lib/payload/utils/translation';
 import { Product } from './collections/Product';
 import { ProductCategory } from './collections/ProductCategory';
 import { MetaSetting } from './collections/MetaSetting';
-import { Order } from './collections/Order';
+import { Order } from './collections/order';
 import { PointTransaction } from './collections/point-transaction';
 import { OrderProduct } from './collections/order-product';
 import { Payments } from './collections/payments';
