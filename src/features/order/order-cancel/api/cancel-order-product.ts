@@ -1,5 +1,7 @@
 'use server';
 
+/** TODO:: 해당 함수는 더이상 사용하지 않으므로 삭제 */
+
 import { getPayload } from '@/shared';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import { cancelOrderProductSchema } from '@/entities/order-product';

@@ -9,24 +9,32 @@ import {
   ItemDescription,
   ItemActions,
 } from '@/shared/ui/shadcn/item';
-import { CollectionViewOrderProduct } from '../lib/normalize';
+import { OrderProduct } from '../model/order-detail-schema';
 import { isPayloadImageRenderable } from '@/shared/lib/validation';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
-import CancelItemAction from './CancelItemAction';
+import { Button } from '@/shared/ui/shadcn/button';
+
+import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface OrderProductItemProps {
-  orderProduct: CollectionViewOrderProduct;
+  orderProduct: OrderProduct;
+  orderId: number;
   idx: number;
   isCancelAction: boolean;
 }
 
-const OrderProductItem = ({ orderProduct, idx, isCancelAction }: OrderProductItemProps) => {
+const OrderProductItem = ({
+  orderId,
+  orderProduct,
+  idx,
+  isCancelAction,
+}: OrderProductItemProps) => {
   return (
     <Item variant={idx % 2 === 0 ? 'default' : 'muted'}>
       <ItemMedia variant="image">
-        {isPayloadImageRenderable(orderProduct.image) ? (
+        {isPayloadImageRenderable(orderProduct.product.image) ? (
           <Image
-            src={orderProduct.image.url}
+            src={orderProduct.product.image.url}
             alt="주문 상품 이미지"
             width={100}
             height={100}
@@ -69,7 +77,21 @@ const OrderProductItem = ({ orderProduct, idx, isCancelAction }: OrderProductIte
           </div>
         </div>
       </ItemContent>
-      {isCancelAction && <CancelItemAction orderProductId={orderProduct.id} />}
+      {isCancelAction && (
+        <OrderAction.CancelTrigger
+          targetOrderIds={[orderId]}
+          targetOrderProductId={orderProduct.id}
+          currentStatus={orderProduct.orderProductStatus}
+          display={{
+            count: 1,
+            viewType: 'order-detail',
+          }}
+        >
+          <Button variant="ghost" size="icon">
+            <PackageX className="size-6" strokeWidth={1.5} />
+          </Button>
+        </OrderAction.CancelTrigger>
+      )}
     </Item>
   );
 };

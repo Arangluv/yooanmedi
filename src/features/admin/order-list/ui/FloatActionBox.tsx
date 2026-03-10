@@ -1,11 +1,14 @@
 'use client';
 
 import useOrderListSearch from '../model/useOrderListSearch';
-import { ORDER_STATUS } from '@/entities/order/constants/order-status';
+import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-status';
+import { RowSelectionState } from '@tanstack/react-table';
+import { OrderAction } from '@/features/admin/order-detail/model/order-action-dialog-provider';
+
+// todo : remove
 import OrderStatusActionButton from './orderStatusActionButton';
 import CancelOrderListButton from './cancelOrderListButton';
-import { RowSelectionState } from '@tanstack/react-table';
-import { Button } from '@/shared';
+import { ORDER_ACTION } from '@/entities/order/constants/order-action';
 
 const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) => {
   const { filters } = useOrderListSearch();
@@ -23,8 +26,24 @@ const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) =
   return (
     <div className="fixed right-1/2 bottom-12 z-50 translate-x-1/2">
       <div className="bg-foreground dark:bg-background flex items-center gap-4 rounded-xl p-4">
-        <OrderStatusActionButton selectedRows={selectedRows} />
-        <CancelOrderListButton selectedRows={selectedRows} />
+        <OrderAction.ProceedTrigger
+          display={{
+            count: Object.keys(selectedRows).length,
+            viewType: 'order-list',
+          }}
+          targetOrderIds={Object.keys(selectedRows).map((key) => parseInt(key))}
+          currentStatus={filters.orderStatus as OrderStatus}
+        />
+        <OrderAction.ProceedContent />
+        <OrderAction.CancelTrigger
+          display={{
+            count: Object.keys(selectedRows).length,
+            viewType: 'order-list',
+          }}
+          targetOrderIds={Object.keys(selectedRows).map((key) => parseInt(key))}
+          currentStatus={filters.orderStatus as OrderStatus}
+        />
+        <OrderAction.CancelContent />
       </div>
     </div>
   );

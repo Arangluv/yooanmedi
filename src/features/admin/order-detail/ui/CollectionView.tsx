@@ -1,10 +1,13 @@
 import PaymentInfo from './PaymentInfo';
 import OrderUserInfo from './OrderUserInfo';
 import DeliveryInfo from './DeliveryInfo';
+import {
+  OrderCancelledInfoCard,
+  OrderCancelRequestInfoCard,
+  OrderProgressInfoCard,
+} from './order-info-card';
 import { OrderCollectionProvider } from '../model/order-provider';
-import OrderAlertDialogContent from './OrderAlertDialogContent';
-import { OrderCancelledInfo, OrderCancelRequestInfo, OrderProgressInfo } from './order-info';
-import AlertDialogProvider from '../model/dialog-provider';
+import { OrderAction } from '../model/order-action-dialog-provider';
 
 interface CollectionDocumentViewProps {
   doc: {
@@ -15,14 +18,14 @@ interface CollectionDocumentViewProps {
 const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
   return (
     <OrderCollectionProvider orderId={doc.id}>
-      <AlertDialogProvider>
+      <OrderAction>
         <div className="bg-muted dark:bg-background h-full w-full px-[60px] py-[30px]">
           <div className="flex gap-12">
             <section className="flex w-[70%] flex-col gap-6">
               {/* 주문 정보 */}
-              <OrderProgressInfo title="주문 정보" />
-              <OrderCancelRequestInfo title="주문취소 요청" />
-              <OrderCancelledInfo title="취소된 주문" />
+              <OrderProgressInfoCard />
+              <OrderCancelRequestInfoCard />
+              <OrderCancelledInfoCard />
             </section>
             <section className="flex w-[30%] flex-col gap-6">
               {/* 결제 정보 */}
@@ -33,9 +36,8 @@ const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
               <DeliveryInfo />
             </section>
           </div>
-          <OrderAlertDialogContent />
         </div>
-      </AlertDialogProvider>
+      </OrderAction>
     </OrderCollectionProvider>
   );
 };
