@@ -305,13 +305,13 @@ OrderAction.CancelContent = function CancelContent() {
               // 주문 상품 취소처리 (단건)
               const isExecuteCancelOrderProduct = targetOrderProductId !== null;
               if (isExecuteCancelOrderProduct) {
-                console.log('[Dialog] executeCancelOrderProduct 실행 -> 단건상품취소');
                 result = await executeCancelOrderProduct({
                   action,
                   currentStatus,
                   orderId: targetOrderIds[0],
                   orderProductId: targetOrderProductId,
                 });
+
                 invalidateQueries.push('order');
               } else {
                 // 주문 취소처리 (일괄)
@@ -320,6 +320,7 @@ OrderAction.CancelContent = function CancelContent() {
                   currentStatus,
                   orderIds: targetOrderIds,
                 });
+
                 invalidateQueries.push('orders');
               }
 
@@ -329,7 +330,7 @@ OrderAction.CancelContent = function CancelContent() {
               }
 
               toast.success(result.message);
-              // queryClient.invalidateQueries({ queryKey: invalidateQueries });
+              queryClient.invalidateQueries({ queryKey: invalidateQueries });
             } catch (error) {
               const errorMessage =
                 error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';

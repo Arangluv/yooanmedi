@@ -69,7 +69,6 @@ export const cancelOrderProduct = async ({
   orderProductId: number;
 }) => {
   try {
-    console.log('[Server action] cancelOrderProduct 실행');
     const orderStatusMachine = new OrderStateMachine(currentStatus as OrderStatus);
     if (!orderStatusMachine.canExecuteAction(action as OrderAction)) {
       return {
@@ -79,8 +78,6 @@ export const cancelOrderProduct = async ({
     }
 
     const command = CancelCommandFactory.createCommand(currentStatus, action);
-    console.log('[Server action]  Create Command Result : ');
-    console.log(command);
 
     const result = await command.partialCancelExecute(targetOrderId, orderProductId);
     return result;
