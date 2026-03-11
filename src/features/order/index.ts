@@ -12,6 +12,3 @@ export type { OrderListDto } from './order-list/model/order-list-schema';
 
 // order-list lib
 export type { OrderListItem } from './order-list/lib/normalization';
-
-// order-cancel api
-export { cancelOrderProduct } from './order-cancel/api/cancel-order-product';
