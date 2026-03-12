@@ -13,6 +13,3 @@ export { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from './constants/ord
 // api
 export { createOrderProduct } from './api/create-order-product';
 export { cancelOrderProduct } from './api/cancel-order-product';
-
-// lib
-export { validateCancellableOrderProduct } from './lib/validate';

@@ -12,7 +12,9 @@ export const Product: CollectionConfig = {
     defaultColumns: ['manufacturer', 'name', 'category', 'price', 'is_best_product', 'stock'],
     useAsTitle: 'name',
     components: {
-      beforeListTable: ['@collections/components/product/ProductListTest'] as CustomComponent[],
+      beforeListTable: [
+        '@collections/components/product/ProductBulkUploadButton',
+      ] as CustomComponent[],
     },
   },
   fields: [
