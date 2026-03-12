@@ -20,6 +20,8 @@ import { Order } from './collections/order';
 import { OrderProduct } from './collections/order-product';
 import { Payments } from './collections/payments';
 import { RecentPurchasedHistory } from './collections/recent-purchased-history';
+import { Favorites } from './collections/favorites';
+import { ProductPrice } from './collections/product-price';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -58,11 +60,13 @@ export default buildConfig({
     Files,
     Product,
     ProductCategory,
+    ProductPrice,
     Order,
     OrderProduct,
     RecentPurchasedHistory,
     Payments,
     PointTransaction,
+    Favorites,
   ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
   editor: lexicalEditor(),

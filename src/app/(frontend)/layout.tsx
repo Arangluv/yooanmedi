@@ -12,14 +12,16 @@ import { Check, Info } from 'lucide-react';
 import Popup from './_components/Popup';
 import QueryProvider from './query-provider';
 import { TooltipProvider } from '@/shared/ui/shadcn/tooltip';
+import { siteConfig } from '@/shared/config/site.config';
 
-// export const dynamic = 'force-dynamic';
-// export const revalidate = 0;
+const { title, description, naverSiteVerification } = siteConfig;
 
 export const metadata: Metadata = {
-  title: '유안메디팜',
-  description:
-    '의약품 전자상거래 전문업체 주사제 · 백신 · 흡입제 · 내복제 · 외용제 · 기타 · 수액제',
+  title,
+  description,
+  other: {
+    'naver-site-verification': naverSiteVerification,
+  },
 };
 
 export const viewport: Viewport = {
