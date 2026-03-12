@@ -213,10 +213,6 @@ export interface File {
  */
 export interface Image {
   id: number;
-  /**
-   * 필수x, 이미지 설명을 입력해주세요. ex) 제품명
-   */
-  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -529,7 +525,6 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "image_select".
  */
 export interface ImageSelect<T extends boolean = true> {
-  alt?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
