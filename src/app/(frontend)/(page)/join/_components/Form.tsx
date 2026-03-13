@@ -515,11 +515,11 @@ function PersonalInfoContent({
       />
       <Input
         name="doctorLicenseNumber"
-        label="의사면허번호"
+        label="의사면허번호(병원인 경우 작성해주세요)"
         type="number"
         placeholder="의사면허번호를 입력해주세요."
         {...inputProps}
-        isRequired
+        isRequired={false}
       />
       <div className="flex items-end gap-2">
         <Input
