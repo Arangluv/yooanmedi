@@ -214,7 +214,6 @@ export const Users: CollectionConfig = {
           type: 'text',
           name: 'doctorLicenseNumber',
           label: '의사면허번호',
-          required: true,
           admin: {
             condition: (data, siblingData) => {
               return siblingData.role === 'client';
