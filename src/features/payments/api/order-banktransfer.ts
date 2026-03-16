@@ -4,7 +4,7 @@ import { transformOrderListToInventory } from '@/entities/inventory';
 import { createUsePointTransaction } from '@/entities/point';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price';
 import { createOrder, CreateOrderDto, ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
-import { getNowISOString } from '@/shared'; // TODO :: REMOVE
+import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
 import {
   createOrderProduct,
   CreateOrderProductDto,
@@ -26,12 +26,9 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       dto;
 
     const inventory = await transformOrderListToInventory(orderList);
-    const totalPriceWithoutDeliveryFee = inventory.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0,
-    );
-    const freeDeliveryFlg = totalPriceWithoutDeliveryFee >= minOrderPrice;
-    const pointAllocator = new PointAllocator(inventory, usedPoint, freeDeliveryFlg);
+    const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+    const isFreeDelivery = deliveryInfoManager.isFreeDelivery();
+    const pointAllocator = new PointAllocator(inventory, usedPoint, isFreeDelivery);
 
     // 주문 생성
     const DEFAULT_ORDER_DELIVERY_FEE = 0;
@@ -54,15 +51,9 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
 
     for (let i = 0; i < inventory.length; i++) {
       const inventoryItem = inventory[i];
-      const productDeliveryFee = getDeliveryFeeFromProductCosiderFlg({
-        inventoryItem,
-        freeDeliveryFlg,
-      });
-
-      let totalProductAmount =
-        inventoryItem.product.price * inventoryItem.quantity + productDeliveryFee;
-
-      totalProductAmount -= pointAllocator.getAllocatedPoint(inventoryItem.product.id);
+      const orderProductSubtotal = deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
+      const orderProductTotalAmount =
+        orderProductSubtotal - pointAllocator.getAllocatedPoint(inventoryItem.product.id);
 
       // 주문 상품 생성
       const createOrderProductDto: CreateOrderProductDto = {
@@ -71,8 +62,8 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
-        totalAmount: totalProductAmount,
-        productDeliveryFee: productDeliveryFee,
+        totalAmount: orderProductTotalAmount,
+        productDeliveryFee: deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem),
         quantity: inventoryItem.quantity,
         cashback_rate: inventoryItem.product.cashback_rate,
         cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,

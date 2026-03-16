@@ -1,6 +1,7 @@
-import type { Product } from '@/entities/product/@x/inventory';
-
-export const baseProduct: Product = {
+/**
+ * 기본 상품데이터는 배송비가 0원, 배송과 관련된 설정이 모두 false입니다.
+ */
+export const baseProduct = {
   id: 1681,
   image: null,
   name: '소부날캡슐200mg',
@@ -23,7 +24,7 @@ export const baseProduct: Product = {
 };
 
 // product fixture factory 함수
-export const createMockProduct = (override?: Partial<Product>) => {
+export const createMockProduct = (override?: Partial<typeof baseProduct>) => {
   return {
     ...baseProduct,
     ...override,
