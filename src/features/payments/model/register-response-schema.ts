@@ -62,7 +62,7 @@ export const registerResultSchema = successResponseSchema
     authorizationId: data.authorizationId,
     shopOrderNo: data.shopOrderNo,
     deliveryRequest: data.shopValue1,
-    orderList: data.shopValue2, // 이미 transform 돼 있음
+    orderList: data.shopValue2,
     usedPoint: data.shopValue3,
     userId: data.shopValue4,
     paymentsMethod: data.shopValue5,

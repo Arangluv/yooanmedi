@@ -15,7 +15,7 @@ import {
   CreateRecentPurchasedHistoryDto,
 } from '@/entities/recent-purchased-history';
 
-import { PointUseEstimator } from '@/entities/point/lib/use/point-use-estimator';
+import { PointAllocator } from '@/entities/point/lib/use/point-use-allocator';
 import { type OrderBankTransferDto } from '../model/order-banktransfer-schema';
 import { FLG_STATUS } from '@/entities/order/constants/flg-status';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
@@ -31,7 +31,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       0,
     );
     const freeDeliveryFlg = totalPriceWithoutDeliveryFee >= minOrderPrice;
-    const pointUseEstimator = new PointUseEstimator(inventory, usedPoint, freeDeliveryFlg);
+    const pointAllocator = new PointAllocator(inventory, usedPoint, freeDeliveryFlg);
 
     // 주문 생성
     const DEFAULT_ORDER_DELIVERY_FEE = 0;
@@ -62,7 +62,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       let totalProductAmount =
         inventoryItem.product.price * inventoryItem.quantity + productDeliveryFee;
 
-      totalProductAmount -= pointUseEstimator.getUsedPoint(inventoryItem.product.id);
+      totalProductAmount -= pointAllocator.getAllocatedPoint(inventoryItem.product.id);
 
       // 주문 상품 생성
       const createOrderProductDto: CreateOrderProductDto = {
@@ -96,7 +96,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
         await createUsePointTransaction({
           userId,
           orderProductId: orderProduct.id,
-          amount: pointUseEstimator.getUsedPoint(inventoryItem.product.id),
+          amount: pointAllocator.getAllocatedPoint(inventoryItem.product.id),
         });
       }
     }
