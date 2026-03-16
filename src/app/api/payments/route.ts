@@ -26,9 +26,10 @@ import {
 } from '@/entities/recent-purchased-history';
 import { createPayment } from '@/entities/payment';
 import type { CreatePaymentDto } from '@/entities/payment';
-import { PointUseEstimator } from '@/entities/point/lib/use/point-use-estimator';
+import { PointAllocator } from '@/entities/point/lib/use/point-use-allocator';
 import { FLG_STATUS } from '@/entities/order/constants/flg-status';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
+import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -96,35 +97,25 @@ export async function POST(request: NextRequest) {
     await createPayment(createPaymentDto);
 
     const inventory = await transformOrderListToInventory(orderList);
-    const totalPriceWithoutDeliveryFee = inventory.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0,
-    );
-    const freeDeliveryFlg = totalPriceWithoutDeliveryFee >= minOrderPrice;
-    const pointUseEstimator = new PointUseEstimator(inventory, usedPoint, freeDeliveryFlg);
+    const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+    const isFreeDelivery = deliveryInfoManager.isFreeDelivery();
+    const pointAllocator = new PointAllocator(inventory, usedPoint, isFreeDelivery);
 
     // 주문 상품 생성
     for (let i = 0; i < inventory.length; i++) {
       const inventoryItem = inventory[i];
-      const productDeliveryFee = getDeliveryFeeFromProductCosiderFlg({
-        inventoryItem,
-        freeDeliveryFlg,
-      });
+      const orderProductSubtotal = deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
+      const orderProductTotalAmount =
+        orderProductSubtotal - pointAllocator.getAllocatedPoint(inventoryItem.product.id);
 
-      let totalProductAmount =
-        inventoryItem.product.price * inventoryItem.quantity + productDeliveryFee;
-
-      totalProductAmount -= pointUseEstimator.getUsedPoint(inventoryItem.product.id);
-
-      // 주문 상품 생성
       const createOrderProductDto: CreateOrderProductDto = {
         order: order.id,
         product: inventoryItem.product.id,
         orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
         priceSnapshot: inventoryItem.product.price,
         productNameSnapshot: inventoryItem.product.name,
-        totalAmount: totalProductAmount,
-        productDeliveryFee: productDeliveryFee,
+        totalAmount: orderProductTotalAmount,
+        productDeliveryFee: deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem),
         quantity: inventoryItem.quantity,
         cashback_rate: inventoryItem.product.cashback_rate,
         cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
@@ -148,7 +139,7 @@ export async function POST(request: NextRequest) {
         await createUsePointTransaction({
           userId,
           orderProductId: orderProduct.id,
-          amount: pointUseEstimator.getUsedPoint(inventoryItem.product.id),
+          amount: pointAllocator.getAllocatedPoint(inventoryItem.product.id),
         });
       }
 

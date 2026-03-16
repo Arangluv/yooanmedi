@@ -47,7 +47,6 @@ export const getDeliveryFeeFromProduct = (item: Inventory[number]) => {
   return product.delivery_fee;
 };
 
-// TODO :: 네이밍 수정 필요
 export const getDeliveryFeeFromProductCosiderFlg = ({
   inventoryItem,
   freeDeliveryFlg,

@@ -1,7 +1,7 @@
 import type { Inventory } from '@/entities/inventory/@x/point';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price/lib/calculator';
 
-export class PointUseEstimator {
+export class PointAllocator {
   private readonly inventory: Inventory;
   private readonly usedPoint: number;
   private readonly isFreeDelivery: boolean;
@@ -146,7 +146,7 @@ export class PointUseEstimator {
     }
   }
 
-  public getUsedPoint(productId: number) {
+  public getAllocatedPoint(productId: number) {
     const target = this.usedPointMap.get(productId);
 
     if (!target) {

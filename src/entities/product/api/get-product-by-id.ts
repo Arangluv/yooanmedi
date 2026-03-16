@@ -5,12 +5,10 @@ import { getPayload } from '@/shared';
 export const getProductById = async (id: number) => {
   const payload = await getPayload();
 
-  const product = await payload.find({
+  const product = await payload.findByID({
     collection: 'product',
-    where: {
-      id: { equals: id },
-    },
+    id,
   });
 
-  return product.docs[0];
+  return product;
 };

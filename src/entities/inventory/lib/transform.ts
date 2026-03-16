@@ -1,7 +1,6 @@
 'use server';
 
 import { getProductById } from '@/entities/product';
-
 import type { InventoryItem } from '../model/type';
 
 interface OrderList {
