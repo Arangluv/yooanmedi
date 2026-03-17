@@ -14,7 +14,7 @@ const OrderUserInfo = () => {
       <CardContent>
         <div className="flex flex-col gap-2 text-lg">
           <div className="flex items-center justify-between">
-            <span>병원명</span>
+            <span>상호명</span>
             <span>{orderUserInfo?.hospitalName}</span>
           </div>
           <div className="flex items-center justify-between">

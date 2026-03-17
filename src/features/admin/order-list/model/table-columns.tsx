@@ -53,7 +53,7 @@ export const columns: ColumnDef<OrderListItem>[] = [
   },
   {
     accessorKey: 'orderUser',
-    header: '주문고객',
+    header: '상호명',
   },
   {
     accessorKey: 'orderStatus',

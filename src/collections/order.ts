@@ -44,7 +44,7 @@ export const Order: CollectionConfig = {
     {
       name: 'user',
       type: 'relationship',
-      label: '주문고객',
+      label: '상호명',
       relationTo: 'users',
       required: true,
       admin: {

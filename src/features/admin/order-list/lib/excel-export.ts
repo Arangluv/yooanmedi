@@ -7,7 +7,7 @@ type ExcelExportData = {
   번호: number;
   주문번호: string;
   주문일시: string;
-  병원명: string;
+  상호명: string;
   제조사: string;
   상품명: string;
   보험코드: string;
@@ -27,7 +27,7 @@ export const ExportExcel = async () => {
       번호: item.index,
       주문번호: item.orderNo,
       주문일시: moment(item.orderDate).format('YYYY-MM-DD'),
-      병원명: item.orderUser,
+      상호명: item.orderUser,
       제조사: item.manufacturer,
       상품명: item.productName,
       보험코드: item.insuranceCode,

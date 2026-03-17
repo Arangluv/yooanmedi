@@ -107,12 +107,12 @@ function FirstStep({
     <Form className="w-full flex flex-col gap-6" onSubmit={onSubmit}>
       <Input
         name="hospitalName"
-        label="병원명"
-        placeholder="병원명을 입력해주세요."
+        label="상호명"
+        placeholder="상호명을 입력해주세요."
         {...inputProps}
         validate={(value: string) => {
           if (!value) {
-            return '병원명을 입력해주세요.'
+            return '상호명을 입력해주세요.'
           }
           return true
         }}

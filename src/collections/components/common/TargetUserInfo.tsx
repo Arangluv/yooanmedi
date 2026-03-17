@@ -10,7 +10,7 @@ const TargetUserInfo = () => {
     <div className="bg-card border-border flex h-[110px] w-full shrink-0 flex-col justify-center gap-4 rounded-md border p-4">
       <span className="text-lg font-bold">고객 정보</span>
       <div className="flex items-center justify-between">
-        <TargetCard title="병원명" value={hosipital_name} />
+        <TargetCard title="상호명" value={hosipital_name} />
         <TargetCard title="대표자명" value={ceo_name} />
         <TargetCard title="이메일" value={email} />
       </div>

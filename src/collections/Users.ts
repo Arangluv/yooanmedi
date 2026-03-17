@@ -196,7 +196,7 @@ export const Users: CollectionConfig = {
         {
           type: 'text',
           name: 'hospitalName',
-          label: '병원명',
+          label: '상호명',
           admin: {
             width: '33.33%',
             condition: (data, siblingData) => {
