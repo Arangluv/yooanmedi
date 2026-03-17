@@ -6,6 +6,7 @@ export const MetaSetting: GlobalConfig = {
   admin: {
     group: '홈페이지 설정',
   },
+  lockDocuments: false,
   fields: [
     {
       name: 'min_order_price',

@@ -8,6 +8,7 @@ export const Image: CollectionConfig = {
   admin: {
     group: '파일 & 이미지',
   },
+  lockDocuments: false,
   labels: {
     singular: '이미지',
     plural: '이미지',

@@ -8,6 +8,7 @@ export const Payments: CollectionConfig = {
     singular: '카드 결제 내역',
     plural: '카드 결제 내역',
   },
+  lockDocuments: false,
   admin: {
     group: '주문 관리',
   },

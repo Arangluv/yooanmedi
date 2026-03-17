@@ -8,6 +8,7 @@ export const OrderProduct: CollectionConfig = {
     singular: '고객 주문 상품',
     plural: '고객 주문 상품',
   },
+  lockDocuments: false,
   admin: {
     defaultColumns: [
       'productNameSnapshot',

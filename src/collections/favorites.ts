@@ -6,6 +6,7 @@ export const Favorites: CollectionConfig = {
     singular: '관심상품',
     plural: '관심상품',
   },
+  lockDocuments: false,
   admin: {
     group: '유저 관리',
     defaultColumns: ['user', 'product', 'createdAt'],

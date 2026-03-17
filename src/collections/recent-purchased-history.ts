@@ -6,6 +6,7 @@ export const RecentPurchasedHistory: CollectionConfig = {
     singular: '상품 최근 구매내역',
     plural: '상품 최근 구매내역',
   },
+  lockDocuments: false,
   admin: {
     defaultColumns: ['user', 'product', 'quantity', 'amount'],
     group: '유저 관리',

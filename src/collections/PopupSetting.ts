@@ -4,8 +4,8 @@ import {
   lexicalEditor,
   LinkFeature,
   UploadFeature,
-} from '@payloadcms/richtext-lexical'
-import { GlobalConfig } from 'payload'
+} from '@payloadcms/richtext-lexical';
+import { GlobalConfig } from 'payload';
 
 export const PopupSetting: GlobalConfig = {
   slug: 'popup',
@@ -13,6 +13,7 @@ export const PopupSetting: GlobalConfig = {
   admin: {
     group: '홈페이지 설정',
   },
+  lockDocuments: false,
   fields: [
     {
       type: 'array',
@@ -41,7 +42,7 @@ export const PopupSetting: GlobalConfig = {
           admin: {
             description: '이미지를 선택해주세요',
             condition: (data, siblingData) => {
-              return siblingData.isOnlyImage === true
+              return siblingData.isOnlyImage === true;
             },
           },
         },
@@ -56,7 +57,7 @@ export const PopupSetting: GlobalConfig = {
                 siblingData.isOnlyImage === false ||
                 siblingData.isOnlyImage === undefined ||
                 siblingData.isOnlyImage === null
-              )
+              );
             },
           },
           editor: lexicalEditor({
@@ -101,4 +102,4 @@ export const PopupSetting: GlobalConfig = {
       ],
     },
   ],
-}
+};

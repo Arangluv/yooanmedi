@@ -6,6 +6,7 @@ export const PointTransaction: CollectionConfig = {
     singular: '적립금 내역',
     plural: '적립금 내역',
   },
+  lockDocuments: false,
   admin: {
     defaultColumns: ['user', 'type', 'amount', 'reason'],
     group: '주문 관리',

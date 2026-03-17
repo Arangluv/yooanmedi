@@ -4,8 +4,8 @@ import {
   lexicalEditor,
   LinkFeature,
   UploadFeature,
-} from '@payloadcms/richtext-lexical'
-import { GlobalConfig } from 'payload'
+} from '@payloadcms/richtext-lexical';
+import { GlobalConfig } from 'payload';
 
 export const PrivacyPolicy: GlobalConfig = {
   slug: 'privacy-policy',
@@ -13,6 +13,7 @@ export const PrivacyPolicy: GlobalConfig = {
   admin: {
     group: '홈페이지 설정',
   },
+  lockDocuments: false,
   fields: [
     {
       name: 'content',
@@ -61,4 +62,4 @@ export const PrivacyPolicy: GlobalConfig = {
       }),
     },
   ],
-}
+};

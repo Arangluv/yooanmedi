@@ -11,6 +11,7 @@ export const ProductPrice: CollectionConfig = {
     defaultColumns: ['user', 'product', 'price'],
     group: '유저 관리',
   },
+  lockDocuments: false,
   indexes: [
     {
       fields: ['product', 'user'],

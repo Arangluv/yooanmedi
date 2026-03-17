@@ -6,6 +6,7 @@ export const Files: CollectionConfig = {
     read: () => true,
     create: () => true,
   },
+  lockDocuments: false,
   admin: {
     group: '파일 & 이미지',
   },

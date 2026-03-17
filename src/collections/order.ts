@@ -11,6 +11,7 @@ export const Order: CollectionConfig = {
     singular: '주문 내역',
     plural: '주문 내역',
   },
+  lockDocuments: false,
   admin: {
     group: '주문 관리',
     useAsTitle: 'orderNo',

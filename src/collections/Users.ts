@@ -6,6 +6,7 @@ export const Users: CollectionConfig = {
     singular: '유저',
     plural: '유저',
   },
+  lockDocuments: false,
   admin: {
     defaultColumns: [
       'username',
