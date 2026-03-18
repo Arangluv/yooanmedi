@@ -35,12 +35,27 @@ const ProductCategotyNavigation = ({ categories }: { categories: ProductCategory
       selectedKey={selectedKey}
       onSelectionChange={(key) => setSelectedKey(key as string)}
     >
-      <Tab key="all" title="전체" onClick={() => onTabClick(null)}></Tab>
+      <Tab
+        key="all"
+        title="전체"
+        className="text-[20px] font-bold"
+        onClick={() => onTabClick(null)}
+      ></Tab>
       {categories.map((category) => (
-        <Tab key={category.id} title={category.name} onClick={() => onTabClick(category.id)}></Tab>
+        <Tab
+          className="text-[20px] font-bold"
+          key={category.id}
+          title={category.name}
+          onClick={() => onTabClick(category.id)}
+        ></Tab>
       ))}
       {/* 이 탭은 카테고리 탭과 분리되어야 하지만 요구사항으로 인해 통합 */}
-      <Tab title="관심상품" key="favorites" onClick={() => updateFavorites()}></Tab>
+      <Tab
+        className="text-[20px] font-bold"
+        title={<span className="text-brand">관심상품</span>}
+        key="favorites"
+        onClick={() => updateFavorites()}
+      ></Tab>
     </Tabs>
   );
 };
