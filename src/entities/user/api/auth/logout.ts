@@ -5,7 +5,7 @@ import config from '@/payload.config';
 
 export const logout = async () => {
   try {
-    const res = await payloadLogout({ config, allSessions: true });
+    const res = await payloadLogout({ config });
 
     if (res.success) {
       return { success: true };

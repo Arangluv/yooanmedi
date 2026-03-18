@@ -28,6 +28,8 @@ export const Users: CollectionConfig = {
   },
   auth: {
     loginWithUsername: true,
+    useSessions: false,
+    tokenExpiration: 60 * 60 * 2, // 2시간
   },
   access: {
     admin: ({ req }) => {
