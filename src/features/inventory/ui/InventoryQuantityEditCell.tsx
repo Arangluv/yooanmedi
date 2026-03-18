@@ -9,7 +9,7 @@ import { useInventoryStore } from '@/entities/inventory';
 import { InventoryItem } from '@/entities/inventory';
 
 const InventoryQuantityEditCell = ({ inventoryItem }: { inventoryItem: InventoryItem }) => {
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState(inventoryItem.quantity);
   const { updateInventory } = useInventoryStore();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const InventoryQuantityEditCell = ({ inventoryItem }: { inventoryItem: Inventory
         variant="bordered"
         minValue={1}
         maxValue={999}
-        defaultValue={1}
+        defaultValue={inventoryItem.quantity}
         value={value}
         onValueChange={(value) => setValue(value)}
         classNames={{ base: 'w-fit', inputWrapper: 'h-5 w-12 border-1 shadow-none' }}

@@ -35,7 +35,7 @@ const DetailQuantityInputRow = () => {
 
     addInventory({ product: clieckedProduct, quantity: Number(quantity) });
     setValue(0);
-    toast.success(<AddedProductToast />);
+    toast.success(<AddedProductToast count={Number(quantity)} />);
   };
 
   const handleQuantitySaveSubmit = (e: React.FormEvent<HTMLFormElement>) => {
