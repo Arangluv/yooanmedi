@@ -8,6 +8,7 @@ import moment from 'moment';
 import { formatNumberWithCommas } from '@/shared';
 import useAuthStore from '@/entities/user/model/useAuthStore';
 import { useEffect } from 'react';
+import { useInventoryStore } from '@/entities/inventory';
 
 const PaymentSuccess = ({
   amount,
@@ -19,9 +20,11 @@ const PaymentSuccess = ({
   shopOrderNo: string;
 }) => {
   const refreshUser = useAuthStore((state) => state.refreshUser);
+  const { clearInventory } = useInventoryStore();
 
   useEffect(() => {
     refreshUser();
+    clearInventory();
   }, []);
 
   return (

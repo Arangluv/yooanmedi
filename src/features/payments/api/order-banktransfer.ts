@@ -30,75 +30,71 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
     const isFreeDelivery = deliveryInfoManager.isFreeDelivery();
     const pointAllocator = new PointAllocator(inventory, usedPoint, isFreeDelivery);
 
-    // // 주문 생성
-    // const DEFAULT_ORDER_DELIVERY_FEE = 0;
-    // const orderDto = {
-    //   user: userId,
-    //   orderNo: shopOrderNo,
-    //   orderStatus: ORDER_STATUS.PENDING,
-    //   flgStatus: FLG_STATUS.INIT_NORMAL,
-    //   paymentStatus: PAYMENT_STATUS.PENDING,
-    //   orderRequest: deliveryRequest,
-    //   finalPrice: amount,
-    //   orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE,
-    //   paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
-    //   usedPoint: usedPoint,
-    // } as CreateOrderDto;
+    // 주문 생성
+    const DEFAULT_ORDER_DELIVERY_FEE = 0;
+    const orderDto = {
+      user: userId,
+      orderNo: shopOrderNo,
+      orderStatus: ORDER_STATUS.PENDING,
+      flgStatus: FLG_STATUS.INIT_NORMAL,
+      paymentStatus: PAYMENT_STATUS.PENDING,
+      orderRequest: deliveryRequest,
+      finalPrice: amount,
+      orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE,
+      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
+      usedPoint: usedPoint,
+    } as CreateOrderDto;
 
-    // const order = await createOrder({
-    //   dto: orderDto,
-    // });
+    const order = await createOrder({
+      dto: orderDto,
+    });
 
-    // for (let i = 0; i < inventory.length; i++) {
-    //   const inventoryItem = inventory[i];
-    //   const orderProductSubtotal = deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
-    //   const orderProductTotalAmount =
-    //     orderProductSubtotal - pointAllocator.getAllocatedPoint(inventoryItem.product.id);
+    for (let i = 0; i < inventory.length; i++) {
+      const inventoryItem = inventory[i];
+      const orderProductSubtotal = deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
+      const orderProductTotalAmount =
+        orderProductSubtotal - pointAllocator.getAllocatedPoint(inventoryItem.product.id);
 
-    //   // 주문 상품 생성
-    //   const createOrderProductDto: CreateOrderProductDto = {
-    //     order: order.id,
-    //     product: inventoryItem.product.id,
-    //     orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
-    //     priceSnapshot: inventoryItem.product.price,
-    //     productNameSnapshot: inventoryItem.product.name,
-    //     totalAmount: orderProductTotalAmount,
-    //     productDeliveryFee: deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem),
-    //     quantity: inventoryItem.quantity,
-    //     cashback_rate: inventoryItem.product.cashback_rate,
-    //     cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
-    //   };
+      // 주문 상품 생성
+      const createOrderProductDto: CreateOrderProductDto = {
+        order: order.id,
+        product: inventoryItem.product.id,
+        orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
+        priceSnapshot: inventoryItem.product.price,
+        productNameSnapshot: inventoryItem.product.name,
+        totalAmount: orderProductTotalAmount,
+        productDeliveryFee: deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem),
+        quantity: inventoryItem.quantity,
+        cashback_rate: inventoryItem.product.cashback_rate,
+        cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
+      };
 
-    //   const orderProduct = await createOrderProduct({
-    //     dto: createOrderProductDto,
-    //   });
+      const orderProduct = await createOrderProduct({
+        dto: createOrderProductDto,
+      });
 
-    //   // 히스토리 생성
-    //   const createRecentPurchasedHistoryDto: CreateRecentPurchasedHistoryDto = {
-    //     user: userId,
-    //     product: inventoryItem.product.id,
-    //     quantity: inventoryItem.quantity,
-    //     amount: inventoryItem.product.price,
-    //   };
-    //   await createRecentPurchasedHistory(createRecentPurchasedHistoryDto);
+      // 히스토리 생성
+      const createRecentPurchasedHistoryDto: CreateRecentPurchasedHistoryDto = {
+        user: userId,
+        product: inventoryItem.product.id,
+        quantity: inventoryItem.quantity,
+        amount: inventoryItem.product.price,
+      };
+      await createRecentPurchasedHistory(createRecentPurchasedHistoryDto);
 
-    //   // 사용 포인트 차감
-    //   if (usedPoint) {
-    //     await createUsePointTransaction({
-    //       userId,
-    //       orderProductId: orderProduct.id,
-    //       amount: pointAllocator.getAllocatedPoint(inventoryItem.product.id),
-    //     });
-    //   }
-    // }
+      // 사용 포인트 차감
+      if (usedPoint) {
+        await createUsePointTransaction({
+          userId,
+          orderProductId: orderProduct.id,
+          amount: pointAllocator.getAllocatedPoint(inventoryItem.product.id),
+        });
+      }
+    }
 
-    // return {
-    //   success: true,
-    //   message: '무통장 입금 주문을 생성하였습니다.',
-    // };
     return {
-      success: false,
-      message: '테스트중입니다.',
+      success: true,
+      message: '무통장 입금 주문을 생성하였습니다.',
     };
   } catch (error) {
     console.log(error);

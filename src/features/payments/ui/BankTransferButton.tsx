@@ -16,7 +16,7 @@ import {
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
 
-import type { InventoryItem } from '@/entities/inventory';
+import { useInventoryStore, type InventoryItem } from '@/entities/inventory';
 import { generateShopOrderNo } from '../lib/order-uuid';
 import { orderBankTransfer } from '../api/order-banktransfer';
 import {
@@ -42,6 +42,7 @@ const BankTransferButton = ({
   amount,
 }: BankTransferButtonProps) => {
   const { isOpen, onOpen } = useDisclosure();
+  const { clearInventory } = useInventoryStore();
 
   const dto: OrderBankTransferDto = {
     shopOrderNo: generateShopOrderNo(),
@@ -61,6 +62,7 @@ const BankTransferButton = ({
         return;
       }
 
+      clearInventory();
       onOpen();
     },
     onError: (error) => {
