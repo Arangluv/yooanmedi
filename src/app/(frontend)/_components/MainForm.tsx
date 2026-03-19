@@ -16,12 +16,14 @@ import { login } from '@/app/(frontend)/actions';
 import { BrandLogo } from '@/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function MainForm() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [content, setContent] = useState<React.ReactNode>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: loginMutation } = useMutation({
     mutationFn: ({ id, password }: { id: string; password: string }) => login(id, password),
@@ -88,7 +90,7 @@ export default function MainForm() {
           <Input
             name="password"
             label="비밀번호"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             size="md"
             placeholder="비밀번호를 입력해주세요."
             validate={(value: string) => {
@@ -98,6 +100,21 @@ export default function MainForm() {
 
               return true;
             }}
+            endContent={
+              <button
+                type="button"
+                className="cursor-pointer"
+                onClick={() => {
+                  setShowPassword(!showPassword);
+                }}
+              >
+                {showPassword ? (
+                  <Eye className="text-foreground-500 h-5 w-5 cursor-pointer" strokeWidth={2} />
+                ) : (
+                  <EyeOff className="text-foreground-500 h-5 w-5 cursor-pointer" strokeWidth={2} />
+                )}
+              </button>
+            }
             isRequired={true}
             radius="sm"
             startContent={<Lock className="text-foreground-500 h-5 w-5" strokeWidth={1.5} />}
