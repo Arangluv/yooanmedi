@@ -15,7 +15,7 @@ import {
   CreateRecentPurchasedHistoryDto,
 } from '@/entities/recent-purchased-history';
 
-import { PointAllocator } from '@/entities/point/lib/use/point-use-allocator';
+import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { type OrderBankTransferDto } from '../model/order-banktransfer-schema';
 import { FLG_STATUS } from '@/entities/order/constants/flg-status';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
@@ -26,9 +26,9 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
       dto;
 
     const inventory = await transformOrderListToInventory(orderList);
+
     const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
-    const isFreeDelivery = deliveryInfoManager.isFreeDelivery();
-    const pointAllocator = new PointAllocator(inventory, usedPoint, isFreeDelivery);
+    const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
 
     // 주문 생성
     const DEFAULT_ORDER_DELIVERY_FEE = 0;
