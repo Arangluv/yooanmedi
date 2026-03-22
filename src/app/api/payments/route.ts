@@ -13,7 +13,6 @@ import {
 } from '@/entities/point';
 import { ORDER_STATUS, createOrder } from '@/entities/order';
 import { type CreateOrderDto } from '@/entities/order';
-import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import {
   createOrderProduct,
@@ -26,7 +25,7 @@ import {
 } from '@/entities/recent-purchased-history';
 import { createPayment } from '@/entities/payment';
 import type { CreatePaymentDto } from '@/entities/payment';
-import { PointAllocator } from '@/entities/point/lib/use/point-use-allocator';
+import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { FLG_STATUS } from '@/entities/order/constants/flg-status';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
@@ -98,8 +97,7 @@ export async function POST(request: NextRequest) {
 
     const inventory = await transformOrderListToInventory(orderList);
     const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
-    const isFreeDelivery = deliveryInfoManager.isFreeDelivery();
-    const pointAllocator = new PointAllocator(inventory, usedPoint, isFreeDelivery);
+    const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
 
     // 주문 상품 생성
     for (let i = 0; i < inventory.length; i++) {

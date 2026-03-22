@@ -58,4 +58,8 @@ export class DeliveryInfoManager {
 
     return subtotal;
   }
+
+  public getInventory() {
+    return this.inventory;
+  }
 }
