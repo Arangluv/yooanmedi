@@ -11,8 +11,7 @@ import {
   createEarnPointTransaction,
   getPointWhenUsingCard,
 } from '@/entities/point';
-import { ORDER_STATUS, createOrder } from '@/entities/order';
-import { type CreateOrderDto } from '@/entities/order';
+import { createOrder } from '@/entities/order';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import {
   createOrderProduct,
@@ -26,9 +25,8 @@ import {
 import { createPayment } from '@/entities/payment';
 import type { CreatePaymentDto } from '@/entities/payment';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
-import { FLG_STATUS } from '@/entities/order/constants/flg-status';
-import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
+import { buildCreateCreditCardOrderDto } from '@/features/payments/lib/build-payments-dto';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -69,19 +67,26 @@ export async function POST(request: NextRequest) {
     });
 
     // 주문 생성
-    const DEFAULT_ORDER_DELIVERY_FEE = 0;
-    const createOrderDto: CreateOrderDto = {
+    // const DEFAULT_ORDER_DELIVERY_FEE = 0;
+    // const createOrderDto: CreateOrderDto = {
+    //   orderStatus: ORDER_STATUS.PREPARING,
+    //   flgStatus: FLG_STATUS.INIT_NORMAL,
+    //   paymentStatus: PAYMENT_STATUS.COMPLETE,
+    //   orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE, // 묶음 배송 처리 시 사용하는 필드 -> 고도화 예정
+    //   paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+    //   user: userId,
+    //   orderNo: shopOrderNo,
+    //   orderRequest: deliveryRequest,
+    //   finalPrice: approveData.amount,
+    //   usedPoint: usedPoint,
+    // };
+    const createOrderDto = buildCreateCreditCardOrderDto({
       user: userId,
       orderNo: shopOrderNo,
-      orderStatus: ORDER_STATUS.PREPARING,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.COMPLETE,
       orderRequest: deliveryRequest,
       finalPrice: approveData.amount,
-      orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE, // 묶음 배송 처리 시 사용하는 필드 -> 고도화 예정
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-      usedPoint: usedPoint,
-    };
+      usedPoint,
+    });
     const order = await createOrder({
       dto: createOrderDto,
     });

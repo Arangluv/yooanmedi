@@ -2,8 +2,7 @@
 
 import { transformOrderListToInventory } from '@/entities/inventory';
 import { createUsePointTransaction } from '@/entities/point';
-import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price';
-import { createOrder, CreateOrderDto, ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
+import { createOrder } from '@/entities/order';
 import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
 import {
   createOrderProduct,
@@ -17,37 +16,27 @@ import {
 
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { type OrderBankTransferDto } from '../model/order-banktransfer-schema';
-import { FLG_STATUS } from '@/entities/order/constants/flg-status';
-import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
+import { buildBankTransferOrderDto } from '../lib/build-payments-dto';
 
 export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
   try {
-    const { shopOrderNo, deliveryRequest, orderList, usedPoint, userId, minOrderPrice, amount } =
-      dto;
+    const { shopOrderNo, deliveryRequest } = dto;
+    const { orderList, minOrderPrice, userId } = dto;
+    const { usedPoint, amount } = dto;
 
     const inventory = await transformOrderListToInventory(orderList);
-
     const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
     const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
 
     // 주문 생성
-    const DEFAULT_ORDER_DELIVERY_FEE = 0;
-    const orderDto = {
+    const orderDto = buildBankTransferOrderDto({
       user: userId,
       orderNo: shopOrderNo,
-      orderStatus: ORDER_STATUS.PENDING,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.PENDING,
       orderRequest: deliveryRequest,
       finalPrice: amount,
-      orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
-      usedPoint: usedPoint,
-    } as CreateOrderDto;
-
-    const order = await createOrder({
-      dto: orderDto,
+      usedPoint,
     });
+    const order = await createOrder({ dto: orderDto });
 
     for (let i = 0; i < inventory.length; i++) {
       const inventoryItem = inventory[i];

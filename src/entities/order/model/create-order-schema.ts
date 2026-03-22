@@ -16,7 +16,7 @@ const createBaseOrderSchema = z.object({
     .optional()
     .transform((val) => val ?? ''),
   orderDeliveryFee: z.number().optional().default(0),
-  finalPrice: z.number(),
+  finalPrice: z.number().min(0),
   usedPoint: z.number(),
 });
 
