@@ -4,6 +4,9 @@ import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 
 import { createOrderSchema } from '@/entities/order/model/create-order-schema';
+import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
+import { createOrderProductSchema } from '@/entities/order-product/model/create-order-product-schema';
+import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 
 interface BuildCreateOrderDtoProps {
   user: number;
@@ -54,5 +57,52 @@ export const buildCreateCreditCardOrderDto = ({
     orderRequest,
     finalPrice,
     usedPoint,
+  });
+};
+
+interface BuildCreateOrderProductDtoProps {
+  orderId: number;
+  totalAmount: number;
+  productDeliveryFee: number;
+  inventoryItem: InventoryItem;
+}
+
+export const buildBankTransferOrderProductDto = ({
+  orderId,
+  totalAmount,
+  productDeliveryFee,
+  inventoryItem,
+}: BuildCreateOrderProductDtoProps) => {
+  return createOrderProductSchema.parse({
+    order: orderId,
+    totalAmount,
+    productDeliveryFee,
+    orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
+    product: inventoryItem.product.id,
+    priceSnapshot: inventoryItem.product.price,
+    productNameSnapshot: inventoryItem.product.name,
+    quantity: inventoryItem.quantity,
+    cashback_rate: inventoryItem.product.cashback_rate,
+    cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
+  });
+};
+
+export const buildCreateCreditCardOrderProductDto = ({
+  orderId,
+  totalAmount,
+  productDeliveryFee,
+  inventoryItem,
+}: BuildCreateOrderProductDtoProps) => {
+  return createOrderProductSchema.parse({
+    order: orderId,
+    totalAmount,
+    productDeliveryFee,
+    orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
+    product: inventoryItem.product.id,
+    priceSnapshot: inventoryItem.product.price,
+    productNameSnapshot: inventoryItem.product.name,
+    quantity: inventoryItem.quantity,
+    cashback_rate: inventoryItem.product.cashback_rate,
+    cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
   });
 };

@@ -67,19 +67,6 @@ export async function POST(request: NextRequest) {
     });
 
     // 주문 생성
-    // const DEFAULT_ORDER_DELIVERY_FEE = 0;
-    // const createOrderDto: CreateOrderDto = {
-    //   orderStatus: ORDER_STATUS.PREPARING,
-    //   flgStatus: FLG_STATUS.INIT_NORMAL,
-    //   paymentStatus: PAYMENT_STATUS.COMPLETE,
-    //   orderDeliveryFee: DEFAULT_ORDER_DELIVERY_FEE, // 묶음 배송 처리 시 사용하는 필드 -> 고도화 예정
-    //   paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-    //   user: userId,
-    //   orderNo: shopOrderNo,
-    //   orderRequest: deliveryRequest,
-    //   finalPrice: approveData.amount,
-    //   usedPoint: usedPoint,
-    // };
     const createOrderDto = buildCreateCreditCardOrderDto({
       user: userId,
       orderNo: shopOrderNo,
@@ -113,12 +100,12 @@ export async function POST(request: NextRequest) {
 
       const createOrderProductDto: CreateOrderProductDto = {
         order: order.id,
-        product: inventoryItem.product.id,
-        orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
-        priceSnapshot: inventoryItem.product.price,
-        productNameSnapshot: inventoryItem.product.name,
         totalAmount: orderProductTotalAmount,
         productDeliveryFee: deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem),
+        orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
+        product: inventoryItem.product.id,
+        priceSnapshot: inventoryItem.product.price,
+        productNameSnapshot: inventoryItem.product.name,
         quantity: inventoryItem.quantity,
         cashback_rate: inventoryItem.product.cashback_rate,
         cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,

@@ -1,20 +1,15 @@
 'use server';
 
 import { getPayload } from '@/shared';
-import {
-  CreateRecentPurchasedHistoryDto,
-  CreateRecentPurchasedHistoryParseResult,
-  createHistorySchema,
-} from '../model/create-schema';
+import { CreateRecentPurchasedHistoryDto } from '../model/create-schema';
 
 export const createRecentPurchasedHistory = async (dto: CreateRecentPurchasedHistoryDto) => {
   try {
     const payload = await getPayload();
-    const data: CreateRecentPurchasedHistoryParseResult = createHistorySchema.parse(dto);
 
     await payload.create({
       collection: 'recent-purchased-history',
-      data,
+      data: dto,
     });
 
     return;
