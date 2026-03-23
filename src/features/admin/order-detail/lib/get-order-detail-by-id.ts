@@ -32,6 +32,7 @@ export const getOrderDetailById = async (id: number) => {
       },
       product: {
         image: true,
+        specification: true,
       },
       'order-product': {
         product: true,

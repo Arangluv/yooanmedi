@@ -29,6 +29,9 @@ const OrderProductItem = ({
   idx,
   isCancelAction,
 }: OrderProductItemProps) => {
+  console.log('orderProduct');
+  console.log(orderProduct);
+
   return (
     <Item variant={idx % 2 === 0 ? 'default' : 'muted'}>
       <ItemMedia variant="image">
@@ -50,7 +53,15 @@ const OrderProductItem = ({
             <ItemTitle className="text-base">{orderProduct.productNameSnapshot}</ItemTitle>
           </div>
           <div className="flex items-center gap-16">
-            <div>
+            {orderProduct.product.specification && (
+              <div className="min-w-[80px]">
+                <ItemTitle className="text-base">규격</ItemTitle>
+                <ItemDescription className="text-base">
+                  {orderProduct.product.specification}
+                </ItemDescription>
+              </div>
+            )}
+            <div className="min-w-[80px]">
               <ItemTitle className="text-base">가격</ItemTitle>
               <ItemDescription className="text-base">
                 {formatNumberWithCommas(orderProduct.priceSnapshot)}원

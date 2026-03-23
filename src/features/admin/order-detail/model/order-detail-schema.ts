@@ -15,6 +15,7 @@ const orderProductSchema = z.object({
   product: z.object({
     id: z.number(),
     image: z.custom<Image | null>(),
+    specification: z.string(),
   }),
   quantity: z.number(),
   orderProductStatus: z.enum(Object.values(ORDER_PRODUCT_STATUS)),
