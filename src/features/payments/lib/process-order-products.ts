@@ -76,14 +76,13 @@ export class OrderProductsManager {
   }
 
   async processOrderSideEffectsForCreditCard() {
+    // OrderProducts 생성
     await Promise.all(
       this.inventory.map(async (inventoryItem: InventoryItem) => {
         // step 1. 주문 상품 생성
         const orderProduct = await this.createCreditCardOrderProduct(inventoryItem);
         // step 2. 구매 히스토리 생성
         await this.makeRecentPurchasedHistory(inventoryItem);
-        // step 3. 결제 내역 생성
-        await this.createCardPaymentHistory(inventoryItem, orderProduct.id);
         // step 4. 구매 포인트 적립
         await this.accumulatePoint(inventoryItem, orderProduct.id);
         // step 5. 사용 포인트 차감
@@ -139,19 +138,16 @@ export class OrderProductsManager {
   }
 
   // 결제 내역 생성
-  private async createCardPaymentHistory(
-    inventoryItem: InventoryItem,
-    orderProductId: number,
-  ): Promise<void> {
-    if (this.pgCno) {
-      await createPayment({
-        order: this.orderId,
-        amount: inventoryItem.product.price,
-        paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-        pgCno: this.pgCno,
-      });
-    }
-  }
+  // private async createCardPaymentHistory(): Promise<void> {
+  //   if (this.pgCno) {
+  //     await createPayment({
+  //       order: this.orderId,
+  //       amount: this.amount,
+  //       paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+  //       pgCno: this.pgCno,
+  //     });
+  //   }
+  // }
 
   // 사용 포인트 차감
   private async deductUsedPoint(

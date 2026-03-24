@@ -89,17 +89,18 @@ export async function POST(request: NextRequest) {
       minOrderPrice,
       pgCno: approveData.pgCno,
     };
+
+    // 결제 내역 생성
+    const createPaymentDto: CreatePaymentDto = {
+      order: order.id,
+      amount: approveData.amount,
+      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      pgCno: approveData.pgCno,
+    };
+    await createPayment(createPaymentDto);
+
     const orderProductsManager = await OrderProductsManager.create(dto, order.id, userId);
     orderProductsManager.processOrderSideEffectsForCreditCard();
-
-    // // 결제 내역 생성
-    // const createPaymentDto: CreatePaymentDto = {
-    //   order: order.id,
-    //   amount: approveData.amount,
-    //   paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-    //   pgCno: approveData.pgCno,
-    // };
-    // await createPayment(createPaymentDto);
 
     // const inventory = await transformOrderListToInventory(orderList);
     // const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
