@@ -102,6 +102,11 @@ const data = [
         href: `${GLOBAL_BASE_URL}/popup?breadcrumbs=팝업 설정`,
       },
       {
+        label: '배너 설정',
+        icon: CopyPlus,
+        href: `${GLOBAL_BASE_URL}/banner?breadcrumbs=배너 설정`,
+      },
+      {
         label: '최소 주문 금액 설정',
         icon: Settings,
         href: `${GLOBAL_BASE_URL}/meta-setting?breadcrumbs=최소 주문 금액 설정`,
