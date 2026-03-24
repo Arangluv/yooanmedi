@@ -15,6 +15,7 @@ export const createRecentPurchasedHistory = async (dto: CreateRecentPurchasedHis
     return;
   } catch (error) {
     // TODO :: error 핸들링
+    console.log(error);
     throw new Error('최근 구매내역을 생성하는데 문제가 발생했습니다');
   }
 };

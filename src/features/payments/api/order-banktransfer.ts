@@ -1,8 +1,8 @@
 'use server';
 
+import { createOrder } from '@/entities/order';
 import { transformOrderListToInventory } from '@/entities/inventory';
 import { createUsePointTransaction } from '@/entities/point';
-import { createOrder } from '@/entities/order';
 import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
 import {
   createOrderProduct,
@@ -13,8 +13,8 @@ import {
   createRecentPurchasedHistory,
   CreateRecentPurchasedHistoryDto,
 } from '@/entities/recent-purchased-history';
-
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
+
 import { type OrderBankTransferDto } from '../model/order-banktransfer-schema';
 import { buildBankTransferOrderDto } from '../lib/build-payments-dto';
 import { OrderProductsManager } from '../lib/process-order-products';
@@ -23,8 +23,7 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
   try {
     const { userId, shopOrderNo, deliveryRequest } = dto;
     const { usedPoint, amount } = dto;
-    const { orderList, minOrderPrice } = dto;
-
+    
     // 주문 생성
     const orderDto = buildBankTransferOrderDto({
       user: userId,
@@ -35,15 +34,15 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
     });
     const order = await createOrder({ dto: orderDto });
 
+    // 주문 사이드 이펙트 처리
+    const orderProductsManager = await OrderProductsManager.create(dto, order.id, userId);
+    await orderProductsManager.processOrderSideEffectsForBankTransfer();
+
     // const inventory = await transformOrderListToInventory(orderList);
     // const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
     // const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
 
-    // 주문 사이드 이펙트 처리
-    const orderProductsManager = await OrderProductsManager.create(dto, order.id);
-    await orderProductsManager.processOrderSideEffectsForBankTransfer();
-
-    // 주문 상품 생성
+    // // 주문 상품 생성
     // for (let i = 0; i < inventory.length; i++) {
     //   const inventoryItem = inventory[i];
     //   const orderProductSubtotal = deliveryInfoManager.getOrderProductSubtotal(inventoryItem);

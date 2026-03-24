@@ -27,6 +27,7 @@ import type { CreatePaymentDto } from '@/entities/payment';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
 import { buildCreateCreditCardOrderDto } from '@/features/payments/lib/build-payments-dto';
+import { OrderProductsManager } from '@/features/payments/lib/process-order-products';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -78,68 +79,81 @@ export async function POST(request: NextRequest) {
       dto: createOrderDto,
     });
 
-    // 결제 내역 생성
-    const createPaymentDto: CreatePaymentDto = {
-      order: order.id,
+    const dto = {
+      shopOrderNo,
+      deliveryRequest,
+      orderList,
+      usedPoint,
+      userId,
       amount: approveData.amount,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      minOrderPrice,
       pgCno: approveData.pgCno,
     };
-    await createPayment(createPaymentDto);
+    const orderProductsManager = await OrderProductsManager.create(dto, order.id, userId);
+    orderProductsManager.processOrderSideEffectsForCreditCard();
 
-    const inventory = await transformOrderListToInventory(orderList);
-    const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
-    const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
+    // // 결제 내역 생성
+    // const createPaymentDto: CreatePaymentDto = {
+    //   order: order.id,
+    //   amount: approveData.amount,
+    //   paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+    //   pgCno: approveData.pgCno,
+    // };
+    // await createPayment(createPaymentDto);
 
-    // 주문 상품 생성
-    for (let i = 0; i < inventory.length; i++) {
-      const inventoryItem = inventory[i];
-      const orderProductSubtotal = deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
-      const orderProductTotalAmount =
-        orderProductSubtotal - pointAllocator.getAllocatedPoint(inventoryItem.product.id);
+    // const inventory = await transformOrderListToInventory(orderList);
+    // const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+    // const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
 
-      const createOrderProductDto: CreateOrderProductDto = {
-        order: order.id,
-        totalAmount: orderProductTotalAmount,
-        productDeliveryFee: deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem),
-        orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
-        product: inventoryItem.product.id,
-        priceSnapshot: inventoryItem.product.price,
-        productNameSnapshot: inventoryItem.product.name,
-        quantity: inventoryItem.quantity,
-        cashback_rate: inventoryItem.product.cashback_rate,
-        cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
-      };
+    // // 주문 상품 생성
+    // for (let i = 0; i < inventory.length; i++) {
+    //   const inventoryItem = inventory[i];
+    //   const orderProductSubtotal = deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
+    //   const orderProductTotalAmount =
+    //     orderProductSubtotal - pointAllocator.getAllocatedPoint(inventoryItem.product.id);
 
-      const orderProduct = await createOrderProduct({
-        dto: createOrderProductDto,
-      });
+    //   const createOrderProductDto: CreateOrderProductDto = {
+    //     order: order.id,
+    //     totalAmount: orderProductTotalAmount,
+    //     productDeliveryFee: deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem),
+    //     orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
+    //     product: inventoryItem.product.id,
+    //     priceSnapshot: inventoryItem.product.price,
+    //     productNameSnapshot: inventoryItem.product.name,
+    //     quantity: inventoryItem.quantity,
+    //     cashback_rate: inventoryItem.product.cashback_rate,
+    //     cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
+    //   };
 
-      // 히스토리 생성
-      const createRecentPurchasedHistoryDto: CreateRecentPurchasedHistoryDto = {
-        user: userId,
-        product: inventoryItem.product.id,
-        quantity: inventoryItem.quantity,
-        amount: inventoryItem.product.price,
-      };
-      await createRecentPurchasedHistory(createRecentPurchasedHistoryDto);
+    //   const orderProduct = await createOrderProduct({
+    //     dto: createOrderProductDto,
+    //   });
 
-      // 사용 포인트 차감
-      if (usedPoint) {
-        await createUsePointTransaction({
-          userId,
-          orderProductId: orderProduct.id,
-          amount: pointAllocator.getAllocatedPoint(inventoryItem.product.id),
-        });
-      }
+    //   // 히스토리 생성
+    //   const createRecentPurchasedHistoryDto: CreateRecentPurchasedHistoryDto = {
+    //     user: userId,
+    //     product: inventoryItem.product.id,
+    //     quantity: inventoryItem.quantity,
+    //     amount: inventoryItem.product.price,
+    //   };
+    //   await createRecentPurchasedHistory(createRecentPurchasedHistoryDto);
 
-      // 구매 포인트 적립
-      await createEarnPointTransaction({
-        userId,
-        orderProductId: orderProduct.id,
-        amount: getPointWhenUsingCard(inventoryItem.product) * inventoryItem.quantity,
-      });
-    }
+    //   // 사용 포인트 차감
+    //   if (usedPoint) {
+    //     await createUsePointTransaction({
+    //       userId,
+    //       orderProductId: orderProduct.id,
+    //       amount: pointAllocator.getAllocatedPoint(inventoryItem.product.id),
+    //     });
+    //   }
+
+    //   // 구매 포인트 적립
+    //   await createEarnPointTransaction({
+    //     userId,
+    //     orderProductId: orderProduct.id,
+    //     amount: getPointWhenUsingCard(inventoryItem.product) * inventoryItem.quantity,
+    //   });
+    // }
 
     // 트랜잭션 커밋 -> TODO:: 트랜잭션 설정이 필요합니다
     // await payload.db.commitTransaction(dbTransactionID as string);
@@ -155,7 +169,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(url, { status: 302 });
   } catch (error: any) {
     console.log(error);
-
     // 트랜잭션 롤백
     // await payload.db.rollbackTransaction(dbTransactionID as string);
 
