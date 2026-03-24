@@ -1,5 +1,5 @@
 import type { Inventory } from '@/entities/inventory/@x/point';
-import type { PointAllocator } from '@/entities/point/lib/use/point-use-allocator';
+import type { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price/lib/calculator';
 
 export class DeliveryInfoManager {
