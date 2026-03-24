@@ -2,20 +2,14 @@
 
 import { getPayload } from '@/shared';
 
-import {
-  CreateOrderProductDto,
-  CreateOrderProductParseResult,
-  createOrderProductSchema,
-} from '../model/create-order-product-schema';
+import { CreateOrderProductDto } from '../model/create-order-product-schema';
 
-export const createOrderProduct = async ({ dto }: { dto: CreateOrderProductDto }) => {
+export const createOrderProduct = async (dto: CreateOrderProductDto) => {
   try {
     const payload = await getPayload();
-
-    const data: CreateOrderProductParseResult = createOrderProductSchema.parse(dto);
     const orderProduct = await payload.create({
       collection: 'order-product',
-      data,
+      data: dto,
     });
 
     return orderProduct;
