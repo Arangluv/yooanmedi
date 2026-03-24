@@ -17,6 +17,7 @@ const getCustomPrice = async (user: User): Promise<CustomPriceTable[]> => {
   const payload = await getPayload();
   const data = await payload.find({
     collection: 'product-price',
+    pagination: false,
     select: {
       price: true,
       product: true,
@@ -27,7 +28,6 @@ const getCustomPrice = async (user: User): Promise<CustomPriceTable[]> => {
       },
     },
     populate: {
-      // 빈 객체 전달 시 id만 전달됨
       product: {},
     },
   });

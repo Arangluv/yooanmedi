@@ -12,6 +12,7 @@ export const orderBankTransferSchema = z.object({
       quantity: z.number(),
     }),
   ),
+  pgCno: z.string().optional(),
   usedPoint: z.number(),
   userId: z.number(),
   amount: z.number(),
