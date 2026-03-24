@@ -22,6 +22,8 @@ import { Payments } from './collections/payments';
 import { RecentPurchasedHistory } from './collections/recent-purchased-history';
 import { Favorites } from './collections/favorites';
 import { ProductPrice } from './collections/product-price';
+import { Banner } from './collections/banner';
+import { BannerImage } from './collections/banner-image';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -57,6 +59,7 @@ export default buildConfig({
   collections: [
     Users,
     Image,
+    BannerImage,
     Files,
     Product,
     ProductCategory,
@@ -68,7 +71,7 @@ export default buildConfig({
     PointTransaction,
     Favorites,
   ],
-  globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting],
+  globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting, Banner],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -98,6 +101,7 @@ export default buildConfig({
       collections: {
         image: true,
         files: true,
+        'banner-image': true,
       },
       bucket: process.env.S3_BUCKET!,
       config: {

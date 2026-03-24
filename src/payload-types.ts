@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     image: Image;
+    'banner-image': BannerImage;
     files: File;
     product: Product;
     'product-category': ProductCategory;
@@ -91,6 +92,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     image: ImageSelect<false> | ImageSelect<true>;
+    'banner-image': BannerImageSelect<false> | BannerImageSelect<true>;
     files: FilesSelect<false> | FilesSelect<true>;
     product: ProductSelect<false> | ProductSelect<true>;
     'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
@@ -113,12 +115,14 @@ export interface Config {
     terms: Term;
     'privacy-policy': PrivacyPolicy;
     'meta-setting': MetaSetting;
+    banner: Banner;
   };
   globalsSelect: {
     popup: PopupSelect<false> | PopupSelect<true>;
     terms: TermsSelect<false> | TermsSelect<true>;
     'privacy-policy': PrivacyPolicySelect<false> | PrivacyPolicySelect<true>;
     'meta-setting': MetaSettingSelect<false> | MetaSettingSelect<true>;
+    banner: BannerSelect<false> | BannerSelect<true>;
   };
   locale: null;
   user: User & {
@@ -205,6 +209,24 @@ export interface File {
  * via the `definition` "image".
  */
 export interface Image {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banner-image".
+ */
+export interface BannerImage {
   id: number;
   updatedAt: string;
   createdAt: string;
@@ -396,6 +418,10 @@ export interface PayloadLockedDocument {
         value: number | Image;
       } | null)
     | ({
+        relationTo: 'banner-image';
+        value: number | BannerImage;
+      } | null)
+    | ({
         relationTo: 'files';
         value: number | File;
       } | null)
@@ -511,6 +537,23 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "image_select".
  */
 export interface ImageSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banner-image_select".
+ */
+export interface BannerImageSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -809,6 +852,26 @@ export interface MetaSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banner".
+ */
+export interface Banner {
+  id: number;
+  items?:
+    | {
+        /**
+         * 홈페이지 메인에 들어가는 배너이미지를 선택해주세요
+         *  권장 비율 85 : 36
+         *  ex. 850 * 360, 1700 * 720
+         */
+        image?: (number | null) | BannerImage;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "popup_select".
  */
 export interface PopupSelect<T extends boolean = true> {
@@ -850,6 +913,21 @@ export interface PrivacyPolicySelect<T extends boolean = true> {
  */
 export interface MetaSettingSelect<T extends boolean = true> {
   min_order_price?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banner_select".
+ */
+export interface BannerSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
