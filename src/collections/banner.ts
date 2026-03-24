@@ -3,6 +3,9 @@ import { GlobalConfig } from 'payload';
 export const Banner: GlobalConfig = {
   slug: 'banner',
   label: '배너관리',
+  access: {
+    read: () => true,
+  },
   admin: {
     group: '홈페이지 설정',
   },

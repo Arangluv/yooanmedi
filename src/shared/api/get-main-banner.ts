@@ -1,16 +1,10 @@
 'use server';
 
-import { getPayload } from '../lib/get-payload';
-
 export const getMainBanners = async () => {
-  const payload = await getPayload();
-
-  const banner = await payload.findGlobal({
-    slug: 'banner',
-    select: {
-      items: true,
-    },
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/globals/banner`, {
+    cache: 'no-store',
   });
+  const data = await res.json();
 
-  return banner.items;
+  return data.items;
 };
