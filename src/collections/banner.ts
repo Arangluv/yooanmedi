@@ -8,6 +8,11 @@ export const Banner: GlobalConfig = {
   },
   admin: {
     group: '홈페이지 설정',
+    components: {
+      elements: {
+        Description: '@/shared/ui/admin/DocumentLink',
+      },
+    },
   },
   lockDocuments: false,
   fields: [

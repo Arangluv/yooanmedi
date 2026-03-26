@@ -34,6 +34,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_62822d1fca684579ea845f3f896686f1 } from '@/collections/components/common/ArrayLabel'
+import { default as default_3a001223b64abec1123d32d1416c0587 } from '@/shared/ui/admin/DocumentLink'
 import { default as default_c39be30a9f2d76895202e71dab5a55b0 } from '@/shared/ui/admin/sidebar/EmptyPayloadNav'
 import { default as default_aef67b4deff124b3ff804f69e784ddcb } from '@/shared/ui/admin/Header'
 import { HomeIcon as HomeIcon_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
@@ -81,6 +82,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#TableFeatureClient": TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/collections/components/common/ArrayLabel#default": default_62822d1fca684579ea845f3f896686f1,
+  "@/shared/ui/admin/DocumentLink#default": default_3a001223b64abec1123d32d1416c0587,
   "@/shared/ui/admin/sidebar/EmptyPayloadNav#default": default_c39be30a9f2d76895202e71dab5a55b0,
   "@/shared/ui/admin/Header#default": default_aef67b4deff124b3ff804f69e784ddcb,
   "@/shared/ui/logos#HomeIcon": HomeIcon_c4ed48037aede40cf46fe21deda1067f,
