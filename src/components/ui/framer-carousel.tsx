@@ -7,7 +7,7 @@ import { Empty, EmptyTitle, EmptyDescription } from '@/shared';
 
 interface CarouselImage {
   id: string;
-  url: string;
+  url: string | null;
 }
 
 export function FramerCarousel({ items }: { items: CarouselImage[] }) {
@@ -100,7 +100,7 @@ export function FramerCarousel({ items }: { items: CarouselImage[] }) {
             {items.map((item, idx) => (
               <div key={item.id} className="h-[360px] w-full shrink-0">
                 <Image
-                  src={item.url}
+                  src={item.url ?? ''}
                   alt={`메인배너${idx + 1}`}
                   className="pointer-events-none h-full w-full rounded-lg object-contain select-none"
                   draggable={false}

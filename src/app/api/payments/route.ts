@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
 
     let data = {} as Record<string, string>;
     const formData = await request.formData();
+
     formData.forEach((value: any, key: string) => {
       data[key as string] = value;
     });
@@ -80,14 +81,14 @@ export async function POST(request: NextRequest) {
     });
 
     const dto = {
-      shopOrderNo,
-      deliveryRequest,
-      orderList,
-      usedPoint,
-      userId,
-      amount: approveData.amount,
-      minOrderPrice,
-      pgCno: approveData.pgCno,
+      shopOrderNo, // register param
+      deliveryRequest, // register param
+      orderList, // register param
+      usedPoint, // register param
+      userId, // register param
+      minOrderPrice, // register param
+      amount: approveData.amount, // approve param
+      pgCno: approveData.pgCno, // approve param
     };
 
     // 결제 내역 생성
