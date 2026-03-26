@@ -44,6 +44,9 @@ function LeftContent() {
         <p className="text-foreground-600 text-lg">
           유안메디팜은 병의원에 필수제품을 판매하는 온라인 쇼핑몰입니다.
         </p>
+        <div className="flex justify-end">
+          <span className="text-lg font-bold">오픈 이벤트 3개월간 배송비 무료</span>
+        </div>
       </div>
       {/* 중단 이미지 */}
       {/* <div className="h-[360px] w-full overflow-hidden rounded-md">

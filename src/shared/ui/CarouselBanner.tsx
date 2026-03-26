@@ -4,9 +4,6 @@ import { bannerSchema } from '../model/banner-schema';
 
 const CarouselBanner = async () => {
   const banners = await getMainBanners();
-  console.log('banners');
-  console.log(banners);
-
   const items = bannerSchema.parse(banners);
 
   return (
