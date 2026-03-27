@@ -22,7 +22,7 @@ import { orderBankTransfer } from '../api/order-banktransfer';
 import {
   type OrderBankTransferDto,
   orderBankTransferSchema,
-} from '../model/order-banktransfer-schema';
+} from '../model/schema/order-banktransfer-schema';
 
 interface BankTransferButtonProps {
   deliveryRequest: string;

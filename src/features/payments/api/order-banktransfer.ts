@@ -1,42 +1,33 @@
 'use server';
 
 import { createOrder } from '@/entities/order';
-import { transformOrderListToInventory } from '@/entities/inventory';
-import { createUsePointTransaction } from '@/entities/point';
-import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
-import {
-  createOrderProduct,
-  CreateOrderProductDto,
-  ORDER_PRODUCT_STATUS,
-} from '@/entities/order-product';
-import {
-  createRecentPurchasedHistory,
-  CreateRecentPurchasedHistoryDto,
-} from '@/entities/recent-purchased-history';
-import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
-
-import { type OrderBankTransferDto } from '../model/order-banktransfer-schema';
+import { type OrderBankTransferDto } from '../model/schema/order-banktransfer-schema';
 import { buildBankTransferOrderDto } from '../lib/build-payments-dto';
 import { OrderProductsManager } from '../lib/process-order-products';
 
+import { BankTransferPaymentManager } from '../model/manager/bank-transfer-payment-manager';
+
 export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
   try {
-    const { userId, shopOrderNo, deliveryRequest } = dto;
-    const { usedPoint, amount } = dto;
-    
-    // 주문 생성
-    const orderDto = buildBankTransferOrderDto({
-      user: userId,
-      orderNo: shopOrderNo,
-      orderRequest: deliveryRequest,
-      finalPrice: amount,
-      usedPoint,
-    });
-    const order = await createOrder({ dto: orderDto });
+    // const { userId, shopOrderNo, deliveryRequest } = dto;
+    // const { usedPoint, amount } = dto;
+    const paymentContext = BankTransferPaymentManager.createContext(dto);
+    const paymentManager = await BankTransferPaymentManager.create(paymentContext);
 
-    // 주문 사이드 이펙트 처리
-    const orderProductsManager = await OrderProductsManager.create(dto, order.id, userId);
-    await orderProductsManager.processOrderSideEffectsForBankTransfer();
+    const order = await paymentManager.createOrder();
+    // // 주문 생성
+    // const orderDto = buildBankTransferOrderDto({
+    //   user: userId,
+    //   orderNo: shopOrderNo,
+    //   orderRequest: deliveryRequest,
+    //   finalPrice: amount,
+    //   usedPoint,
+    // });
+    // const order = await createOrder({ dto: orderDto });
+
+    // // 주문 사이드 이펙트 처리
+    // const orderProductsManager = await OrderProductsManager.create(dto, order.id, userId);
+    // await orderProductsManager.processOrderSideEffectsForBankTransfer();
 
     // const inventory = await transformOrderListToInventory(orderList);
     // const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);

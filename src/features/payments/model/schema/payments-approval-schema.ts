@@ -1,25 +1,22 @@
 import { z } from 'zod';
 
-import { getUuidWithoutHyphen } from '@/shared';
-import { getNowYYYYMMDD } from '@/shared';
+import { getUuidWithoutHyphen, getNowYYYYMMDD } from '@/shared';
 
-export const paymentsApprovalRequestBaseSchema = z.object({
+export const approvalPaymentBaseSchema = z.object({
   mallId: z.string(),
   authorizationId: z.string(),
   shopOrderNo: z.string(),
 });
 
-export const paymentsApprovalRequestSchema = paymentsApprovalRequestBaseSchema.transform(
-  (data) => ({
-    ...data,
-    shopTransactionId: getUuidWithoutHyphen(),
-    approvalReqDate: getNowYYYYMMDD(),
-  }),
-);
+export const approvalPaymentSchema = approvalPaymentBaseSchema.transform((data) => ({
+  ...data,
+  shopTransactionId: getUuidWithoutHyphen(),
+  approvalReqDate: getNowYYYYMMDD(),
+}));
 
-export type PaymentsApprovalRequestDto = z.infer<typeof paymentsApprovalRequestSchema>;
+export type ApprovalPaymentDto = z.infer<typeof approvalPaymentSchema>;
 
-export const paymentsApprovalResponseSchema = z
+export const approvalPaymentResultSchema = z
   .object({
     resCd: z.string(),
     resMsg: z.string(),
@@ -41,4 +38,4 @@ export const paymentsApprovalResponseSchema = z
   })
   .strip();
 
-export type PaymentsApprovalResult = z.infer<typeof paymentsApprovalResponseSchema>;
+export type ApprovalPaymentResult = z.infer<typeof approvalPaymentResultSchema>;

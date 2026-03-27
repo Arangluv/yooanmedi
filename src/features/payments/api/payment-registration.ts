@@ -3,8 +3,8 @@
 import type {
   PaymentsRegisterApplicationDto,
   PaymentsRegisterRequestDto,
-} from '../model/payments-register-schema';
-import { paymentsRegisterRequestDtoSchema } from '../model/payments-register-schema';
+} from '../model/schema/payments-register-schema';
+import { paymentsRegisterRequestDtoSchema } from '../model/schema/payments-register-schema';
 
 type PaymentRegistrationSuccessResponse = {
   resCd: '0000';

@@ -3,9 +3,9 @@ import { FLG_STATUS } from '@/entities/order/constants/flg-status';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 
-import { createOrderSchema } from '@/entities/order/model/create-order-schema';
+import { createOrderSchema } from '@/entities/order/model/create-order.schema';
 import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { createOrderProductSchema } from '@/entities/order-product/model/create-order-product-schema';
+import { createOrderProductSchema } from '@/entities/order-product/model/create-order-product.schema';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 
 interface BuildCreateOrderDtoProps {

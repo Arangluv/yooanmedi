@@ -1,16 +1,15 @@
 'use server';
 
 import { getPayload } from '@/shared';
-import { CreatePaymentDto, createPaymentSchema } from '../model/create-schema';
+import { CreatePaymentDto } from '../model/create-schema';
 
 export const createPayment = async (dto: CreatePaymentDto) => {
   try {
     const payload = await getPayload();
-    const data = createPaymentSchema.parse(dto);
 
     await payload.create({
       collection: 'payment',
-      data,
+      data: dto,
     });
 
     return;

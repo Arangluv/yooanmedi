@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
 import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_RESPONSE_SUCCESS_CODE } from '../../constants/payment-gateway-code';
 
 /** resCd가 '0000'일 때 — 모든 필드 보장 */
-const successResponseSchema = z.object({
-  resCd: z.literal('0000'),
+export const registerSuccessResponseSchema = z.object({
+  resCd: z.literal(PAYMENTS_RESPONSE_SUCCESS_CODE),
   resMsg: z.string(),
   authorizationId: z.string(),
   shopOrderNo: z.string(),
@@ -17,7 +18,7 @@ const successResponseSchema = z.object({
 });
 
 /** resCd가 '0000'이 아닐 때 — 선택 필드는 undefined 가능 */
-const failureResponseSchema = z.object({
+export const registerFailureResponseSchema = z.object({
   resCd: z.string().refine((v) => v !== '0000', {
     message: "resCd가 '0000'이면 success 스키마로 파싱되어야 합니다.",
   }),
@@ -32,9 +33,13 @@ const failureResponseSchema = z.object({
   shopValue6: z.never(),
 });
 
-export const registerResponseSchema = z.union([successResponseSchema, failureResponseSchema]);
-export type RegisterResponseDto = z.infer<typeof registerResponseSchema>;
+export const paymentRegisterSchema = z.union([
+  registerSuccessResponseSchema,
+  registerFailureResponseSchema,
+]);
+export type PaymentRegisterResult = z.infer<typeof paymentRegisterSchema>;
 
+// TODO : 삭제
 // 어플리케이션에서
 const orderItemSchema = z.object({
   product: z.object({
@@ -47,18 +52,22 @@ const orderItemSchema = z.object({
 const orderListSchema = z.array(orderItemSchema);
 
 const registerApplicationTransformSchema = z.object({
+  resCd: z.literal(PAYMENTS_RESPONSE_SUCCESS_CODE),
+  resMsg: z.string(),
   authorizationId: z.string(),
   shopOrderNo: z.string(),
   deliveryRequest: z.string(),
   orderList: orderListSchema,
   usedPoint: z.number(),
   userId: z.number(),
-  paymentsMethod: z.enum([PAYMENTS_METHOD.CREDIT_CARD, PAYMENTS_METHOD.BANK_TRANSFER]),
+  paymentsMethod: z.enum([PAYMENTS_METHOD.CREDIT_CARD]),
   minOrderPrice: z.number(),
 });
 
-export const registerResultSchema = successResponseSchema
+export const registerResultSchema = registerSuccessResponseSchema
   .transform((data) => ({
+    resCd: data.resCd,
+    resMsg: data.resMsg,
     authorizationId: data.authorizationId,
     shopOrderNo: data.shopOrderNo,
     deliveryRequest: data.shopValue1,

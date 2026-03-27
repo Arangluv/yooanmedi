@@ -8,12 +8,12 @@ export {
   registerResultSchema,
   type RegisterResponseDto,
   type RegisterResult,
-} from './model/register-response-schema';
+} from './model/schema/register-response-schema';
 export { default as usePaymentsResultQuery } from './model/usePaymentsResultQuery';
 export {
   paymentsApprovalResponseSchema,
   paymentsApprovalRequestSchema,
-} from './model/payments-approval-schema';
+} from './model/schema/payments-approval-schema';
 
 export { paymentsApproval } from './api/payment-approval';
 export { paymentRegistration } from './api/payment-registration';
