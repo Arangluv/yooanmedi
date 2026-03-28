@@ -4,7 +4,12 @@ import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-mana
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { PAYMENTS_RESPONSE_SUCCESS_CODE } from '../../constants/payment-gateway-code';
 import { PaymentRegisterResult, paymentRegisterSchema } from '../schema/register-response-schema';
-import { PGPaymentContext, pgPaymentContextSchema } from '../schema/payment-context-schema';
+import {
+  PGPaymentContextAfterApproval,
+  PGPaymentContextAfterOrder,
+  PGPaymentInitContext,
+  pgPaymentInitContextSchema,
+} from '../schema/payment-context-schema';
 import { paymentsApproval } from '../../api/payment-approval';
 import {
   ApprovalPaymentResult,
@@ -18,20 +23,19 @@ import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-tra
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import { createPayment } from '@/entities/payment/api/create';
 
-export class PGPaymentManager extends PaymentManager {
-  protected context: PGPaymentContext;
-
+export class PGPaymentManager<
+  TContext extends PGPaymentInitContext,
+> extends PaymentManager<TContext> {
   protected constructor(
     inventory: Inventory,
     deliveryInfoManager: DeliveryInfoManager,
     pointAllocator: PointAllocator,
-    context: PGPaymentContext,
+    context: TContext,
   ) {
     super(inventory, deliveryInfoManager, pointAllocator, context);
-    this.context = context;
   }
 
-  static async create(context: PGPaymentContext) {
+  static async create(context: PGPaymentInitContext) {
     const inventory = await transformOrderListToInventory(context.orderList);
     const deliveryInfoManager = new DeliveryInfoManager(inventory, context.minOrderPrice);
     const pointAllocator = new PointAllocator(deliveryInfoManager, context.usedPoint);
@@ -57,7 +61,7 @@ export class PGPaymentManager extends PaymentManager {
   }
 
   static createInitialContext(data: PaymentRegisterResult) {
-    return pgPaymentContextSchema.parse(data);
+    return pgPaymentInitContextSchema.parse(data);
   }
 
   public async approvePayment() {
@@ -69,24 +73,33 @@ export class PGPaymentManager extends PaymentManager {
     return approvalResult;
   }
 
-  public applyApprovalResultToContext(approvalResult: ApprovalPaymentResult) {
-    const { amount, pgCno } = approvalResult;
+  public applyApprovalResultToContext(
+    approvalResult: ApprovalPaymentResult,
+  ): asserts this is PGPaymentManager<PGPaymentContextAfterApproval> {
+    const {
+      amount,
+      pgCno,
+      paymentInfo: { approvalDate },
+    } = approvalResult;
 
     this.context = {
       ...this.context,
       amount,
       pgCno,
+      approvalDate,
     };
   }
 
-  public applyOrderIdToContext(orderId: number) {
+  public applyOrderIdToContext(
+    orderId: number,
+  ): asserts this is PGPaymentManager<PGPaymentContextAfterOrder> {
     this.context = {
       ...this.context,
       orderId,
     };
   }
 
-  public async createOrder() {
+  public async createOrder(this: PGPaymentManager<PGPaymentContextAfterApproval>) {
     if (this.context.amount === undefined) {
       throw new Error('amount가 설정되지 않았습니다');
     }
@@ -97,6 +110,9 @@ export class PGPaymentManager extends PaymentManager {
     return order;
   }
 
+  /**
+   * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
+   */
   public async processOrderSideEffects() {
     await Promise.all(
       this.inventory.map(async (inventoryItem: InventoryItem) => {
@@ -115,6 +131,10 @@ export class PGPaymentManager extends PaymentManager {
   public async createPaymentHistory() {
     const dto = PaymentDto.createPaymentHistory(this.context);
     await createPayment(dto);
+  }
+
+  public getContext(): TContext {
+    return this.context;
   }
 
   private async createOrderProduct(inventoryItem: InventoryItem) {

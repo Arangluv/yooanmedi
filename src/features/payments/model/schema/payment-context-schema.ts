@@ -38,14 +38,13 @@ export type BasePaymentContext = z.infer<typeof basePaymentContextSchema>;
  * shopValue5: paymentsMethod
  * shopValue6: minOrderPrice
  */
-const pgPaymentContextTransformSchema = basePaymentContextSchema.extend({
+
+// initial context
+const pgPaymentInitContextPipe = basePaymentContextSchema.extend({
   paymentsMethod: z.enum([PAYMENTS_METHOD.CREDIT_CARD]),
-  amount: z.number().optional(),
-  pgCno: z.string().optional(),
-  orderId: z.number().optional(),
 });
 
-export const pgPaymentContextSchema = registerSuccessResponseSchema
+export const pgPaymentInitContextSchema = registerSuccessResponseSchema
   .transform((data) => ({
     authorizationId: data.authorizationId,
     shopOrderNo: data.shopOrderNo,
@@ -56,15 +55,49 @@ export const pgPaymentContextSchema = registerSuccessResponseSchema
     paymentsMethod: data.shopValue5,
     minOrderPrice: data.shopValue6,
   }))
-  .pipe(pgPaymentContextTransformSchema);
+  .pipe(pgPaymentInitContextPipe);
 
-export type PGPaymentContext = z.infer<typeof pgPaymentContextSchema>;
+export type PGPaymentInitContext = z.infer<typeof pgPaymentInitContextSchema>;
+
+// after approval
+const pgPaymentContextAfterApprovalSchema = pgPaymentInitContextPipe.extend({
+  amount: z.number(),
+  pgCno: z.string(),
+  approvalDate: z.string(),
+});
+export type PGPaymentContextAfterApproval = z.infer<typeof pgPaymentContextAfterApprovalSchema>;
+
+// after order
+const pgPaymentContextAfterOrderSchema = pgPaymentContextAfterApprovalSchema.extend({
+  orderId: z.number(),
+});
+export type PGPaymentContextAfterOrder = z.infer<typeof pgPaymentContextAfterOrderSchema>;
 
 /**
  * 무통장 입금 결제 context schema
  */
-export const bankTransferPaymentContextSchema = basePaymentContextSchema.extend({
+const bankTransferPaymentInitContextPipe = basePaymentContextSchema.extend({
   paymentsMethod: z.enum([PAYMENTS_METHOD.BANK_TRANSFER]),
 });
 
-export type BankTransferPaymentContext = z.infer<typeof bankTransferPaymentContextSchema>;
+export const bankTransferPaymentInitContextSchema = registerSuccessResponseSchema
+  .transform((data) => ({
+    authorizationId: data.authorizationId,
+    shopOrderNo: data.shopOrderNo,
+    deliveryRequest: data.shopValue1,
+    orderList: data.shopValue2,
+    usedPoint: data.shopValue3,
+    userId: data.shopValue4,
+  }))
+  .pipe(bankTransferPaymentInitContextPipe);
+
+export type BankTransferPaymentInitContext = z.infer<typeof bankTransferPaymentInitContextSchema>;
+
+// after order
+const bankTransferPaymentContextAfterOrderSchema = bankTransferPaymentInitContextPipe.extend({
+  orderId: z.number(),
+});
+
+export type BankTransferPaymentContextAfterOrder = z.infer<
+  typeof bankTransferPaymentContextAfterOrderSchema
+>;

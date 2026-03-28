@@ -11,8 +11,6 @@ export const createPayment = async (dto: CreatePaymentDto) => {
       collection: 'payment',
       data: dto,
     });
-
-    return;
   } catch (error) {
     // TODO :: error 핸들링
     throw new Error('결제 내역을 생성하는데 문제가 발생했습니다');

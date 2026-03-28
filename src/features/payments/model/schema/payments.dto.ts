@@ -49,7 +49,25 @@ export const PaymentDto = {
     });
   },
 
-  createOrderProductForBankTransfer: (context: BankTransferPaymentContext) => {},
+  createOrderProductForBankTransfer: (
+    context: BankTransferPaymentContext,
+    inventoryItem: InventoryItem,
+    totalAmount: number,
+    productDeliveryFee: number,
+  ) => {
+    return createOrderProductSchema.parse({
+      order: context.orderId,
+      totalAmount,
+      productDeliveryFee,
+      orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
+      product: inventoryItem.product.id,
+      priceSnapshot: inventoryItem.product.price,
+      productNameSnapshot: inventoryItem.product.name,
+      quantity: inventoryItem.quantity,
+      cashback_rate: inventoryItem.product.cashback_rate,
+      cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
+    });
+  },
 
   createRecentPurchasedHistory: (context: BasePaymentContext, inventoryItem: InventoryItem) => {
     return createRecentPurchasedHistorySchema.parse({

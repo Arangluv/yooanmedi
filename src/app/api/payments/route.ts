@@ -1,35 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-import {
-  registerResponseSchema,
-  registerResultSchema,
-  paymentsApproval,
-} from '@/features/payments';
-import { transformOrderListToInventory } from '@/entities/inventory';
-import {
-  createUsePointTransaction,
-  createEarnPointTransaction,
-  getPointWhenUsingCard,
-} from '@/entities/point';
-import { createOrder } from '@/entities/order';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
-import {
-  createOrderProduct,
-  CreateOrderProductDto,
-  ORDER_PRODUCT_STATUS,
-} from '@/entities/order-product';
-import {
-  createRecentPurchasedHistory,
-  CreateRecentPurchasedHistoryDto,
-} from '@/entities/recent-purchased-history';
-import { createPayment } from '@/entities/payment';
-import type { CreatePaymentDto } from '@/entities/payment';
-import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
-import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
-import { buildCreateCreditCardOrderDto } from '@/features/payments/lib/build-payments-dto';
-import { OrderProductsManager } from '@/features/payments/lib/process-order-products';
-
 import { PGPaymentManager } from '@/features/payments/model/manager/pg-payment-manager';
+import { PGPaymentInitContext } from '@/features/payments/model/schema/payment-context-schema';
 
 export async function POST(request: NextRequest) {
   // const payload = await getPayload();
@@ -43,8 +14,9 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const registerResult = PGPaymentManager.validatePaymentRegister(formData);
 
-    const paymentContext = PGPaymentManager.createInitialContext(registerResult);
-    const paymentManager = await PGPaymentManager.create(paymentContext);
+    const paymentContext = PGPaymentManager.createInitialContext(registerResult); // 초기 context
+    const paymentManager: PGPaymentManager<PGPaymentInitContext> =
+      await PGPaymentManager.create(paymentContext);
 
     // step 1. 결제승인 요청
     const approvalResult = await paymentManager.approvePayment();
@@ -54,10 +26,7 @@ export async function POST(request: NextRequest) {
     const order = await paymentManager.createOrder();
     paymentManager.applyOrderIdToContext(order.id);
 
-    /**
-     * step 3. side effect 처리
-     * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
-     */
+    // step 3. 주문 사이드 이펙트 처리
     await paymentManager.processOrderSideEffects();
 
     // step 4. 결제 내역 생성
@@ -66,16 +35,14 @@ export async function POST(request: NextRequest) {
     // 트랜잭션 커밋 -> TODO:: 트랜잭션 설정이 필요합니다
     // await payload.db.commitTransaction(dbTransactionID as string);
 
-    // // 리다이렉트
-    // const url = request.nextUrl.clone();
-    // url.pathname = '/order/payments/popup-callback';
-    // url.searchParams.set('status', 'success');
-    // url.searchParams.set('approvalDate', approveData.paymentInfo.approvalDate);
-    // url.searchParams.set('amount', approveData.amount.toString());
-    // url.searchParams.set('shopOrderNo', approveData.shopOrderNo);
-    // return NextResponse.redirect(url, { status: 302 });
+    const url = request.nextUrl.clone();
+    url.pathname = '/order/payments/popup-callback';
+    url.searchParams.set('status', 'success');
+    url.searchParams.set('approvalDate', paymentManager.getContext().approvalDate.toString());
+    url.searchParams.set('amount', paymentManager.getContext().amount.toString());
+    url.searchParams.set('shopOrderNo', paymentManager.getContext().shopOrderNo);
 
-    return NextResponse.json({ message: '결제 처리가 완료되었습니다' }, { status: 200 });
+    return NextResponse.redirect(url, { status: 302 });
   } catch (error: any) {
     console.log(error);
     // 트랜잭션 롤백
