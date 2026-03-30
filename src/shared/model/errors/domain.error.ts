@@ -1,0 +1,53 @@
+import { ApplicationBaseError } from './base.error';
+import { type ZodError } from 'zod';
+
+export const VALIDATION_ERROR_CODE = 'VALIDATION_ERROR';
+export class ValidationError extends ApplicationBaseError {
+  constructor(clientMessage: string, data?: Record<string, any>) {
+    super(clientMessage, VALIDATION_ERROR_CODE, data);
+  }
+}
+
+export const BUSINESS_LOGIC_ERROR_CODE = 'BUSINESS_LOGIC_ERROR';
+export class BusinessLogicError extends ApplicationBaseError {
+  constructor(clientMessage: string, data?: Record<string, any>) {
+    super(clientMessage, BUSINESS_LOGIC_ERROR_CODE, data);
+  }
+}
+
+export const NOT_FOUND_ERROR_CODE = 'NOT_FOUND_ERROR';
+export class NotFoundError extends ApplicationBaseError {
+  constructor(clientMessage: string, data?: Record<string, any>) {
+    super(clientMessage, NOT_FOUND_ERROR_CODE, data);
+  }
+}
+
+export const DATA_BASE_ERROR_CODE = 'DATA_BASE_ERROR';
+export class DataBaseError extends ApplicationBaseError {
+  constructor(clientMessage: string, data?: Record<string, any>) {
+    super(clientMessage, DATA_BASE_ERROR_CODE, data);
+  }
+}
+
+// z.ZodError<T> 이걸 받는다
+export const ZOD_ERROR_CODE = 'ZOD_ERROR';
+export class ZodParseError extends ApplicationBaseError {
+  constructor(clientMessage: string, data?: Record<string, any>) {
+    super(clientMessage, ZOD_ERROR_CODE, data);
+  }
+
+  static generateErrorDevMessage<T>(error: ZodError<T>): string {
+    let devMessage = '';
+
+    const issues = error.issues;
+    for (const issue of issues) {
+      devMessage += `${issue.path.join('.')}: ${issue.message}\n`;
+    }
+
+    return devMessage;
+  }
+
+  public getDevMessage(): string {
+    return this.devMessage ?? '';
+  }
+}
