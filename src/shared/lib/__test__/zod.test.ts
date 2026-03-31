@@ -33,7 +33,7 @@ describe('zodSafeParse', () => {
     expect(() => zodSafeParse(testZodSchema, testData)).toThrow(ZodParseError);
   });
 
-  it('zodSafeParse 실패 시 ZodParseError의 devMessage가 설정된다', () => {
+  it('zodSafeParse 실패 시 ZodParseError의 devMessage가 key: message 형식으로 설정된다', () => {
     const testZodSchema = z.object({
       name: z.string(),
       age: z.number('나이는 숫자여야 합니다.').min(1, '나이는 1 이상이어야 합니다.'),
@@ -52,10 +52,8 @@ describe('zodSafeParse', () => {
     try {
       zodSafeParse(testZodSchema, testDataAgeNotNumber);
     } catch (error: unknown) {
-      console.log('error');
-      console.log(error);
       if (error instanceof ZodParseError) {
-        expect(error.getDevMessage()).toBe('나이는 숫자여야 합니다.');
+        expect(error.getDevMessage()).toBe('age: 나이는 숫자여야 합니다.\n');
       }
     }
 
@@ -63,7 +61,7 @@ describe('zodSafeParse', () => {
       zodSafeParse(testZodSchema, testDataAgeNotMin);
     } catch (error: unknown) {
       if (error instanceof ZodParseError) {
-        expect(error.getDevMessage()).toBe('나이는 1 이상이어야 합니다.');
+        expect(error.getDevMessage()).toBe('age: 나이는 1 이상이어야 합니다.\n');
       }
     }
   });

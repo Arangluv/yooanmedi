@@ -29,7 +29,7 @@ export class ApplicationBaseError extends Error {
     return this.message;
   }
 
-  public setDevMessage(devMessage: string): void {
-    this.devMessage = devMessage;
+  public getDevMessage(): string {
+    return this.devMessage ?? '';
   }
 }

@@ -22,6 +22,7 @@ import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entit
 import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-transaction';
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import { createPayment } from '@/entities/payment/api/create';
+import { zodSafeParse } from '@/shared/lib/zod';
 
 export class PGPaymentManager<
   TContext extends PGPaymentInitContext,
@@ -49,10 +50,8 @@ export class PGPaymentManager<
       data[key as string] = value;
     });
 
-    // todo : dto로 빼도 되지않을까
-    const registerResult: PaymentRegisterResult = paymentRegisterSchema.parse(data);
+    const registerResult = zodSafeParse(paymentRegisterSchema, data);
 
-    // todo : 타입추론?
     if (registerResult.resCd !== PAYMENTS_RESPONSE_SUCCESS_CODE) {
       throw new Error('결제 등록과정에서 문제가 발생했습니다');
     }
@@ -61,7 +60,8 @@ export class PGPaymentManager<
   }
 
   static createInitialContext(data: PaymentRegisterResult) {
-    return pgPaymentInitContextSchema.parse(data);
+    const context = zodSafeParse(pgPaymentInitContextSchema, data);
+    return context;
   }
 
   public async approvePayment() {
@@ -113,7 +113,7 @@ export class PGPaymentManager<
   /**
    * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
    */
-  public async processOrderSideEffects() {
+  public async processOrderSideEffects(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
     await Promise.all(
       this.inventory.map(async (inventoryItem: InventoryItem) => {
         // step 1. 주문 상품 생성
@@ -128,7 +128,7 @@ export class PGPaymentManager<
     );
   }
 
-  public async createPaymentHistory() {
+  public async createPaymentHistory(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
     const dto = PaymentDto.createPaymentHistory(this.context);
     await createPayment(dto);
   }
@@ -137,7 +137,10 @@ export class PGPaymentManager<
     return this.context;
   }
 
-  private async createOrderProduct(inventoryItem: InventoryItem) {
+  private async createOrderProduct(
+    this: PGPaymentManager<PGPaymentContextAfterOrder>,
+    inventoryItem: InventoryItem,
+  ) {
     const subtotal = this.deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
     const totalAmount = subtotal - this.pointAllocator.getAllocatedPoint(inventoryItem.product.id);
     const productDeliveryFee = this.deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem);

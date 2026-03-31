@@ -1,6 +1,4 @@
-import type { Inventory } from '@/entities/inventory/@x/point';
 import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
-import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price/lib/calculator';
 
 export class PointAllocator {
   private readonly deliveryInfoManager: DeliveryInfoManager;

@@ -29,7 +29,6 @@ export class DataBaseError extends ApplicationBaseError {
   }
 }
 
-// z.ZodError<T> 이걸 받는다
 export const ZOD_ERROR_CODE = 'ZOD_ERROR';
 export class ZodParseError extends ApplicationBaseError {
   constructor(clientMessage: string, data?: Record<string, any>) {
@@ -47,7 +46,7 @@ export class ZodParseError extends ApplicationBaseError {
     return devMessage;
   }
 
-  public getDevMessage(): string {
-    return this.devMessage ?? '';
+  public setDevMessage(devMessage: string): void {
+    this.devMessage = devMessage;
   }
 }

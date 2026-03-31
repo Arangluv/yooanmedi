@@ -1,8 +1,11 @@
 import { createOrderSchema } from '@/entities/order/model/create-order.schema';
 import {
-  BankTransferPaymentContext,
   BasePaymentContext,
-  PGPaymentContext,
+  BankTransferPaymentInitContext,
+  BankTransferPaymentContextAfterOrder,
+  PGPaymentInitContext,
+  PGPaymentContextAfterApproval,
+  PGPaymentContextAfterOrder,
 } from './payment-context-schema';
 import { approvalPaymentSchema } from './payments-approval-schema';
 import { createOrderProductSchema } from '@/entities/order-product/model/create-order-product.schema';
@@ -11,31 +14,39 @@ import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
 import { createRecentPurchasedHistorySchema } from '@/entities/recent-purchased-history/model/create-schema';
 import { createPaymentSchema } from '@/entities/payment/model/create-schema';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { zodSafeParse } from '@/shared/lib/zod';
 
 export const PaymentDto = {
-  createOrder: (context: BasePaymentContext) => {
-    return createOrderSchema.parse({
+  createOrder: (context: PGPaymentContextAfterApproval | BankTransferPaymentInitContext) => {
+    const dto = {
       user: context.userId,
       orderNo: context.shopOrderNo,
       orderRequest: context.deliveryRequest,
       finalPrice: context.amount,
       usedPoint: context.usedPoint,
-    });
+    };
+
+    const result = zodSafeParse(createOrderSchema, dto);
+    return result;
   },
-  approvePayment: (context: BasePaymentContext) => {
-    return approvalPaymentSchema.parse({
+
+  approvePayment: (context: PGPaymentInitContext) => {
+    const dto = {
       mallId: process.env.PAYMENTS_MID as string,
       authorizationId: context.authorizationId,
       shopOrderNo: context.shopOrderNo,
-    });
+    };
+    const result = zodSafeParse(approvalPaymentSchema, dto);
+    return result;
   },
+
   createOrderProductForPg: (
-    context: PGPaymentContext,
+    context: PGPaymentContextAfterOrder,
     inventoryItem: InventoryItem,
     totalAmount: number,
     productDeliveryFee: number,
   ) => {
-    return createOrderProductSchema.parse({
+    const dto = {
       order: context.orderId,
       totalAmount,
       productDeliveryFee,
@@ -46,16 +57,18 @@ export const PaymentDto = {
       cashback_rate: inventoryItem.product.cashback_rate,
       cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
       orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
-    });
+    };
+    const result = zodSafeParse(createOrderProductSchema, dto);
+    return result;
   },
 
   createOrderProductForBankTransfer: (
-    context: BankTransferPaymentContext,
+    context: BankTransferPaymentContextAfterOrder,
     inventoryItem: InventoryItem,
     totalAmount: number,
     productDeliveryFee: number,
   ) => {
-    return createOrderProductSchema.parse({
+    const dto = {
       order: context.orderId,
       totalAmount,
       productDeliveryFee,
@@ -66,24 +79,33 @@ export const PaymentDto = {
       quantity: inventoryItem.quantity,
       cashback_rate: inventoryItem.product.cashback_rate,
       cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
-    });
+    };
+
+    const result = zodSafeParse(createOrderProductSchema, dto);
+    return result;
   },
 
   createRecentPurchasedHistory: (context: BasePaymentContext, inventoryItem: InventoryItem) => {
-    return createRecentPurchasedHistorySchema.parse({
+    const dto = {
       user: context.userId,
       product: inventoryItem.product.id,
       quantity: inventoryItem.quantity,
       amount: inventoryItem.product.price,
-    });
+    };
+
+    const result = zodSafeParse(createRecentPurchasedHistorySchema, dto);
+    return result;
   },
 
-  createPaymentHistory: (context: PGPaymentContext) => {
-    return createPaymentSchema.parse({
+  createPaymentHistory: (context: PGPaymentContextAfterOrder) => {
+    const dto = {
       order: context.orderId,
       amount: context.amount,
       pgCno: context.pgCno,
       paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-    });
+    };
+
+    const result = zodSafeParse(createPaymentSchema, dto);
+    return result;
   },
 };

@@ -77,19 +77,11 @@ export type PGPaymentContextAfterOrder = z.infer<typeof pgPaymentContextAfterOrd
  * 무통장 입금 결제 context schema
  */
 const bankTransferPaymentInitContextPipe = basePaymentContextSchema.extend({
+  amount: z.number(),
   paymentsMethod: z.enum([PAYMENTS_METHOD.BANK_TRANSFER]),
 });
 
-export const bankTransferPaymentInitContextSchema = registerSuccessResponseSchema
-  .transform((data) => ({
-    authorizationId: data.authorizationId,
-    shopOrderNo: data.shopOrderNo,
-    deliveryRequest: data.shopValue1,
-    orderList: data.shopValue2,
-    usedPoint: data.shopValue3,
-    userId: data.shopValue4,
-  }))
-  .pipe(bankTransferPaymentInitContextPipe);
+export const bankTransferPaymentInitContextSchema = bankTransferPaymentInitContextPipe;
 
 export type BankTransferPaymentInitContext = z.infer<typeof bankTransferPaymentInitContextSchema>;
 

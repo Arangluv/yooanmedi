@@ -12,6 +12,7 @@ import { transformOrderListToInventory } from '@/entities/inventory/lib/transfor
 import { PaymentDto } from '../schema/payments.dto';
 import { createOrder as createOrderFromEntityLayer } from '@/entities/order';
 import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
+import { zodSafeParse } from '@/shared/lib/zod';
 
 export class BankTransferPaymentManager<
   TContext extends BankTransferPaymentInitContext,
@@ -26,7 +27,8 @@ export class BankTransferPaymentManager<
   }
 
   static createContext(dto: OrderBankTransferDto) {
-    return bankTransferPaymentInitContextSchema.parse(dto);
+    const context = zodSafeParse(bankTransferPaymentInitContextSchema, dto);
+    return context;
   }
 
   static async create(context: BankTransferPaymentInitContext) {
@@ -53,7 +55,9 @@ export class BankTransferPaymentManager<
     };
   }
 
-  public async processOrderSideEffects() {
+  public async processOrderSideEffects(
+    this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
+  ) {
     await Promise.all(
       this.inventory.map(async (inventoryItem: InventoryItem) => {
         // step 1. 주문 상품 생성
@@ -66,10 +70,12 @@ export class BankTransferPaymentManager<
     );
   }
 
-  private async createOrderProduct(inventoryItem: InventoryItem) {
+  private async createOrderProduct(
+    this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
+    inventoryItem: InventoryItem,
+  ) {
     const subtotal = this.deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
     const totalAmount = subtotal - this.pointAllocator.getAllocatedPoint(inventoryItem.product.id);
-
     const productDeliveryFee = this.deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem);
 
     const orderProductDto = PaymentDto.createOrderProductForBankTransfer(

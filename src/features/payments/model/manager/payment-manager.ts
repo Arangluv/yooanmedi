@@ -39,6 +39,7 @@ export abstract class PaymentManager<TContext extends BasePaymentContext> {
     inventoryItem: InventoryItem,
     orderProductId: number,
   ): Promise<void> {
+    // will remove -> createUsePointTransaction 에서 처리
     if (this.context.usedPoint === 0) {
       return;
     }
