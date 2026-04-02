@@ -2,7 +2,7 @@ import type { Inventory } from '@/entities/inventory/@x/point';
 import type { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price/lib/calculator';
 
-export class DeliveryInfoManager {
+export class DeliveryFeeManager {
   private readonly inventory: Inventory;
   private readonly freeDelivery: boolean;
 
@@ -12,7 +12,7 @@ export class DeliveryInfoManager {
   }
 
   // 최소 주문금액 이상 주문 시 배송비 무료가 적용되는 상품을 필터링 후 총 금액을 계산하여 반환합니다
-  private getFreeDelivryEligibleTotalPrice() {
+  private getFreeDeliveryEligibleTotalPrice() {
     const eligibleProducts = this.inventory.filter(({ product }) => product.is_free_delivery);
     const eligibleTotalPrice = eligibleProducts.reduce(
       (acc, { product, quantity }) => acc + product.price * quantity,
@@ -24,7 +24,7 @@ export class DeliveryInfoManager {
 
   // 설정한 최소 주문금액과 총 결제 금액을 비교하여 배송비 무료 여부를 반환합니다
   private calcIsFreeDelivery(minOrderPrice: number) {
-    const eligibleTotalPrice = this.getFreeDelivryEligibleTotalPrice();
+    const eligibleTotalPrice = this.getFreeDeliveryEligibleTotalPrice();
 
     return eligibleTotalPrice >= minOrderPrice;
   }

@@ -1,15 +1,16 @@
-import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
+import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { type Inventory, type InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { createRecentPurchasedHistory } from '@/entities/recent-purchased-history';
-import { createUsePointTransaction } from '@/entities/point/lib/use/create-transaction';
+import { createRecentPurchasedHistory } from '@/entities/recent-purchased-history/api/create';
+// import { createUsePointTransaction } from '@/entities/point/lib/use/create-transaction';
 import { BasePaymentContext } from '../schema/payment-context-schema';
 import { Order } from '@/entities/order/model/type';
 import { PaymentDto } from '../schema/payments.dto';
+import { UsePointTransaction } from '@/entities/point/lib/use/use-point-transaction';
 
 export abstract class PaymentManager<TContext extends BasePaymentContext> {
   protected inventory: Inventory;
-  protected deliveryInfoManager: DeliveryInfoManager;
+  protected deliveryFeeManager: DeliveryFeeManager;
   protected pointAllocator: PointAllocator;
   protected context: TContext;
 
@@ -18,14 +19,18 @@ export abstract class PaymentManager<TContext extends BasePaymentContext> {
 
   protected constructor(
     inventory: Inventory,
-    deliveryInfoManager: DeliveryInfoManager,
+    deliveryFeeManager: DeliveryFeeManager,
     pointAllocator: PointAllocator,
     context: TContext,
   ) {
     this.inventory = inventory;
-    this.deliveryInfoManager = deliveryInfoManager;
+    this.deliveryFeeManager = deliveryFeeManager;
     this.pointAllocator = pointAllocator;
     this.context = context;
+  }
+  // 결제 컨텍스트 조회
+  public getContext(): TContext {
+    return this.context;
   }
 
   // 구매 히스토리 생성
@@ -39,19 +44,14 @@ export abstract class PaymentManager<TContext extends BasePaymentContext> {
     inventoryItem: InventoryItem,
     orderProductId: number,
   ): Promise<void> {
-    // will remove -> createUsePointTransaction 에서 처리
-    if (this.context.usedPoint === 0) {
-      return;
-    }
-
-    if (this.context.usedPoint < 0) {
-      throw new Error('사용 포인트는 0 이상이어야 합니다');
-    }
-
-    await createUsePointTransaction({
+    const paymentPointTransaction = new UsePointTransaction({
       userId: this.context.userId,
       orderProductId: orderProductId,
       amount: this.pointAllocator.getAllocatedPoint(inventoryItem.product.id),
     });
+
+    await paymentPointTransaction.initializeContext();
+    // await paymentPointTransaction.createHistory();
+    // await paymentPointTransaction.deductUserPoint();
   }
 }

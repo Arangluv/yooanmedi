@@ -13,6 +13,10 @@ export class BusinessLogicError extends ApplicationBaseError {
   constructor(clientMessage: string, data?: Record<string, any>) {
     super(clientMessage, BUSINESS_LOGIC_ERROR_CODE, data);
   }
+
+  setDevMessage(devMessage: string): void {
+    this.devMessage = devMessage;
+  }
 }
 
 export const NOT_FOUND_ERROR_CODE = 'NOT_FOUND_ERROR';

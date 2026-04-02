@@ -1,28 +1,19 @@
 import { z } from 'zod';
 import { registerSuccessResponseSchema } from './register-response-schema';
 import { PAYMENTS_METHOD } from '@/entities/order';
+import { orderBankTransferSchema } from './order-banktransfer-schema';
+import { baseSchema } from './base.schema';
 
 /**
- * 공통 주문 상품 스키마
+ * 공통 결제 컨텍스트 스키마
  */
-const orderItemSchema = z.object({
-  product: z.object({
-    id: z.number(),
-    price: z.number(),
-  }),
-  quantity: z.number(),
-});
-
-const orderListSchema = z.array(orderItemSchema);
-
 const basePaymentContextSchema = z.object({
-  authorizationId: z.string(),
-  shopOrderNo: z.string(),
-  deliveryRequest: z.string(),
-  orderList: orderListSchema,
-  usedPoint: z.number(),
-  userId: z.number(),
-  minOrderPrice: z.number(),
+  shopOrderNo: baseSchema.shopOrderNo,
+  userId: baseSchema.userId,
+  usedPoint: baseSchema.usedPoint,
+  minOrderPrice: baseSchema.minOrderPrice,
+  orderList: baseSchema.orderList,
+  deliveryRequest: baseSchema.deliveryRequest,
 });
 
 export type BasePaymentContext = z.infer<typeof basePaymentContextSchema>;
@@ -41,7 +32,8 @@ export type BasePaymentContext = z.infer<typeof basePaymentContextSchema>;
 
 // initial context
 const pgPaymentInitContextPipe = basePaymentContextSchema.extend({
-  paymentsMethod: z.enum([PAYMENTS_METHOD.CREDIT_CARD]),
+  authorizationId: z.string(),
+  paymentsMethod: baseSchema.paymentMethodForPG,
 });
 
 export const pgPaymentInitContextSchema = registerSuccessResponseSchema
@@ -61,33 +53,43 @@ export type PGPaymentInitContext = z.infer<typeof pgPaymentInitContextSchema>;
 
 // after approval
 const pgPaymentContextAfterApprovalSchema = pgPaymentInitContextPipe.extend({
-  amount: z.number(),
-  pgCno: z.string(),
-  approvalDate: z.string(),
+  amount: baseSchema.amount,
+  pgCno: baseSchema.pgCno,
+  approvalDate: baseSchema.approvalDate,
 });
 export type PGPaymentContextAfterApproval = z.infer<typeof pgPaymentContextAfterApprovalSchema>;
 
 // after order
 const pgPaymentContextAfterOrderSchema = pgPaymentContextAfterApprovalSchema.extend({
-  orderId: z.number(),
+  orderId: baseSchema.orderId,
 });
 export type PGPaymentContextAfterOrder = z.infer<typeof pgPaymentContextAfterOrderSchema>;
 
 /**
  * 무통장 입금 결제 context schema
  */
-const bankTransferPaymentInitContextPipe = basePaymentContextSchema.extend({
-  amount: z.number(),
-  paymentsMethod: z.enum([PAYMENTS_METHOD.BANK_TRANSFER]),
+const bankTransferPaymentInitContextPipe = orderBankTransferSchema.extend({
+  paymentsMethod: baseSchema.paymentMethodForBankTransfer,
 });
 
-export const bankTransferPaymentInitContextSchema = bankTransferPaymentInitContextPipe;
+export const bankTransferPaymentInitContextSchema = orderBankTransferSchema
+  .transform((data) => ({
+    shopOrderNo: data.shopOrderNo,
+    deliveryRequest: data.deliveryRequest,
+    orderList: data.orderList,
+    usedPoint: data.usedPoint,
+    userId: data.userId,
+    minOrderPrice: data.minOrderPrice,
+    amount: data.amount,
+    paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
+  }))
+  .pipe(bankTransferPaymentInitContextPipe);
 
 export type BankTransferPaymentInitContext = z.infer<typeof bankTransferPaymentInitContextSchema>;
 
 // after order
 const bankTransferPaymentContextAfterOrderSchema = bankTransferPaymentInitContextPipe.extend({
-  orderId: z.number(),
+  orderId: baseSchema.orderId,
 });
 
 export type BankTransferPaymentContextAfterOrder = z.infer<

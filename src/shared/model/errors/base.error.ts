@@ -5,7 +5,9 @@ import {
   DATA_BASE_ERROR_CODE,
   ZOD_ERROR_CODE,
 } from './domain.error';
-import { ERROR_CODE, UNKNOWN_ERROR_CODE } from './types';
+
+export const ERROR_CODE = 'ERROR';
+export const UNKNOWN_ERROR_CODE = 'UNKNOWN_ERROR';
 
 export class ApplicationBaseError extends Error {
   protected devMessage?: string;

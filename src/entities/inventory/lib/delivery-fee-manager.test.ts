@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { DeliveryInfoManager } from './delivery-info-manager';
+import { DeliveryFeeManager } from './delivery-fee-manager';
 import { createMockInventoryItem } from '@/shared/__mock__/inventory.fixture';
 import { createMockProduct } from '@/shared/__mock__/product.fixture';
 
-describe('DeliveryInfoManager', () => {
+describe('DeliveryFeeManager', () => {
   describe('isFreeDelivery', () => {
     it.each([
       {
@@ -36,7 +36,7 @@ describe('DeliveryInfoManager', () => {
             quantity,
           }),
         ];
-        const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+        const deliveryInfoManager = new DeliveryFeeManager(inventory, minOrderPrice);
 
         expect(deliveryInfoManager.isFreeDelivery()).toBe(expected);
       },
@@ -51,7 +51,7 @@ describe('DeliveryInfoManager', () => {
         }),
       ];
 
-      const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+      const deliveryInfoManager = new DeliveryFeeManager(inventory, minOrderPrice);
 
       expect(deliveryInfoManager.isFreeDelivery()).toBe(false);
     });
@@ -73,7 +73,7 @@ describe('DeliveryInfoManager', () => {
         }),
       ];
 
-      const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+      const deliveryInfoManager = new DeliveryFeeManager(inventory, minOrderPrice);
 
       expect(deliveryInfoManager.isFreeDelivery()).toBe(false);
     });
@@ -97,7 +97,7 @@ describe('DeliveryInfoManager', () => {
         }),
       ];
 
-      const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+      const deliveryInfoManager = new DeliveryFeeManager(inventory, minOrderPrice);
 
       expect(deliveryInfoManager.getOrderProductSubtotal(inventory[0])).toBe(65000);
       expect(deliveryInfoManager.getOrderProductSubtotal(inventory[1])).toBe(38000);
@@ -130,7 +130,7 @@ describe('DeliveryInfoManager', () => {
         }),
       ];
 
-      const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
+      const deliveryInfoManager = new DeliveryFeeManager(inventory, minOrderPrice);
 
       expect(deliveryInfoManager.getOrderProductSubtotal(inventory[0])).toBe(68000);
       expect(deliveryInfoManager.getOrderProductSubtotal(inventory[1])).toBe(38000);

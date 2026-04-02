@@ -1,6 +1,6 @@
 import { PaymentManager } from './payment-manager';
 import { Inventory, InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
+import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { PAYMENTS_RESPONSE_SUCCESS_CODE } from '../../constants/payment-gateway-code';
 import { PaymentRegisterResult, paymentRegisterSchema } from '../schema/register-response-schema';
@@ -23,25 +23,26 @@ import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-tra
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import { createPayment } from '@/entities/payment/api/create';
 import { zodSafeParse } from '@/shared/lib/zod';
+import { BusinessLogicError } from '@/shared/model/errors/domain.error';
 
 export class PGPaymentManager<
   TContext extends PGPaymentInitContext,
 > extends PaymentManager<TContext> {
   protected constructor(
     inventory: Inventory,
-    deliveryInfoManager: DeliveryInfoManager,
+    deliveryFeeManager: DeliveryFeeManager,
     pointAllocator: PointAllocator,
     context: TContext,
   ) {
-    super(inventory, deliveryInfoManager, pointAllocator, context);
+    super(inventory, deliveryFeeManager, pointAllocator, context);
   }
 
   static async create(context: PGPaymentInitContext) {
     const inventory = await transformOrderListToInventory(context.orderList);
-    const deliveryInfoManager = new DeliveryInfoManager(inventory, context.minOrderPrice);
-    const pointAllocator = new PointAllocator(deliveryInfoManager, context.usedPoint);
+    const deliveryFeeManager = new DeliveryFeeManager(inventory, context.minOrderPrice);
+    const pointAllocator = new PointAllocator(deliveryFeeManager, context.usedPoint);
 
-    return new PGPaymentManager(inventory, deliveryInfoManager, pointAllocator, context);
+    return new PGPaymentManager(inventory, deliveryFeeManager, pointAllocator, context);
   }
 
   static validatePaymentRegister(formData: FormData) {
@@ -52,8 +53,12 @@ export class PGPaymentManager<
 
     const registerResult = zodSafeParse(paymentRegisterSchema, data);
 
-    if (registerResult.resCd !== PAYMENTS_RESPONSE_SUCCESS_CODE) {
-      throw new Error('결제 등록과정에서 문제가 발생했습니다');
+    if (!registerResult.isSuccess) {
+      const error = new BusinessLogicError('결제 등록과정에서 문제가 발생했습니다');
+      const debugMessage = `resCd: ${registerResult.resCd}, resMsg: ${registerResult.resMsg}`;
+      error.setDevMessage(debugMessage);
+
+      throw error;
     }
 
     return registerResult;
@@ -100,10 +105,6 @@ export class PGPaymentManager<
   }
 
   public async createOrder(this: PGPaymentManager<PGPaymentContextAfterApproval>) {
-    if (this.context.amount === undefined) {
-      throw new Error('amount가 설정되지 않았습니다');
-    }
-
     const dto = PaymentDto.createOrder(this.context);
     const order = await createOrderFromEntityLayer({ dto });
 
@@ -133,17 +134,13 @@ export class PGPaymentManager<
     await createPayment(dto);
   }
 
-  public getContext(): TContext {
-    return this.context;
-  }
-
   private async createOrderProduct(
     this: PGPaymentManager<PGPaymentContextAfterOrder>,
     inventoryItem: InventoryItem,
   ) {
-    const subtotal = this.deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
+    const subtotal = this.deliveryFeeManager.getOrderProductSubtotal(inventoryItem);
     const totalAmount = subtotal - this.pointAllocator.getAllocatedPoint(inventoryItem.product.id);
-    const productDeliveryFee = this.deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem);
+    const productDeliveryFee = this.deliveryFeeManager.getOrderProductDeliveryFee(inventoryItem);
 
     const orderProductDto = PaymentDto.createOrderProductForPg(
       this.context,

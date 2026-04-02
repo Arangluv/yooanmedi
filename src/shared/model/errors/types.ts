@@ -5,9 +5,7 @@ import {
   DATA_BASE_ERROR_CODE,
   ZOD_ERROR_CODE,
 } from './domain.error';
-
-export const ERROR_CODE = 'ERROR'; // 표준 Error instance인 경우
-export const UNKNOWN_ERROR_CODE = 'UNKNOWN_ERROR'; // unknown 에러 처리
+import { ERROR_CODE, UNKNOWN_ERROR_CODE } from './base.error';
 
 export type ErrorResponse = {
   code:

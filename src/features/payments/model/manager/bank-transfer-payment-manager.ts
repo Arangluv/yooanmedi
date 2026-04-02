@@ -1,6 +1,6 @@
 import { PaymentManager } from './payment-manager';
 import { Inventory, InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
+import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { OrderBankTransferDto } from '../schema/order-banktransfer-schema';
 import {
@@ -19,11 +19,11 @@ export class BankTransferPaymentManager<
 > extends PaymentManager<TContext> {
   protected constructor(
     inventory: Inventory,
-    deliveryInfoManager: DeliveryInfoManager,
+    deliveryFeeManager: DeliveryFeeManager,
     pointAllocator: PointAllocator,
     context: TContext,
   ) {
-    super(inventory, deliveryInfoManager, pointAllocator, context);
+    super(inventory, deliveryFeeManager, pointAllocator, context);
   }
 
   static createContext(dto: OrderBankTransferDto) {
@@ -33,10 +33,10 @@ export class BankTransferPaymentManager<
 
   static async create(context: BankTransferPaymentInitContext) {
     const inventory = await transformOrderListToInventory(context.orderList);
-    const deliveryInfoManager = new DeliveryInfoManager(inventory, context.minOrderPrice);
-    const pointAllocator = new PointAllocator(deliveryInfoManager, context.usedPoint);
+    const deliveryFeeManager = new DeliveryFeeManager(inventory, context.minOrderPrice);
+    const pointAllocator = new PointAllocator(deliveryFeeManager, context.usedPoint);
 
-    return new BankTransferPaymentManager(inventory, deliveryInfoManager, pointAllocator, context);
+    return new BankTransferPaymentManager(inventory, deliveryFeeManager, pointAllocator, context);
   }
 
   public async createOrder() {
@@ -74,9 +74,9 @@ export class BankTransferPaymentManager<
     this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
     inventoryItem: InventoryItem,
   ) {
-    const subtotal = this.deliveryInfoManager.getOrderProductSubtotal(inventoryItem);
+    const subtotal = this.deliveryFeeManager.getOrderProductSubtotal(inventoryItem);
     const totalAmount = subtotal - this.pointAllocator.getAllocatedPoint(inventoryItem.product.id);
-    const productDeliveryFee = this.deliveryInfoManager.getOrderProductDeliveryFee(inventoryItem);
+    const productDeliveryFee = this.deliveryFeeManager.getOrderProductDeliveryFee(inventoryItem);
 
     const orderProductDto = PaymentDto.createOrderProductForBankTransfer(
       this.context,
