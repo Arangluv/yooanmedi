@@ -3,7 +3,10 @@ import { Inventory, InventoryItem } from '@/entities/inventory/model/inventory-s
 import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { PAYMENTS_RESPONSE_SUCCESS_CODE } from '../../constants/payment-gateway-code';
-import { PaymentRegisterResult, paymentRegisterSchema } from '../schema/register-response-schema';
+import {
+  validatePaymentRegisterSchema,
+  ValidatePaymentRegister,
+} from '../schema/register-response-schema';
 import {
   PGPaymentContextAfterApproval,
   PGPaymentContextAfterOrder,
@@ -51,7 +54,7 @@ export class PGPaymentManager<
       data[key as string] = value;
     });
 
-    const registerResult = zodSafeParse(paymentRegisterSchema, data);
+    const registerResult = zodSafeParse(validatePaymentRegisterSchema, data);
 
     if (!registerResult.isSuccess) {
       const error = new BusinessLogicError('결제 등록과정에서 문제가 발생했습니다');
@@ -64,18 +67,17 @@ export class PGPaymentManager<
     return registerResult;
   }
 
-  static createInitialContext(data: PaymentRegisterResult) {
+  static createInitialContext(data: ValidatePaymentRegister) {
     const context = zodSafeParse(pgPaymentInitContextSchema, data);
     return context;
   }
 
   public async approvePayment() {
-    const approvalDto = PaymentDto.approvePayment(this.context);
-    const result = await paymentsApproval(approvalDto);
+    const approvalRequestDto = PaymentDto.approvePayment(this.context);
+    const approvalResult = await paymentsApproval(approvalRequestDto);
 
-    const approvalResult = approvalPaymentResultSchema.parse(result);
-
-    return approvalResult;
+    const parsedApprovalResult = approvalPaymentResultSchema.parse(approvalResult);
+    return parsedApprovalResult;
   }
 
   public applyApprovalResultToContext(

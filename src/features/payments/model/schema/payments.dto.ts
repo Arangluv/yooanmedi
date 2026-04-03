@@ -7,7 +7,7 @@ import {
   PGPaymentContextAfterApproval,
   PGPaymentContextAfterOrder,
 } from './payment-context-schema';
-import { approvalPaymentSchema } from './payments-approval-schema';
+import { approvalPaymentRequestDtoSchema } from './payments-approval-schema';
 import { createOrderProductSchema } from '@/entities/order-product/model/create-order-product.schema';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
@@ -32,11 +32,12 @@ export const PaymentDto = {
 
   approvePayment: (context: PGPaymentInitContext) => {
     const dto = {
-      mallId: process.env.PAYMENTS_MID as string,
+      mallId: process.env.PAYMENTS_MID,
       authorizationId: context.authorizationId,
       shopOrderNo: context.shopOrderNo,
     };
-    const result = zodSafeParse(approvalPaymentSchema, dto);
+
+    const result = zodSafeParse(approvalPaymentRequestDtoSchema, dto);
     return result;
   },
 

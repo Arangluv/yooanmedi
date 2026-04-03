@@ -15,6 +15,8 @@ import { createOrderProduct } from '@/entities/order-product/api/create-order-pr
 import { createRecentPurchasedHistory } from '@/entities/recent-purchased-history/api/create';
 import { transformOrderListToInventory } from '@/entities/inventory/lib/transform';
 import { UsePointTransaction } from '@/entities/point/lib/use/use-point-transaction';
+import { createOrderProductSchema } from '@/entities/order-product/model/create-order-product.schema';
+import { createRecentPurchasedHistorySchema } from '@/entities/recent-purchased-history/model/create-schema';
 
 vi.mock('@/entities/inventory/lib/transform', () => ({
   transformOrderListToInventory: vi.fn(),
@@ -112,9 +114,8 @@ describe('BankTransferPaymentManager', () => {
     let paymentManager: BankTransferPaymentManager<BankTransferPaymentInitContext>;
     let createOrderSpy: Mock;
 
-    const randomMockOrderId = Math.floor(Math.random() * 1000000);
     const mockOrder = {
-      id: randomMockOrderId,
+      id: 123,
     };
 
     beforeEach(async () => {
@@ -155,11 +156,10 @@ describe('BankTransferPaymentManager', () => {
     let paymentManager: BankTransferPaymentManager<BankTransferPaymentInitContext>;
     let createProductMock: Mock;
     let createRecentPurchasedHistoryMock: Mock;
-    let initializeContextSpy: Mock;
+    let initializeContextSpy: Mock; // will remove
 
-    const randomMockOrderId = Math.floor(Math.random() * 1000000);
     const mockOrder = {
-      id: randomMockOrderId,
+      id: 123,
     };
 
     beforeEach(async () => {
@@ -185,16 +185,23 @@ describe('BankTransferPaymentManager', () => {
       vi.restoreAllMocks();
     });
 
-    it('processOrderSideEffects', async () => {
+    it('주문 사이드 이펙트를 처리한다.', async () => {
       const order = await paymentManager.createOrder();
       paymentManager.applyOrderIdToContext(order.id);
 
       await paymentManager.processOrderSideEffects();
 
-      const loopCount = basePaymentInventoryFixture.length;
-      expect(createProductMock).toHaveBeenCalledTimes(loopCount);
-      expect(createRecentPurchasedHistoryMock).toHaveBeenCalledTimes(loopCount);
-      expect(initializeContextSpy).toHaveBeenCalledTimes(loopCount);
+      expect(createProductMock).toHaveBeenCalledWith(
+        expect.schemaMatching(createOrderProductSchema),
+      );
+      expect(createRecentPurchasedHistoryMock).toHaveBeenCalledWith(
+        expect.schemaMatching(createRecentPurchasedHistorySchema),
+      );
+
+      const loopTimes = basePaymentInventoryFixture.length;
+      expect(createProductMock).toHaveBeenCalledTimes(loopTimes);
+      expect(createRecentPurchasedHistoryMock).toHaveBeenCalledTimes(loopTimes);
+      expect(initializeContextSpy).toHaveBeenCalledTimes(loopTimes); // will remove
     });
   });
 });

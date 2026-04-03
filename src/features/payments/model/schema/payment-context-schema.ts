@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { registerSuccessResponseSchema } from './register-response-schema';
+import { registerResultSchema } from './register-response-schema';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { orderBankTransferSchema } from './order-banktransfer-schema';
 import { baseSchema } from './base.schema';
@@ -32,11 +32,11 @@ export type BasePaymentContext = z.infer<typeof basePaymentContextSchema>;
 
 // initial context
 const pgPaymentInitContextPipe = basePaymentContextSchema.extend({
-  authorizationId: z.string(),
+  authorizationId: baseSchema.authorizationId,
   paymentsMethod: baseSchema.paymentMethodForPG,
 });
 
-export const pgPaymentInitContextSchema = registerSuccessResponseSchema
+export const pgPaymentInitContextSchema = registerResultSchema
   .transform((data) => ({
     authorizationId: data.authorizationId,
     shopOrderNo: data.shopOrderNo,

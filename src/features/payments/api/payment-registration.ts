@@ -26,7 +26,7 @@ export const paymentRegistration = async (
   dto: PaymentsRegisterApplicationDto,
 ): Promise<PaymentRegistrationResult> => {
   try {
-    // transform application dto to request dto
+    // transform application DTO to request DTO
     const requestDto: PaymentsRegisterRequestDto = paymentsRegisterRequestDtoSchema.parse({
       ...dto,
       mallId: process.env.PAYMENTS_MID as string,
