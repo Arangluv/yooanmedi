@@ -89,6 +89,10 @@ export const OrderProgressInfoCard = () => {
 
   const isEmpty = progressOrder.orderProducts.length === 0;
 
+  if (!progressOrder.inProgressOrderStatus) {
+    return null;
+  }
+
   return (
     <OrderInfoCard
       type="progress"
