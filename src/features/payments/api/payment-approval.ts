@@ -1,8 +1,8 @@
 'use server';
 
-import { ApprovalPaymentDto } from '../model/schema/payments-approval-schema';
+import { ApprovalPaymentRequestDto } from '../model/schema/payments-approval-schema';
 
-export const paymentsApproval = async (dto: ApprovalPaymentDto) => {
+export const paymentsApproval = async (dto: ApprovalPaymentRequestDto) => {
   const res = await fetch(process.env.PAYMENTS_APPROVAL_URL as string, {
     method: 'POST',
     body: JSON.stringify(dto),

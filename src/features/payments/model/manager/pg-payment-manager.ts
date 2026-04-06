@@ -2,7 +2,6 @@ import { PaymentManager } from './payment-manager';
 import { Inventory, InventoryItem } from '@/entities/inventory/model/inventory-schema';
 import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
-import { PAYMENTS_RESPONSE_SUCCESS_CODE } from '../../constants/payment-gateway-code';
 import {
   validatePaymentRegisterSchema,
   ValidatePaymentRegister,
@@ -22,11 +21,11 @@ import { transformOrderListToInventory } from '@/entities/inventory/lib/transfor
 import { PaymentDto } from '../schema/payments.dto';
 import { createOrder as createOrderFromEntityLayer } from '@/entities/order';
 import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
-import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-transaction';
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import { createPayment } from '@/entities/payment/api/create';
 import { zodSafeParse } from '@/shared/lib/zod';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { EarnPointTransaction } from '@/entities/point/lib/earn/point-transaction';
 
 export class PGPaymentManager<
   TContext extends PGPaymentInitContext,
@@ -107,7 +106,7 @@ export class PGPaymentManager<
   }
 
   public async createOrder(this: PGPaymentManager<PGPaymentContextAfterApproval>) {
-    const dto = PaymentDto.createOrder(this.context);
+    const dto = PaymentDto.createOrderForPG(this.context);
     const order = await createOrderFromEntityLayer({ dto });
 
     return order;
@@ -157,10 +156,15 @@ export class PGPaymentManager<
 
   // 구매 포인트 적립 (PG사 결제는 구매시점에 바로 적립)
   private async accumulatePoint(inventoryItem: InventoryItem, orderProductId: number) {
-    await createEarnPointTransaction({
+    const earnPointTransaction = new EarnPointTransaction({
       userId: this.context.userId,
       orderProductId: orderProductId,
-      amount: getPointWhenUsingCard(inventoryItem.product) * inventoryItem.quantity,
     });
+
+    const accumulatedPoint = getPointWhenUsingCard(inventoryItem.product) * inventoryItem.quantity;
+
+    await earnPointTransaction.initializeContext();
+    await earnPointTransaction.createHistory(accumulatedPoint);
+    await earnPointTransaction.accumulateUserPoint(accumulatedPoint);
   }
 }

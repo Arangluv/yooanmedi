@@ -15,15 +15,38 @@ import { createRecentPurchasedHistorySchema } from '@/entities/recent-purchased-
 import { createPaymentSchema } from '@/entities/payment/model/create-schema';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import { zodSafeParse } from '@/shared/lib/zod';
+import { FLG_STATUS } from '@/entities/order/constants/flg-status';
+import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
+import { ORDER_STATUS } from '@/entities/order';
 
 export const PaymentDto = {
-  createOrder: (context: PGPaymentContextAfterApproval | BankTransferPaymentInitContext) => {
+  createOrderForPG: (context: PGPaymentContextAfterApproval) => {
     const dto = {
       user: context.userId,
       orderNo: context.shopOrderNo,
       orderRequest: context.deliveryRequest,
       finalPrice: context.amount,
       usedPoint: context.usedPoint,
+      flgStatus: FLG_STATUS.INIT_NORMAL,
+      paymentStatus: PAYMENT_STATUS.COMPLETE,
+      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      orderStatus: ORDER_STATUS.PREPARING,
+    };
+
+    const result = zodSafeParse(createOrderSchema, dto);
+    return result;
+  },
+  createOrderForBankTransfer: (context: BankTransferPaymentInitContext) => {
+    const dto = {
+      user: context.userId,
+      orderNo: context.shopOrderNo,
+      orderRequest: context.deliveryRequest,
+      finalPrice: context.amount,
+      usedPoint: context.usedPoint,
+      flgStatus: FLG_STATUS.INIT_NORMAL,
+      paymentStatus: PAYMENT_STATUS.PENDING,
+      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
+      orderStatus: ORDER_STATUS.PENDING,
     };
 
     const result = zodSafeParse(createOrderSchema, dto);

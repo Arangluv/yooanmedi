@@ -1,14 +1,9 @@
-import { getPayload } from '@/shared/lib/get-payload';
-import { zodSafeParse } from '@/shared/lib/zod';
-import {
-  PaymentPointTransactionContext,
-  paymentPointTransactionSchema,
-} from '../model/point-transaction.schema';
+import { PaymentPointTransactionContext } from '../model/point-transaction.schema';
+import PointService from './service';
 
 export interface PaymentPointTransactionParams {
   userId: number;
   orderProductId: number;
-  amount: number;
 }
 
 /**
@@ -17,44 +12,29 @@ export interface PaymentPointTransactionParams {
  */
 export abstract class PointTransactionBase {
   private params: PaymentPointTransactionParams;
-  protected context: PaymentPointTransactionContext | null;
+  protected context?: PaymentPointTransactionContext | null;
 
-  abstract createHistory(): Promise<void>;
+  abstract createHistory(amount: number): Promise<void>;
 
   constructor(params: PaymentPointTransactionParams) {
     this.params = params;
-    this.context = null;
   }
 
   public async initializeContext() {
-    const payload = await getPayload();
-
     const [user, orderProduct] = await Promise.all([
-      payload.findByID({
-        collection: 'users',
-        id: this.params.userId,
-        select: {
-          point: true,
-        },
-      }),
-      payload.findByID({
-        collection: 'order-product',
-        id: this.params.orderProductId,
-        select: {},
-      }),
+      PointService.findTargetUser(this.params.userId),
+      PointService.findTargetOrderProduct(this.params.orderProductId),
     ]);
 
-    const result = zodSafeParse(paymentPointTransactionSchema, {
-      user,
-      orderProduct,
-      amount: this.params.amount,
-    });
+    // todo :: 삭제
+    // const result = zodSafeParse(paymentPointTransactionSchema, {
+    //   user,
+    //   orderProduct,
+    // });
 
     this.context = {
-      payload,
-      ...result,
+      user,
+      orderProduct,
     };
   }
-
-  public async validate() {}
 }

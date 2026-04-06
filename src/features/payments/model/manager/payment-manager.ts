@@ -6,7 +6,7 @@ import { createRecentPurchasedHistory } from '@/entities/recent-purchased-histor
 import { BasePaymentContext } from '../schema/payment-context-schema';
 import { Order } from '@/entities/order/model/type';
 import { PaymentDto } from '../schema/payments.dto';
-import { UsePointTransaction } from '@/entities/point/lib/use/use-point-transaction';
+import { UsePointTransaction } from '@/entities/point/lib/use/point-transaction';
 
 export abstract class PaymentManager<TContext extends BasePaymentContext> {
   protected inventory: Inventory;
@@ -47,11 +47,11 @@ export abstract class PaymentManager<TContext extends BasePaymentContext> {
     const paymentPointTransaction = new UsePointTransaction({
       userId: this.context.userId,
       orderProductId: orderProductId,
-      amount: this.pointAllocator.getAllocatedPoint(inventoryItem.product.id),
     });
+    const amount = this.pointAllocator.getAllocatedPoint(inventoryItem.product.id);
 
     await paymentPointTransaction.initializeContext();
-    // await paymentPointTransaction.createHistory();
-    // await paymentPointTransaction.deductUserPoint();
+    await paymentPointTransaction.createHistory(amount);
+    await paymentPointTransaction.deductUserPoint(amount);
   }
 }

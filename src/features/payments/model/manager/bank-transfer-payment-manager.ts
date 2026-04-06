@@ -40,7 +40,7 @@ export class BankTransferPaymentManager<
   }
 
   public async createOrder() {
-    const dto = PaymentDto.createOrder(this.context);
+    const dto = PaymentDto.createOrderForBankTransfer(this.context);
     const order = await createOrderFromEntityLayer({ dto });
 
     return order;

@@ -14,9 +14,10 @@ import { createBankTransferManagerFixture } from '@/shared/__mock__/bank-transfe
 import { createOrderProduct } from '@/entities/order-product/api/create-order-product';
 import { createRecentPurchasedHistory } from '@/entities/recent-purchased-history/api/create';
 import { transformOrderListToInventory } from '@/entities/inventory/lib/transform';
-import { UsePointTransaction } from '@/entities/point/lib/use/use-point-transaction';
+import { UsePointTransaction } from '@/entities/point/lib/use/point-transaction';
 import { createOrderProductSchema } from '@/entities/order-product/model/create-order-product.schema';
 import { createRecentPurchasedHistorySchema } from '@/entities/recent-purchased-history/model/create-schema';
+import { createOrder as createOrderFromEntityLayer } from '@/entities/order/api/create-order';
 
 vi.mock('@/entities/inventory/lib/transform', () => ({
   transformOrderListToInventory: vi.fn(),
@@ -32,6 +33,10 @@ vi.mock('@/entities/recent-purchased-history/api/create', () => ({
 
 vi.mock('@/entities/point/lib/use/create-transaction', () => ({
   createUsePointTransaction: vi.fn(),
+}));
+
+vi.mock('@/entities/order/api/create-order', () => ({
+  createOrder: vi.fn(),
 }));
 
 describe('BankTransferPaymentManager', () => {
@@ -112,36 +117,20 @@ describe('BankTransferPaymentManager', () => {
 
   describe('createOrder', () => {
     let paymentManager: BankTransferPaymentManager<BankTransferPaymentInitContext>;
-    let createOrderSpy: Mock;
-
-    const mockOrder = {
-      id: 123,
-    };
 
     beforeEach(async () => {
       vi.mocked(transformOrderListToInventory).mockResolvedValue(basePaymentInventoryFixture);
+      vi.mocked(createOrderFromEntityLayer).mockResolvedValue({ id: 123 } as any);
 
       const dto = createMockBankTransferDto();
       paymentManager = await createBankTransferManagerFixture(dto);
-
-      createOrderSpy = vi.spyOn(paymentManager, 'createOrder').mockResolvedValue(mockOrder as any);
     });
 
     afterEach(() => {
       vi.restoreAllMocks();
     });
 
-    it('createOrder는 주문을 생성한다.', async () => {
-      const order = await paymentManager.createOrder();
-
-      // 검증 1: 내부적으로 createOrder가 올바른 dto로 호출되었는가
-      expect(createOrderSpy).toHaveBeenCalledWith();
-
-      // 검증 2: 반환된 order가 올바른 형식을 가지고 있는가
-      expect(order.id).toBe(mockOrder.id);
-    });
-
-    it('applyOrderIdToContext는 주문 아이디를 컨텍스트에 적용한다.', async () => {
+    it('createOrder는 주문을 생성한 후 주문 아이디를 context에 적용한다.', async () => {
       const order = await paymentManager.createOrder();
       paymentManager.applyOrderIdToContext(order.id);
 
@@ -149,59 +138,6 @@ describe('BankTransferPaymentManager', () => {
 
       expect(context.orderId).toBe(order.id);
       expectTypeOf(context).toEqualTypeOf<BankTransferPaymentContextAfterOrder>();
-    });
-  });
-
-  describe('processOrderSideEffects', () => {
-    let paymentManager: BankTransferPaymentManager<BankTransferPaymentInitContext>;
-    let createProductMock: Mock;
-    let createRecentPurchasedHistoryMock: Mock;
-    let initializeContextSpy: Mock; // will remove
-
-    const mockOrder = {
-      id: 123,
-    };
-
-    beforeEach(async () => {
-      const dto = createMockBankTransferDto();
-      paymentManager = await createBankTransferManagerFixture(dto);
-
-      vi.spyOn(paymentManager, 'createOrder').mockResolvedValue(mockOrder as any);
-
-      createProductMock = vi.mocked(createOrderProduct);
-      createProductMock
-        .mockResolvedValueOnce({ id: 1 } as any)
-        .mockResolvedValueOnce({ id: 2 } as any)
-        .mockResolvedValueOnce({ id: 3 } as any)
-        .mockResolvedValueOnce({ id: 4 } as any);
-
-      createRecentPurchasedHistoryMock = vi.mocked(createRecentPurchasedHistory);
-      initializeContextSpy = vi
-        .spyOn(UsePointTransaction.prototype, 'initializeContext')
-        .mockResolvedValue(undefined);
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    it('주문 사이드 이펙트를 처리한다.', async () => {
-      const order = await paymentManager.createOrder();
-      paymentManager.applyOrderIdToContext(order.id);
-
-      await paymentManager.processOrderSideEffects();
-
-      expect(createProductMock).toHaveBeenCalledWith(
-        expect.schemaMatching(createOrderProductSchema),
-      );
-      expect(createRecentPurchasedHistoryMock).toHaveBeenCalledWith(
-        expect.schemaMatching(createRecentPurchasedHistorySchema),
-      );
-
-      const loopTimes = basePaymentInventoryFixture.length;
-      expect(createProductMock).toHaveBeenCalledTimes(loopTimes);
-      expect(createRecentPurchasedHistoryMock).toHaveBeenCalledTimes(loopTimes);
-      expect(initializeContextSpy).toHaveBeenCalledTimes(loopTimes); // will remove
     });
   });
 });

@@ -6,13 +6,13 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     projects: [
-      {
-        extends: true,
-        test: {
-          name: 'base',
-          include: ['**/*.test.ts'],
-        },
-      },
+      // {
+      //   extends: true,
+      //   test: {
+      //     name: 'base',
+      //     include: ['**/*.test.ts'],
+      //   },
+      // },
       {
         extends: true,
         test: {
