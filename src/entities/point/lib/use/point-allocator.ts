@@ -1,15 +1,13 @@
-import type { Inventory } from '@/entities/inventory/@x/point';
-import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
-import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price/lib/calculator';
+import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 
 export class PointAllocator {
-  private readonly deliveryInfoManager: DeliveryInfoManager;
+  private readonly deliveryFeeManager: DeliveryFeeManager;
   private readonly usedPoint: number;
   private ratioMap: Map<number, number>;
   private pointMap: Map<number, number>;
 
-  constructor(deliveryInfoManager: DeliveryInfoManager, usedPoint: number) {
-    this.deliveryInfoManager = deliveryInfoManager;
+  constructor(deliveryFeeManager: DeliveryFeeManager, usedPoint: number) {
+    this.deliveryFeeManager = deliveryFeeManager;
     this.usedPoint = usedPoint;
     this.ratioMap = this.createRatioMap();
     this.pointMap = this.createPointMap();
@@ -21,7 +19,7 @@ export class PointAllocator {
    */
   private createRatioMap() {
     const ratioMap = new Map<number, number>();
-    const inventory = this.deliveryInfoManager.getInventory();
+    const inventory = this.deliveryFeeManager.getInventory();
     const totalPriceWithoutDeliveryFee = inventory.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
       0,
@@ -45,7 +43,7 @@ export class PointAllocator {
 
   private createPointMap() {
     const pointMap = new Map<number, number>();
-    const inventory = this.deliveryInfoManager.getInventory();
+    const inventory = this.deliveryFeeManager.getInventory();
 
     // 1. 가중치에 비례하여 포인트를 분배합니다.
     inventory.forEach((item) => {

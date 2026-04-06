@@ -2,11 +2,11 @@ import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 import { createEarnPointTransaction } from '@/entities/point/lib/earn/create-transaction';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
-import { getPayload } from '@/shared/lib/get-payload';
 
 import { BaseProceedCommand, CommandResult } from './base-command';
 import { findOrderProductIdsByStatus } from '../../lib/find-order-product-ids-by-status';
 import { findOrderUserId } from '../../lib/find-order-user-id';
+import { EarnPointTransaction } from '@/entities/point/lib/earn/point-transaction';
 
 export class ProceedToPreparingCommand extends BaseProceedCommand {
   constructor() {
@@ -46,11 +46,15 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
           Math.floor(
             (updatedOrderProduct.cashback_rate_for_bank / 100) * updatedOrderProduct.priceSnapshot,
           ) * updatedOrderProduct.quantity;
-        await createEarnPointTransaction({
+
+        const earnPointTransaction = new EarnPointTransaction({
           userId: orderUserId,
           orderProductId,
-          amount: pointAmount,
         });
+
+        await earnPointTransaction.initializeContext();
+        await earnPointTransaction.createHistory(pointAmount);
+        await earnPointTransaction.accumulateUserPoint(pointAmount);
       }
 
       // step 3. update order status to preparing

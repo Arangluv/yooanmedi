@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { createMockInventoryItem } from '@/shared/__mock__/inventory.fixture';
 import { createMockProduct } from '@/shared/__mock__/product.fixture';
-import { PointAllocator } from './point-allocator';
-import { DeliveryInfoManager } from '@/entities/inventory/lib/delivery-info-manager';
+import { PointAllocator } from '../use/point-allocator';
+import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 
 const testCases = [
   {
@@ -199,8 +199,8 @@ const testCases = [
 describe('PointAllocator', () => {
   describe('비례되어 분배된 포인트의 총합은 사용포인트와 같아야한다', () => {
     it.each(testCases)('$case', ({ inventory, usedPoint, minOrderPrice }) => {
-      const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
-      const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
+      const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
+      const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
 
       let allocatedPointSum = 0;
       inventory.forEach((item) => {
@@ -214,8 +214,8 @@ describe('PointAllocator', () => {
 
   describe('사용포인트가 있을때 모든 상품에 분배된 포인트는 0 이상이어야 한다', () => {
     it.each(testCases)('$case', ({ inventory, usedPoint, minOrderPrice }) => {
-      const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
-      const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
+      const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
+      const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
 
       if (usedPoint > 0) {
         inventory.forEach((item) => {
@@ -228,8 +228,8 @@ describe('PointAllocator', () => {
 
   describe('사용포인트가 0일시 모든 상품에 분배된 포인트는 0이어야 한다', () => {
     it.each(testCases)('$case', ({ inventory, usedPoint, minOrderPrice }) => {
-      const deliveryInfoManager = new DeliveryInfoManager(inventory, minOrderPrice);
-      const pointAllocator = new PointAllocator(deliveryInfoManager, usedPoint);
+      const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
+      const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
 
       if (usedPoint === 0) {
         inventory.forEach((item) => {

@@ -18,7 +18,6 @@ import type {
 } from '../model/order-detail-schema';
 
 // TODO: Error boundary refactoring 필요
-
 export type CollectionViewOrderData = {
   orderInfo: OrderInformation;
   paymentInfo: PaymentInfo;
@@ -92,7 +91,10 @@ const createOrderProductsInfo = (orderRowData: Order) => {
       progressOrderStatus[FIRST_INDEX_FOR_COMMON_PROGRESS];
   }
 
+  console.log('orderProductsInfo');
+  console.log(orderProductsInfo);
   const orderInformation = orderInformationSchema.parse(orderProductsInfo);
+
   return orderInformation;
 };
 

@@ -6,15 +6,15 @@ import {
   CreateOrderDto,
   CreateOrderParseResult,
   createOrderSchema,
-} from '../model/create-order-schema';
+} from '../model/create-order.schema';
 import type { Order } from '../model/type';
 
-interface CreateOrderProps {
+interface CreateOrderParams {
   dto: CreateOrderDto;
   transactionID?: string | number;
 }
 
-export const createOrder = async ({ dto, transactionID }: CreateOrderProps): Promise<Order> => {
+export const createOrder = async ({ dto, transactionID }: CreateOrderParams): Promise<Order> => {
   const payload = await getPayload();
 
   try {

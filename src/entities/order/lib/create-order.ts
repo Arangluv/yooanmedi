@@ -6,7 +6,7 @@ import {
   CreateOrderDto,
   CreateOrderParseResult,
   createOrderSchema,
-} from '../model/create-order-schema';
+} from '../model/create-order.schema';
 import type { Order } from '../model/type';
 
 interface CreateOrderProps {

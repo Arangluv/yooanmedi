@@ -2,7 +2,7 @@
 
 import { getPayload } from '@/shared';
 
-import { CreateOrderProductDto } from '../model/create-order-product-schema';
+import { CreateOrderProductDto } from '../model/create-order-product.schema';
 
 export const createOrderProduct = async (dto: CreateOrderProductDto) => {
   try {
