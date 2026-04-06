@@ -3,6 +3,7 @@
 import { getProductById } from '@/entities/product';
 import type { InventoryItem } from '../model/type';
 import { inventorySchema, type Inventory } from '../model/inventory-schema';
+import { zodSafeParse } from '@/shared/lib/zod';
 
 interface OrderList {
   product: Pick<InventoryItem['product'], 'id' | 'price'>;
@@ -13,7 +14,7 @@ interface OrderList {
  * @description 주문 리스트를 invenroty entity로 변환합니다.
  */
 export const transformOrderListToInventory = async (orderList: OrderList[]): Promise<Inventory> => {
-  const transformedInventory = await Promise.all(
+  const rawInventory = await Promise.all(
     orderList.map(async (item) => {
       const product = await getProductById(item.product.id);
 
@@ -27,6 +28,6 @@ export const transformOrderListToInventory = async (orderList: OrderList[]): Pro
     }),
   );
 
-  const validatedInventory = inventorySchema.parse(transformedInventory);
-  return validatedInventory;
+  const transformedInventory = zodSafeParse(inventorySchema, rawInventory);
+  return transformedInventory;
 };

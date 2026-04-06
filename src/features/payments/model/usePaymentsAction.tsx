@@ -6,7 +6,7 @@ import type { InventoryItem } from '@/entities/inventory';
 import type { User } from '@/entities/user';
 import { PAYMENTS_METHOD } from '@/entities/order';
 
-import { paymentsRegisterApplicationDtoSchema } from './payments-register-schema';
+import { paymentsRegisterApplicationDtoSchema } from './schema/payments-register-schema';
 import { paymentRegistration } from '../api/payment-registration';
 import { openPaymentsPopup } from '../lib/open-payments-popup';
 import { generateShopOrderNo } from '../lib/order-uuid';

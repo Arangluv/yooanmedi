@@ -8,7 +8,7 @@ export const PointTransaction: CollectionConfig = {
   },
   lockDocuments: false,
   admin: {
-    defaultColumns: ['user', 'type', 'amount', 'reason'],
+    defaultColumns: ['user', 'type', 'amount', 'createdAt'],
     group: '주문 관리',
   },
   fields: [

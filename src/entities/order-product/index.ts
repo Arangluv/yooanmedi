@@ -1,6 +1,6 @@
 // models
 export { type OrderProduct } from './model/types';
-export { type CreateOrderProductDto } from './model/create-order-product-schema';
+export { type CreateOrderProductDto } from './model/create-order-product.schema';
 export {
   cancelOrderProductSchema,
   cancelResponseSchema,

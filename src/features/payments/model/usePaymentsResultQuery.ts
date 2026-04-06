@@ -1,7 +1,7 @@
 'use client';
 
 import { parseAsString, parseAsInteger, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { paymentsResultQuerySchema } from './payments-result-query-schema';
+import { paymentsResultQuerySchema } from './schema/payments-result-query-schema';
 
 const searchParamsOptions = {
   status: parseAsStringLiteral(['success', 'error']),

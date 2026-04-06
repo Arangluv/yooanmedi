@@ -27,4 +27,3 @@ export const createOrderProductSchema = z.union([
 ]);
 
 export type CreateOrderProductDto = z.input<typeof createOrderProductSchema>;
-export type CreateOrderProductParseResult = z.infer<typeof createOrderProductSchema>;

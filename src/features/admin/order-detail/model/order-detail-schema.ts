@@ -34,7 +34,7 @@ export const orderInformationSchema = z.object({
   updatedAt: z.string(),
   orderNo: z.string(),
   progressOrder: z.object({
-    inProgressOrderStatus: z.enum(Object.values(ORDER_STATUS)),
+    inProgressOrderStatus: z.enum(Object.values(ORDER_STATUS)).nullable(), // todo :: 수정필요 -> 취소처리 시 inprogressOrder를 특정 지을 수 없음
     orderProducts: orderProductsArraySchema,
   }),
   cancelRequestOrder: z.object({
@@ -48,7 +48,6 @@ export type OrderInformation = z.infer<typeof orderInformationSchema>;
 /**
  * payment infomation schema
  */
-
 export const paymentInfoSchema = z.object({
   paymentMethod: z.enum(Object.values(PAYMENTS_METHOD)),
   paymentStatus: z.enum(Object.values(PAYMENT_STATUS)),
