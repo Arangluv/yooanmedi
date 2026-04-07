@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PGPaymentManager } from '@/features/payments/model/manager/pg-payment-manager';
 import { PGPaymentInitContext } from '@/features/payments/model/schema/payment-context-schema';
+import { handleError } from '@/shared/model/errors/handle-error';
 
 export async function POST(request: NextRequest) {
-  // const payload = await getPayload();
-  // const dbTransactionID = await payload.db.beginTransaction();
-
   try {
-    // if (!dbTransactionID) {
-    //   throw new Error('트랜잭션 아이디를 가져오는데 문제가 발생했습니다');
-    // }
-
     const formData = await request.formData();
     const registerResult = PGPaymentManager.validatePaymentRegister(formData);
 
@@ -32,9 +26,6 @@ export async function POST(request: NextRequest) {
     // step 4. 결제 내역 생성
     await paymentManager.createPaymentHistory();
 
-    // 트랜잭션 커밋 -> TODO:: 트랜잭션 설정이 필요합니다
-    // await payload.db.commitTransaction(dbTransactionID as string);
-
     const url = request.nextUrl.clone();
     url.pathname = '/order/payments/popup-callback';
     url.searchParams.set('status', 'success');
@@ -44,9 +35,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.redirect(url, { status: 302 });
   } catch (error: any) {
-    console.log(error);
-    // 트랜잭션 롤백
-    // await payload.db.rollbackTransaction(dbTransactionID as string);
+    // TODO::
+    const errorResult = handleError(error);
 
     // 리다이렉트 -> TODO: searchParams를 set하는 방식에 대해 고민이 필요합니다
     const url = request.nextUrl.clone();

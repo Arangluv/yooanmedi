@@ -116,8 +116,8 @@ export class PGPaymentManager<
    * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
    */
   public async processOrderSideEffects(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
-    // 아래 코드는 병렬처리하면 안됨
-    // 포인트 차감 / 적립은 순차적으로 처리가 필요함
+    // (중요) 아래 코드는 병렬처리하면 안됨
+    // 포인트 차감 / 적립은 순차적으로 처리가 필요함 -> todo 유저 포인트 업데이트를 바깥으로 분리하여 병렬처리 가능하도록 수정
 
     for (const inventoryItem of this.inventory) {
       // step 1. 주문 상품 생성
@@ -129,18 +129,6 @@ export class PGPaymentManager<
       // step 4. 구매 포인트 적립
       await this.accumulatePoint(inventoryItem, orderProduct.id);
     }
-    // await Promise.all(
-    //   this.inventory.map(async (inventoryItem: InventoryItem) => {
-    //     // step 1. 주문 상품 생성
-    //     const orderProduct = await this.createOrderProduct(inventoryItem);
-    //     // step 2. 구매 히스토리 생성
-    //     await this.makeRecentPurchasedHistory(inventoryItem);
-    //     // step 3. 사용 포인트 차감
-    //     await this.deductUsedPoint(inventoryItem, orderProduct.id);
-    //     // step 4. 구매 포인트 적립
-    //     await this.accumulatePoint(inventoryItem, orderProduct.id);
-    //   }),
-    // );
   }
 
   public async createPaymentHistory(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
@@ -163,7 +151,6 @@ export class PGPaymentManager<
       productDeliveryFee,
     );
     const orderProduct = await createOrderProductFromEntityLayer(orderProductDto);
-
     return orderProduct;
   }
 

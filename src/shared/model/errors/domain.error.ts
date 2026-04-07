@@ -14,7 +14,18 @@ export class BusinessLogicError extends ApplicationBaseError {
     super(clientMessage, BUSINESS_LOGIC_ERROR_CODE, data);
   }
 
-  setDevMessage(devMessage: string): void {
+  public setDevMessage(devMessage: string): void {
+    this.devMessage = devMessage;
+  }
+}
+
+export const SYSTEM_ERROR_CODE = 'SYSTEM_ERROR';
+export class SystemError extends ApplicationBaseError {
+  constructor(clientMessage: string, data?: Record<string, any>) {
+    super(clientMessage, SYSTEM_ERROR_CODE, data);
+  }
+
+  public setDevMessage(devMessage: string): void {
     this.devMessage = devMessage;
   }
 }

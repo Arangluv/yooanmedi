@@ -28,6 +28,7 @@ export abstract class PaymentManager<TContext extends BasePaymentContext> {
     this.pointAllocator = pointAllocator;
     this.context = context;
   }
+
   // 결제 컨텍스트 조회
   public getContext(): TContext {
     return this.context;

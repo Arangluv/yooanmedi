@@ -4,6 +4,7 @@ import {
   NOT_FOUND_ERROR_CODE,
   DATA_BASE_ERROR_CODE,
   ZOD_ERROR_CODE,
+  SYSTEM_ERROR_CODE,
 } from './domain.error';
 
 export const ERROR_CODE = 'ERROR';
@@ -20,6 +21,7 @@ export class ApplicationBaseError extends Error {
       | typeof NOT_FOUND_ERROR_CODE
       | typeof DATA_BASE_ERROR_CODE
       | typeof ZOD_ERROR_CODE
+      | typeof SYSTEM_ERROR_CODE
       | typeof ERROR_CODE
       | typeof UNKNOWN_ERROR_CODE,
     public readonly data?: Record<string, any>,
