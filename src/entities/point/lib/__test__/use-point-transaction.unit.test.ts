@@ -3,7 +3,6 @@ import { UsePointTransaction } from '../use/point-transaction';
 import PointService from '../service';
 import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
 import { createPointHistory as createPointHistoryApi } from '../../api/create-history';
-import { updateUserPoint as updateUserPointApi } from '../../api/update';
 
 vi.mock('../service', () => ({
   default: {

@@ -18,6 +18,7 @@ import { zodSafeParse } from '@/shared/lib/zod';
 import { FLG_STATUS } from '@/entities/order/constants/flg-status';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { ORDER_STATUS } from '@/entities/order';
+import { EnrichedOrderListItem } from './order-list.schema';
 
 export const PaymentDto = {
   createOrderForPG: (context: PGPaymentContextAfterApproval) => {
@@ -66,20 +67,18 @@ export const PaymentDto = {
 
   createOrderProductForPg: (
     context: PGPaymentContextAfterOrder,
-    inventoryItem: InventoryItem,
-    totalAmount: number,
-    productDeliveryFee: number,
+    orderListItem: EnrichedOrderListItem,
   ) => {
     const dto = {
       order: context.orderId,
-      totalAmount,
-      productDeliveryFee,
-      product: inventoryItem.product.id,
-      priceSnapshot: inventoryItem.product.price,
-      productNameSnapshot: inventoryItem.product.name,
-      quantity: inventoryItem.quantity,
-      cashback_rate: inventoryItem.product.cashback_rate,
-      cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
+      totalAmount: orderListItem.totalAmount,
+      productDeliveryFee: orderListItem.orderProductDeliveryFee,
+      product: orderListItem.product.id,
+      priceSnapshot: orderListItem.product.price,
+      productNameSnapshot: orderListItem.product.name,
+      quantity: orderListItem.quantity,
+      cashback_rate: orderListItem.product.cashback_rate,
+      cashback_rate_for_bank: orderListItem.product.cashback_rate_for_bank,
       orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
     };
     const result = zodSafeParse(createOrderProductSchema, dto);
@@ -88,21 +87,19 @@ export const PaymentDto = {
 
   createOrderProductForBankTransfer: (
     context: BankTransferPaymentContextAfterOrder,
-    inventoryItem: InventoryItem,
-    totalAmount: number,
-    productDeliveryFee: number,
+    orderListItem: EnrichedOrderListItem,
   ) => {
     const dto = {
       order: context.orderId,
-      totalAmount,
-      productDeliveryFee,
+      totalAmount: orderListItem.totalAmount,
+      productDeliveryFee: orderListItem.orderProductDeliveryFee,
       orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
-      product: inventoryItem.product.id,
-      priceSnapshot: inventoryItem.product.price,
-      productNameSnapshot: inventoryItem.product.name,
-      quantity: inventoryItem.quantity,
-      cashback_rate: inventoryItem.product.cashback_rate,
-      cashback_rate_for_bank: inventoryItem.product.cashback_rate_for_bank,
+      product: orderListItem.product.id,
+      priceSnapshot: orderListItem.product.price,
+      productNameSnapshot: orderListItem.product.name,
+      quantity: orderListItem.quantity,
+      cashback_rate: orderListItem.product.cashback_rate,
+      cashback_rate_for_bank: orderListItem.product.cashback_rate_for_bank,
     };
 
     const result = zodSafeParse(createOrderProductSchema, dto);

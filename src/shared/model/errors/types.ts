@@ -4,6 +4,7 @@ import {
   NOT_FOUND_ERROR_CODE,
   DATA_BASE_ERROR_CODE,
   ZOD_ERROR_CODE,
+  SYSTEM_ERROR_CODE,
 } from './domain.error';
 import { ERROR_CODE, UNKNOWN_ERROR_CODE } from './base.error';
 
@@ -15,6 +16,7 @@ export type ErrorResponse = {
     | typeof DATA_BASE_ERROR_CODE
     | typeof ZOD_ERROR_CODE
     | typeof ERROR_CODE
+    | typeof SYSTEM_ERROR_CODE
     | typeof UNKNOWN_ERROR_CODE;
   message: string;
 };

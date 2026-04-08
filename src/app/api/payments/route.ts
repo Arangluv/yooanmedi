@@ -12,6 +12,8 @@ export async function POST(request: NextRequest) {
     const paymentManager: PGPaymentManager<PGPaymentInitContext> =
       await PGPaymentManager.create(paymentContext);
 
+    // await paymentManager.execute();
+
     // step 1. 결제승인 요청
     const approvalResult = await paymentManager.approvePayment();
     paymentManager.applyApprovalResultToContext(approvalResult);

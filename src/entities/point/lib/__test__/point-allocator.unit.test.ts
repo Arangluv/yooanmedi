@@ -196,47 +196,78 @@ const testCases = [
   },
 ];
 
+const MAX_TEST_TIME = 5000;
+
 describe('PointAllocator', () => {
   describe('비례되어 분배된 포인트의 총합은 사용포인트와 같아야한다', () => {
-    it.each(testCases)('$case', ({ inventory, usedPoint, minOrderPrice }) => {
-      const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
-      const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
+    it.each(testCases)(
+      '$case',
+      ({ inventory, usedPoint, minOrderPrice }) => {
+        const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
+        const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
 
-      let allocatedPointSum = 0;
-      inventory.forEach((item) => {
-        const allocatedPoint = pointAllocator.getAllocatedPoint(item.product.id);
-        allocatedPointSum += allocatedPoint;
-      });
+        let allocatedPointSum = 0;
+        inventory.forEach((item) => {
+          const allocatedPoint = pointAllocator.getAllocatedPoint(item.product.id);
+          allocatedPointSum += allocatedPoint;
+        });
 
-      expect(allocatedPointSum).toBe(usedPoint);
-    });
+        expect(allocatedPointSum).toBe(usedPoint);
+      },
+      MAX_TEST_TIME,
+    );
   });
 
   describe('사용포인트가 있을때 모든 상품에 분배된 포인트는 0 이상이어야 한다', () => {
-    it.each(testCases)('$case', ({ inventory, usedPoint, minOrderPrice }) => {
-      const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
-      const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
+    it.each(testCases)(
+      '$case',
+      ({ inventory, usedPoint, minOrderPrice }) => {
+        const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
+        const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
 
-      if (usedPoint > 0) {
-        inventory.forEach((item) => {
-          const allocatedPoint = pointAllocator.getAllocatedPoint(item.product.id);
-          expect(allocatedPoint).toBeGreaterThan(0);
-        });
-      }
-    });
+        if (usedPoint > 0) {
+          inventory.forEach((item) => {
+            const allocatedPoint = pointAllocator.getAllocatedPoint(item.product.id);
+            expect(allocatedPoint).toBeGreaterThan(0);
+          });
+        }
+      },
+      MAX_TEST_TIME,
+    );
   });
 
   describe('사용포인트가 0일시 모든 상품에 분배된 포인트는 0이어야 한다', () => {
-    it.each(testCases)('$case', ({ inventory, usedPoint, minOrderPrice }) => {
-      const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
-      const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
+    it.each(testCases)(
+      '$case',
+      ({ inventory, usedPoint, minOrderPrice }) => {
+        const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
+        const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
 
-      if (usedPoint === 0) {
+        if (usedPoint === 0) {
+          inventory.forEach((item) => {
+            const allocatedPoint = pointAllocator.getAllocatedPoint(item.product.id);
+            expect(allocatedPoint).toBe(0);
+          });
+        }
+      },
+      MAX_TEST_TIME,
+    );
+  });
+
+  describe('분배된 포인트는 주문상품 가격을 초과할 수 없다', () => {
+    it.each(testCases)(
+      '$case',
+      ({ inventory, usedPoint, minOrderPrice }) => {
+        const deliveryFeeManager = new DeliveryFeeManager(inventory, minOrderPrice);
+        const pointAllocator = new PointAllocator(deliveryFeeManager, usedPoint);
+
         inventory.forEach((item) => {
-          const allocatedPoint = pointAllocator.getAllocatedPoint(item.product.id);
-          expect(allocatedPoint).toBe(0);
+          const subtotal = deliveryFeeManager.getOrderProductSubtotal(item);
+          const totalAmount = subtotal - pointAllocator.getAllocatedPoint(item.product.id);
+          expect(totalAmount).toBeGreaterThanOrEqual(0);
         });
-      }
-    });
+      },
+      MAX_TEST_TIME,
+    );
   });
 });

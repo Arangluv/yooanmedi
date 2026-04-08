@@ -3,6 +3,8 @@ import { handleError } from '../handle-error';
 import {
   BUSINESS_LOGIC_ERROR_CODE,
   BusinessLogicError,
+  SYSTEM_ERROR_CODE,
+  SystemError,
   ZOD_ERROR_CODE,
   ZodParseError,
 } from '../domain.error';
@@ -27,6 +29,17 @@ describe('handleError', () => {
       const result = handleError(error);
       expect(result).toEqual({
         code: BUSINESS_LOGIC_ERROR_CODE,
+        message: error.message,
+      });
+    });
+  });
+
+  describe('SystemError', () => {
+    it('SystemError 처리 시 ErrorResponse를 반환한다', () => {
+      const error = new SystemError('시스템 에러');
+      const result = handleError(error);
+      expect(result).toEqual({
+        code: SYSTEM_ERROR_CODE,
         message: error.message,
       });
     });

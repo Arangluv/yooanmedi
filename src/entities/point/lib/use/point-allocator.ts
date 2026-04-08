@@ -45,33 +45,31 @@ export class PointAllocator {
     const pointMap = new Map<number, number>();
     const inventory = this.deliveryFeeManager.getInventory();
 
-    // 1. 가중치에 비례하여 포인트를 분배합니다.
     inventory.forEach((item) => {
       const ratio = this.ratioMap.get(item.product.id);
-
-      if (!ratio) {
-        throw new Error('주문 상품의 가중치가 존재하지 않습니다');
-      }
+      if (!ratio) throw new Error('주문 상품의 가중치가 존재하지 않습니다');
 
       const point = Math.floor((this.usedPoint * ratio) / 100);
-      pointMap.set(item.product.id, point);
+      const productPrice = item.product.price * item.quantity;
+      pointMap.set(item.product.id, Math.min(point, productPrice));
     });
 
-    const distributedPointSum = Array.from(pointMap.values()).reduce(
-      (acc, point) => acc + point,
-      0,
-    );
-    const remainingPoint = this.usedPoint - distributedPointSum;
+    const distributedPointSum = Array.from(pointMap.values()).reduce((acc, p) => acc + p, 0);
+    let remainingPoint = this.usedPoint - distributedPointSum;
 
-    // 2. 분배 후 남은 포인트가 있으면 가중치가 가장 큰 상품에 추가합니다
-    if (remainingPoint > 0) {
-      const weights = Array.from(this.ratioMap.values());
-      const orderProducutIds = Array.from(this.ratioMap.keys());
+    // 1원씩 순서대로 분배 (floor로 생긴 잔여 포인트는 소액이므로 순회로 처리)
+    for (const item of inventory) {
+      if (remainingPoint <= 0) break;
 
-      const maxWeightIndex = weights.indexOf(Math.max(...weights));
-      const maxWeightId = orderProducutIds[maxWeightIndex];
+      const productPrice = item.product.price * item.quantity;
+      const alreadyAllocated = pointMap.get(item.product.id)!;
+      const canReceive = productPrice - alreadyAllocated; // 더 받을 수 있는 한도
 
-      pointMap.set(maxWeightId, pointMap.get(maxWeightId)! + remainingPoint);
+      if (canReceive <= 0) continue;
+
+      const toAllocate = Math.min(remainingPoint, canReceive);
+      pointMap.set(item.product.id, alreadyAllocated + toAllocate);
+      remainingPoint -= toAllocate;
     }
 
     return pointMap;

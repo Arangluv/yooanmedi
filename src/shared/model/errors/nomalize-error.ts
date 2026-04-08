@@ -1,8 +1,8 @@
 import { BusinessLogicError, SystemError, ZodParseError } from './domain.error';
 import { ErrorResponse } from './types';
-import { ERROR_CODE } from './base.error';
+import { ERROR_CODE, UNKNOWN_ERROR_CODE } from './base.error';
+import { Logger } from '../logger/logger';
 
-// todo :: deprecated
 export const handleError = (error: unknown): ErrorResponse => {
   if (error instanceof ZodParseError) {
     return {
@@ -33,7 +33,6 @@ export const handleError = (error: unknown): ErrorResponse => {
     };
   }
 
-  // unknown 에러 처리
   return {
     code: 'UNKNOWN_ERROR',
     message: '알 수 없는 에러가 발생했습니다.',

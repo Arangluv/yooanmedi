@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { transactionContext } from '../transaction-context';
 import { withTransaction } from '../with-transaction';
 import { getPayload } from '../get-payload';
 import { getTransactionContext } from '../transaction-context';
@@ -24,11 +23,13 @@ describe('transactionContext', () => {
   });
 
   it('getTransactionContext은 withTransaction 내부에서 호출되어야 한다', async () => {
-    await withTransaction(async () => {
-      const { payload, transactionID } = getTransactionContext();
+    await withTransaction({
+      callback: async () => {
+        const { payload, transactionID } = getTransactionContext();
 
-      expect(payload).toBeDefined();
-      expect(transactionID).toBe('test-transaction-id-1');
+        expect(payload).toBeDefined();
+        expect(transactionID).toBe('test-transaction-id-1');
+      },
     });
   });
 
@@ -54,14 +55,18 @@ describe('transactionContext', () => {
       },
     } as any);
 
-    await withTransaction(async () => {
-      const { transactionID } = getTransactionContext();
-      expect(transactionID).toBe(randomTransactionID);
+    await withTransaction({
+      callback: async () => {
+        const { transactionID } = getTransactionContext();
+        expect(transactionID).toBe(randomTransactionID);
+      },
     });
 
-    await withTransaction(async () => {
-      const { transactionID } = getTransactionContext();
-      expect(transactionID).toBe(randomTransactionID2);
+    await withTransaction({
+      callback: async () => {
+        const { transactionID } = getTransactionContext();
+        expect(transactionID).toBe(randomTransactionID2);
+      },
     });
   });
 });

@@ -4,7 +4,12 @@ import { getPayload } from '@/shared/lib/get-payload';
 import { SystemError } from '@/shared/model/errors/domain.error';
 import { transactionContext } from './transaction-context';
 
-export const withTransaction = async <T>(callback: () => Promise<T>) => {
+interface WithTransactionOptions {
+  callback: () => Promise<void>;
+  onRollback?: (error: unknown) => Promise<void>;
+}
+
+export const withTransaction = async <T>({ callback, onRollback }: WithTransactionOptions) => {
   const payload = await getPayload();
   const transactionID = await payload.db.beginTransaction();
 
@@ -23,6 +28,7 @@ export const withTransaction = async <T>(callback: () => Promise<T>) => {
     await payload.db.commitTransaction(transactionID);
   } catch (error) {
     await payload.db.rollbackTransaction(transactionID);
+    await onRollback?.(error);
     throw error;
   }
 };
