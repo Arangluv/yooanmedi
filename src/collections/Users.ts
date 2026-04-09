@@ -9,6 +9,7 @@ export const Users: CollectionConfig = {
   lockDocuments: false,
   admin: {
     defaultColumns: [
+      'id',
       'username',
       'hospitalName',
       'phoneNumber',

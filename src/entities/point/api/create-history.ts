@@ -1,26 +1,16 @@
-import { PointActionType } from '../constants/point-action-type';
-import { getPayload } from '@/shared/lib/get-payload';
+import { CreatePointHistoryEntity } from '../model/schema/history.schema';
+import { getTransactionContext } from '@/shared/lib/transaction-context';
 
-interface CreatePointHistoryParams {
-  target: {
-    user: number;
-    orderProduct: number;
-  };
-  amount: number;
-  type: PointActionType;
-}
+export const createPointHistory = async (history: CreatePointHistoryEntity) => {
+  const { payload, transactionID } = getTransactionContext();
 
-export const createPointHistory = async ({ target, type, amount }: CreatePointHistoryParams) => {
-  const payload = await getPayload();
-  const { user, orderProduct } = target;
-
-  await payload.create({
+  const result = await payload.create({
     collection: 'point-transaction',
-    data: {
-      amount: amount,
-      user: user,
-      orderProduct: orderProduct,
-      type: type,
+    data: history,
+    req: {
+      transactionID,
     },
   });
+
+  return result;
 };

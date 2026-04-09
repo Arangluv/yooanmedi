@@ -37,10 +37,14 @@ export class NotFoundError extends ApplicationBaseError {
   }
 }
 
-export const DATA_BASE_ERROR_CODE = 'DATA_BASE_ERROR';
+export const DATABASE_ERROR_CODE = 'DATABASE_ERROR';
 export class DataBaseError extends ApplicationBaseError {
   constructor(clientMessage: string, data?: Record<string, any>) {
-    super(clientMessage, DATA_BASE_ERROR_CODE, data);
+    super(clientMessage, DATABASE_ERROR_CODE, data);
+  }
+
+  public setDevMessage(message: string): void {
+    this.devMessage = message;
   }
 }
 

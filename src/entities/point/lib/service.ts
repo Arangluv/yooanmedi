@@ -1,9 +1,9 @@
 import { createPointHistory } from '../api/create-history';
 import { getOrderProduct } from '../api/order-product';
 import { getUser } from '../api/user';
-import { userSchema, orderProductSchema } from '../model/point-transaction.schema';
+import { userSchema, orderProductSchema } from '../model/schema/point-transaction.schema';
 import { zodSafeParse } from '@/shared/lib/zod';
-import { PointActionType } from '../constants/point-action-type';
+import { PointActionType } from '../constants/point-action';
 import { updateUserPoint } from '../api/update';
 
 // todo:: zod로 관리해야한다

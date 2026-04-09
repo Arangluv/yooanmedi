@@ -29,9 +29,6 @@ const OrderProductItem = ({
   idx,
   isCancelAction,
 }: OrderProductItemProps) => {
-  console.log('orderProduct');
-  console.log(orderProduct);
-
   return (
     <Item variant={idx % 2 === 0 ? 'default' : 'muted'}>
       <ItemMedia variant="image">

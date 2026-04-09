@@ -1,7 +1,7 @@
 'use server';
 
 import { getPointTransactionContext } from '../get-point-transaction-context';
-import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
+import { POINT_ACTION } from '../../constants/point-action';
 import { normalizePoint } from '../helper';
 import { validateCancelEarnPoint } from './validate';
 
@@ -38,7 +38,7 @@ export const createCancelEarnPointTransaction = async ({
           equals: orderProduct.id,
         },
         type: {
-          equals: POINT_ACTION_TYPE.EARN,
+          equals: POINT_ACTION.EARN,
         },
       },
       limit: 1,
@@ -53,7 +53,7 @@ export const createCancelEarnPointTransaction = async ({
       data: {
         user: userId,
         orderProduct: orderProduct.id,
-        type: POINT_ACTION_TYPE.CANCEL_EARN,
+        type: POINT_ACTION.CANCEL_EARN,
         reason: `주문취소로 인한 적립금 취소 - 주문 상품 아이디 : ${orderProduct.id}`,
         amount: previousPointTransactionAmount,
       },

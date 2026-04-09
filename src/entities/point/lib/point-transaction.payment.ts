@@ -1,4 +1,4 @@
-import { PaymentPointTransactionContext } from '../model/point-transaction.schema';
+import { PaymentPointTransactionContext } from '../model/schema/point-transaction.schema';
 import PointService from './service';
 
 export interface PaymentPointTransactionParams {

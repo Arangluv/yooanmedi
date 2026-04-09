@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { UsePointTransaction } from '../use/point-transaction';
 import PointService from '../service';
-import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
+import { POINT_ACTION } from '../../constants/point-action';
 import { createPointHistory as createPointHistoryApi } from '../../api/create-history';
 
 vi.mock('../service', () => ({
@@ -76,7 +76,7 @@ describe('createHistory', () => {
     expect(PointService.createPointHistory).toHaveBeenCalledWith({
       target: { user: userId, orderProduct: orderProductId },
       amount: usedPoint,
-      type: POINT_ACTION_TYPE.USE,
+      type: POINT_ACTION.USE,
     });
   });
 

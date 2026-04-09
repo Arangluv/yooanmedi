@@ -1,5 +1,5 @@
 import { PaymentPointTransactionParams, PointTransactionBase } from '../point-transaction.payment';
-import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
+import { POINT_ACTION } from '../../constants/point-action';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
 import PointService from '../service';
 
@@ -23,7 +23,7 @@ export class EarnPointTransaction extends PointTransactionBase {
     await PointService.createPointHistory({
       target: { user: user.id, orderProduct: orderProduct.id },
       amount,
-      type: POINT_ACTION_TYPE.EARN,
+      type: POINT_ACTION.EARN,
     });
   }
 

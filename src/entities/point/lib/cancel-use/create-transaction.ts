@@ -1,6 +1,6 @@
 'use server';
 
-import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
+import { POINT_ACTION } from '../../constants/point-action';
 import { getPointTransactionContext } from '../get-point-transaction-context';
 import { normalizePoint } from '../helper';
 import { validateCancelUsePoint } from './validate';
@@ -36,7 +36,7 @@ export const createCancelUsePointTransaction = async ({
           equals: orderProduct.id,
         },
         type: {
-          equals: POINT_ACTION_TYPE.USE,
+          equals: POINT_ACTION.USE,
         },
       },
     });
@@ -50,7 +50,7 @@ export const createCancelUsePointTransaction = async ({
       data: {
         user: user.id,
         orderProduct: orderProduct.id,
-        type: POINT_ACTION_TYPE.CANCEL_USE,
+        type: POINT_ACTION.CANCEL_USE,
         reason: `주문취소로 인한 적립금 사용 취소 - 주문 상품 아이디 : ${orderProduct.id}`,
         amount: previousPointTransactionAmount,
       },

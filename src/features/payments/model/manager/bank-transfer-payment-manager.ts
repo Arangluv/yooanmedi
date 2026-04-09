@@ -1,3 +1,8 @@
+import { createOrder as createOrderFromEntityLayer } from '@/entities/order/api/create-order';
+import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
+import { zodSafeParse } from '@/shared/lib/zod';
+import { withTransaction } from '@/shared/lib/with-transaction';
+
 import { PaymentManager } from './payment-manager';
 import { OrderBankTransferDto } from '../schema/order-banktransfer-schema';
 import {
@@ -6,12 +11,10 @@ import {
   BankTransferPaymentContextAfterOrder,
 } from '../schema/payment-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { createOrder as createOrderFromEntityLayer } from '@/entities/order';
-import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
-import { zodSafeParse } from '@/shared/lib/zod';
-import { withTransaction } from '@/shared/lib/with-transaction';
 import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
 import { enrichedOrderListFromContext } from '../enriched-order-list';
+import { UsePointHistoryDto } from '@/entities/point/model/schema/history.schema';
+import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 
 export class BankTransferPaymentManager<
   TContext extends BankTransferPaymentInitContext,
@@ -33,20 +36,23 @@ export class BankTransferPaymentManager<
   public async execute() {
     await withTransaction({
       callback: async () => {
-        // PaymentManager.someaction1
-        // PaymentManager.someaction2
+        const order = await this.createOrder();
+        this.applyOrderIdToContext(order.id);
+
+        const manager = this as BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>;
+        await manager.processOrderList();
       },
     });
   }
 
-  public async createOrder() {
+  private async createOrder() {
     const dto = PaymentDto.createOrderForBankTransfer(this.context);
-    const order = await createOrderFromEntityLayer({ dto });
+    const order = await createOrderFromEntityLayer(dto);
 
     return order;
   }
 
-  public applyOrderIdToContext(
+  private applyOrderIdToContext(
     orderId: number,
   ): asserts this is BankTransferPaymentManager<BankTransferPaymentContextAfterOrder> {
     this.context = {
@@ -55,17 +61,23 @@ export class BankTransferPaymentManager<
     };
   }
 
-  // todo :: 네이밍 변경
-  public async processOrderSideEffects(
+  private async processOrderList(
     this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
   ) {
+    const usePointTransaction = new UsePointTransaction();
+
     for (const orderListItem of this.orderList) {
-      // step 1. 주문 상품 생성
+      // step 2-1. 주문 상품 생성
       const orderProduct = await this.createOrderProduct(orderListItem);
-      // step 2. 구매 히스토리 생성
+      // step 2-2. 구매 히스토리 생성
       await this.makeRecentPurchasedHistory(orderListItem);
-      // step 3. 사용 포인트 차감
-      await this.deductUsedPoint(orderListItem, orderProduct.id);
+      // step 2-3. 사용 포인트 차감 히스토리 생성
+      const createUsePointHistoryDto: UsePointHistoryDto = {
+        user: this.context.userId,
+        orderProduct: orderProduct.id,
+        amount: orderListItem.calculatedUsedPoint,
+      };
+      await usePointTransaction.createHistory(createUsePointHistoryDto);
     }
   }
 
