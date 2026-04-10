@@ -8,7 +8,6 @@ import { Product } from './Columns';
 import TableEmpty from './TableEmpty';
 import useCreateCustomPrice from '@/collections/hooks/useCreateCustomPrice';
 import InLineAlertBox from './InLineAlertBox';
-import { useEffect } from 'react';
 
 export default function ProductPriceSetSection() {
   const products = useProductSelectList((state) => state.products);

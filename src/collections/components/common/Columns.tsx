@@ -7,6 +7,7 @@ import '@tanstack/table-core';
 export interface Product {
   id: number;
   name: string;
+  specification: string | null;
   manufacturer: string;
   price: number;
 }
@@ -72,6 +73,10 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'name',
     header: '상품명',
+  },
+  {
+    accessorKey: 'specification',
+    header: '규격/단위',
   },
   {
     accessorKey: 'manufacturer',

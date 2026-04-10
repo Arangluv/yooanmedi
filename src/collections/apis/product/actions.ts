@@ -40,6 +40,7 @@ export const getProductList = async ({
       id: true,
       name: true,
       manufacturer: true,
+      specification: true,
       price: true,
     },
     page: page,
