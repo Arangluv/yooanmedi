@@ -15,7 +15,6 @@ import {
   approvalPaymentResultSchema,
 } from '../schema/payments-approval-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import { createPayment } from '@/entities/payment/api/create';
 import { zodSafeParse } from '@/shared/lib/zod';
@@ -36,6 +35,7 @@ import { UsecaseResult } from '@/shared/model/type';
 import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
 import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
+import { OrderProductService } from '@/entities/order-product/model/services/service';
 
 interface PaymentUsecaseResultData {
   approvalDate: string;
@@ -211,8 +211,10 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
     this: PGPaymentManager<PGPaymentContextAfterOrder>,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const orderProductDto = PaymentDto.createOrderProductForPg(this.context, orderListItem);
-    const orderProduct = await createOrderProductFromEntityLayer(orderProductDto);
+    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.CREDIT_CARD);
+    const requestDto = PaymentDto.createOrderProduct(this.context, orderListItem);
+    const orderProduct = await orderProductService.createOrderProduct(requestDto);
+
     return orderProduct;
   }
 }

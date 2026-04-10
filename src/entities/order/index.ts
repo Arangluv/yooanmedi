@@ -3,7 +3,6 @@ export { createOrder } from './api/create-order';
 
 // models
 export { type Order } from './model/type';
-export type { CreateOrderDto } from './model/schemas/create-order.schema';
 export { createOrderSchema } from './model/schemas/create-order.schema';
 
 // constants

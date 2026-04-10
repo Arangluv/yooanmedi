@@ -1,4 +1,3 @@
-import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
 import { zodSafeParse } from '@/shared/lib/zod';
 import { withTransaction } from '@/shared/lib/with-transaction';
 import { PaymentManager } from './payment-manager';
@@ -15,6 +14,7 @@ import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 import { UsecaseResult } from '@/shared/model/type';
 import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
+import { OrderProductService } from '@/entities/order-product/model/services/service';
 
 export class BankTransferPaymentManager<
   TContext extends BankTransferPaymentInitContext,
@@ -94,11 +94,9 @@ export class BankTransferPaymentManager<
     this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const orderProductDto = PaymentDto.createOrderProductForBankTransfer(
-      this.context,
-      orderListItem,
-    );
-    const orderProduct = await createOrderProductFromEntityLayer(orderProductDto);
+    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const requestDto = PaymentDto.createOrderProduct(this.context, orderListItem);
+    const orderProduct = await orderProductService.createOrderProduct(requestDto);
 
     return orderProduct;
   }
