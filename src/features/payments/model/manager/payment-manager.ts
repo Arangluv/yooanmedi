@@ -2,12 +2,13 @@ import { createRecentPurchasedHistory } from '@/entities/recent-purchased-histor
 import { BasePaymentContext } from '../schema/payment-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
 import { type EnrichedOrderList, type EnrichedOrderListItem } from '../schema/order-list.schema';
+import { UsecaseResult } from '@/shared/model/type';
 
-export abstract class PaymentManager<TContext extends BasePaymentContext> {
+export abstract class PaymentManager<TContext extends BasePaymentContext, TData = never> {
   protected orderList: EnrichedOrderList;
   protected context: TContext;
 
-  abstract execute(): Promise<void>;
+  abstract execute(): Promise<UsecaseResult<TData>>;
 
   protected constructor(orderList: EnrichedOrderList, context: TContext) {
     this.orderList = orderList;

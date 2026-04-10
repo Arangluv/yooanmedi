@@ -11,7 +11,6 @@ export const OrderProduct: CollectionConfig = {
   lockDocuments: false,
   admin: {
     defaultColumns: [
-      'id',
       'productNameSnapshot',
       'priceSnapshot',
       'totalAmount',

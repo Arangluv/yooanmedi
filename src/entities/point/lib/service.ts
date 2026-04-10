@@ -4,7 +4,7 @@ import { getUser } from '../api/user';
 import { userSchema, orderProductSchema } from '../model/schema/point-transaction.schema';
 import { zodSafeParse } from '@/shared/lib/zod';
 import { PointActionType } from '../constants/point-action';
-import { updateUserPoint } from '../api/update';
+import { updateUserPoint } from '../api/increment-point';
 
 // todo:: zod로 관리해야한다
 interface CreatePointHistoryParams {

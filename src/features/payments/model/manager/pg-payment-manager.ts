@@ -33,10 +33,19 @@ import {
   UsePointHistoryDto,
 } from '@/entities/point/model/schema/history.schema';
 import { IPointTransaction } from '@/entities/point/model/interfaces';
+import { UsecaseResult } from '@/shared/model/type';
+import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
 
-export class PGPaymentManager<
-  TContext extends PGPaymentInitContext,
-> extends PaymentManager<TContext> {
+interface PaymentUsecaseResultData {
+  approvalDate: string;
+  amount: number;
+  shopOrderNo: string;
+}
+
+export class PGPaymentManager<TContext extends PGPaymentInitContext> extends PaymentManager<
+  TContext,
+  PaymentUsecaseResultData
+> {
   protected constructor(orderList: EnrichedOrderList, context: TContext) {
     super(orderList, context);
   }
@@ -70,8 +79,8 @@ export class PGPaymentManager<
     return context;
   }
 
-  public async execute() {
-    await withTransaction({
+  public async execute(): Promise<UsecaseResult<PaymentUsecaseResultData>> {
+    return await withTransaction({
       callback: async () => {
         const usePointTransaction = new UsePointTransaction();
         const earnPointTransaction = new EarnPointTransaction();
@@ -89,9 +98,24 @@ export class PGPaymentManager<
 
         // step 4. 결제 내역 생성
         await this.createPaymentHistory();
+
+        // TODO:: callback 내부라 this 추론이 불가능하므로 타입 캐스팅을 사용 -> refactoring 필요
+        const manager = this as PGPaymentManager<PGPaymentContextAfterOrder>;
+        return {
+          data: {
+            approvalDate: manager.context.approvalDate,
+            amount: manager.context.amount,
+            shopOrderNo: manager.context.shopOrderNo,
+          },
+          message: '결제가 완료되었습니다.',
+        };
       },
-      onRollback: async (error) => {
-        // TODO: PG사 결제 취소요청
+      onRollback: async () => {
+        // type arssert가 진행되지 않은 상태이기에 unknown 타입으로 먼저 캐스팅 -> 이 시점은 결제가 승인되었다는 전제하에 진행된다.
+        const manager = this as unknown as PGPaymentManager<PGPaymentContextAfterOrder>;
+        if (manager.context?.pgCno) {
+          await cancelPgPaymentAll(manager.context.amount, manager.context.pgCno);
+        }
       },
     });
   }
@@ -147,30 +171,32 @@ export class PGPaymentManager<
   ) {
     let earnedPoint = 0;
 
-    // (중요) 아래 코드는 병렬처리하면 안됨 -> 포인트 차감 / 적립은 순차적으로 처리가 필요함
-    for (const orderListItem of this.orderList) {
-      // step 1. 주문 상품 생성
-      const orderProduct = await this.createOrderProduct(orderListItem);
-      // step 2. 구매 히스토리 생성
-      await this.makeRecentPurchasedHistory(orderListItem);
-      // step 3. 사용 포인트 차감 히스토리 생성
-      await usePointTransaction.createHistory({
-        user: this.context.userId,
-        orderProduct: orderProduct.id,
-        amount: orderListItem.calculatedUsedPoint,
-      });
-      // step 4. 구매 포인트 적립 히스토리 생성
-      const willEarnPoint = getPointWhenUsingCard(orderListItem.product) * orderListItem.quantity;
-      earnedPoint += willEarnPoint;
-      await earnPointTransaction.createHistory({
-        user: this.context.userId,
-        orderProduct: orderProduct.id,
-        amount: willEarnPoint,
-      });
-    }
+    await Promise.all(
+      this.orderList.map(async (orderListItem) => {
+        // step 1. 주문 상품 생성
+        const orderProduct = await this.createOrderProduct(orderListItem);
+        // step 2. 구매 히스토리 생성
+        await this.makeRecentPurchasedHistory(orderListItem);
+        // step 3. 사용 포인트 차감 히스토리 생성
+        await usePointTransaction.createHistory({
+          user: this.context.userId,
+          orderProduct: orderProduct.id,
+          amount: orderListItem.calculatedUsedPoint,
+        });
+        // step 4. 구매 포인트 적립 히스토리 생성
+        const willEarnPoint = getPointWhenUsingCard(orderListItem.product) * orderListItem.quantity;
+        earnedPoint += willEarnPoint;
+        await earnPointTransaction.createHistory({
+          user: this.context.userId,
+          orderProduct: orderProduct.id,
+          amount: willEarnPoint,
+        });
+      }),
+    );
 
-    // step 5. point 업데이트
+    // step 5. 구매 포인트 적립
     await earnPointTransaction.updateUserPoint(this.context.userId, earnedPoint);
+    // step 6. 사용 포인트 차감
     await usePointTransaction.updateUserPoint(this.context.userId, this.context.usedPoint);
   }
 

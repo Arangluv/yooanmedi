@@ -18,7 +18,7 @@ describe('withTransaction', () => {
     vi.clearAllMocks();
   });
 
-  it('transactionID가 없다면 SystemError를 throw한다.', async () => {
+  it('1. transactionID가 없다면 SystemError를 throw한다.', async () => {
     vi.mocked(getPayload).mockResolvedValueOnce({
       db: {
         beginTransaction: vi.fn().mockResolvedValue(null),
@@ -32,7 +32,7 @@ describe('withTransaction', () => {
     );
   });
 
-  it('callback 함수 성공 시 db.commitTransaction 함수가 호출되어야 한다', async () => {
+  it('2. callback 함수 성공 시 db.commitTransaction 함수가 호출되어야 한다', async () => {
     const payload = await getPayload();
     await withTransaction({ callback: () => Promise.resolve() });
 
@@ -40,7 +40,35 @@ describe('withTransaction', () => {
     expect(payload.db.rollbackTransaction).not.toHaveBeenCalled();
   });
 
-  it('callback 함수에서 error를 throw하지 않으면 catch 블록에서 error는 undefined다', async () => {
+  it('3. callback 함수가 Promise를 반환하지 않으면 그 값을 그대로 반환한다', async () => {
+    const testCallback = () => {
+      return 'test';
+    };
+
+    const result = await withTransaction({
+      callback: async () => {
+        return testCallback();
+      },
+    });
+
+    expect(result).toBe('test');
+  });
+
+  it('4. callback 함수가 Promise를 반환하면 resolve된 값을 반환한다', async () => {
+    const testCallback = () => {
+      return Promise.resolve('test');
+    };
+
+    const result = await withTransaction({
+      callback: async () => {
+        return testCallback();
+      },
+    });
+
+    expect(result).toBe('test');
+  });
+
+  it('5. callback 함수에서 error를 throw하지 않으면 catch 블록에서 error는 undefined다', async () => {
     try {
       await withTransaction({ callback: () => Promise.reject() });
     } catch (error) {
@@ -48,7 +76,7 @@ describe('withTransaction', () => {
     }
   });
 
-  it('callback 함수가 Promise.reject를 반환하면 db.rollbackTransaction 함수가 호출되어야 한다', async () => {
+  it('6. callback 함수가 Promise.reject를 반환하면 db.rollbackTransaction 함수가 호출되어야 한다', async () => {
     const payload = await getPayload();
 
     try {
@@ -59,7 +87,7 @@ describe('withTransaction', () => {
     }
   });
 
-  it('callback 함수가 throw를 발생시키면 Error를 throw하고 db.rollbackTransaction 함수가 호출되어야 한다', async () => {
+  it('7. callback 함수가 throw를 발생시키면 Error를 throw하고 db.rollbackTransaction 함수가 호출되어야 한다', async () => {
     const payload = await getPayload();
 
     try {
@@ -77,7 +105,7 @@ describe('withTransaction', () => {
     }
   });
 
-  it('callback 함수가 Promise.reject를 반환하고 onRollback 함수가 정의되어 있다면 onRollback 함수가 호출되어야 한다', async () => {
+  it('8. callback 함수가 Promise.reject를 반환하고 onRollback 함수가 정의되어 있다면 onRollback 함수가 호출되어야 한다', async () => {
     const onRollbackMock = vi.fn();
 
     try {
@@ -92,7 +120,7 @@ describe('withTransaction', () => {
     }
   });
 
-  it('callback 함수가 throw를 발생시키고 onRollback 함수가 정의되어 있다면 onRollback 함수가 호출되어야 한다', async () => {
+  it('9. callback 함수가 throw를 발생시키고 onRollback 함수가 정의되어 있다면 onRollback 함수가 호출되어야 한다', async () => {
     const onRollbackMock = vi.fn();
 
     try {
@@ -110,7 +138,7 @@ describe('withTransaction', () => {
     }
   });
 
-  it('rollback에서 throw한 error는 최상단 catch 블록에서 처리되어야 한다', async () => {
+  it('10. rollback에서 throw한 error는 최상단 catch 블록에서 처리되어야 한다', async () => {
     try {
       await withTransaction({
         callback: async () => {

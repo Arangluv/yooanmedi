@@ -13,8 +13,8 @@ import {
 import { PaymentDto } from '../schema/payments.dto';
 import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
 import { enrichedOrderListFromContext } from '../enriched-order-list';
-import { UsePointHistoryDto } from '@/entities/point/model/schema/history.schema';
 import { UsePointTransaction } from '@/entities/point/model/point-transaction';
+import { UsecaseResult } from '@/shared/model/type';
 
 export class BankTransferPaymentManager<
   TContext extends BankTransferPaymentInitContext,
@@ -33,7 +33,7 @@ export class BankTransferPaymentManager<
     return new BankTransferPaymentManager(orderList, context);
   }
 
-  public async execute() {
+  public async execute(): Promise<UsecaseResult> {
     await withTransaction({
       callback: async () => {
         const order = await this.createOrder();
@@ -43,6 +43,10 @@ export class BankTransferPaymentManager<
         await manager.processOrderList();
       },
     });
+
+    return {
+      message: '무통장 입금 주문을 생성하였습니다.',
+    };
   }
 
   private async createOrder() {
@@ -66,19 +70,23 @@ export class BankTransferPaymentManager<
   ) {
     const usePointTransaction = new UsePointTransaction();
 
-    for (const orderListItem of this.orderList) {
-      // step 2-1. 주문 상품 생성
-      const orderProduct = await this.createOrderProduct(orderListItem);
-      // step 2-2. 구매 히스토리 생성
-      await this.makeRecentPurchasedHistory(orderListItem);
-      // step 2-3. 사용 포인트 차감 히스토리 생성
-      const createUsePointHistoryDto: UsePointHistoryDto = {
-        user: this.context.userId,
-        orderProduct: orderProduct.id,
-        amount: orderListItem.calculatedUsedPoint,
-      };
-      await usePointTransaction.createHistory(createUsePointHistoryDto);
-    }
+    await Promise.all(
+      this.orderList.map(async (orderListItem) => {
+        // step 2-1. 주문 상품 생성
+        const orderProduct = await this.createOrderProduct(orderListItem);
+        // step 2-2. 구매 히스토리 생성
+        await this.makeRecentPurchasedHistory(orderListItem);
+        // step 2-3. 사용 포인트 차감 히스토리 생성
+        await usePointTransaction.createHistory({
+          user: this.context.userId,
+          orderProduct: orderProduct.id,
+          amount: orderListItem.calculatedUsedPoint,
+        });
+      }),
+    );
+
+    // step 3. 사용 포인트 차감
+    await usePointTransaction.updateUserPoint(this.context.userId, this.context.usedPoint);
   }
 
   private async createOrderProduct(

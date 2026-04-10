@@ -65,3 +65,15 @@ export type CreatePointHistoryEntity =
   | CancelUsePointHistoryEntity
   | EarnPointHistoryEntity
   | CancelEarnPointHistoryEntity;
+
+export const createPointHistoryResultSchema = z.object({
+  id: z.number(),
+});
+export type CreatePointHistoryResult = z.infer<typeof createPointHistoryResultSchema>;
+
+export const pointHistorySchema = z.object({
+  id: z.number(),
+  amount: z.number(),
+});
+export const pointHistoriesSchema = z.array(pointHistorySchema);
+export type PointHistory = z.infer<typeof pointHistorySchema>;

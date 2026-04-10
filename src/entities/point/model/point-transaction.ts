@@ -2,15 +2,18 @@ import { zodSafeParse } from '@/shared/lib/zod';
 import { IPointTransaction } from './interfaces';
 import { PointTransactionRepository } from './repository';
 import {
-  type UsePointHistoryDto,
-  type UsePointHistoryEntity,
   usePointHistoryEntitySchema,
-  type CancelUsePointHistoryDto,
-  type EarnPointHistoryDto,
-  type CancelEarnPointHistoryDto,
   EarnPointHistoryEntity,
   earnPointHistoryEntitySchema,
 } from './schema/history.schema';
+import type {
+  UsePointHistoryDto,
+  UsePointHistoryEntity,
+  CancelUsePointHistoryDto,
+  EarnPointHistoryDto,
+  CancelEarnPointHistoryDto,
+} from './schema/history.schema';
+import { BusinessLogicError } from '@/shared/model/errors/domain.error';
 
 abstract class PointTransaction {
   protected historyIds: number[];
@@ -38,13 +41,18 @@ export class UsePointTransaction
 
   public async updateUserPoint(userId: number, amount: number): Promise<void> {
     const histories = await PointTransactionRepository.getHistories(this.historyIds);
-    // todo :: 사용된 포인트 계산
-    // const usedPoint = histories.reduce((acc, history) => acc + history.amount, 0);
-    // if (usedPoint !== amount) {
-    //   throw new Error('사용된 포인트와 실제 사용된 포인트가 다릅니다');
-    // }
+    const amountCalculatedFromHistories = histories.reduce(
+      (acc, history) => acc + history.amount,
+      0,
+    );
 
-    // await PointTransactionRepository.decreaseUserPoint(userId, amount);
+    if (amountCalculatedFromHistories !== amount) {
+      const error = new BusinessLogicError('주문을 처리하는데 문제가 발생했습니다');
+      error.setDevMessage('사용된 포인트와 실제 사용된 포인트가 다릅니다');
+      throw error;
+    }
+
+    await PointTransactionRepository.decreaseUserPoint(userId, amount);
   }
 
   private createHistoryEntity(dto: UsePointHistoryDto): UsePointHistoryEntity {
@@ -77,7 +85,21 @@ export class EarnPointTransaction
     return zodSafeParse(earnPointHistoryEntitySchema, dto);
   }
 
-  public async updateUserPoint(userId: number, amount: number): Promise<void> {}
+  public async updateUserPoint(userId: number, amount: number): Promise<void> {
+    const histories = await PointTransactionRepository.getHistories(this.historyIds);
+    const amountCalculatedFromHistories = histories.reduce(
+      (acc, history) => acc + history.amount,
+      0,
+    );
+
+    if (amountCalculatedFromHistories !== amount) {
+      const error = new BusinessLogicError('주문을 처리하는데 문제가 발생했습니다');
+      error.setDevMessage('사용된 포인트와 실제 사용된 포인트가 다릅니다');
+      throw error;
+    }
+
+    await PointTransactionRepository.increaseUserPoint(userId, amount);
+  }
 }
 
 export class CancelEarnPointTransaction
