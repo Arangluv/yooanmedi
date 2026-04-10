@@ -6,8 +6,6 @@ import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { BaseProceedCommand, CommandResult } from './base-command';
 import { findOrderProductIdsByStatus } from '../../lib/find-order-product-ids-by-status';
 import { findOrderUserId } from '../../lib/find-order-user-id';
-import { EarnPointTransaction } from '@/entities/point/model/point-transaction';
-import { createUsePointTransaction } from '@/entities/point/lib/use/create-transaction';
 
 export class ProceedToPreparingCommand extends BaseProceedCommand {
   constructor() {
@@ -43,11 +41,11 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
 
         // step 2. create history and update amount -> will deprecated (todo)
         const willEarnPoint =
-          (updatedOrderProduct.cashback_rate / 100) *
+          (updatedOrderProduct.cashback_rate_for_bank / 100) *
           updatedOrderProduct.priceSnapshot *
           updatedOrderProduct.quantity;
 
-        await createUsePointTransaction({
+        await createEarnPointTransaction({
           userId: orderUserId,
           orderProductId,
           amount: willEarnPoint,
