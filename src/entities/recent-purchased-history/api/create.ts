@@ -1,21 +1,16 @@
 'use server';
 
-import { getPayload } from '@/shared';
 import { CreateRecentPurchasedHistoryDto } from '../model/create-schema';
+import { getTransactionContext } from '@/shared/lib/transaction-context';
 
 export const createRecentPurchasedHistory = async (dto: CreateRecentPurchasedHistoryDto) => {
-  try {
-    const payload = await getPayload();
+  const { payload, transactionID } = getTransactionContext();
 
-    await payload.create({
-      collection: 'recent-purchased-history',
-      data: dto,
-    });
-
-    return;
-  } catch (error) {
-    // TODO :: error 핸들링
-    console.log(error);
-    throw new Error('최근 구매내역을 생성하는데 문제가 발생했습니다');
-  }
+  await payload.create({
+    collection: 'recent-purchased-history',
+    data: dto,
+    req: {
+      transactionID,
+    },
+  });
 };

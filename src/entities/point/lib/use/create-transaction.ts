@@ -1,7 +1,7 @@
 'use server';
 
 import { getPointTransactionContext } from '../get-point-transaction-context';
-import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
+import { POINT_ACTION } from '../../constants/point-action';
 import { normalizePoint } from '../helper';
 import { validateUsePoint } from './validate';
 
@@ -24,7 +24,7 @@ export const createUsePointTransaction = async (params: CreateUsePointTransactio
     data: {
       user: user.id,
       orderProduct: orderProduct.id,
-      type: POINT_ACTION_TYPE.USE,
+      type: POINT_ACTION.USE,
       reason: `적립금 사용 - 주문 상품 아이디 : ${orderProduct.id}`,
       amount: params.amount,
     },

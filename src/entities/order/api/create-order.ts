@@ -1,33 +1,19 @@
 'use server';
 
-import { getPayload } from '@/shared';
+import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { CreateOrderEntity, CreateOrderResponseDto } from '../model/schemas/create-order.schema';
 
-import {
-  CreateOrderDto,
-  CreateOrderParseResult,
-  createOrderSchema,
-} from '../model/create-order.schema';
-import type { Order } from '../model/type';
+export const createOrder = async (order: CreateOrderEntity): Promise<CreateOrderResponseDto> => {
+  const { payload, transactionID } = getTransactionContext();
 
-interface CreateOrderParams {
-  dto: CreateOrderDto;
-  transactionID?: string | number;
-}
+  const createdOrder = await payload.create({
+    collection: 'order',
+    data: order,
+    select: {},
+    req: {
+      transactionID,
+    },
+  });
 
-export const createOrder = async ({ dto, transactionID }: CreateOrderParams): Promise<Order> => {
-  const payload = await getPayload();
-
-  try {
-    const data: CreateOrderParseResult = createOrderSchema.parse(dto);
-
-    const order = await payload.create({
-      collection: 'order',
-      data,
-      ...(transactionID ? { req: { transactionID } } : {}),
-    });
-
-    return order;
-  } catch (error) {
-    throw new Error('주문내역을 생성하는데 문제가 발생했습니다');
-  }
+  return createdOrder;
 };

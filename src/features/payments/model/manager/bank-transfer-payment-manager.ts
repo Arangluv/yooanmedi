@@ -1,29 +1,26 @@
+import { zodSafeParse } from '@/shared/lib/zod';
+import { withTransaction } from '@/shared/lib/with-transaction';
 import { PaymentManager } from './payment-manager';
-import { Inventory, InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
-import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { OrderBankTransferDto } from '../schema/order-banktransfer-schema';
 import {
   bankTransferPaymentInitContextSchema,
   BankTransferPaymentInitContext,
   BankTransferPaymentContextAfterOrder,
 } from '../schema/payment-context-schema';
-import { transformOrderListToInventory } from '@/entities/inventory/lib/transform';
 import { PaymentDto } from '../schema/payments.dto';
-import { createOrder as createOrderFromEntityLayer } from '@/entities/order';
-import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
+import { enrichedOrderListFromContext } from '../enriched-order-list';
+import { UsePointTransaction } from '@/entities/point/model/point-transaction';
+import { UsecaseResult } from '@/shared/model/type';
+import { OrderService } from '@/entities/order/model/services/service';
+import { PAYMENTS_METHOD } from '@/entities/order';
+import { OrderProductService } from '@/entities/order-product/model/services/service';
 
 export class BankTransferPaymentManager<
   TContext extends BankTransferPaymentInitContext,
 > extends PaymentManager<TContext> {
-  protected constructor(
-    inventory: Inventory,
-    deliveryFeeManager: DeliveryFeeManager,
-    pointAllocator: PointAllocator,
-    context: TContext,
-  ) {
-    super(inventory, deliveryFeeManager, pointAllocator, context);
+  protected constructor(orderList: EnrichedOrderList, context: TContext) {
+    super(orderList, context);
   }
 
   static createContext(dto: OrderBankTransferDto) {
@@ -32,21 +29,35 @@ export class BankTransferPaymentManager<
   }
 
   static async create(context: BankTransferPaymentInitContext) {
-    const inventory = await transformOrderListToInventory(context.orderList);
-    const deliveryFeeManager = new DeliveryFeeManager(inventory, context.minOrderPrice);
-    const pointAllocator = new PointAllocator(deliveryFeeManager, context.usedPoint);
-
-    return new BankTransferPaymentManager(inventory, deliveryFeeManager, pointAllocator, context);
+    const orderList = await enrichedOrderListFromContext(context);
+    return new BankTransferPaymentManager(orderList, context);
   }
 
-  public async createOrder() {
+  public async execute(): Promise<UsecaseResult> {
+    await withTransaction({
+      callback: async () => {
+        const order = await this.createOrder();
+        this.applyOrderIdToContext(order.id);
+
+        const manager = this as BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>;
+        await manager.processOrderList();
+      },
+    });
+
+    return {
+      message: '무통장 입금 주문을 생성하였습니다.',
+    };
+  }
+
+  private async createOrder() {
+    const orderService = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
     const dto = PaymentDto.createOrderForBankTransfer(this.context);
-    const order = await createOrderFromEntityLayer({ dto });
+    const order = await orderService.createOrder(dto);
 
     return order;
   }
 
-  public applyOrderIdToContext(
+  private applyOrderIdToContext(
     orderId: number,
   ): asserts this is BankTransferPaymentManager<BankTransferPaymentContextAfterOrder> {
     this.context = {
@@ -55,34 +66,37 @@ export class BankTransferPaymentManager<
     };
   }
 
-  public async processOrderSideEffects(
+  private async processOrderList(
     this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
   ) {
-    for (const inventoryItem of this.inventory) {
-      // step 1. 주문 상품 생성
-      const orderProduct = await this.createOrderProduct(inventoryItem);
-      // step 2. 구매 히스토리 생성
-      await this.makeRecentPurchasedHistory(inventoryItem);
-      // step 3. 사용 포인트 차감
-      await this.deductUsedPoint(inventoryItem, orderProduct.id);
-    }
+    const usePointTransaction = new UsePointTransaction();
+
+    await Promise.all(
+      this.orderList.map(async (orderListItem) => {
+        // step 2-1. 주문 상품 생성
+        const orderProduct = await this.createOrderProduct(orderListItem);
+        // step 2-2. 구매 히스토리 생성
+        await this.makeRecentPurchasedHistory(orderListItem);
+        // step 2-3. 사용 포인트 차감 히스토리 생성
+        await usePointTransaction.createHistory({
+          user: this.context.userId,
+          orderProduct: orderProduct.id,
+          amount: orderListItem.calculatedUsedPoint,
+        });
+      }),
+    );
+
+    // step 3. 사용 포인트 차감
+    await usePointTransaction.updateUserPoint(this.context.userId, this.context.usedPoint);
   }
 
   private async createOrderProduct(
     this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
-    inventoryItem: InventoryItem,
+    orderListItem: EnrichedOrderListItem,
   ) {
-    const subtotal = this.deliveryFeeManager.getOrderProductSubtotal(inventoryItem);
-    const totalAmount = subtotal - this.pointAllocator.getAllocatedPoint(inventoryItem.product.id);
-    const productDeliveryFee = this.deliveryFeeManager.getOrderProductDeliveryFee(inventoryItem);
-
-    const orderProductDto = PaymentDto.createOrderProductForBankTransfer(
-      this.context,
-      inventoryItem,
-      totalAmount,
-      productDeliveryFee,
-    );
-    const orderProduct = await createOrderProductFromEntityLayer(orderProductDto);
+    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const requestDto = PaymentDto.createOrderProduct(this.context, orderListItem);
+    const orderProduct = await orderProductService.createOrderProduct(requestDto);
 
     return orderProduct;
   }

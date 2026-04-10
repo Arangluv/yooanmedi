@@ -1,18 +1,15 @@
 'use server';
 
-import { getPayload } from '@/shared';
 import { CreatePaymentDto } from '../model/create-schema';
+import { getTransactionContext } from '@/shared/lib/transaction-context';
 
 export const createPayment = async (dto: CreatePaymentDto) => {
-  try {
-    const payload = await getPayload();
-
-    await payload.create({
-      collection: 'payment',
-      data: dto,
-    });
-  } catch (error) {
-    // TODO :: error 핸들링
-    throw new Error('결제 내역을 생성하는데 문제가 발생했습니다');
-  }
+  const { payload, transactionID } = getTransactionContext();
+  await payload.create({
+    collection: 'payment',
+    data: dto,
+    req: {
+      transactionID,
+    },
+  });
 };

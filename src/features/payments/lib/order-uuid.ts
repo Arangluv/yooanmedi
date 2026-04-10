@@ -1,3 +1,12 @@
+/**
+ * order에 사용하는 orderNo를 생성합니다. (15자리)
+ *
+ * @example
+ * ```ts
+ * const orderNo = generateShopOrderNo();
+ * console.log(orderNo); // '202604071234567890'
+ * ```
+ */
 export const generateShopOrderNo = () => {
   const now = new Date();
   const yyyymmdd =

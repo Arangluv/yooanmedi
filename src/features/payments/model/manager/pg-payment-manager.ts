@@ -1,7 +1,4 @@
 import { PaymentManager } from './payment-manager';
-import { Inventory, InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
-import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import {
   validatePaymentRegisterSchema,
   ValidatePaymentRegister,
@@ -17,34 +14,46 @@ import {
   ApprovalPaymentResult,
   approvalPaymentResultSchema,
 } from '../schema/payments-approval-schema';
-import { transformOrderListToInventory } from '@/entities/inventory/lib/transform';
 import { PaymentDto } from '../schema/payments.dto';
-import { createOrder as createOrderFromEntityLayer } from '@/entities/order';
-import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import { createPayment } from '@/entities/payment/api/create';
 import { zodSafeParse } from '@/shared/lib/zod';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
-import { EarnPointTransaction } from '@/entities/point/lib/earn/point-transaction';
+import { withTransaction } from '@/shared/lib/with-transaction';
+import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
+import { enrichedOrderListFromContext } from '../enriched-order-list';
+import {
+  UsePointTransaction,
+  EarnPointTransaction,
+} from '@/entities/point/model/point-transaction';
+import {
+  EarnPointHistoryDto,
+  UsePointHistoryDto,
+} from '@/entities/point/model/schema/history.schema';
+import { IPointTransaction } from '@/entities/point/model/interfaces';
+import { UsecaseResult } from '@/shared/model/type';
+import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
+import { OrderService } from '@/entities/order/model/services/service';
+import { PAYMENTS_METHOD } from '@/entities/order';
+import { OrderProductService } from '@/entities/order-product/model/services/service';
 
-export class PGPaymentManager<
-  TContext extends PGPaymentInitContext,
-> extends PaymentManager<TContext> {
-  protected constructor(
-    inventory: Inventory,
-    deliveryFeeManager: DeliveryFeeManager,
-    pointAllocator: PointAllocator,
-    context: TContext,
-  ) {
-    super(inventory, deliveryFeeManager, pointAllocator, context);
+interface PaymentUsecaseResultData {
+  approvalDate: string;
+  amount: number;
+  shopOrderNo: string;
+}
+
+export class PGPaymentManager<TContext extends PGPaymentInitContext> extends PaymentManager<
+  TContext,
+  PaymentUsecaseResultData
+> {
+  protected constructor(orderList: EnrichedOrderList, context: TContext) {
+    super(orderList, context);
   }
 
   static async create(context: PGPaymentInitContext) {
-    const inventory = await transformOrderListToInventory(context.orderList);
-    const deliveryFeeManager = new DeliveryFeeManager(inventory, context.minOrderPrice);
-    const pointAllocator = new PointAllocator(deliveryFeeManager, context.usedPoint);
-
-    return new PGPaymentManager(inventory, deliveryFeeManager, pointAllocator, context);
+    const orderList = await enrichedOrderListFromContext(context);
+    return new PGPaymentManager(orderList, context);
   }
 
   static validatePaymentRegister(formData: FormData) {
@@ -71,7 +80,48 @@ export class PGPaymentManager<
     return context;
   }
 
-  public async approvePayment() {
+  public async execute(): Promise<UsecaseResult<PaymentUsecaseResultData>> {
+    return await withTransaction({
+      callback: async () => {
+        const usePointTransaction = new UsePointTransaction();
+        const earnPointTransaction = new EarnPointTransaction();
+
+        // step 1. 결제승인 요청
+        const approvalResult = await this.approvePayment();
+        this.applyApprovalResultToContext(approvalResult);
+
+        // step 2. 주문 생성
+        const order = await this.createOrder();
+        this.applyOrderIdToContext(order.id);
+
+        // step 3. 주문 리스트 처리
+        await this.processOrderList(usePointTransaction, earnPointTransaction);
+
+        // step 4. 결제 내역 생성
+        await this.createPaymentHistory();
+
+        // TODO:: callback 내부라 this 추론이 불가능하므로 타입 캐스팅을 사용 -> refactoring 필요
+        const manager = this as PGPaymentManager<PGPaymentContextAfterOrder>;
+        return {
+          data: {
+            approvalDate: manager.context.approvalDate,
+            amount: manager.context.amount,
+            shopOrderNo: manager.context.shopOrderNo,
+          },
+          message: '결제가 완료되었습니다.',
+        };
+      },
+      onRollback: async () => {
+        // type arssert가 진행되지 않은 상태이기에 unknown 타입으로 먼저 캐스팅 -> 이 시점은 결제가 승인되었다는 전제하에 진행된다.
+        const manager = this as unknown as PGPaymentManager<PGPaymentContextAfterOrder>;
+        if (manager.context?.pgCno) {
+          await cancelPgPaymentAll(manager.context.amount, manager.context.pgCno);
+        }
+      },
+    });
+  }
+
+  protected async approvePayment() {
     const approvalRequestDto = PaymentDto.approvePayment(this.context);
     const approvalResult = await paymentsApproval(approvalRequestDto);
 
@@ -79,7 +129,7 @@ export class PGPaymentManager<
     return parsedApprovalResult;
   }
 
-  public applyApprovalResultToContext(
+  protected applyApprovalResultToContext(
     approvalResult: ApprovalPaymentResult,
   ): asserts this is PGPaymentManager<PGPaymentContextAfterApproval> {
     const {
@@ -96,7 +146,7 @@ export class PGPaymentManager<
     };
   }
 
-  public applyOrderIdToContext(
+  protected applyOrderIdToContext(
     orderId: number,
   ): asserts this is PGPaymentManager<PGPaymentContextAfterOrder> {
     this.context = {
@@ -105,9 +155,10 @@ export class PGPaymentManager<
     };
   }
 
-  public async createOrder(this: PGPaymentManager<PGPaymentContextAfterApproval>) {
+  protected async createOrder(this: PGPaymentManager<PGPaymentContextAfterApproval>) {
+    const orderService = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
     const dto = PaymentDto.createOrderForPG(this.context);
-    const order = await createOrderFromEntityLayer({ dto });
+    const order = await orderService.createOrder(dto);
 
     return order;
   }
@@ -115,56 +166,55 @@ export class PGPaymentManager<
   /**
    * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
    */
-  public async processOrderSideEffects(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
-    // (중요) 아래 코드는 병렬처리하면 안됨
-    // 포인트 차감 / 적립은 순차적으로 처리가 필요함 -> todo 유저 포인트 업데이트를 바깥으로 분리하여 병렬처리 가능하도록 수정
+  protected async processOrderList(
+    this: PGPaymentManager<PGPaymentContextAfterOrder>,
+    usePointTransaction: IPointTransaction<UsePointHistoryDto>,
+    earnPointTransaction: IPointTransaction<EarnPointHistoryDto>,
+  ) {
+    let earnedPoint = 0;
 
-    for (const inventoryItem of this.inventory) {
-      // step 1. 주문 상품 생성
-      const orderProduct = await this.createOrderProduct(inventoryItem);
-      // step 2. 구매 히스토리 생성
-      await this.makeRecentPurchasedHistory(inventoryItem);
-      // step 3. 사용 포인트 차감
-      await this.deductUsedPoint(inventoryItem, orderProduct.id);
-      // step 4. 구매 포인트 적립
-      await this.accumulatePoint(inventoryItem, orderProduct.id);
-    }
+    await Promise.all(
+      this.orderList.map(async (orderListItem) => {
+        // step 1. 주문 상품 생성
+        const orderProduct = await this.createOrderProduct(orderListItem);
+        // step 2. 구매 히스토리 생성
+        await this.makeRecentPurchasedHistory(orderListItem);
+        // step 3. 사용 포인트 차감 히스토리 생성
+        await usePointTransaction.createHistory({
+          user: this.context.userId,
+          orderProduct: orderProduct.id,
+          amount: orderListItem.calculatedUsedPoint,
+        });
+        // step 4. 구매 포인트 적립 히스토리 생성
+        const willEarnPoint = getPointWhenUsingCard(orderListItem.product) * orderListItem.quantity;
+        earnedPoint += willEarnPoint;
+        await earnPointTransaction.createHistory({
+          user: this.context.userId,
+          orderProduct: orderProduct.id,
+          amount: willEarnPoint,
+        });
+      }),
+    );
+
+    // step 5. 구매 포인트 적립
+    await earnPointTransaction.updateUserPoint(this.context.userId, earnedPoint);
+    // step 6. 사용 포인트 차감
+    await usePointTransaction.updateUserPoint(this.context.userId, this.context.usedPoint);
   }
 
-  public async createPaymentHistory(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
+  protected async createPaymentHistory(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
     const dto = PaymentDto.createPaymentHistory(this.context);
     await createPayment(dto);
   }
 
   private async createOrderProduct(
     this: PGPaymentManager<PGPaymentContextAfterOrder>,
-    inventoryItem: InventoryItem,
+    orderListItem: EnrichedOrderListItem,
   ) {
-    const subtotal = this.deliveryFeeManager.getOrderProductSubtotal(inventoryItem);
-    const totalAmount = subtotal - this.pointAllocator.getAllocatedPoint(inventoryItem.product.id);
-    const productDeliveryFee = this.deliveryFeeManager.getOrderProductDeliveryFee(inventoryItem);
+    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.CREDIT_CARD);
+    const requestDto = PaymentDto.createOrderProduct(this.context, orderListItem);
+    const orderProduct = await orderProductService.createOrderProduct(requestDto);
 
-    const orderProductDto = PaymentDto.createOrderProductForPg(
-      this.context,
-      inventoryItem,
-      totalAmount,
-      productDeliveryFee,
-    );
-    const orderProduct = await createOrderProductFromEntityLayer(orderProductDto);
     return orderProduct;
-  }
-
-  // 구매 포인트 적립 (PG사 결제는 구매시점에 바로 적립)
-  private async accumulatePoint(inventoryItem: InventoryItem, orderProductId: number) {
-    const earnPointTransaction = new EarnPointTransaction({
-      userId: this.context.userId,
-      orderProductId: orderProductId,
-    });
-
-    const accumulatedPoint = getPointWhenUsingCard(inventoryItem.product) * inventoryItem.quantity;
-
-    await earnPointTransaction.initializeContext();
-    await earnPointTransaction.createHistory(accumulatedPoint);
-    await earnPointTransaction.accumulateUserPoint(accumulatedPoint);
   }
 }

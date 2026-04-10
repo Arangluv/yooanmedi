@@ -4,6 +4,7 @@ import { type OrderBankTransferDto } from '../model/schema/order-banktransfer-sc
 import { BankTransferPaymentManager } from '../model/manager/bank-transfer-payment-manager';
 import { BankTransferPaymentInitContext } from '../model/schema/payment-context-schema';
 import { handleError } from '@/shared/model/errors/handle-error';
+import { Logger } from '@/shared/model/logger/logger';
 
 export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
   try {
@@ -11,18 +12,14 @@ export const orderBankTransfer = async (dto: OrderBankTransferDto) => {
     const paymentManager: BankTransferPaymentManager<BankTransferPaymentInitContext> =
       await BankTransferPaymentManager.create(paymentContext);
 
-    // step 1. 주문 생성
-    const order = await paymentManager.createOrder();
-    paymentManager.applyOrderIdToContext(order.id);
-
-    // step 2. 주문 사이드 이펙트 처리
-    await paymentManager.processOrderSideEffects();
+    await paymentManager.execute();
 
     return {
       success: true,
       message: '무통장 입금 주문을 생성하였습니다.',
     };
   } catch (error) {
+    Logger.error(error);
     handleError(error);
 
     return {

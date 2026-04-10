@@ -1,6 +1,6 @@
 'use server';
 
-import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
+import { POINT_ACTION } from '../../constants/point-action';
 import { getPointTransactionContext } from '../get-point-transaction-context';
 
 interface GetUsedPointParams {
@@ -25,7 +25,7 @@ export const getUsedPoint = async ({ userId, orderProductId }: GetUsedPointParam
           equals: orderProduct.id,
         },
         type: {
-          equals: POINT_ACTION_TYPE.USE,
+          equals: POINT_ACTION.USE,
         },
       },
       limit: 1,

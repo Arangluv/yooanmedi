@@ -30,7 +30,6 @@ export type BasePaymentContext = z.infer<typeof basePaymentContextSchema>;
  * shopValue6: minOrderPrice
  */
 
-// initial context
 const pgPaymentInitContextPipe = basePaymentContextSchema.extend({
   authorizationId: baseSchema.authorizationId,
   paymentsMethod: baseSchema.paymentMethodForPG,

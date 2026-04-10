@@ -91,10 +91,7 @@ const createOrderProductsInfo = (orderRowData: Order) => {
       progressOrderStatus[FIRST_INDEX_FOR_COMMON_PROGRESS];
   }
 
-  console.log('orderProductsInfo');
-  console.log(orderProductsInfo);
   const orderInformation = orderInformationSchema.parse(orderProductsInfo);
-
   return orderInformation;
 };
 

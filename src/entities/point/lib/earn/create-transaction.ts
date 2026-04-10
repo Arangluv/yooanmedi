@@ -1,7 +1,7 @@
 'use server';
 
 import { getPointTransactionContext } from '../get-point-transaction-context';
-import { POINT_ACTION_TYPE } from '../../constants/point-action-type';
+import { POINT_ACTION } from '../../constants/point-action';
 import { normalizePoint } from '../helper';
 
 interface CreateEarnPointTransactionParams {
@@ -29,7 +29,7 @@ export const createEarnPointTransaction = async ({
       data: {
         user: user.id,
         orderProduct: orderProduct.id,
-        type: POINT_ACTION_TYPE.EARN,
+        type: POINT_ACTION.EARN,
         reason: `주문 완료 적립 - 주문 상품 아이디 : ${orderProduct.id}`,
         amount: amount,
       },

@@ -12,26 +12,14 @@ export async function POST(request: NextRequest) {
     const paymentManager: PGPaymentManager<PGPaymentInitContext> =
       await PGPaymentManager.create(paymentContext);
 
-    // step 1. 결제승인 요청
-    const approvalResult = await paymentManager.approvePayment();
-    paymentManager.applyApprovalResultToContext(approvalResult);
-
-    // step 2. 주문 생성
-    const order = await paymentManager.createOrder();
-    paymentManager.applyOrderIdToContext(order.id);
-
-    // step 3. 주문 사이드 이펙트 처리
-    await paymentManager.processOrderSideEffects();
-
-    // step 4. 결제 내역 생성
-    await paymentManager.createPaymentHistory();
+    const result = await paymentManager.execute();
 
     const url = request.nextUrl.clone();
     url.pathname = '/order/payments/popup-callback';
     url.searchParams.set('status', 'success');
-    url.searchParams.set('approvalDate', paymentManager.getContext().approvalDate.toString());
-    url.searchParams.set('amount', paymentManager.getContext().amount.toString());
-    url.searchParams.set('shopOrderNo', paymentManager.getContext().shopOrderNo);
+    url.searchParams.set('approvalDate', result.data.approvalDate.toString());
+    url.searchParams.set('amount', result.data.amount.toString());
+    url.searchParams.set('shopOrderNo', result.data.shopOrderNo);
 
     return NextResponse.redirect(url, { status: 302 });
   } catch (error: any) {
