@@ -1,5 +1,5 @@
 /**
- * order에 사용하는 orderNo를 생성합니다.
+ * order에 사용하는 orderNo를 생성합니다. (15자리)
  *
  * @example
  * ```ts

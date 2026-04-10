@@ -3,8 +3,8 @@ export { createOrder } from './api/create-order';
 
 // models
 export { type Order } from './model/type';
-export type { CreateOrderDto } from './model/create-order.schema';
-export { createOrderSchema } from './model/create-order.schema';
+export type { CreateOrderDto } from './model/schemas/create-order.schema';
+export { createOrderSchema } from './model/schemas/create-order.schema';
 
 // constants
 export { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './constants/payments-options';

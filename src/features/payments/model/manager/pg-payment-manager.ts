@@ -15,7 +15,6 @@ import {
   approvalPaymentResultSchema,
 } from '../schema/payments-approval-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { createOrder as createOrderFromEntityLayer } from '@/entities/order';
 import { createOrderProduct as createOrderProductFromEntityLayer } from '@/entities/order-product/api/create-order-product';
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import { createPayment } from '@/entities/payment/api/create';
@@ -35,6 +34,8 @@ import {
 import { IPointTransaction } from '@/entities/point/model/interfaces';
 import { UsecaseResult } from '@/shared/model/type';
 import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
+import { OrderService } from '@/entities/order/model/services/service';
+import { PAYMENTS_METHOD } from '@/entities/order';
 
 interface PaymentUsecaseResultData {
   approvalDate: string;
@@ -155,8 +156,9 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
   }
 
   protected async createOrder(this: PGPaymentManager<PGPaymentContextAfterApproval>) {
+    const orderService = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
     const dto = PaymentDto.createOrderForPG(this.context);
-    const order = await createOrderFromEntityLayer(dto);
+    const order = await orderService.createOrder(dto);
 
     return order;
   }

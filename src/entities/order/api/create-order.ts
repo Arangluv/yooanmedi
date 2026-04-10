@@ -1,24 +1,19 @@
 'use server';
 
 import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { CreateOrderEntity, CreateOrderResponseDto } from '../model/schemas/create-order.schema';
 
-import {
-  CreateOrderDto,
-  CreateOrderParseResult,
-  createOrderSchema,
-} from '../model/create-order.schema';
-import type { Order } from '../model/type';
-
-export const createOrder = async (dto: CreateOrderDto): Promise<Order> => {
+export const createOrder = async (order: CreateOrderEntity): Promise<CreateOrderResponseDto> => {
   const { payload, transactionID } = getTransactionContext();
 
-  const order = await payload.create({
+  const createdOrder = await payload.create({
     collection: 'order',
-    data: dto,
+    data: order,
+    select: {},
     req: {
       transactionID,
     },
   });
 
-  return order;
+  return createdOrder;
 };

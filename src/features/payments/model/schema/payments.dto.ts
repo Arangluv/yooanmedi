@@ -1,4 +1,8 @@
-import { createOrderSchema } from '@/entities/order/model/create-order.schema';
+import {
+  createBankTransferOrderSchema,
+  createOrderSchema,
+  createPGOrderSchema,
+} from '@/entities/order/model/schemas/create-order.schema';
 import {
   BasePaymentContext,
   BankTransferPaymentInitContext,
@@ -13,12 +17,9 @@ import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-p
 import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
 import { createRecentPurchasedHistorySchema } from '@/entities/recent-purchased-history/model/create-schema';
 import { createPaymentSchema } from '@/entities/payment/model/create-schema';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import { zodSafeParse } from '@/shared/lib/zod';
-import { FLG_STATUS } from '@/entities/order/constants/flg-status';
-import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
-import { ORDER_STATUS } from '@/entities/order';
 import { EnrichedOrderListItem } from './order-list.schema';
+import { PAYMENTS_METHOD } from '@/entities/order';
 
 export const PaymentDto = {
   createOrderForPG: (context: PGPaymentContextAfterApproval) => {
@@ -28,14 +29,9 @@ export const PaymentDto = {
       orderRequest: context.deliveryRequest,
       finalPrice: context.amount,
       usedPoint: context.usedPoint,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.COMPLETE,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-      orderStatus: ORDER_STATUS.PREPARING,
     };
 
-    const result = zodSafeParse(createOrderSchema, dto);
-    return result;
+    return dto;
   },
   createOrderForBankTransfer: (context: BankTransferPaymentInitContext) => {
     const dto = {
@@ -44,14 +40,9 @@ export const PaymentDto = {
       orderRequest: context.deliveryRequest,
       finalPrice: context.amount,
       usedPoint: context.usedPoint,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.PENDING,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
-      orderStatus: ORDER_STATUS.PENDING,
     };
 
-    const result = zodSafeParse(createOrderSchema, dto);
-    return result;
+    return dto;
   },
 
   approvePayment: (context: PGPaymentInitContext) => {
