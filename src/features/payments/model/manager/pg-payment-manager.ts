@@ -16,7 +16,7 @@ import {
 } from '../schema/payments-approval-schema';
 import { PaymentDto } from '../schema/payments.dto';
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
-import { createPayment } from '@/entities/payment/api/create';
+// import { createPayment } from '@/entities/payment/api/create';
 import { zodSafeParse } from '@/shared/lib/zod';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
 import { withTransaction } from '@/shared/lib/with-transaction';
@@ -36,6 +36,7 @@ import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all
 import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
+import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
 
 interface PaymentUsecaseResultData {
   approvalDate: string;
@@ -178,7 +179,7 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
         // step 1. 주문 상품 생성
         const orderProduct = await this.createOrderProduct(orderListItem);
         // step 2. 구매 히스토리 생성
-        await this.makeRecentPurchasedHistory(orderListItem);
+        await this.createRecentPurchasedHistory(orderListItem);
         // step 3. 사용 포인트 차감 히스토리 생성
         await usePointTransaction.createHistory({
           user: this.context.userId,
@@ -203,8 +204,10 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
   }
 
   protected async createPaymentHistory(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
+    const paymentHistoryService = new PaymentHistoryService();
     const dto = PaymentDto.createPaymentHistory(this.context);
-    await createPayment(dto);
+
+    await paymentHistoryService.createHistory(dto);
   }
 
   private async createOrderProduct(

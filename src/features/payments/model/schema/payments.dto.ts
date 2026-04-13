@@ -83,10 +83,8 @@ export const PaymentDto = {
       order: context.orderId,
       amount: context.amount,
       pgCno: context.pgCno,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
     };
 
-    const result = zodSafeParse(createPaymentSchema, dto);
-    return result;
+    return dto;
   },
 };

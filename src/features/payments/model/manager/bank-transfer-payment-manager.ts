@@ -76,7 +76,7 @@ export class BankTransferPaymentManager<
         // step 2-1. 주문 상품 생성
         const orderProduct = await this.createOrderProduct(orderListItem);
         // step 2-2. 구매 히스토리 생성
-        await this.makeRecentPurchasedHistory(orderListItem);
+        await this.createRecentPurchasedHistory(orderListItem);
         // step 2-3. 사용 포인트 차감 히스토리 생성
         await usePointTransaction.createHistory({
           user: this.context.userId,

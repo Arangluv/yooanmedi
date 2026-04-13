@@ -16,7 +16,7 @@ export abstract class PaymentManager<TContext extends BasePaymentContext, TData 
   }
 
   // 구매 히스토리 생성
-  protected async makeRecentPurchasedHistory(orderListItem: EnrichedOrderListItem): Promise<void> {
+  protected async createRecentPurchasedHistory(orderListItem: EnrichedOrderListItem): Promise<void> {
     const recentPurchasedHistoryService = new RecentPurchasedHistoryService();
     const dto = PaymentDto.createRecentPurchasedHistory(this.context, orderListItem);
     await recentPurchasedHistoryService.createHistory(dto);
