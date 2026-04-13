@@ -27,6 +27,7 @@ export const getRecentPurchasedHistory = async ({
       user: { equals: user.id },
       product: { equals: product.id },
     },
+    sort: 'createdAt',
     limit: 3,
   });
 

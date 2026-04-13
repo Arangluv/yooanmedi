@@ -8,7 +8,6 @@ import {
 } from './payment-context-schema';
 import { approvalPaymentRequestDtoSchema } from './payments-approval-schema';
 import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { createRecentPurchasedHistorySchema } from '@/entities/recent-purchased-history/model/create-schema';
 import { createPaymentSchema } from '@/entities/payment/model/create-schema';
 import { zodSafeParse } from '@/shared/lib/zod';
 import { EnrichedOrderListItem } from './order-list.schema';
@@ -76,8 +75,7 @@ export const PaymentDto = {
       amount: inventoryItem.product.price,
     };
 
-    const result = zodSafeParse(createRecentPurchasedHistorySchema, dto);
-    return result;
+    return dto;
   },
 
   createPaymentHistory: (context: PGPaymentContextAfterOrder) => {

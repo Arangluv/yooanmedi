@@ -7,7 +7,7 @@ import type { User } from '@/entities/user/@x/recent-purchased-history';
 import type { ProductItem } from '@/entities/product/@x/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
 
-import { getRecentPurchasedHistory } from '../api/get-recent-purchased-history';
+import { recentPurchasedHistoryQueries } from '../model/recent-purchased-history.queries';
 
 type RecentPurchasesTableProps = {
   user: User;
@@ -15,10 +15,9 @@ type RecentPurchasesTableProps = {
 };
 
 const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {
-  const { data } = useQuery({
-    queryKey: ['recent-purchased-history', user.id, product.id],
-    queryFn: () => getRecentPurchasedHistory({ user, product }),
-  });
+  const { data } = useQuery(
+    recentPurchasedHistoryQueries.lists({ userId: user.id, productId: product.id }),
+  );
 
   if (!data || data.length === 0) {
     return null;

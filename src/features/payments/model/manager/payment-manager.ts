@@ -1,8 +1,8 @@
-import { createRecentPurchasedHistory } from '@/entities/recent-purchased-history/api/create';
+import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
+import { UsecaseResult } from '@/shared/model/type';
 import { BasePaymentContext } from '../schema/payment-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
 import { type EnrichedOrderList, type EnrichedOrderListItem } from '../schema/order-list.schema';
-import { UsecaseResult } from '@/shared/model/type';
 
 export abstract class PaymentManager<TContext extends BasePaymentContext, TData = never> {
   protected orderList: EnrichedOrderList;
@@ -15,14 +15,10 @@ export abstract class PaymentManager<TContext extends BasePaymentContext, TData 
     this.context = context;
   }
 
-  // 결제 컨텍스트 조회
-  public getContext(): TContext {
-    return this.context;
-  }
-
   // 구매 히스토리 생성
   protected async makeRecentPurchasedHistory(orderListItem: EnrichedOrderListItem): Promise<void> {
+    const recentPurchasedHistoryService = new RecentPurchasedHistoryService();
     const dto = PaymentDto.createRecentPurchasedHistory(this.context, orderListItem);
-    await createRecentPurchasedHistory(dto);
+    await recentPurchasedHistoryService.createHistory(dto);
   }
 }
