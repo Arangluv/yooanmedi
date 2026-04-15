@@ -6,6 +6,7 @@ interface StringSchemaOptions {
   minLength?: number;
   maxLength?: number;
   length?: number;
+  isOptional?: boolean;
 }
 
 export const stringSchema = ({
@@ -14,6 +15,7 @@ export const stringSchema = ({
   minLength,
   maxLength,
   length,
+  isOptional = false,
 }: StringSchemaOptions) => {
   let schema = z.string({
     error: (iss) => {

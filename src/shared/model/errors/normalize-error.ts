@@ -7,7 +7,7 @@ import {
 import { ErrorResponse } from './types';
 import { ERROR_CODE, UNKNOWN_ERROR_CODE } from './base.error';
 
-export const handleError = (error: unknown): ErrorResponse => {
+export const normalizeError = (error: unknown): ErrorResponse => {
   if (error instanceof ZodParseError) {
     return {
       code: error.code,
@@ -41,7 +41,7 @@ export const handleError = (error: unknown): ErrorResponse => {
   if (error instanceof Error) {
     return {
       code: ERROR_CODE,
-      message: error.message,
+      message: '알 수 없는 에러가 발생했습니다.',
     };
   }
 

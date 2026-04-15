@@ -1,5 +1,7 @@
 import { stringSchema } from './string.schema';
 import { numberSchema } from './number.schema';
+import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
+import { z } from 'zod';
 
 interface BaseSchemaOptions {
   required_message?: string;
@@ -23,10 +25,24 @@ export const BaseSchema = {
     invalid_message: '유효하지 않은 PG 주문번호입니다.',
     length: 20,
   }),
-  orderNo: stringSchema({
-    required_message: '주문 번호는 비어있을 수 없습니다.',
-    invalid_message: '유효하지 않은 주문 번호입니다.',
-    length: 15,
+
+
+  url: z.url({
+    error: (iss) => {
+      if (iss === undefined) {
+        return 'URL이 누락되었습니다.';
+      }
+
+      if (iss.code === 'invalid_type') {
+        return '유효하지 않은 URL 타입입니다.';
+      }
+
+      if (iss.code === 'invalid_format') {
+        return '유효하지 않은 URL 형식입니다.';
+      }
+
+      return '유효하지 않은 URL입니다.';
+    },
   }),
   collectionId: (options: BaseSchemaOptions) =>
     numberSchema({

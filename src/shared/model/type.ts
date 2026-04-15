@@ -6,6 +6,8 @@ interface BaseUsecaseResult {
   message: string;
 }
 
+// TODO:: deprecated -> server-action.ts로 이동
+
 interface UsecaseResultWithData<TData> extends BaseUsecaseResult {
   data: TData;
 }

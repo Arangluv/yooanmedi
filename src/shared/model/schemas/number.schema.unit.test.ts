@@ -8,12 +8,20 @@ describe('numberSchema', () => {
     expect(result.data).toBe(10);
   });
 
+  it('전달받은 데이터가 파싱된다', () => {
+    const result = numberSchema({ min: 0 }).safeParse(0);
+    expect(result.success).toBe(true);
+    expect(result.data).toBe(0);
+  });
+
   it('데이터가 누락된 경우 파싱에 실패한다', () => {
     const testDto = {
       name: '',
     } as any;
 
-    const result = numberSchema({ required: '해당 값을 필수입니다' }).safeParse(testDto.ceo);
+    const result = numberSchema({ required_message: '해당 값을 필수입니다' }).safeParse(
+      testDto.ceo,
+    );
     expect(result.success).toBe(false);
   });
 
