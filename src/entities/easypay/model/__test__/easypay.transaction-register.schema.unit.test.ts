@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { easypayRegisterTransactionSchema } from '../schemas/easypay.transaction-register.schema';
+import { easypayRegisterTransactionSchema } from '../schemas/easypay.register-transaction.schema';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 
 describe('easypayRegisterTransactionSchema', () => {

@@ -90,4 +90,11 @@ describe('EasyPayService', () => {
       await expect(easypayService.registerTransaction(invalidRequestDto)).rejects.toThrow();
     });
   });
+
+  describe('validateAndParseRegisterTransactionResult', () => {
+    it.todo('성공 시 데이터 필드가 있는 객체를 반환한다', () => {
+      // 해당 테스트는 schema 테스트에서 처리되므로 별도로 테스트하지 않음 -> todo :: 테스트 커버리지를 관리하는 방법을 찾아보고 기록할 것
+      // 이곳에 작성하는 테스트와, schema에서 작성한 테스트는 무엇이 달라야 하는가?
+    });
+  });
 });

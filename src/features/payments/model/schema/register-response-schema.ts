@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { PAYMENTS_METHOD } from '@/entities/order';
 import { PAYMENTS_RESPONSE_SUCCESS_CODE } from '../../constants/payment-gateway-code';
 import { baseSchema } from './base.schema';
 

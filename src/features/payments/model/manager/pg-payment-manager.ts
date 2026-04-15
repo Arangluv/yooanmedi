@@ -1,8 +1,27 @@
-import { PaymentManager } from './payment-manager';
+import { UsecaseResult } from '@/shared/model/type';
+import { zodSafeParse } from '@/shared/lib/zod';
+import { BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { withTransaction } from '@/shared/lib/with-transaction';
+import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import {
-  validatePaymentRegisterSchema,
-  ValidatePaymentRegister,
-} from '../schema/register-response-schema';
+  UsePointTransaction,
+  EarnPointTransaction,
+} from '@/entities/point/model/point-transaction';
+import {
+  EarnPointHistoryDto,
+  UsePointHistoryDto,
+} from '@/entities/point/model/schema/history.schema';
+import { IPointTransaction } from '@/entities/point/model/interfaces';
+import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
+import { OrderService } from '@/entities/order/model/services/service';
+import { PAYMENTS_METHOD } from '@/entities/order';
+import { OrderProductService } from '@/entities/order-product/model/services/service';
+import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
+import { PaymentManager } from './payment-manager';
+// import {
+//   validatePaymentRegisterSchema,
+//   ValidatePaymentRegister,
+// } from '../schema/register-response-schema';
 import {
   PGPaymentContextAfterApproval,
   PGPaymentContextAfterOrder,
@@ -15,28 +34,10 @@ import {
   approvalPaymentResultSchema,
 } from '../schema/payments-approval-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
-// import { createPayment } from '@/entities/payment/api/create';
-import { zodSafeParse } from '@/shared/lib/zod';
-import { BusinessLogicError } from '@/shared/model/errors/domain.error';
-import { withTransaction } from '@/shared/lib/with-transaction';
 import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
 import { enrichedOrderListFromContext } from '../enriched-order-list';
-import {
-  UsePointTransaction,
-  EarnPointTransaction,
-} from '@/entities/point/model/point-transaction';
-import {
-  EarnPointHistoryDto,
-  UsePointHistoryDto,
-} from '@/entities/point/model/schema/history.schema';
-import { IPointTransaction } from '@/entities/point/model/interfaces';
-import { UsecaseResult } from '@/shared/model/type';
-import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
-import { OrderService } from '@/entities/order/model/services/service';
-import { PAYMENTS_METHOD } from '@/entities/order';
-import { OrderProductService } from '@/entities/order-product/model/services/service';
-import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
+import { EasyPayService } from '@/entities/easypay/model/easypay.service';
+import { type EasypayRegisterTransactionValidatedResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
 
 interface PaymentUsecaseResultData {
   approvalDate: string;
@@ -58,25 +59,17 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
   }
 
   static validatePaymentRegister(formData: FormData) {
-    let data = {} as Record<string, string>;
+    let data = {} as any;
     formData.forEach((value: any, key: string) => {
       data[key as string] = value;
     });
 
-    const registerResult = zodSafeParse(validatePaymentRegisterSchema, data);
-
-    if (!registerResult.isSuccess) {
-      const error = new BusinessLogicError('결제 등록과정에서 문제가 발생했습니다');
-      const debugMessage = `resCd: ${registerResult.resCd}, resMsg: ${registerResult.resMsg}`;
-      error.setDevMessage(debugMessage);
-
-      throw error;
-    }
-
-    return registerResult;
+    const easyPayService = new EasyPayService();
+    const validatedRegisterResult = easyPayService.validateAndParseRegisterTransactionResult(data);
+    return validatedRegisterResult;
   }
 
-  static createInitialContext(data: ValidatePaymentRegister) {
+  static createInitialContext(data: EasypayRegisterTransactionValidatedResult) {
     const context = zodSafeParse(pgPaymentInitContextSchema, data);
     return context;
   }

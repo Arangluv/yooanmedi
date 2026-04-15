@@ -1,4 +1,4 @@
-import { EasypayRegisterTransactionRequestDto } from '../model/schemas/easypay.transaction-register.schema';
+import { EasypayRegisterTransactionRequestDto } from '../model/schemas/easypay.register-transaction.schema';
 
 export const registerTransaction = async (dto: EasypayRegisterTransactionRequestDto) => {
   const res = await fetch(process.env.PAYMENTS_REGISTER_URL as string, {

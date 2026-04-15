@@ -4,7 +4,7 @@ import { EndPointResult, failure, ok } from '@/shared/lib/end-point-result';
 import { normalizeError } from '@/shared/model/errors/normalize-error';
 import { Logger } from '@/shared/model/logger/logger';
 import { EasyPayService } from '../model/easypay.service';
-import { type RegisterTransactionRequestDto } from '../model/schemas/easypay.transaction-register.schema';
+import { type RegisterTransactionRequestDto } from '../model/schemas/easypay.register-transaction.schema';
 
 export interface RegisterTransactionResponseDto {
   authPageUrl: string;

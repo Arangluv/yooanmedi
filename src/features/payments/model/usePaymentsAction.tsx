@@ -3,7 +3,7 @@
 import { useMutation } from '@tanstack/react-query';
 import type { InventoryItem } from '@/entities/inventory';
 import type { User } from '@/entities/user';
-import { RegisterTransactionRequestDto } from '@/entities/easypay/model/schemas/easypay.transaction-register.schema';
+import { RegisterTransactionRequestDto } from '@/entities/easypay/model/schemas/easypay.register-transaction.schema';
 // import { paymentsRegisterApplicationDtoSchema } from './schema/payments-register-schema';
 // import { paymentRegistration } from '../api/payment-registration';
 import { openPaymentsPopup } from '../lib/open-payments-popup';

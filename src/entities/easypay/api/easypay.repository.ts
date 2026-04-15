@@ -3,7 +3,7 @@ import {
   EasypayRegisterTransactionRequestDto,
   EasypayRegisterTransactionResponseDto,
   easypayRegisterTransactionResponseSchema,
-} from '../model/schemas/easypay.transaction-register.schema';
+} from '../model/schemas/easypay.register-transaction.schema';
 import { registerTransaction as registerTransactionApi } from './register-transaction';
 
 export class EasyPayRepository {

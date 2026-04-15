@@ -1,6 +1,5 @@
 import { stringSchema } from './string.schema';
 import { numberSchema } from './number.schema';
-import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { z } from 'zod';
 
 interface BaseSchemaOptions {
@@ -25,7 +24,6 @@ export const BaseSchema = {
     invalid_message: '유효하지 않은 PG 주문번호입니다.',
     length: 20,
   }),
-
 
   url: z.url({
     error: (iss) => {
