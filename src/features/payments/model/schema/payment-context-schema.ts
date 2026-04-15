@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { registerResultSchema } from './register-response-schema';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { orderBankTransferSchema } from './order-banktransfer-schema';
 import { baseSchema } from './base.schema';
-
+import { easypayRegisterTransactionResultSchema } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
 /**
  * 공통 결제 컨텍스트 스키마
  */
@@ -35,7 +34,7 @@ const pgPaymentInitContextPipe = basePaymentContextSchema.extend({
   paymentsMethod: baseSchema.paymentMethodForPG,
 });
 
-export const pgPaymentInitContextSchema = registerResultSchema
+export const pgPaymentInitContextSchema = easypayRegisterTransactionResultSchema
   .transform((data) => ({
     authorizationId: data.authorizationId,
     shopOrderNo: data.shopOrderNo,

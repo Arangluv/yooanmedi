@@ -2,6 +2,20 @@ import { z } from 'zod';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
 
+export const easypayRegisterTransactionResultSchema = z.object({
+  resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
+  resMsg: z.string(),
+  authorizationId: z.string(),
+  shopOrderNo: PaymentsBaseSchema.orderNo,
+  shopValue1: PaymentsBaseSchema.deliveryRequest,
+  shopValue2: PaymentsBaseSchema.orderList,
+  shopValue3: PaymentsBaseSchema.usedPoint,
+  shopValue4: PaymentsBaseSchema.userId,
+  shopValue5: PaymentsBaseSchema.paymentsMethodUsedCard,
+  shopValue6: PaymentsBaseSchema.minOrderPrice,
+  isRegistrationSuccess: z.literal(true),
+});
+
 const easypayRegisterTransactionSuccessResultSchema = z
   .object({
     resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
@@ -22,8 +36,7 @@ const easypayRegisterTransactionSuccessResultSchema = z
         },
         { message: '유효하지 않은 JSON 형식입니다.' },
       )
-      .transform((val) => JSON.parse(val))
-      .pipe(PaymentsBaseSchema.orderList),
+      .transform((val) => JSON.parse(val)),
     shopValue3: z
       .string()
       .refine((val) => !isNaN(Number(val)), { message: '숫자 형식이 아닙니다' })
@@ -41,7 +54,8 @@ const easypayRegisterTransactionSuccessResultSchema = z
   .transform((data) => ({
     ...data,
     isRegistrationSuccess: true as const,
-  }));
+  }))
+  .pipe(easypayRegisterTransactionResultSchema);
 
 const easypayRegisterTransactionFailResultSchema = z
   .object({
@@ -55,13 +69,13 @@ const easypayRegisterTransactionFailResultSchema = z
     isRegistrationSuccess: false as const,
   }));
 
-export const easypayRegisterTransactionResultSchema = z.union([
+export const easypayRegisterTransactionRawResultSchema = z.union([
   easypayRegisterTransactionSuccessResultSchema,
   easypayRegisterTransactionFailResultSchema,
 ]);
 
 export type EasypayRegisterTransactionRawResult = z.input<
-  typeof easypayRegisterTransactionResultSchema
+  typeof easypayRegisterTransactionRawResultSchema
 >;
 export type EasypayRegisterTransactionValidatedResult = z.infer<
   typeof easypayRegisterTransactionResultSchema

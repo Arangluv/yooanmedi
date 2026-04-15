@@ -8,8 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const registerResult = PGPaymentManager.validatePaymentRegister(formData);
-
-    const paymentContext = PGPaymentManager.createInitialContext(registerResult);
+    const paymentContext = PGPaymentManager.createInitialContextFromRegisterResult(registerResult);
     const paymentManager: PGPaymentManager<PGPaymentInitContext> =
       await PGPaymentManager.create(paymentContext);
 

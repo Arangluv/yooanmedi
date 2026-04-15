@@ -1,6 +1,5 @@
 import { UsecaseResult } from '@/shared/model/type';
 import { zodSafeParse } from '@/shared/lib/zod';
-import { BusinessLogicError } from '@/shared/model/errors/domain.error';
 import { withTransaction } from '@/shared/lib/with-transaction';
 import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import {
@@ -18,10 +17,6 @@ import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
 import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
 import { PaymentManager } from './payment-manager';
-// import {
-//   validatePaymentRegisterSchema,
-//   ValidatePaymentRegister,
-// } from '../schema/register-response-schema';
 import {
   PGPaymentContextAfterApproval,
   PGPaymentContextAfterOrder,
@@ -69,7 +64,7 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
     return validatedRegisterResult;
   }
 
-  static createInitialContext(data: EasypayRegisterTransactionValidatedResult) {
+  static createInitialContextFromRegisterResult(data: EasypayRegisterTransactionValidatedResult) {
     const context = zodSafeParse(pgPaymentInitContextSchema, data);
     return context;
   }

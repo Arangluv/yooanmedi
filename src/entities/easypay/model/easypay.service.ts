@@ -5,7 +5,7 @@ import {
   type RegisterTransactionRequestDto,
 } from './schemas/easypay.register-transaction.schema';
 import {
-  easypayRegisterTransactionResultSchema,
+  easypayRegisterTransactionRawResultSchema,
   type EasypayRegisterTransactionRawResult,
 } from './schemas/easypay.register-transaction-result.schema';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
@@ -30,7 +30,7 @@ export class EasyPayService implements IEasyPay {
   public validateAndParseRegisterTransactionResult(
     registerDto: EasypayRegisterTransactionRawResult,
   ) {
-    const validatedResult = zodSafeParse(easypayRegisterTransactionResultSchema, registerDto);
+    const validatedResult = zodSafeParse(easypayRegisterTransactionRawResultSchema, registerDto);
     if (!validatedResult.isRegistrationSuccess) {
       const error = new BusinessLogicError('결제등록 과정에서 문제가 발생했습니다');
       error.setDevMessage(`resCd: ${validatedResult.resCd}, resMsg: ${validatedResult.resMsg}`);
