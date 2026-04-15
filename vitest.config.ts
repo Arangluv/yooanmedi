@@ -6,13 +6,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     projects: [
-      // {
-      //   extends: true,
-      //   test: {
-      //     name: 'base',
-      //     include: ['**/*.test.ts'],
-      //   },
-      // },
       {
         extends: true,
         test: {
@@ -35,8 +28,8 @@ export default defineConfig({
         },
       },
     ],
+    setupFiles: [path.resolve(__dirname, './vitest.setup.ts')],
   },
-  // optional
   plugins: [react()],
   resolve: {
     alias: {

@@ -3,6 +3,6 @@ export const EASYPAY_CONFIG = {
   payMethodTypeCode: '11', // 고정
   currency: '00', // 고정
   deviceTypeCode: 'pc', // 고정
-  returnUrl: process.env.NEXT_PUBLIC_SITE_URL + '/api/payments', // 고정
+  returnUrl: process.env.SITE_URL + '/api/payments', // 고정
   successResponseCode: '0000',
 } as const;
