@@ -8,6 +8,10 @@ import {
   easypayRegisterTransactionRawResultSchema,
   type EasypayRegisterTransactionRawResult,
 } from './schemas/easypay.register-transaction-result.schema';
+import {
+  type PaymentApprovalRequestDto,
+  toPaymentApprovalServiceDto,
+} from './schemas/easypay.payment-approval.schema';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
 import { zodSafeParse } from '@/shared/lib/zod';
 
@@ -40,8 +44,17 @@ export class EasyPayService implements IEasyPay {
     return validatedResult;
   }
 
-  public async approveTransaction(dto: any): Promise<void> {
-    throw 'not implemented';
+  public async approvePayment(dto: PaymentApprovalRequestDto) {
+    const easypayRequestDto = toPaymentApprovalServiceDto(dto);
+    const approvalResult = await EasyPayRepository.approvePayment(easypayRequestDto);
+
+    if (!approvalResult.isPaymentApprovalSuccess) {
+      const error = new BusinessLogicError('결제승인 과정에서 문제가 발생했습니다');
+      error.setDevMessage(`resCd: ${approvalResult.resCd}, resMsg: ${approvalResult.resMsg}`);
+      throw error;
+    }
+    const test = approvalResult;
+    return approvalResult;
   }
 
   public async cancelTransaction(dto: any): Promise<void> {

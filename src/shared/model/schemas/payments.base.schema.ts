@@ -59,6 +59,21 @@ export const PaymentsBaseSchema = {
     invalid_message: '유효하지 않은 PG 주문번호입니다.',
     length: 20,
   }),
+  approvalReqDate: stringSchema({
+    required_message: 'approvalReqDate는 비어있을 수 없습니다.',
+    invalid_message: '유효하지 않은 approvalReqDate입니다.',
+    length: 8,
+  }),
+  shopTransactionId: stringSchema({
+    required_message: 'authorizationId는 비어있을 수 없습니다.',
+    invalid_message: '유효하지 않은 authorizationId입니다.',
+    length: 20,
+  }),
+  authorizationId: stringSchema({
+    required_message: 'authorizationId는 비어있을 수 없습니다.',
+    invalid_message: '유효하지 않은 authorizationId입니다.',
+    length: 20,
+  }),
   clientTypeCode: z.literal(EASYPAY_CONFIG.clientTypeCode),
   payMethodTypeCode: z.literal(EASYPAY_CONFIG.payMethodTypeCode),
   currency: z.literal(EASYPAY_CONFIG.currency),
@@ -100,6 +115,7 @@ export const PaymentsBaseSchema = {
     invalid_message: '유효하지 않은 mallId입니다.',
     length: 8,
   }),
+  paymentSuccessCode: z.literal(EASYPAY_CONFIG.successResponseCode),
   paymentsMethodUsedCard: z.literal(PAYMENTS_METHOD.CREDIT_CARD),
   paymentsMethodUsedBankTransfer: z.literal(PAYMENTS_METHOD.BANK_TRANSFER),
 } as const;

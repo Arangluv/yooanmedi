@@ -6,6 +6,10 @@ import {
   type EasypayRegisterTransactionRawResult,
   type EasypayRegisterTransactionValidatedResult,
 } from './schemas/easypay.register-transaction-result.schema';
+import {
+  type EasypayPaymentApprovalRequestDto,
+  type EasypayPaymentApprovalResult,
+} from './schemas/easypay.payment-approval.schema';
 
 export interface IEasyPay {
   registerTransaction: (
@@ -14,6 +18,6 @@ export interface IEasyPay {
   validateAndParseRegisterTransactionResult: (
     registerDto: EasypayRegisterTransactionRawResult,
   ) => EasypayRegisterTransactionValidatedResult;
-  approveTransaction: (dto: any) => Promise<void>;
+  approvePayment: (dto: EasypayPaymentApprovalRequestDto) => Promise<EasypayPaymentApprovalResult>;
   cancelTransaction: (dto: any) => Promise<void>;
 }

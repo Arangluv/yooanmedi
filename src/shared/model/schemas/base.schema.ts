@@ -19,12 +19,6 @@ interface StringSchemaOptions extends BaseSchemaOptions {
 }
 
 export const BaseSchema = {
-  pgCno: stringSchema({
-    required_message: 'PG 주문번호는 비어있을 수 없습니다.',
-    invalid_message: '유효하지 않은 PG 주문번호입니다.',
-    length: 20,
-  }),
-
   url: z.url({
     error: (iss) => {
       if (iss === undefined) {

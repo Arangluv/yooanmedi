@@ -39,13 +39,11 @@ export const PaymentDto = {
 
   approvePayment: (context: PGPaymentInitContext) => {
     const dto = {
-      mallId: process.env.PAYMENTS_MID,
       authorizationId: context.authorizationId,
       shopOrderNo: context.shopOrderNo,
     };
 
-    const result = zodSafeParse(approvalPaymentRequestDtoSchema, dto);
-    return result;
+    return dto;
   },
 
   createOrderProduct: (
