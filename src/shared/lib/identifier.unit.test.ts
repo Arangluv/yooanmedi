@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateUUID32digits, generate20digitsNumberBasedOnDate } from './identifier';
+import { generateUUID32digits, generate15digitsNumberBasedOnDate } from './identifier';
 
 describe('identifier', () => {
   it('generateUUID20digits은 32자리 랜덤 UUID를 반환한다', () => {
@@ -8,8 +8,8 @@ describe('identifier', () => {
     expect(uuid.length).toBe(32);
   });
 
-  it('generate20digitsNumberBasedOnDate는 15자리 숫자를 반환한다', () => {
-    const number = generate20digitsNumberBasedOnDate();
+  it('generate15digitsNumberBasedOnDate는 15자리 숫자를 반환한다', () => {
+    const number = generate15digitsNumberBasedOnDate();
     expect(number).toBeDefined();
     expect(String(number).length).toBe(15);
   });

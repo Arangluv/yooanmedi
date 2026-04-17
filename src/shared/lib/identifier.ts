@@ -19,11 +19,11 @@ export const generateUUID32digits = () => {
  * @description 15자리 숫자를 반환합니다.
  * @example
  * ```ts
- * const number = generate20digitsNumberBasedOnDate();
+ * const number = generate15digitsNumberBasedOnDate();
  * console.log(number); // '202604071234567890'
  * ```
  */
-export const generate20digitsNumberBasedOnDate = () => {
+export const generate15digitsNumberBasedOnDate = () => {
   const now = new Date();
   const yyyymmdd =
     now.getFullYear().toString() +

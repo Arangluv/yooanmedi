@@ -3,7 +3,7 @@ import { PAYMENTS_METHOD } from '@/entities/order'; // todo :: refactor -> layer
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
 import { BaseSchema } from '@/shared/model/schemas/base.schema';
-import { generateRandomNumber } from '@/shared/lib/random-number';
+import { generate15digitsNumberBasedOnDate } from '@/shared/lib/identifier';
 
 const shopValueInfoApplicationSchema = z.object({
   deliveryRequest: PaymentsBaseSchema.deliveryRequest,
@@ -41,7 +41,7 @@ const transformApplicationDtoToEasypayDto = (data: RegisterTransactionRequestDto
     currency: EASYPAY_CONFIG.currency,
     deviceTypeCode: EASYPAY_CONFIG.deviceTypeCode,
     returnUrl: EASYPAY_CONFIG.returnUrl,
-    shopOrderNo: generateRandomNumber({ length: 15 }),
+    shopOrderNo: generate15digitsNumberBasedOnDate(),
     shopValueInfo: {
       value1: data.shopValueInfo.deliveryRequest,
       value2: JSON.stringify(data.shopValueInfo.orderList),

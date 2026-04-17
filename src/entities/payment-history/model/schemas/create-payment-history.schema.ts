@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
 import { BaseSchema } from '@/shared/model/schemas/base.schema';
+import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
 
 const createPaymentBaseSchema = z.object({
   order: BaseSchema.collectionId({
@@ -12,7 +13,7 @@ const createPaymentBaseSchema = z.object({
     invalid_message: '금액은 숫자여야 합니다.',
     min: 0,
   }),
-  pgCno: BaseSchema.pgCno,
+  pgCno: PaymentsBaseSchema.pgCno,
 });
 
 export const createPaymentHistoryPipe = createPaymentBaseSchema.extend({
