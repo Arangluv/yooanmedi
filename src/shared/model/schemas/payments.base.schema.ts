@@ -3,7 +3,7 @@ import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { stringSchema } from './string.schema';
 import { numberSchema } from './number.schema';
 import { BaseSchema } from './base.schema';
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 
 const orderListItemSchema = z.object({
   product: z.object({
@@ -67,7 +67,7 @@ export const PaymentsBaseSchema = {
   shopTransactionId: stringSchema({
     required_message: 'authorizationId는 비어있을 수 없습니다.',
     invalid_message: '유효하지 않은 authorizationId입니다.',
-    length: 20,
+    length: 32,
   }),
   authorizationId: stringSchema({
     required_message: 'authorizationId는 비어있을 수 없습니다.',

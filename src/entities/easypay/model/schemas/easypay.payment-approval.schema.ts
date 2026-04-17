@@ -1,18 +1,18 @@
 import { z } from 'zod';
-import { getUuidWithoutHyphen } from '@/shared/lib/get-uuid';
+import { generateUUID32digits } from '@/shared/lib/identifier';
 import { getNowYYYYMMDD } from '@/shared/lib/date';
 import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
 import moment from 'moment';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { zodSafeParse } from '@/shared/lib/zod';
 
-export const paymentApprovalRequestSchema = z.object({
+const paymentApprovalRequestSchema = z.object({
   authorizationId: PaymentsBaseSchema.authorizationId,
   shopOrderNo: PaymentsBaseSchema.orderNo,
 });
 export type PaymentApprovalRequestDto = z.infer<typeof paymentApprovalRequestSchema>;
 
-export const paymentApprovalServiceSchema = z.object({
+const paymentApprovalServiceSchema = z.object({
   authorizationId: PaymentsBaseSchema.authorizationId,
   shopOrderNo: PaymentsBaseSchema.orderNo,
   shopTransactionId: PaymentsBaseSchema.shopTransactionId,
@@ -26,7 +26,7 @@ export const toPaymentApprovalServiceDto = (
 ): PaymentApprovalServiceDto => {
   return zodSafeParse(paymentApprovalServiceSchema, {
     ...dto,
-    shopTransactionId: getUuidWithoutHyphen(),
+    shopTransactionId: generateUUID32digits(),
     approvalReqDate: getNowYYYYMMDD(),
     mallId: process.env.PAYMENTS_MID as string,
   });
@@ -88,7 +88,6 @@ const toPaymentApprovalFailureResultSchema = (data: any) => {
 };
 export type paymentApprovalFailureResult = z.infer<typeof paymentApprovalFailureResultSchema>;
 
-// 외부에서는 다음 함수로만 schema 접근 -> todo:: 공통화 할 수 있겠다
 export const paymentApprovalResultSchema = (
   data: unknown,
 ): PaymentApprovalSuccessResult | paymentApprovalFailureResult => {

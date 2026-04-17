@@ -36,6 +36,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@lib': path.resolve(__dirname, './src/lib'),
       '@shared': path.resolve(__dirname, './src/shared'),
+      'server-only': path.resolve(__dirname, './src/shared/__mock__/empty-server-only.ts'),
     },
   },
 });

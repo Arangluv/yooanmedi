@@ -21,18 +21,14 @@ import {
   PGPaymentContextAfterApproval,
   PGPaymentContextAfterOrder,
   PGPaymentInitContext,
-  pgPaymentInitContextSchema,
+  toPaymentInitContext,
 } from '../schema/payment-context-schema';
-import { paymentsApproval } from '../../api/payment-approval';
-import {
-  ApprovalPaymentResult,
-  approvalPaymentResultSchema,
-} from '../schema/payments-approval-schema';
+import { ApprovalPaymentResult } from '../schema/payments-approval-schema';
 import { PaymentDto } from '../schema/payments.dto';
 import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
 import { enrichedOrderListFromContext } from '../enriched-order-list';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
-import { type EasypayRegisterTransactionValidatedResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
+import { type RegisterTransactionResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
 
 interface PaymentUsecaseResultData {
   approvalDate: string;
@@ -64,8 +60,8 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
     return validatedRegisterResult;
   }
 
-  static createInitialContextFromRegisterResult(data: EasypayRegisterTransactionValidatedResult) {
-    const context = zodSafeParse(pgPaymentInitContextSchema, data);
+  static createInitialContextFromRegisterResult(data: RegisterTransactionResult) {
+    const context = toPaymentInitContext(data);
     return context;
   }
 
@@ -111,11 +107,12 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
   }
 
   protected async approvePayment() {
+    const easyPayService = new EasyPayService();
     const approvalRequestDto = PaymentDto.approvePayment(this.context);
-    const approvalResult = await paymentsApproval(approvalRequestDto);
-
-    const parsedApprovalResult = approvalPaymentResultSchema.parse(approvalResult);
-    return parsedApprovalResult;
+    // const approvalResult = await paymentsApproval(approvalRequestDto);
+    // const parsedApprovalResult = approvalPaymentResultSchema.parse(approvalResult);
+    const approvalResult = await easyPayService.approvePayment(approvalRequestDto);
+    return approvalResult;
   }
 
   protected applyApprovalResultToContext(

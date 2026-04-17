@@ -14,20 +14,42 @@ describe('numberSchema', () => {
     expect(result.data).toBe(0);
   });
 
-  it('데이터가 누락된 경우 파싱에 실패한다', () => {
-    const testDto = {
-      name: '',
-    } as any;
-
-    const result = numberSchema({ required_message: '해당 값을 필수입니다' }).safeParse(
-      testDto.ceo,
-    );
+  it('required_message가 있으면 해당 메시지를 반환한다', () => {
+    const result = numberSchema({
+      required_message: '해당 값을 필수입니다',
+    }).safeParse(undefined);
     expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('해당 값을 필수입니다');
+  });
+
+  it('required_message가 없으면 기본 메시지를 반환한다', () => {
+    const result = numberSchema({}).safeParse(undefined);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('숫자가 누락되었습니다');
+  });
+
+  it('invalid_message가 있으면 해당 메시지를 반환한다', () => {
+    const result = numberSchema({
+      invalid_message: '숫자만 입력 가능합니다',
+    }).safeParse('test');
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('숫자만 입력 가능합니다');
+  });
+
+  it('invalid_message가 없으면 기본 메시지를 반환한다', () => {
+    const result = numberSchema({}).safeParse('test');
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('숫자 타입이 아닙니다');
   });
 
   it('숫자 타입이 아닌 경우 파싱에 실패한다', () => {
-    const result = numberSchema({}).safeParse('test');
-    expect(result.success).toBe(false);
+    const resultWithInvalidMessage = numberSchema({
+      invalid_message: '숫자 타입이 아닙니다',
+    }).safeParse('test');
+    expect(resultWithInvalidMessage.success).toBe(false);
+
+    const resultWithoutInvalidMessage = numberSchema({}).safeParse('test');
+    expect(resultWithoutInvalidMessage.success).toBe(false);
   });
 
   it('최소값 옵션이 있고, 최소값을 충족하지 못한 경우 파싱에 실패한다', () => {

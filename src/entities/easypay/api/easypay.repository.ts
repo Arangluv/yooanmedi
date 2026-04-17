@@ -22,6 +22,5 @@ export class EasyPayRepository {
   public static async approvePayment(dto: PaymentApprovalServiceDto) {
     const approvalResult = await approvePayment(dto);
     return paymentApprovalResultSchema(approvalResult);
-    // return zodSafeParse(easypayPaymentApprovalResultSchema, approvalResult);
   }
 }

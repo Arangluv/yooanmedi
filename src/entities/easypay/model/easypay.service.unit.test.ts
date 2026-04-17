@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { EasyPayService } from '../easypay.service';
-import { EasyPayRepository } from '../../api/easypay.repository';
+import { EasyPayService } from './easypay.service';
+import { EasyPayRepository } from '../api/easypay.repository';
 
-vi.mock('../../api/easypay.repository', () => ({
+vi.mock('../api/easypay.repository', () => ({
   EasyPayRepository: {
     registerTransaction: vi.fn(),
   },

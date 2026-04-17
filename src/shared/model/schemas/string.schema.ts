@@ -10,8 +10,8 @@ interface StringSchemaOptions {
 }
 
 export const stringSchema = ({
-  required_message,
-  invalid_message,
+  required_message = '문자열이 누락되었습니다',
+  invalid_message = '문자열 타입이 아닙니다',
   minLength,
   maxLength,
   length,
@@ -20,12 +20,9 @@ export const stringSchema = ({
   let schema = z.string({
     error: (iss) => {
       if (iss.input === undefined) {
-        return required_message ?? '문자열이 누락되었습니다';
+        return required_message;
       }
-
-      if (iss.code === 'invalid_type') {
-        return invalid_message ?? '문자열 타입이 아닙니다';
-      }
+      return invalid_message;
     },
   });
 
@@ -47,7 +44,7 @@ export const stringSchema = ({
 
   if (length) {
     schema = schema.length(length, {
-      error: (iss) => {
+      error: () => {
         return `${length} 자리의 문자열이어야 합니다`;
       },
     });

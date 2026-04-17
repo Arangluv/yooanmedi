@@ -5,8 +5,8 @@ import {
   type RegisterTransactionRequestDto,
 } from './schemas/easypay.register-transaction.schema';
 import {
-  easypayRegisterTransactionRawResultSchema,
-  type EasypayRegisterTransactionRawResult,
+  toTransactionRegistrationServiceResult,
+  type EasypayRegisterTransactionResponse,
 } from './schemas/easypay.register-transaction-result.schema';
 import {
   type PaymentApprovalRequestDto,
@@ -32,16 +32,17 @@ export class EasyPayService implements IEasyPay {
   }
 
   public validateAndParseRegisterTransactionResult(
-    registerDto: EasypayRegisterTransactionRawResult,
+    registerDto: EasypayRegisterTransactionResponse,
   ) {
-    const validatedResult = zodSafeParse(easypayRegisterTransactionRawResultSchema, registerDto);
-    if (!validatedResult.isRegistrationSuccess) {
+    const registerResult = toTransactionRegistrationServiceResult(registerDto);
+
+    if (!registerResult.isRegistrationSuccess) {
       const error = new BusinessLogicError('결제등록 과정에서 문제가 발생했습니다');
-      error.setDevMessage(`resCd: ${validatedResult.resCd}, resMsg: ${validatedResult.resMsg}`);
+      error.setDevMessage(`resCd: ${registerResult.resCd}, resMsg: ${registerResult.resMsg}`);
       throw error;
     }
 
-    return validatedResult;
+    return registerResult;
   }
 
   public async approvePayment(dto: PaymentApprovalRequestDto) {
@@ -53,7 +54,7 @@ export class EasyPayService implements IEasyPay {
       error.setDevMessage(`resCd: ${approvalResult.resCd}, resMsg: ${approvalResult.resMsg}`);
       throw error;
     }
-    const test = approvalResult;
+
     return approvalResult;
   }
 

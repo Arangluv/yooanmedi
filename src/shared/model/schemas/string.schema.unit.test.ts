@@ -8,16 +8,30 @@ describe('stringSchema', () => {
     expect(result.data).toBe('test');
   });
 
-  it('데이터가 누락된 경우 파싱에 실패한다', () => {
-    const testDto = {
-      name: '',
-    } as any;
-
-    const result = stringSchema({ required_message: '없는 필드에 접근했습니다' }).safeParse(
-      testDto.ceo,
+  it('값이 undefined이고 required_message가 있으면 해당 메시지를 반환한다', () => {
+    const result = stringSchema({ required_message: '필수 값을 누락했습니다' }).safeParse(
+      undefined,
     );
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe('없는 필드에 접근했습니다');
+    expect(result.error?.issues[0].message).toBe('필수 값을 누락했습니다');
+  });
+
+  it('값이 undefined이고 required_message가 없으면 기본 메시지를 반환한다', () => {
+    const result = stringSchema({}).safeParse(undefined);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('문자열이 누락되었습니다');
+  });
+
+  it('string type이 아니고 invalid_message가 있으면 해당 메시지를 반환한다', () => {
+    const result = stringSchema({ invalid_message: '문자열 타입이 아닙니다' }).safeParse(123);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('문자열 타입이 아닙니다');
+  });
+
+  it('string type이 아니고 invalid_message가 없으면 기본 메시지를 반환한다', () => {
+    const result = stringSchema({}).safeParse(123);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('문자열 타입이 아닙니다');
   });
 
   it('최소길이 옵션이 있고, 최소길이를 충족하지 못한 경우파싱에 실패한다', () => {
@@ -32,23 +46,10 @@ describe('stringSchema', () => {
     expect(result.error?.issues[0].message).toBe('5 이하의 문자열이어야 합니다');
   });
 
-  it('길이 옵션이 있고, 길이를 충족하지 못한 경우 파싱에 실패한다', () => {
+  it('정확한 길이 옵션이 있고, 길이를 충족하지 못한 경우 파싱에 실패한다', () => {
     const result = stringSchema({ length: 5 }).safeParse('test');
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe('5 자리의 문자열이어야 합니다');
-  });
-
-  it('다중옵션이 있고, 모든 옵션을 충족하지 못한 경우 가장 먼저 발생한 오류 메시지가 반환된다', () => {
-    const testDto = {
-      name: '',
-    } as any;
-
-    const result = stringSchema({ required_message: '없는 필드에 접근했습니다' }).safeParse(
-      testDto.ceo,
-    );
-
-    expect(result.success).toBe(false);
-    expect(result.error?.issues[0].message).toBe('없는 필드에 접근했습니다');
   });
 
   it('다중옵션이 있을 때 모든 옵션을 충족하면 파싱에 성공한다', () => {

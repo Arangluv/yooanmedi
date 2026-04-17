@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { orderBankTransferSchema } from './order-banktransfer-schema';
 import { baseSchema } from './base.schema';
-import { easypayRegisterTransactionResultSchema } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
+import { RegisterTransactionResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
+import { zodSafeParse } from '@/shared/lib/zod';
 /**
  * 공통 결제 컨텍스트 스키마
  */
@@ -29,13 +30,12 @@ export type BasePaymentContext = z.infer<typeof basePaymentContextSchema>;
  * shopValue6: minOrderPrice
  */
 
-const pgPaymentInitContextPipe = basePaymentContextSchema.extend({
+const pgPaymentInitContextSchema = basePaymentContextSchema.extend({
   authorizationId: baseSchema.authorizationId,
   paymentsMethod: baseSchema.paymentMethodForPG,
 });
-
-export const pgPaymentInitContextSchema = easypayRegisterTransactionResultSchema
-  .transform((data) => ({
+export const toPaymentInitContext = (data: RegisterTransactionResult) => {
+  return zodSafeParse(pgPaymentInitContextSchema, {
     authorizationId: data.authorizationId,
     shopOrderNo: data.shopOrderNo,
     deliveryRequest: data.shopValue1,
@@ -44,13 +44,13 @@ export const pgPaymentInitContextSchema = easypayRegisterTransactionResultSchema
     userId: data.shopValue4,
     paymentsMethod: data.shopValue5,
     minOrderPrice: data.shopValue6,
-  }))
-  .pipe(pgPaymentInitContextPipe);
+  });
+};
 
 export type PGPaymentInitContext = z.infer<typeof pgPaymentInitContextSchema>;
 
 // after approval
-const pgPaymentContextAfterApprovalSchema = pgPaymentInitContextPipe.extend({
+const pgPaymentContextAfterApprovalSchema = pgPaymentInitContextSchema.extend({
   amount: baseSchema.amount,
   pgCno: baseSchema.pgCno,
   approvalDate: baseSchema.approvalDate,

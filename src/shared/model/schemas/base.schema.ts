@@ -1,4 +1,3 @@
-import { stringSchema } from './string.schema';
 import { numberSchema } from './number.schema';
 import { z } from 'zod';
 
@@ -21,12 +20,8 @@ interface StringSchemaOptions extends BaseSchemaOptions {
 export const BaseSchema = {
   url: z.url({
     error: (iss) => {
-      if (iss === undefined) {
+      if (iss.code == 'invalid_type' && iss.input === undefined) {
         return 'URL이 누락되었습니다.';
-      }
-
-      if (iss.code === 'invalid_type') {
-        return '유효하지 않은 URL 타입입니다.';
       }
 
       if (iss.code === 'invalid_format') {

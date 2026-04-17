@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { registerTransaction } from '../easypay.api';
-import { EasyPayService } from '../../model/easypay.service';
+import { registerTransaction } from './easypay.api';
+import { EasyPayService } from '../model/easypay.service';
 import { Logger } from '@/shared/model/logger/logger';
 import * as normalizeErrorModule from '@/shared/model/errors/normalize-error';
 

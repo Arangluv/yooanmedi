@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @example
  * ```ts
  * const uuid = getUuidWithoutHyphen();
- * console.log(uuid); // '1234567890ABCDEFGHIJ'
+ * console.log(uuid); // '02D5F86034E54F4DB06FC5F7FF454121'
  * ```
  */
 export const getUuidWithoutHyphen = () => {

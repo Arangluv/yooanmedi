@@ -19,9 +19,7 @@ export const numberSchema = ({
         return required_message ?? '숫자가 누락되었습니다';
       }
 
-      if (iss.code === 'invalid_type') {
-        return invalid_message ?? '숫자 타입이 아닙니다';
-      }
+      return invalid_message ?? '숫자 타입이 아닙니다';
     },
   });
 

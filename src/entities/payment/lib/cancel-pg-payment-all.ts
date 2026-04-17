@@ -1,4 +1,4 @@
-import { getUuidWithoutHyphen } from '@/shared/lib/get-uuid';
+import { getUuidWithoutHyphen } from '@/shared/lib/uuid';
 import crypto from 'crypto';
 import moment from 'moment-timezone';
 import { CANCEL_REVISE_TYPE } from '../constant/cancel-revise-type';
