@@ -1,8 +1,8 @@
 import { z } from 'zod';
+import moment from 'moment';
 import { generateUUID32digits } from '@/shared/lib/identifier';
 import { getNowYYYYMMDD } from '@/shared/lib/date';
 import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
-import moment from 'moment';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { zodSafeParse } from '@/shared/lib/zod';
 
@@ -12,7 +12,7 @@ const paymentApprovalRequestSchema = z.object({
 });
 export type PaymentApprovalRequestDto = z.infer<typeof paymentApprovalRequestSchema>;
 
-const paymentApprovalServiceSchema = z.object({
+export const paymentApprovalServiceSchema = z.object({
   authorizationId: PaymentsBaseSchema.authorizationId,
   shopOrderNo: PaymentsBaseSchema.orderNo,
   shopTransactionId: PaymentsBaseSchema.shopTransactionId,
@@ -37,7 +37,7 @@ const paymentApprovalBaseResultSchema = z.object({
   resMsg: z.string(),
 });
 
-const paymentApprovalSuccessResultSchema = paymentApprovalBaseResultSchema.extend({
+export const paymentApprovalSuccessResultSchema = paymentApprovalBaseResultSchema.extend({
   resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
   mallId: PaymentsBaseSchema.mallId,
   pgCno: PaymentsBaseSchema.pgCno,
@@ -74,10 +74,8 @@ const toPaymentApprovalSuccessResultSchema = (data: any): PaymentApprovalSuccess
 };
 export type PaymentApprovalSuccessResult = z.infer<typeof paymentApprovalSuccessResultSchema>;
 
-const paymentApprovalFailureResultSchema = paymentApprovalBaseResultSchema.extend({
-  resCd: z
-    .string()
-    .refine((val) => val !== EASYPAY_CONFIG.successResponseCode, '잘못된 응답코드 입니다.'),
+export const paymentApprovalFailureResultSchema = paymentApprovalBaseResultSchema.extend({
+  resCd: z.string(),
   isPaymentApprovalSuccess: z.literal(false),
 });
 const toPaymentApprovalFailureResultSchema = (data: any) => {
@@ -88,11 +86,10 @@ const toPaymentApprovalFailureResultSchema = (data: any) => {
 };
 export type paymentApprovalFailureResult = z.infer<typeof paymentApprovalFailureResultSchema>;
 
-export const paymentApprovalResultSchema = (
+export const toPaymentApprovalResult = (
   data: unknown,
 ): PaymentApprovalSuccessResult | paymentApprovalFailureResult => {
   const result = zodSafeParse(paymentApprovalBaseResultSchema, data);
-
   if (result.resCd === EASYPAY_CONFIG.successResponseCode) {
     return toPaymentApprovalSuccessResultSchema(data);
   } else {

@@ -1,26 +1,10 @@
 import { z } from 'zod';
-import { PAYMENTS_METHOD } from '@/entities/order'; // todo :: refactor -> layer 이동
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
 import { BaseSchema } from '@/shared/model/schemas/base.schema';
 import { generate15digitsNumberBasedOnDate } from '@/shared/lib/identifier';
-
-const shopValueInfoApplicationSchema = z.object({
-  deliveryRequest: PaymentsBaseSchema.deliveryRequest,
-  orderList: PaymentsBaseSchema.orderList,
-  usedPoint: PaymentsBaseSchema.usedPoint,
-  userId: PaymentsBaseSchema.userId,
-  minOrderPrice: PaymentsBaseSchema.minOrderPrice,
-});
-
-const shopValueInfoEasypaySchema = z.object({
-  value1: PaymentsBaseSchema.deliveryRequest,
-  value2: PaymentsBaseSchema.orderListJson,
-  value3: PaymentsBaseSchema.usedPoint,
-  value4: PaymentsBaseSchema.userId,
-  value5: PaymentsBaseSchema.paymentsMethodUsedCard,
-  value6: PaymentsBaseSchema.minOrderPrice,
-});
+import { PAYMENTS_METHOD } from '@/shared/config/site.config';
+import { zodSafeParse } from '@/shared/lib/zod';
 
 const registerTransactionRequestSchema = z.object({
   amount: BaseSchema.number({
@@ -29,13 +13,40 @@ const registerTransactionRequestSchema = z.object({
     min: 0,
   }),
   orderInfo: PaymentsBaseSchema.orderInfo,
-  shopValueInfo: shopValueInfoApplicationSchema,
+  shopValueInfo: z.object({
+    deliveryRequest: PaymentsBaseSchema.deliveryRequest,
+    orderList: PaymentsBaseSchema.orderList,
+    usedPoint: PaymentsBaseSchema.usedPoint,
+    userId: PaymentsBaseSchema.userId,
+    minOrderPrice: PaymentsBaseSchema.minOrderPrice,
+  }),
 });
 export type RegisterTransactionRequestDto = z.infer<typeof registerTransactionRequestSchema>;
 
-const transformApplicationDtoToEasypayDto = (data: RegisterTransactionRequestDto) => {
-  return {
+export const registerTransactionServiceSchema = z.object({
+  mallId: PaymentsBaseSchema.mallId,
+  returnUrl: BaseSchema.url,
+  amount: PaymentsBaseSchema.amount,
+  clientTypeCode: PaymentsBaseSchema.clientTypeCode,
+  payMethodTypeCode: PaymentsBaseSchema.payMethodTypeCode,
+  currency: PaymentsBaseSchema.currency,
+  deviceTypeCode: PaymentsBaseSchema.deviceTypeCode,
+  shopOrderNo: PaymentsBaseSchema.orderNo,
+  orderInfo: PaymentsBaseSchema.orderInfo,
+  shopValueInfo: z.object({
+    value1: PaymentsBaseSchema.deliveryRequest,
+    value2: PaymentsBaseSchema.orderListJson,
+    value3: PaymentsBaseSchema.usedPoint,
+    value4: PaymentsBaseSchema.userId,
+    value5: PaymentsBaseSchema.paymentsMethodUsedCard,
+    value6: PaymentsBaseSchema.minOrderPrice,
+  }),
+});
+export type RegisterTransactionServiceDto = z.infer<typeof registerTransactionServiceSchema>;
+export const toRegisterTransactionServiceDto = (data: RegisterTransactionRequestDto) => {
+  return zodSafeParse(registerTransactionServiceSchema, {
     ...data,
+    mallId: process.env.PAYMENTS_MID,
     clientTypeCode: EASYPAY_CONFIG.clientTypeCode,
     payMethodTypeCode: EASYPAY_CONFIG.payMethodTypeCode,
     currency: EASYPAY_CONFIG.currency,
@@ -50,54 +61,66 @@ const transformApplicationDtoToEasypayDto = (data: RegisterTransactionRequestDto
       value5: PAYMENTS_METHOD.CREDIT_CARD,
       value6: data.shopValueInfo.minOrderPrice,
     },
-    mallId: process.env.PAYMENTS_MID,
-  };
+  });
 };
 
-export const easypayRegisterTransactionPipe = z.object({
-  mallId: PaymentsBaseSchema.mallId,
-  returnUrl: BaseSchema.url,
-  amount: PaymentsBaseSchema.amount,
-  clientTypeCode: PaymentsBaseSchema.clientTypeCode,
-  payMethodTypeCode: PaymentsBaseSchema.payMethodTypeCode,
-  currency: PaymentsBaseSchema.currency,
-  deviceTypeCode: PaymentsBaseSchema.deviceTypeCode,
-  shopOrderNo: PaymentsBaseSchema.orderNo,
-  orderInfo: PaymentsBaseSchema.orderInfo,
-  shopValueInfo: shopValueInfoEasypaySchema,
+const easypayRegisterTransactionBaseResultSchema = z.object({
+  resCd: z.string(),
+  resMsg: z.string(),
 });
 
-export const easypayRegisterTransactionSchema = registerTransactionRequestSchema
-  .transform(transformApplicationDtoToEasypayDto)
-  .pipe(easypayRegisterTransactionPipe);
-
-export type EasypayRegisterTransactionRequestDto = z.infer<typeof easypayRegisterTransactionSchema>;
-
-const easypayRegisterTransactionSuccessResponseSchema = z
-  .object({
+const easypayRegisterTransactionSuccessResponseSchema =
+  easypayRegisterTransactionBaseResultSchema.extend({
     resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
-    resMsg: z.string(),
-    authPageUrl: z.string(),
-  })
-  .transform((data) => ({
-    ...data,
-    isSuccess: true as const,
-  }));
-
-const easypayRegisterTransactionFailResponseSchema = z
-  .object({
-    resCd: z.string(),
-    resMsg: z.string(),
-  })
-  .transform((data) => ({
-    ...data,
-    isSuccess: false as const,
-  }));
-
-export const easypayRegisterTransactionResponseSchema = z.union([
-  easypayRegisterTransactionSuccessResponseSchema,
-  easypayRegisterTransactionFailResponseSchema,
-]);
-export type EasypayRegisterTransactionResponseDto = z.infer<
-  typeof easypayRegisterTransactionResponseSchema
+    authPageUrl: BaseSchema.url,
+  });
+export type EasypayRegisterTransactionSuccessResponse = z.infer<
+  typeof easypayRegisterTransactionSuccessResponseSchema
 >;
+export const easypayRegisterTransactionSuccessResultSchema =
+  easypayRegisterTransactionBaseResultSchema.extend({
+    resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
+    authPageUrl: BaseSchema.url,
+    isRegistrationSuccess: z.literal(true),
+  });
+export type EasypayRegisterTransactionSuccessResult = z.infer<
+  typeof easypayRegisterTransactionSuccessResultSchema
+>;
+const toRegisterTransactionSuccessResult = (data: EasypayRegisterTransactionSuccessResponse) => {
+  return zodSafeParse(easypayRegisterTransactionSuccessResultSchema, {
+    ...data,
+    isRegistrationSuccess: true,
+  });
+};
+
+const easypayRegisterTransactionFailureResponseSchema =
+  easypayRegisterTransactionBaseResultSchema.extend({});
+export type EasypayRegisterTransactionFailureResponse = z.infer<
+  typeof easypayRegisterTransactionFailureResponseSchema
+>;
+export const easypayRegisterTransactionFailureResultSchema =
+  easypayRegisterTransactionBaseResultSchema.extend({
+    isRegistrationSuccess: z.literal(false),
+  });
+export type EasypayRegisterTransactionFailureResult = z.infer<
+  typeof easypayRegisterTransactionFailureResultSchema
+>;
+const toRegisterTransactionFailureResult = (data: EasypayRegisterTransactionFailureResponse) => {
+  return zodSafeParse(easypayRegisterTransactionFailureResultSchema, {
+    ...data,
+    isRegistrationSuccess: false,
+  });
+};
+
+export const toRegisterTransactionResult = (
+  data: EasypayRegisterTransactionSuccessResponse | EasypayRegisterTransactionFailureResponse,
+) => {
+  if (data.resCd === EASYPAY_CONFIG.successResponseCode) {
+    return toRegisterTransactionSuccessResult(data as EasypayRegisterTransactionSuccessResponse); // 이지페이는 네자리 string으로 성공 / 실패를 구분하기에 타입단언을 사용해준다.
+  } else {
+    return toRegisterTransactionFailureResult(data);
+  }
+};
+export type RegisterTransactionResult =
+  | EasypayRegisterTransactionSuccessResult
+  | EasypayRegisterTransactionFailureResult;

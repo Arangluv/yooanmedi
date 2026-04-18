@@ -1,100 +1,125 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { EasyPayService } from './easypay.service';
 import { EasyPayRepository } from '../api/easypay.repository';
+import {
+  PaymentApprovalFixture,
+  TransactionRegistrationFixture,
+  ValidateTransactionRegistrationResultFixture,
+} from '../__test__/easypay.fixture';
+import { easypayRegisterTransactionSuccessResultSchema } from './schemas/easypay.register-transaction.schema';
+import { paymentApprovalSuccessResultSchema } from './schemas/easypay.payment-approval.schema';
+import { ZodParseError, BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { registerTransactionSuccessResultSchema } from './schemas/easypay.register-transaction-result.schema';
 
 vi.mock('../api/easypay.repository', () => ({
   EasyPayRepository: {
     registerTransaction: vi.fn(),
+    approvePayment: vi.fn(),
   },
 }));
 
 describe('EasyPayService', () => {
   describe('registerTransaction', () => {
-    const requestDto = {
-      amount: 6000,
-      orderInfo: {
-        goodsName: '소부날캡슐200mg 외 2개의 상품',
-        customerInfo: {
-          customerId: 'test0001',
-          customerName: '인천병원',
-          customerMail: 'test0001@gmail.com',
-          customerContactNo: '01012345678',
-          customerAddr: '인천 강화군 강화읍 갑곳리 1076-6 , 23026',
-        },
-      },
-      shopValueInfo: {
-        deliveryRequest: '배송 요청사항입니다',
-        orderList: [
-          {
-            product: {
-              id: 1681,
-              price: 2000,
-            },
-            quantity: 1,
-          },
-          {
-            product: {
-              id: 1683,
-              price: 2000,
-            },
-            quantity: 1,
-          },
-          {
-            product: {
-              id: 1684,
-              price: 2000,
-            },
-            quantity: 1,
-          },
-        ],
-        usedPoint: 0,
-        userId: 3,
-        minOrderPrice: 30000,
-      },
-    };
-
-    it('성공 시 isSuccess true와 함께 authPageUrl을 반환한다', async () => {
-      vi.mocked(EasyPayRepository.registerTransaction).mockResolvedValue({
-        isSuccess: true,
-        resCd: '0000',
-        resMsg: 'success',
-        authPageUrl: 'https://www.testSite.com',
-      });
-
-      const easypayService = new EasyPayService();
-      const result = await easypayService.registerTransaction(requestDto);
-
-      expect(result).toBeDefined();
-      expect(result.isSuccess).toBe(true);
-      expect(result.authPageUrl).toBeDefined();
+    beforeEach(() => {
+      vi.clearAllMocks();
     });
 
-    it('실패 시 error를 throw한다', async () => {
-      vi.mocked(EasyPayRepository.registerTransaction).mockResolvedValue({
-        isSuccess: false,
-        resCd: '9999',
-        resMsg: 'test error message',
-      });
+    it('easypay에서 성공코드를 반환하는 경우 거래등록 결과를 반환한다', async () => {
+      vi.mocked(EasyPayRepository.registerTransaction).mockResolvedValue(
+        TransactionRegistrationFixture.successResult,
+      );
 
       const easypayService = new EasyPayService();
-      await expect(easypayService.registerTransaction(requestDto)).rejects.toThrow();
+      const result = await easypayService.registerTransaction(
+        TransactionRegistrationFixture.requestDto as any,
+      );
+
+      expect(result).toEqual(expect.schemaMatching(easypayRegisterTransactionSuccessResultSchema));
     });
 
-    it('올바르지 않은 DTO가 전달되면 error를 throw한다', async () => {
+    it('easypay에서 실패코드를 반환하는 경우 BusinessLogicError를 throw한다.', async () => {
+      vi.mocked(EasyPayRepository.registerTransaction).mockResolvedValue(
+        TransactionRegistrationFixture.failureResult,
+      );
+
       const easypayService = new EasyPayService();
-      const invalidRequestDto = {
-        amount: '10000',
-        orderInfo: 'test',
-        shopValueInfo: 'test',
-      } as any;
-      await expect(easypayService.registerTransaction(invalidRequestDto)).rejects.toThrow();
+      await expect(
+        easypayService.registerTransaction(TransactionRegistrationFixture.requestDto as any),
+      ).rejects.toThrow(BusinessLogicError);
+    });
+
+    it('requestDto가 올바르지 않은 경우 Error를 throw한다', async () => {
+      const easypayService = new EasyPayService();
+      await expect(
+        easypayService.registerTransaction(TransactionRegistrationFixture.invalidRequestDto as any),
+      ).rejects.toThrow(Error);
     });
   });
 
   describe('validateAndParseRegisterTransactionResult', () => {
-    it.todo('성공 시 데이터 필드가 있는 객체를 반환한다', () => {
-      // 해당 테스트는 schema 테스트에서 처리되므로 별도로 테스트하지 않음 -> todo :: 테스트 커버리지를 관리하는 방법을 찾아보고 기록할 것
-      // 이곳에 작성하는 테스트와, schema에서 작성한 테스트는 무엇이 달라야 하는가?
+    it('거래등록이 성공했다면, 거래등록결과를 어플리케이션 모델로 변환 후 반환한다.', () => {
+      const easypayService = new EasyPayService();
+      const result = easypayService.validateAndParseRegisterTransactionResult(
+        ValidateTransactionRegistrationResultFixture.successRequestDto as any,
+      );
+      expect(result).toEqual(expect.schemaMatching(registerTransactionSuccessResultSchema));
+    });
+
+    it('거래등록이 실패했다면 BusinessLogicError를 throw한다.', () => {
+      const easypayService = new EasyPayService();
+      expect(() =>
+        easypayService.validateAndParseRegisterTransactionResult(
+          ValidateTransactionRegistrationResultFixture.failureRequestDto as any,
+        ),
+      ).toThrow(BusinessLogicError);
+    });
+  });
+
+  describe('approvePayment', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('결제승인 요청에 성공하면 approvalResult를 반환한다', async () => {
+      vi.mocked(EasyPayRepository.approvePayment).mockResolvedValue(
+        PaymentApprovalFixture.successResult,
+      );
+
+      const easypayService = new EasyPayService();
+      const approvalResult = await easypayService.approvePayment(PaymentApprovalFixture.requestDto);
+
+      expect(approvalResult).toBeDefined();
+      expect(approvalResult.isPaymentApprovalSuccess).toBe(true);
+      expect(approvalResult).toEqual(expect.schemaMatching(paymentApprovalSuccessResultSchema));
+    });
+
+    it('requestDto가 올바르지 않은 경우 결제승인 API를 호출하지 않는다', async () => {
+      const easypayService = new EasyPayService();
+      const spy = vi.spyOn(EasyPayRepository, 'approvePayment');
+
+      try {
+        await easypayService.approvePayment(PaymentApprovalFixture.invalidRequestDto as any);
+      } catch (error) {
+        expect(spy).not.toHaveBeenCalled();
+      }
+    });
+
+    it('requestDto가 올바르지 않은 경우 ZodParseError를 throw한다', async () => {
+      const easypayService = new EasyPayService();
+      await expect(
+        easypayService.approvePayment(PaymentApprovalFixture.invalidRequestDto as any),
+      ).rejects.toThrow(ZodParseError);
+    });
+
+    it('easypay에서 실패코드를 반환하는 경우 BusinessLogicError를 throw한다.', async () => {
+      const easypayService = new EasyPayService();
+      vi.mocked(EasyPayRepository.approvePayment).mockResolvedValue(
+        PaymentApprovalFixture.failureResult,
+      );
+
+      await expect(
+        easypayService.approvePayment(PaymentApprovalFixture.requestDto),
+      ).rejects.toThrow(BusinessLogicError);
     });
   });
 });

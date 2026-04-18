@@ -20,7 +20,7 @@ const easypayRegisterTransactionSuccessResponseSchema = registerTransactionBaseS
   shopValue5: z.string(),
   shopValue6: z.string(),
 });
-export type EasypayRegisterTransactionSuccessResponse = z.infer<
+export type EasypayRegisterTransactionSuccessResponseDto = z.infer<
   typeof easypayRegisterTransactionSuccessResponseSchema
 >;
 
@@ -42,7 +42,7 @@ export type RegisterTransactionSuccessResult = z.infer<
 >;
 
 const toTransactionRegistrationServiceSuccessResult = (
-  data: EasypayRegisterTransactionSuccessResponse,
+  data: EasypayRegisterTransactionSuccessResponseDto,
 ) => {
   return zodSafeParse(registerTransactionSuccessResultSchema, {
     ...data,
@@ -59,14 +59,12 @@ const toTransactionRegistrationServiceSuccessResult = (
 export const easypayRegisterTransactionFailureResponseSchema = registerTransactionBaseSchema.extend(
   {},
 );
-export type EasypayRegisterTransactionFailureResponse = z.infer<
+export type EasypayRegisterTransactionFailureResponseDto = z.infer<
   typeof easypayRegisterTransactionFailureResponseSchema
 >;
 
 export const registerTransactionFailureResultSchema = registerTransactionBaseSchema.extend({
-  resCd: z
-    .string()
-    .refine((val) => val !== EASYPAY_CONFIG.successResponseCode, '잘못된 응답코드입니다'),
+  resCd: z.string(),
   isRegistrationSuccess: z.literal(false),
 });
 export type RegisterTransactionFailureResult = z.infer<
@@ -74,7 +72,7 @@ export type RegisterTransactionFailureResult = z.infer<
 >;
 
 const toTransactionRegistrationServiceFailureResult = (
-  data: EasypayRegisterTransactionFailureResponse,
+  data: EasypayRegisterTransactionFailureResponseDto,
 ) => {
   return zodSafeParse(registerTransactionFailureResultSchema, {
     ...data,
@@ -83,21 +81,21 @@ const toTransactionRegistrationServiceFailureResult = (
 };
 
 export const toTransactionRegistrationServiceResult = (
-  data: EasypayRegisterTransactionSuccessResponse | EasypayRegisterTransactionFailureResponse,
+  data: EasypayRegisterTransactionSuccessResponseDto | EasypayRegisterTransactionFailureResponseDto,
 ) => {
   if (data.resCd !== EASYPAY_CONFIG.successResponseCode) {
     return toTransactionRegistrationServiceFailureResult(
-      data as EasypayRegisterTransactionFailureResponse,
+      data as EasypayRegisterTransactionFailureResponseDto,
     );
   }
 
   return toTransactionRegistrationServiceSuccessResult(
-    data as EasypayRegisterTransactionSuccessResponse,
+    data as EasypayRegisterTransactionSuccessResponseDto,
   );
 };
 
 export type EasypayRegisterTransactionResponse =
-  | EasypayRegisterTransactionSuccessResponse
-  | EasypayRegisterTransactionFailureResponse;
+  | EasypayRegisterTransactionSuccessResponseDto
+  | EasypayRegisterTransactionFailureResponseDto;
 
 export type RegisterTransactionResult = RegisterTransactionSuccessResult;

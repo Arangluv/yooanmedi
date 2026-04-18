@@ -29,6 +29,9 @@ export default defineConfig({
       },
     ],
     setupFiles: [path.resolve(__dirname, './vitest.setup.ts')],
+    coverage: {
+      exclude: ['**/__test__/**', '**/collections/**', '**/index.ts', '**/ui', '**/api'],
+    },
   },
   plugins: [react()],
   resolve: {

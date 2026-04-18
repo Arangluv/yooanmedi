@@ -1,32 +1,38 @@
-interface EndPointFailureResult {
-  isSuccess: false;
+interface EndPointSuccessResult {
+  isSuccess: true;
   message: string;
 }
 
-interface EndPointSuccessWithData<TData> {
+interface EndPointSuccessResultWithDataResult<TData> {
   isSuccess: true;
   message: string;
   data: TData;
 }
 
-interface EndPointSuccessWithoutData {
-  isSuccess: true;
+interface EndPointFailureResult {
+  isSuccess: false;
   message: string;
 }
 
 export type EndPointResult<TData = void> =
   | EndPointFailureResult
-  | (TData extends void ? EndPointSuccessWithoutData : EndPointSuccessWithData<TData>);
+  | (TData extends void ? EndPointSuccessResult : EndPointSuccessResultWithDataResult<TData>);
 
-export const ok = <TData>(data: TData, message: string = 'ok'): EndPointSuccessWithData<TData> => ({
+export const ok = (message: string = 'ok'): EndPointSuccessResult => ({
   isSuccess: true,
   message,
-  data,
 });
 
-export const okWithoutData = (message: string = 'ok'): EndPointSuccessWithoutData => ({
+export const okWithData = <TData>({
+  message = 'ok',
+  data,
+}: {
+  message?: string;
+  data: TData;
+}): EndPointSuccessResultWithDataResult<TData> => ({
   isSuccess: true,
   message,
+  data: data,
 });
 
 export const failure = (message: string): EndPointFailureResult => ({

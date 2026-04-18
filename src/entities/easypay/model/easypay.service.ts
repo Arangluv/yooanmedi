@@ -1,7 +1,7 @@
 import { IEasyPay } from './easypay.interfaces';
 import { EasyPayRepository } from '../api/easypay.repository';
 import {
-  easypayRegisterTransactionSchema,
+  toRegisterTransactionServiceDto,
   type RegisterTransactionRequestDto,
 } from './schemas/easypay.register-transaction.schema';
 import {
@@ -13,16 +13,13 @@ import {
   toPaymentApprovalServiceDto,
 } from './schemas/easypay.payment-approval.schema';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
-import { zodSafeParse } from '@/shared/lib/zod';
 
 export class EasyPayService implements IEasyPay {
   public async registerTransaction(requestDto: RegisterTransactionRequestDto) {
-    const easypayRegisterTransactionDto = zodSafeParse(
-      easypayRegisterTransactionSchema,
-      requestDto,
-    );
+    const easypayRegisterTransactionDto = toRegisterTransactionServiceDto(requestDto);
     const result = await EasyPayRepository.registerTransaction(easypayRegisterTransactionDto);
-    if (!result.isSuccess) {
+
+    if (!result.isRegistrationSuccess) {
       const error = new BusinessLogicError('결제등록 과정에서 문제가 발생했습니다');
       error.setDevMessage(`resCd: ${result.resCd}, resMsg: ${result.resMsg}`);
       throw error;
@@ -56,9 +53,5 @@ export class EasyPayService implements IEasyPay {
     }
 
     return approvalResult;
-  }
-
-  public async cancelTransaction(dto: any): Promise<void> {
-    throw 'not implemented';
   }
 }

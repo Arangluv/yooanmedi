@@ -1,5 +1,5 @@
 import {
-  type EasypayRegisterTransactionResponseDto,
+  type EasypayRegisterTransactionSuccessResult,
   type RegisterTransactionRequestDto,
 } from './schemas/easypay.register-transaction.schema';
 import {
@@ -15,12 +15,11 @@ import {
 export interface IEasyPay {
   registerTransaction: (
     dto: RegisterTransactionRequestDto,
-  ) => Promise<EasypayRegisterTransactionResponseDto>;
+  ) => Promise<EasypayRegisterTransactionSuccessResult>;
   validateAndParseRegisterTransactionResult: (
     registerDto: EasypayRegisterTransactionResponse,
   ) => RegisterTransactionResult;
   approvePayment: (
     dto: PaymentApprovalRequestDto,
   ) => Promise<PaymentApprovalSuccessResult | paymentApprovalFailureResult>;
-  cancelTransaction: (dto: any) => Promise<void>;
 }

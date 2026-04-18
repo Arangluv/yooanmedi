@@ -1,6 +1,6 @@
 'use server';
 
-import { EndPointResult, failure, ok } from '@/shared/lib/end-point-result';
+import { EndPointResult, failure, okWithData } from '@/shared/lib/end-point-result';
 import { normalizeError } from '@/shared/model/errors/normalize-error';
 import { Logger } from '@/shared/model/logger/logger';
 import { EasyPayService } from '../model/easypay.service';
@@ -17,7 +17,9 @@ export const registerTransaction = async (
     const easypayService = new EasyPayService();
     const result = await easypayService.registerTransaction(dto);
 
-    return ok(result);
+    return okWithData({
+      data: result,
+    });
   } catch (error) {
     const normalizedError = normalizeError(error);
     Logger.error(error);
