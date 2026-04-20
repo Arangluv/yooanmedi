@@ -1,5 +1,5 @@
-interface EndPointSuccessResult {
-  isSuccess: true;
+interface EndPointBaseResult {
+  isSuccess: boolean;
   message: string;
 }
 
@@ -9,16 +9,11 @@ interface EndPointSuccessResultWithDataResult<TData> {
   data: TData;
 }
 
-interface EndPointFailureResult {
-  isSuccess: false;
-  message: string;
-}
-
 export type EndPointResult<TData = void> =
-  | EndPointFailureResult
-  | (TData extends void ? EndPointSuccessResult : EndPointSuccessResultWithDataResult<TData>);
+  | EndPointBaseResult
+  | (TData extends void ? EndPointBaseResult : EndPointSuccessResultWithDataResult<TData>);
 
-export const ok = (message: string = 'ok'): EndPointSuccessResult => ({
+export const ok = (message: string = 'ok'): EndPointBaseResult => ({
   isSuccess: true,
   message,
 });
@@ -35,7 +30,7 @@ export const okWithData = <TData>({
   data: data,
 });
 
-export const failure = (message: string): EndPointFailureResult => ({
+export const failure = (message: string): EndPointBaseResult => ({
   isSuccess: false,
   message,
 });

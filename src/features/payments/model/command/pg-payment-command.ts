@@ -15,7 +15,6 @@ import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
 import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
-import { PaymentManager } from './payment-manager';
 import {
   PGPaymentContextAfterApproval,
   PGPaymentContextAfterOrder,
@@ -28,16 +27,18 @@ import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.s
 import { enrichedOrderListFromContext } from '../enriched-order-list';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
 import { type RegisterTransactionResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
+import { PaymentCommand } from './payment-command';
+import { runWithTransaction } from '@/shared/lib/run-with-transaction';
 
-interface PaymentUsecaseResultData {
+export interface PGPaymentCommandResult {
   approvalDate: string;
   amount: number;
   shopOrderNo: string;
 }
 
-export class PGPaymentManager<TContext extends PGPaymentInitContext> extends PaymentManager<
+export class PGPaymentCommand<TContext extends PGPaymentInitContext> extends PaymentCommand<
   TContext,
-  PaymentUsecaseResultData
+  PGPaymentCommandResult
 > {
   protected constructor(orderList: EnrichedOrderList, context: TContext) {
     super(orderList, context);
@@ -45,7 +46,7 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
 
   static async create(context: PGPaymentInitContext) {
     const orderList = await enrichedOrderListFromContext(context);
-    return new PGPaymentManager(orderList, context);
+    return new PGPaymentCommand(orderList, context);
   }
 
   static validatePaymentRegister(formData: FormData) {
@@ -64,60 +65,53 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
     return context;
   }
 
-  public async execute(): Promise<EndPointResult<PaymentUsecaseResultData>> {
-    return await withTransaction({
-      callback: async () => {
-        const usePointTransaction = new UsePointTransaction();
-        const earnPointTransaction = new EarnPointTransaction();
+  public async run(): Promise<PGPaymentCommandResult> {
+    const usePointTransaction = new UsePointTransaction();
+    const earnPointTransaction = new EarnPointTransaction();
 
-        // step 1. 결제승인 요청
-        const approvalResult = await this.approvePayment();
-        this.applyApprovalResultToContext(approvalResult);
+    // step 1. 결제승인 요청
+    const approvalResult = await this.approvePayment();
+    this.applyApprovalResultToContext(approvalResult);
 
-        // step 2. 주문 생성
-        const order = await this.createOrder();
-        this.applyOrderIdToContext(order.id);
+    // step 2. 주문 생성
+    const order = await this.createOrder();
+    this.applyOrderIdToContext(order.id);
 
-        // step 3. 주문 리스트 처리
-        await this.processOrderList(usePointTransaction, earnPointTransaction);
+    // step 3. 주문 리스트 처리
+    await this.processOrderList(usePointTransaction, earnPointTransaction);
 
-        // step 4. 결제 내역 생성
-        await this.createPaymentHistory();
+    // step 4. 결제 내역 생성
+    await this.createPaymentHistory();
 
-        // TODO:: callback 내부라 this 추론이 불가능하므로 타입 캐스팅을 사용 -> refactoring 필요
-        const manager = this as PGPaymentManager<PGPaymentContextAfterOrder>;
-        return {
-          isSuccess: true,
-          data: {
-            approvalDate: manager.context.approvalDate,
-            amount: manager.context.amount,
-            shopOrderNo: manager.context.shopOrderNo,
-          },
-          message: '결제가 완료되었습니다.',
-        };
-      },
-      onRollback: async () => {
-        // type arssert가 진행되지 않은 상태이기에 unknown 타입으로 먼저 캐스팅 -> 이 시점은 결제가 승인되었다는 전제하에 진행된다.
-        const manager = this as unknown as PGPaymentManager<PGPaymentContextAfterOrder>;
-        if (manager.context?.pgCno) {
-          await cancelPgPaymentAll(manager.context.amount, manager.context.pgCno);
-        }
-      },
-    });
+    return {
+      approvalDate: this.context.approvalDate,
+      amount: this.context.amount,
+      shopOrderNo: this.context.shopOrderNo,
+    };
+  }
+
+  public async onRollback(): Promise<void> {
+    // type arssert가 진행되지 않은 상태이기에 unknown 타입으로 먼저 캐스팅 -> 이 시점은 결제가 승인되었다는 전제하에 진행된다.
+    const manager = this as unknown as PGPaymentCommand<PGPaymentContextAfterOrder>;
+    if (manager.context?.pgCno) {
+      await cancelPgPaymentAll(manager.context.amount, manager.context.pgCno);
+    }
+  }
+
+  public async execute() {
+    return await runWithTransaction(this);
   }
 
   protected async approvePayment() {
     const easyPayService = new EasyPayService();
     const approvalRequestDto = PaymentDto.approvePayment(this.context);
-    // const approvalResult = await paymentsApproval(approvalRequestDto);
-    // const parsedApprovalResult = approvalPaymentResultSchema.parse(approvalResult);
     const approvalResult = await easyPayService.approvePayment(approvalRequestDto);
     return approvalResult;
   }
 
   protected applyApprovalResultToContext(
     approvalResult: ApprovalPaymentResult,
-  ): asserts this is PGPaymentManager<PGPaymentContextAfterApproval> {
+  ): asserts this is PGPaymentCommand<PGPaymentContextAfterApproval> {
     const {
       amount,
       pgCno,
@@ -134,14 +128,14 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
 
   protected applyOrderIdToContext(
     orderId: number,
-  ): asserts this is PGPaymentManager<PGPaymentContextAfterOrder> {
+  ): asserts this is PGPaymentCommand<PGPaymentContextAfterOrder> {
     this.context = {
       ...this.context,
       orderId,
     };
   }
 
-  protected async createOrder(this: PGPaymentManager<PGPaymentContextAfterApproval>) {
+  protected async createOrder(this: PGPaymentCommand<PGPaymentContextAfterApproval>) {
     const orderService = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
     const dto = PaymentDto.createOrderForPG(this.context);
     const order = await orderService.createOrder(dto);
@@ -153,7 +147,7 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
    * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
    */
   protected async processOrderList(
-    this: PGPaymentManager<PGPaymentContextAfterOrder>,
+    this: PGPaymentCommand<PGPaymentContextAfterOrder>,
     usePointTransaction: IPointTransaction<UsePointHistoryDto>,
     earnPointTransaction: IPointTransaction<EarnPointHistoryDto>,
   ) {
@@ -188,7 +182,7 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
     await usePointTransaction.updateUserPoint(this.context.userId, this.context.usedPoint);
   }
 
-  protected async createPaymentHistory(this: PGPaymentManager<PGPaymentContextAfterOrder>) {
+  protected async createPaymentHistory(this: PGPaymentCommand<PGPaymentContextAfterOrder>) {
     const paymentHistoryService = new PaymentHistoryService();
     const dto = PaymentDto.createPaymentHistory(this.context);
 
@@ -196,7 +190,7 @@ export class PGPaymentManager<TContext extends PGPaymentInitContext> extends Pay
   }
 
   private async createOrderProduct(
-    this: PGPaymentManager<PGPaymentContextAfterOrder>,
+    this: PGPaymentCommand<PGPaymentContextAfterOrder>,
     orderListItem: EnrichedOrderListItem,
   ) {
     const orderProductService = OrderProductService.for(PAYMENTS_METHOD.CREDIT_CARD);

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { withTransaction } from '../with-transaction';
-import { getPayload } from '../get-payload';
-import { getTransactionContext } from '../transaction-context';
+import { withTransaction } from './with-transaction';
+import { getPayload } from './get-payload';
+import { getTransactionContext } from './transaction-context';
 import { SystemError } from '@/shared/model/errors/domain.error';
 
 vi.mock('../get-payload', () => ({

@@ -1,6 +1,5 @@
 import { zodSafeParse } from '@/shared/lib/zod';
-import { withTransaction } from '@/shared/lib/with-transaction';
-import { PaymentManager } from './payment-manager';
+import { PaymentCommand } from './payment-command';
 import {
   type BankTransferRequestDto,
   toBankTransferServiceDto,
@@ -17,11 +16,11 @@ import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
-import { EndPointResult } from '@/shared/lib/end-point-result';
+import { runWithTransaction } from '@/shared/lib/run-with-transaction';
 
-export class BankTransferPaymentManager<
+export class BankTransferPaymentCommand<
   TContext extends BankTransferPaymentInitContext,
-> extends PaymentManager<TContext> {
+> extends PaymentCommand<TContext> {
   protected constructor(orderList: EnrichedOrderList, context: TContext) {
     super(orderList, context);
   }
@@ -34,23 +33,18 @@ export class BankTransferPaymentManager<
 
   static async create(context: BankTransferPaymentInitContext) {
     const orderList = await enrichedOrderListFromContext(context);
-    return new BankTransferPaymentManager(orderList, context);
+    return new BankTransferPaymentCommand(orderList, context);
   }
 
-  public async execute(): Promise<EndPointResult> {
-    return await withTransaction({
-      callback: async () => {
-        const order = await this.createOrder();
-        this.applyOrderIdToContext(order.id);
+  public async run(): Promise<void> {
+    const order = await this.createOrder();
+    this.applyOrderIdToContext(order.id);
 
-        const manager = this as BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>;
-        await manager.processOrderList();
-        return {
-          isSuccess: true,
-          message: '무통장 입금 주문을 생성하였습니다.',
-        };
-      },
-    });
+    await this.processOrderList();
+  }
+
+  public async execute(): Promise<void> {
+    return await runWithTransaction(this);
   }
 
   private async createOrder() {
@@ -63,7 +57,7 @@ export class BankTransferPaymentManager<
 
   private applyOrderIdToContext(
     orderId: number,
-  ): asserts this is BankTransferPaymentManager<BankTransferPaymentContextAfterOrder> {
+  ): asserts this is BankTransferPaymentCommand<BankTransferPaymentContextAfterOrder> {
     this.context = {
       ...this.context,
       orderId,
@@ -71,7 +65,7 @@ export class BankTransferPaymentManager<
   }
 
   private async processOrderList(
-    this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
+    this: BankTransferPaymentCommand<BankTransferPaymentContextAfterOrder>,
   ) {
     const usePointTransaction = new UsePointTransaction();
 
@@ -95,7 +89,7 @@ export class BankTransferPaymentManager<
   }
 
   private async createOrderProduct(
-    this: BankTransferPaymentManager<BankTransferPaymentContextAfterOrder>,
+    this: BankTransferPaymentCommand<BankTransferPaymentContextAfterOrder>,
     orderListItem: EnrichedOrderListItem,
   ) {
     const orderProductService = OrderProductService.for(PAYMENTS_METHOD.BANK_TRANSFER);

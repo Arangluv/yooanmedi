@@ -1,14 +1,18 @@
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
-import { EndPointResult } from '@/shared/lib/end-point-result';
 import { BasePaymentContext } from '../schema/payment-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
 import { type EnrichedOrderList, type EnrichedOrderListItem } from '../schema/order-list.schema';
+import { TransactionalCommand } from '@/shared/lib/run-with-transaction';
+import { IPaymentsCommand } from '../interfaces';
 
-export abstract class PaymentManager<TContext extends BasePaymentContext, TData = never> {
+export abstract class PaymentCommand<TContext extends BasePaymentContext, TResult = void>
+  implements IPaymentsCommand<TResult>, TransactionalCommand<TResult>
+{
   protected orderList: EnrichedOrderList;
   protected context: TContext;
 
-  abstract execute(): Promise<EndPointResult<TData>>;
+  public abstract execute(): Promise<TResult>;
+  public abstract run(): Promise<TResult>;
 
   protected constructor(orderList: EnrichedOrderList, context: TContext) {
     this.orderList = orderList;
