@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
-import { BaseSchema } from '@/shared/model/schemas/base.schema';
+import { numberSchema, urlSchema } from '@/shared/model/schemas/base.schema';
 import { generate15digitsNumberBasedOnDate } from '@/shared/lib/identifier';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 import { zodSafeParse } from '@/shared/lib/zod';
 
 const registerTransactionRequestSchema = z.object({
-  amount: BaseSchema.number({
+  amount: numberSchema({
     required_message: '결제 금액은 비어있을 수 없습니다.',
     invalid_message: '유효하지 않은 결제 금액입니다.',
     min: 0,
@@ -25,7 +25,7 @@ export type RegisterTransactionRequestDto = z.infer<typeof registerTransactionRe
 
 export const registerTransactionServiceSchema = z.object({
   mallId: PaymentsBaseSchema.mallId,
-  returnUrl: BaseSchema.url,
+  returnUrl: urlSchema,
   amount: PaymentsBaseSchema.amount,
   clientTypeCode: PaymentsBaseSchema.clientTypeCode,
   payMethodTypeCode: PaymentsBaseSchema.payMethodTypeCode,
@@ -72,7 +72,7 @@ const easypayRegisterTransactionBaseResultSchema = z.object({
 const easypayRegisterTransactionSuccessResponseSchema =
   easypayRegisterTransactionBaseResultSchema.extend({
     resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
-    authPageUrl: BaseSchema.url,
+    authPageUrl: urlSchema,
   });
 export type EasypayRegisterTransactionSuccessResponse = z.infer<
   typeof easypayRegisterTransactionSuccessResponseSchema
@@ -80,7 +80,7 @@ export type EasypayRegisterTransactionSuccessResponse = z.infer<
 export const easypayRegisterTransactionSuccessResultSchema =
   easypayRegisterTransactionBaseResultSchema.extend({
     resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
-    authPageUrl: BaseSchema.url,
+    authPageUrl: urlSchema,
     isRegistrationSuccess: z.literal(true),
   });
 export type EasypayRegisterTransactionSuccessResult = z.infer<

@@ -6,6 +6,9 @@ export const Product: CollectionConfig = {
     singular: '상품',
     plural: '상품',
   },
+  access: {
+    read: () => true,
+  },
   lockDocuments: false,
   admin: {
     group: '상품 관리',
@@ -114,7 +117,8 @@ export const Product: CollectionConfig = {
       name: 'is_best_product',
       type: 'checkbox',
       label: '인기 제품 여부',
-      defaultValue: false,
+      defaultValue: false,  
+      required: true,
       admin: {
         description: `인기 제품 여부를 선택해주세요 (체크 시 주문 페이지 상단에 표시됩니다.)`,
         custom: {

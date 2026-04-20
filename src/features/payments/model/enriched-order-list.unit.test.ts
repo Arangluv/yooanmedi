@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { createMockProduct } from '@/shared/__mock__/product.fixture';
 import { enrichedOrderListFromContext } from './enriched-order-list';
 import { getProductById } from '@/entities/product/api/get-product-by-id';
 import {

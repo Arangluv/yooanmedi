@@ -9,7 +9,8 @@ import {
 } from '@/entities/point';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
-import { getPayload, getUuidWithoutHyphen } from '@/shared';
+import { getPayload } from '@/shared';
+import { generateUUID32digits } from '@/shared/lib/identifier';
 
 import {
   cancelOrderProductSchema,
@@ -101,7 +102,7 @@ export const cancelOrderProduct = async ({
       });
 
       // 결제 취소 요청
-      const shopTransactionId = getUuidWithoutHyphen();
+      const shopTransactionId = generateUUID32digits();
       const pgCno = await getPaymentPgCno(targetOrderProduct.orderId);
       const authMsg = `${pgCno}|${shopTransactionId}`;
       const hashedAuthMsg = crypto

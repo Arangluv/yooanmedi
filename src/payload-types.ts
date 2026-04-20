@@ -257,7 +257,7 @@ export interface Product {
   /**
    * 인기 제품 여부를 선택해주세요 (체크 시 주문 페이지 상단에 표시됩니다.)
    */
-  is_best_product?: boolean | null;
+  is_best_product: boolean;
   /**
    * 반품가능여부를 선택해주세요 (체크 시 반품가능)
    */

@@ -1,14 +1,3 @@
-import { zodSafeParse } from '@/shared/lib/zod';
-import { PaymentCommand } from './payment-command';
-import {
-  type BankTransferRequestDto,
-  toBankTransferServiceDto,
-} from '../schema/banktransfer-request.schema';
-import {
-  bankTransferPaymentInitContextSchema,
-  BankTransferPaymentInitContext,
-  BankTransferPaymentContextAfterOrder,
-} from '../schema/payment-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
 import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
 import { enrichedOrderListFromContext } from '../enriched-order-list';
@@ -16,58 +5,55 @@ import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
-import { runWithTransaction } from '@/shared/lib/run-with-transaction';
+// 여기에 밑으로 다시 import
+import { runWithTransaction, TransactionalCommand } from '@/shared/lib/run-with-transaction';
+import { IPaymentsCommand } from '../interfaces';
+import { type BankTransferRequestDto } from '../schema/banktransfer-request.schema';
+import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
+import {
+  toBankTransferInitContext,
+  type BankTransferPaymentInitContext,
+  type BankTransferPaymentAfterOrderContext,
+} from '../schema/payment-context-schema';
 
-// will deprecated
-export class BankTransferPaymentCommand<
-  TContext extends BankTransferPaymentInitContext,
-> extends PaymentCommand<TContext> {
-  protected constructor(orderList: EnrichedOrderList, context: TContext) {
-    super(orderList, context);
-  }
+export class BankTransferPaymentCommand
+  implements IPaymentsCommand<void>, TransactionalCommand<void>
+{
+  private requestDto: BankTransferRequestDto;
 
-  static createContext(requestDto: BankTransferRequestDto) {
-    const dto = toBankTransferServiceDto(requestDto);
-    const context = zodSafeParse(bankTransferPaymentInitContextSchema, dto);
-    return context;
-  }
-
-  static async create(context: BankTransferPaymentInitContext) {
-    const orderList = await enrichedOrderListFromContext(context);
-    return new BankTransferPaymentCommand(orderList, context);
+  public constructor(requestDto: BankTransferRequestDto) {
+    this.requestDto = requestDto;
   }
 
   public async run(): Promise<void> {
-    const order = await this.createOrder();
-    this.applyOrderIdToContext(order.id);
+    const initCtx = this.initializeContext(); // 이 부분 추가
+    const afterOrderCtx = await this.createOrder(initCtx);
 
-    await this.processOrderList();
+    await this.processOrderList(afterOrderCtx);
   }
 
   public async execute(): Promise<void> {
     return await runWithTransaction(this);
   }
 
-  private async createOrder() {
-    const orderService = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
-    const dto = PaymentDto.createOrderForBankTransfer(this.context);
-    const order = await orderService.createOrder(dto);
-
-    return order;
+  private initializeContext(): BankTransferPaymentInitContext {
+    return toBankTransferInitContext(this.requestDto);
   }
 
-  private applyOrderIdToContext(
-    orderId: number,
-  ): asserts this is BankTransferPaymentCommand<BankTransferPaymentContextAfterOrder> {
-    this.context = {
-      ...this.context,
-      orderId,
+  private async createOrder(
+    ctx: BankTransferPaymentInitContext,
+  ): Promise<BankTransferPaymentAfterOrderContext> {
+    const orderService = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const dto = PaymentDto.createOrderForBankTransfer(ctx);
+    const order = await orderService.createOrder(dto);
+
+    return {
+      ...ctx,
+      orderId: order.id,
     };
   }
 
-  private async processOrderList(
-    this: BankTransferPaymentCommand<BankTransferPaymentContextAfterOrder>,
-  ) {
+  private async processOrderList(ctx: BankTransferPaymentAfterOrderContext) {
     const usePointTransaction = new UsePointTransaction();
 
     await Promise.all(
@@ -89,10 +75,13 @@ export class BankTransferPaymentCommand<
     await usePointTransaction.updateUserPoint(this.context.userId, this.context.usedPoint);
   }
 
-  private async createOrderProduct(
-    this: BankTransferPaymentCommand<BankTransferPaymentContextAfterOrder>,
-    orderListItem: EnrichedOrderListItem,
-  ) {
+  private async createRecentPurchasedHistory(orderListItem: EnrichedOrderListItem): Promise<void> {
+    const recentPurchasedHistoryService = new RecentPurchasedHistoryService();
+    const dto = PaymentDto.createRecentPurchasedHistory(this.context, orderListItem);
+    await recentPurchasedHistoryService.createHistory(dto);
+  }
+
+  private async createOrderProduct(orderListItem: EnrichedOrderListItem) {
     const orderProductService = OrderProductService.for(PAYMENTS_METHOD.BANK_TRANSFER);
     const requestDto = PaymentDto.createOrderProduct(this.context, orderListItem);
     const orderProduct = await orderProductService.createOrderProduct(requestDto);

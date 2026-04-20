@@ -3,7 +3,7 @@
 import crypto from 'crypto';
 import moment from 'moment-timezone';
 
-import { getUuidWithoutHyphen } from '@/shared';
+import { generateUUID32digits } from '@/shared/lib/identifier';
 import { getPaymentPgCno } from '../api/get-pg-cno';
 import { cancelPaymentSchema } from '../model/cancel-schema';
 import { CANCEL_REVISE_TYPE } from '../constant/cancel-revise-type';
@@ -16,7 +16,7 @@ type CancelPgPaymentParams = {
 
 export const cancelPgPayment = async ({ orderProductId, amount }: CancelPgPaymentParams) => {
   try {
-    const shopTransactionId = getUuidWithoutHyphen();
+    const shopTransactionId = generateUUID32digits();
     const pgCno = await getPaymentPgCno(orderProductId);
     const authMsg = `${pgCno}|${shopTransactionId}`;
     const hashedAuthMsg = crypto

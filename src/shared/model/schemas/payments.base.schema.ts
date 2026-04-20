@@ -1,8 +1,9 @@
 import { z } from 'zod';
-import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
+import moment from 'moment';
 import { stringSchema } from './string.schema';
 import { numberSchema } from './number.schema';
-import { BaseSchema } from './base.schema';
+import { urlSchema } from './base.schema';
+import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 
 const orderListItemSchema = z.object({
@@ -64,6 +65,12 @@ export const PaymentsBaseSchema = {
     invalid_message: '유효하지 않은 approvalReqDate입니다.',
     length: 8,
   }),
+  approvalDate: z
+    .string()
+    .refine((val) => {
+      return moment(val, 'YYYYMMDDHHmmss').isValid();
+    }, 'approvalDate는 YYYYMMDDHHmmss 형식이어야 합니다.')
+    .transform((val) => moment(val, 'YYYYMMDDHHmmss').toISOString()),
   shopTransactionId: stringSchema({
     required_message: 'authorizationId는 비어있을 수 없습니다.',
     invalid_message: '유효하지 않은 authorizationId입니다.',
@@ -108,7 +115,7 @@ export const PaymentsBaseSchema = {
     invalid_message: '유효하지 않은 결제 금액입니다.',
     min: 0,
   }),
-  returnUrl: BaseSchema.url,
+  returnUrl: urlSchema,
   orderInfo: orderInfoSchema,
   mallId: stringSchema({
     required_message: 'mallId는 비어있을 수 없습니다.',
