@@ -20,10 +20,10 @@ import {
   PGPaymentContextAfterOrder,
   PGPaymentInitContext,
   toPaymentInitContext,
-} from '../schema/payment-context-schema';
+} from '../schema/payments-context-schema';
 import { ApprovalPaymentResult } from '../schema/payments-approval-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
+import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/payment-order-list.schema';
 import { enrichedOrderListFromContext } from '../enriched-order-list';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
 import { type RegisterTransactionResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';

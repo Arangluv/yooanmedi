@@ -1,7 +1,10 @@
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
-import { BasePaymentContext } from '../schema/payment-context-schema';
+import { BasePaymentContext } from '../schema/payments-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { type EnrichedOrderList, type EnrichedOrderListItem } from '../schema/order-list.schema';
+import {
+  type EnrichedOrderList,
+  type EnrichedOrderListItem,
+} from '../schema/payment-order-list.schema';
 import { TransactionalCommand } from '@/shared/lib/run-with-transaction';
 import { IPaymentsCommand } from '../interfaces';
 

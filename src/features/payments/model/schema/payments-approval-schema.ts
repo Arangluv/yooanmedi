@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import moment from 'moment';
-import { getUuidWithoutHyphen, getNowYYYYMMDD } from '@/shared';
+import { getNowYYYYMMDD } from '@/shared/lib/date';
+import { generateUUID32digits } from '@/shared/lib/identifier';
 import { baseSchema } from './base.schema';
 
 export const approvalPaymentDefaultRequestSchema = z.object({
@@ -12,7 +13,7 @@ export const approvalPaymentDefaultRequestSchema = z.object({
 export const approvalPaymentRequestDtoSchema = approvalPaymentDefaultRequestSchema.transform(
   (data) => ({
     ...data,
-    shopTransactionId: getUuidWithoutHyphen(),
+    shopTransactionId: generateUUID32digits(),
     approvalReqDate: getNowYYYYMMDD(),
   }),
 );

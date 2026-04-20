@@ -1,17 +1,13 @@
-import {
+import type {
   BasePaymentContext,
   BankTransferPaymentInitContext,
-  BankTransferPaymentContextAfterOrder,
+  BankTransferPaymentAfterOrderContext,
   PGPaymentInitContext,
   PGPaymentContextAfterApproval,
   PGPaymentContextAfterOrder,
-} from './payment-context-schema';
-import { approvalPaymentRequestDtoSchema } from './payments-approval-schema';
+} from './payments-context-schema';
 import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { createPaymentSchema } from '@/entities/payment/model/create-schema';
-import { zodSafeParse } from '@/shared/lib/zod';
-import { EnrichedOrderListItem } from './order-list.schema';
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { EnrichedOrderListItem } from './payment-order-list.schema';
 
 export const PaymentDto = {
   createOrderForPG: (context: PGPaymentContextAfterApproval) => {
@@ -47,7 +43,7 @@ export const PaymentDto = {
   },
 
   createOrderProduct: (
-    context: PGPaymentContextAfterOrder | BankTransferPaymentContextAfterOrder,
+    context: PGPaymentContextAfterOrder | BankTransferPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) => {
     const dto = {

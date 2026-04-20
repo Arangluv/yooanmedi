@@ -11,6 +11,8 @@ export type ProductList = {
   totalProductDocs: number;
 };
 
+// todo:: will deprecate
+
 export const getProductList = async (
   searchParams: ProductSearchParamsType,
 ): Promise<ProductList> => {

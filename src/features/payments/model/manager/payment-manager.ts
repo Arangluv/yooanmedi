@@ -1,8 +1,11 @@
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
 import { EndPointResult } from '@/shared/lib/end-point-result';
-import { BasePaymentContext } from '../schema/payment-context-schema';
+import { BasePaymentContext } from '../schema/payments-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { type EnrichedOrderList, type EnrichedOrderListItem } from '../schema/order-list.schema';
+import {
+  type EnrichedOrderList,
+  type EnrichedOrderListItem,
+} from '../schema/payment-order-list.schema';
 
 export abstract class PaymentManager<TContext extends BasePaymentContext, TData = never> {
   protected orderList: EnrichedOrderList;

@@ -4,11 +4,9 @@ import { zodSafeParse } from '@/shared/lib/zod';
 import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
 import { collectionIdSchema } from '@/shared/model/schemas/base.schema';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
-import {
-  type BankTransferRequestDto,
-  bankTransferRequestSchema,
-} from './banktransfer-request.schema';
+import { type PaymentRequestDto, PaymentRequestSchema } from './payments-request.schema';
 import { generate15digitsNumberBasedOnDate } from '@/shared/lib/identifier';
+import { type EnrichedOrderList, enrichedOrderListSchema } from './payment-order-list.schema';
 
 /**
  * 공통 결제 컨텍스트 스키마
@@ -75,12 +73,15 @@ export type PGPaymentContextAfterOrder = z.infer<typeof pgPaymentContextAfterOrd
 /**
  * 무통장 입금 결제 context schema
  */
-export const bankTransferPaymentInitContextSchema = bankTransferRequestSchema.extend({
+export const bankTransferPaymentInitContextSchema = PaymentRequestSchema.extend({
   paymentsMethod: PaymentsBaseSchema.paymentsMethodUsedBankTransfer,
   shopOrderNo: PaymentsBaseSchema.orderNo,
+  orderList: enrichedOrderListSchema,
 });
 export type BankTransferPaymentInitContext = z.infer<typeof bankTransferPaymentInitContextSchema>;
-export const toBankTransferInitContext = (data: BankTransferRequestDto) => {
+export const toBankTransferInitContext = (
+  data: PaymentRequestDto & { orderList: EnrichedOrderList },
+) => {
   return zodSafeParse(bankTransferPaymentInitContextSchema, {
     ...data,
     shopOrderNo: generate15digitsNumberBasedOnDate(),

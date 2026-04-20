@@ -1,28 +1,14 @@
 import { z } from 'zod';
-import type { Image } from '@/payload-types';
+import { productSchema } from '@/entities/product/model/schemas/product.schema';
+import { numberSchema } from '@/shared/model/schemas/base.schema';
 
 export const inventoryItemSchema = z.object({
-  product: z.object({
-    id: z.number(),
-    price: z.number(),
-    image: z.number().nullable().or(z.custom<Image>()),
-    name: z.string(),
-    insurance_code: z.string().nullable(),
-    specification: z.string().nullable(),
-    manufacturer: z.string(),
-    ingredient: z.string().nullable(),
-    stock: z.number(),
-    is_best_product: z.boolean().nullable().optional(),
-    returnable: z.boolean(),
-    cashback_rate: z.number(),
-    cashback_rate_for_bank: z.number(),
-    delivery_fee: z.number(),
-    is_cost_per_unit: z.boolean(),
-    is_free_delivery: z.boolean(),
-    updatedAt: z.string(),
-    createdAt: z.string(),
+  product: productSchema,
+  quantity: numberSchema({
+    required_message: '주문 수량은 비어있을 수 없습니다.',
+    invalid_message: '주문 수량은 숫자여야 합니다.',
+    min: 1,
   }),
-  quantity: z.number(),
 });
 
 export type InventoryItem = z.infer<typeof inventoryItemSchema>;

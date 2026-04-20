@@ -46,3 +46,6 @@ export const productSchema = z.object({
   createdAt: z.string(),
 });
 export type Product = z.infer<typeof productSchema>;
+
+export const productListSchema = z.array(productSchema);
+export type ProductList = z.infer<typeof productListSchema>;

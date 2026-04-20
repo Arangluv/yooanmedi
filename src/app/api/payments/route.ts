@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PGPaymentCommand } from '@/features/payments/model/command/pg-payment-command';
-import { PGPaymentInitContext } from '@/features/payments/model/schema/payment-context-schema';
+import { PGPaymentInitContext } from '@/features/payments/model/schema/payments-context-schema';
 import { Logger } from '@/shared/model/logger/logger';
 
 export async function POST(request: NextRequest) {

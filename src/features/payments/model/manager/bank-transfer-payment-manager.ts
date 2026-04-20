@@ -4,14 +4,14 @@ import { PaymentManager } from './payment-manager';
 import {
   type BankTransferRequestDto,
   toBankTransferServiceDto,
-} from '../schema/banktransfer-request.schema';
+} from '../schema/payments-request.schema';
 import {
   bankTransferPaymentInitContextSchema,
   BankTransferPaymentInitContext,
   BankTransferPaymentContextAfterOrder,
-} from '../schema/payment-context-schema';
+} from '../schema/payments-context-schema';
 import { PaymentDto } from '../schema/payments.dto';
-import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/order-list.schema';
+import { EnrichedOrderList, EnrichedOrderListItem } from '../schema/payment-order-list.schema';
 import { enrichedOrderListFromContext } from '../enriched-order-list';
 import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 import { OrderService } from '@/entities/order/model/services/service';
