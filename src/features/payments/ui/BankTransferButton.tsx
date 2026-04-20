@@ -3,7 +3,6 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
 import { Info } from 'lucide-react';
 import {
   Button,
@@ -15,14 +14,8 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
-
 import { useInventoryStore, type InventoryItem } from '@/entities/inventory';
-import { generateShopOrderNo } from '../lib/order-uuid';
-import { orderBankTransfer } from '../api/order-banktransfer';
-import {
-  type OrderBankTransferDto,
-  orderBankTransferSchema,
-} from '../model/schema/order-banktransfer-schema';
+import { paymentBybankTransfer } from '../api/payments.api';
 
 interface BankTransferButtonProps {
   deliveryRequest: string;
@@ -44,20 +37,18 @@ const BankTransferButton = ({
   const { isOpen, onOpen } = useDisclosure();
   const { clearInventory } = useInventoryStore();
 
-  const dto: OrderBankTransferDto = {
-    shopOrderNo: generateShopOrderNo(),
-    deliveryRequest,
-    orderList: inventory,
-    usedPoint,
-    userId,
-    minOrderPrice,
-    amount,
-  };
-
   const { mutate } = useMutation({
-    mutationFn: () => orderBankTransfer(orderBankTransferSchema.parse(dto)),
+    mutationFn: () =>
+      paymentBybankTransfer({
+        deliveryRequest,
+        orderList: inventory,
+        usedPoint,
+        userId,
+        minOrderPrice,
+        amount,
+      }),
     onSuccess: (data) => {
-      if (!data.success) {
+      if (!data.isSuccess) {
         alert(data.message);
         return;
       }

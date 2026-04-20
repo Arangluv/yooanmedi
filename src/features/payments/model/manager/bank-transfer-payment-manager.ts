@@ -1,7 +1,10 @@
 import { zodSafeParse } from '@/shared/lib/zod';
 import { withTransaction } from '@/shared/lib/with-transaction';
 import { PaymentManager } from './payment-manager';
-import { OrderBankTransferDto } from '../schema/order-banktransfer-schema';
+import {
+  type BankTransferRequestDto,
+  toBankTransferServiceDto,
+} from '../schema/banktransfer-request.schema';
 import {
   bankTransferPaymentInitContextSchema,
   BankTransferPaymentInitContext,
@@ -23,7 +26,8 @@ export class BankTransferPaymentManager<
     super(orderList, context);
   }
 
-  static createContext(dto: OrderBankTransferDto) {
+  static createContext(requestDto: BankTransferRequestDto) {
+    const dto = toBankTransferServiceDto(requestDto);
     const context = zodSafeParse(bankTransferPaymentInitContextSchema, dto);
     return context;
   }

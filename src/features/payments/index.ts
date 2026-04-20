@@ -4,5 +4,3 @@ export { default as PaymentsResultOverview } from './ui/payment-result/PaymentsR
 
 // model
 export { default as usePaymentsResultQuery } from './model/usePaymentsResultQuery';
-
-export { paymentsApproval } from './api/payment-approval';

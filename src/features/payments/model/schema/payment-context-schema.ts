@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { PAYMENTS_METHOD } from '@/entities/order';
-import { orderBankTransferSchema } from './order-banktransfer-schema';
+import { orderBankTransferSchema } from './banktransfer-request.schema';
 import { baseSchema } from './base.schema';
 import { RegisterTransactionResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
 import { zodSafeParse } from '@/shared/lib/zod';

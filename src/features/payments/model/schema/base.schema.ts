@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import moment from 'moment';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
-import { PAYMENTS_RESPONSE_SUCCESS_CODE } from '../../constants/payment-gateway-code';
+import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 
 const product = z.object({
   id: z.number(),
@@ -37,10 +37,10 @@ export const baseSchema = {
   authorizationId: z
     .string('authorizationId는 비어있을 수 없습니다.')
     .length(20, 'authorizationId는 20자리여야 합니다.'),
-  resSuccessCode: z.literal(PAYMENTS_RESPONSE_SUCCESS_CODE, '올바르지 않은 응답 코드입니다.'),
+  resSuccessCode: z.literal(EASYPAY_CONFIG.successResponseCode, '올바르지 않은 응답 코드입니다.'),
   resFailureCode: z
     .string('resFailureCode는 비어있을 수 없습니다.')
-    .refine((val) => val !== PAYMENTS_RESPONSE_SUCCESS_CODE, '올바르지 않은 응답 코드입니다.'),
+    .refine((val) => val !== EASYPAY_CONFIG.successResponseCode, '올바르지 않은 응답 코드입니다.'),
   resMsg: z.string(),
   // raw data
   shopValue1ToDeliveryRequest: z.string(),

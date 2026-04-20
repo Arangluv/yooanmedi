@@ -1,5 +1,5 @@
 import { BankTransferPaymentManager } from '@/features/payments/model/manager/bank-transfer-payment-manager';
-import { OrderBankTransferDto } from '@/features/payments/model/schema/order-banktransfer-schema';
+import { OrderBankTransferDto } from '@/features/payments/model/schema/banktransfer-request.schema';
 
 export const createBankTransferManagerFixture = async (dto: OrderBankTransferDto) => {
   const context = BankTransferPaymentManager.createContext(dto);
