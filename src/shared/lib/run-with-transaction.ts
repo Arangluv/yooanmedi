@@ -1,5 +1,3 @@
-'use server';
-
 import { getPayload } from '@/shared/lib/get-payload';
 import { SystemError } from '@/shared/model/errors/domain.error';
 import { transactionContext } from './transaction-context';

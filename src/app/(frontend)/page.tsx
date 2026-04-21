@@ -2,7 +2,6 @@ import Image, { StaticImageData } from 'next/image';
 import MainIcon1 from '@public/main_icon_1.png';
 import MainIcon2 from '@public/main_icon_2.png';
 import MainIcon3 from '@public/main_icon_3.png';
-import MainBannerImage from '@public/main_banner.png';
 import BgImage from '@public/v1_logo_small.png';
 import MainForm from './_components/MainForm';
 import CarouselBanner from '@/shared/ui/CarouselBanner';

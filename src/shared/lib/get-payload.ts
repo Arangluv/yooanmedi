@@ -1,4 +1,3 @@
-import 'server-only';
 import { getPayload as getPayloadToLibrary } from 'payload';
 import config from '@/payload.config';
 
