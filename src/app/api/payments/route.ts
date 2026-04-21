@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Logger } from '@/shared';
 import { PGPaymentCommand } from '@/features/payments/model/command/pg-payment-command';
-import { PGPaymentInitContext } from '@/features/payments/model/schema/payments-context-schema';
-import { Logger } from '@/shared/model/logger/logger';
 
 export async function POST(request: NextRequest) {
   try {
-    // const formData = await request.formData();
-    // const manager = new PGPaymentCommand(formData); <-- 이상적인 추상화 형태
-    // const result = await manager.execute();
-
     const formData = await request.formData();
-    const registerResult = PGPaymentCommand.validatePaymentRegister(formData);
-    const context = PGPaymentCommand.createInitialContextFromRegisterResult(registerResult);
-    const manager: PGPaymentCommand<PGPaymentInitContext> = await PGPaymentCommand.create(context);
+    const manager = new PGPaymentCommand(formData);
+
     const result = await manager.execute();
 
     const url = request.nextUrl.clone();

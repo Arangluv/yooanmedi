@@ -16,7 +16,8 @@ export { generationCondition } from './lib/generate-condition';
 export { generateSearchParams, type ProductSearchParamsType } from './lib/generate-searchparams';
 
 // model
-export type { Product, ProductItem, ProductCategory, SearchParamsType } from './model/types';
+export type { Product } from './model/schemas/product.schema';
+export type { ProductItem, ProductCategory, SearchParamsType } from './model/types';
 export { default as useSearchQueryState } from './model/useSearchQueryState';
 
 // ui

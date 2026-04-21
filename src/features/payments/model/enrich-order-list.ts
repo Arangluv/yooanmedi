@@ -1,6 +1,3 @@
-'use server';
-
-import { zodSafeParse } from '@/shared/lib/zod';
 import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import {
@@ -8,11 +5,11 @@ import {
   populatedOrderListSchema,
   type EnrichedOrderList,
   type PopulatedOrderList,
-} from './schema/payment-order-list.schema';
+} from './schemas/payment-order-list.schema';
 import { type Product } from '@/entities/product/model/schemas/product.schema';
 import { ProductRepository } from '@/entities/product/api/repository';
-import { BusinessLogicError } from '@/shared/model/errors/domain.error';
-import { PaymentRequestDto } from './schema/payments-request.schema';
+import { zodSafeParse, BusinessLogicError } from '@/shared';
+import { type BasePaymentContext } from './schemas/payments-context/base.schema';
 
 interface ClinentOrderList {
   product: Pick<Product, 'id' | 'price'>;
@@ -22,12 +19,12 @@ interface ClinentOrderList {
 /**
  * @description 주문 리스트를 결제에서 사용할 데이터를 추가한 후 반환합니다
  */
-export const enrichedOrderListFromContext = async (
-  requestDto: PaymentRequestDto,
+export const enrichOrderList = async (
+  baseContext: BasePaymentContext,
 ): Promise<EnrichedOrderList> => {
-  const orderList = await populateProductDetails(requestDto.orderList);
-  const deliveryFeeManager = new DeliveryFeeManager(orderList, requestDto.minOrderPrice);
-  const pointAllocator = new PointAllocator(deliveryFeeManager, requestDto.usedPoint);
+  const orderList = await populateProductDetails(baseContext.orderList);
+  const deliveryFeeManager = new DeliveryFeeManager(orderList, baseContext.minOrderPrice);
+  const pointAllocator = new PointAllocator(deliveryFeeManager, baseContext.usedPoint);
 
   const enrichedOrderList = orderList.map((orderProduct) => {
     const totalAmount =

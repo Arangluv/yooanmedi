@@ -37,6 +37,7 @@ export class NotFoundError extends ApplicationBaseError {
   }
 }
 
+// todo :: will deprecated
 export const DATABASE_ERROR_CODE = 'DATABASE_ERROR';
 export class DataBaseError extends ApplicationBaseError {
   constructor(clientMessage: string, data?: Record<string, any>) {

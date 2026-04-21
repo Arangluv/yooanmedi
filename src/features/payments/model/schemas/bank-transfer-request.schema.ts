@@ -1,8 +1,7 @@
 import { z } from 'zod';
-import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
-import { collectionIdSchema } from '@/shared/model/schemas/base.schema';
+import { PaymentsBaseSchema, collectionIdSchema } from '@/shared';
 
-export const PaymentRequestSchema = z.object({
+export const bankTransferRequestSchema = z.object({
   deliveryRequest: PaymentsBaseSchema.deliveryRequest,
   orderList: PaymentsBaseSchema.orderList,
   usedPoint: PaymentsBaseSchema.usedPoint,
@@ -13,4 +12,5 @@ export const PaymentRequestSchema = z.object({
     invalid_message: '유저 아이디는 숫자여야 합니다.',
   }),
 });
-export type PaymentRequestDto = z.infer<typeof PaymentRequestSchema>;
+
+export type BankTransferRequestDto = z.infer<typeof bankTransferRequestSchema>;

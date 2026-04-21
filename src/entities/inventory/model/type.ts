@@ -1,7 +1,7 @@
-import type { ProductItem } from '@/entities/product/@x/inventory';
+import type { Product } from '@/entities/product/@x/inventory';
 
 export type InventoryItem = {
-  product: ProductItem;
+  product: Product;
   quantity: number;
 };
 

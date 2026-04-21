@@ -32,6 +32,13 @@
     },
     "target": "ES2022"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/entities/recent-purchased-history"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/entities/recent-purchased-history",
+    "src/features/payments/model/schemas/payments-context/pg.schema.ts"
+  ],
   "exclude": ["node_modules"]
 }

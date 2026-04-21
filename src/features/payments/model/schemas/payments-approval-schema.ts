@@ -1,13 +1,11 @@
 import { z } from 'zod';
 import moment from 'moment';
-import { getNowYYYYMMDD } from '@/shared/lib/date';
-import { generateUUID32digits } from '@/shared/lib/identifier';
-import { baseSchema } from './base.schema';
+import { getNowYYYYMMDD, generateUUID32digits, PaymentsBaseSchema } from '@/shared';
 
 export const approvalPaymentDefaultRequestSchema = z.object({
-  mallId: baseSchema.mallId,
-  authorizationId: baseSchema.authorizationId,
-  shopOrderNo: baseSchema.shopOrderNo,
+  mallId: PaymentsBaseSchema.mallId,
+  authorizationId: PaymentsBaseSchema.authorizationId,
+  shopOrderNo: PaymentsBaseSchema.orderNo,
 });
 
 export const approvalPaymentRequestDtoSchema = approvalPaymentDefaultRequestSchema.transform(
@@ -21,11 +19,11 @@ export const approvalPaymentRequestDtoSchema = approvalPaymentDefaultRequestSche
 export type ApprovalPaymentRequestDto = z.infer<typeof approvalPaymentRequestDtoSchema>;
 
 export const approvalPaymentResultSchema = z.object({
-  resCd: baseSchema.resSuccessCode,
-  resMsg: baseSchema.resMsg,
-  mallId: baseSchema.mallId,
-  pgCno: baseSchema.pgCno,
-  shopOrderNo: baseSchema.shopOrderNo,
+  resCd: PaymentsBaseSchema.paymentSuccessCode,
+  resMsg: z.string(),
+  mallId: PaymentsBaseSchema.mallId,
+  pgCno: PaymentsBaseSchema.pgCno,
+  shopOrderNo: PaymentsBaseSchema.orderNo,
   shopTransactionId: z.string(),
   statusCode: z.string(), // ex: TS03
   statusMessage: z.string(), // ex: 매입요청

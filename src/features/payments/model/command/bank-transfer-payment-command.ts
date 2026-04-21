@@ -1,31 +1,32 @@
 import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 import { OrderService } from '@/entities/order/model/services/service';
-import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
-import { runWithTransaction, TransactionalCommand } from '@/shared/lib/run-with-transaction';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
-import { PaymentDto } from '../schema/payments.dto';
-import { EnrichedOrderListItem } from '../schema/payment-order-list.schema';
-import { enrichedOrderListFromContext } from '../enriched-order-list';
+import { PAYMENTS_METHOD, runWithTransaction, TransactionalCommand } from '@/shared';
+import { PaymentDto } from '../schemas/payments.dto';
+import { EnrichedOrderListItem } from '../schemas/payment-order-list.schema';
+import { enrichOrderList } from '../enrich-order-list';
 import { IPaymentsCommand } from '../interfaces';
-import { type PaymentRequestDto } from '../schema/payments-request.schema';
+import { type BankTransferRequestDto } from '../schemas/bank-transfer-request.schema';
+import { BankTransferContextFactory, PaymentContextFactory } from '../context.factory';
 import {
-  toBankTransferInitContext,
-  type BankTransferPaymentInitContext,
-  type BankTransferPaymentAfterOrderContext,
-} from '../schema/payments-context-schema';
+  BankTransferPaymentAfterOrderContext,
+  BankTransferPaymentInitContext,
+} from '../schemas/payments-context/bank-transfer.schema';
 
 export class BankTransferPaymentCommand
   implements IPaymentsCommand<void>, TransactionalCommand<void>
 {
-  private requestDto: PaymentRequestDto;
+  private requestDto: BankTransferRequestDto;
 
-  public constructor(requestDto: PaymentRequestDto) {
+  public constructor(requestDto: BankTransferRequestDto) {
     this.requestDto = requestDto;
   }
 
   public async run(): Promise<void> {
-    const initCtx = await this.initializeContext();
+    const contextFactory = new BankTransferContextFactory();
+
+    const initCtx = await this.initializeContext(contextFactory);
     const afterOrderCtx = await this.createOrder(initCtx);
 
     await this.processOrderList(afterOrderCtx);
@@ -35,10 +36,13 @@ export class BankTransferPaymentCommand
     return await runWithTransaction(this);
   }
 
-  private async initializeContext(): Promise<BankTransferPaymentInitContext> {
-    const orderList = await enrichedOrderListFromContext(this.requestDto);
-    const context = toBankTransferInitContext({ ...this.requestDto, orderList });
-    return context;
+  private async initializeContext(
+    contextFactory: PaymentContextFactory,
+  ): Promise<BankTransferPaymentInitContext> {
+    const baseContext = contextFactory.createBase(this.requestDto);
+    const orderList = await enrichOrderList(baseContext);
+
+    return contextFactory.initialize({ baseContext, orderList });
   }
 
   private async createOrder(

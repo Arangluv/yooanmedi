@@ -4,8 +4,6 @@ import { useMutation } from '@tanstack/react-query';
 import type { InventoryItem } from '@/entities/inventory';
 import type { User } from '@/entities/user';
 import { RegisterTransactionRequestDto } from '@/entities/easypay/model/schemas/easypay.register-transaction.schema';
-// import { paymentsRegisterApplicationDtoSchema } from './schema/payments-register-schema';
-// import { paymentRegistration } from '../api/payment-registration';
 import { openPaymentsPopup } from '../lib/open-payments-popup';
 import { registerTransaction } from '@/entities/easypay/api/easypay.api';
 
@@ -54,7 +52,7 @@ const usePaymentsAction = ({
     mutationFn: () => registerTransaction(dto),
     onSuccess: (actionResult) => {
       if (actionResult.isSuccess) {
-        openPaymentsPopup(actionResult.data.authPageUrl);
+        openPaymentsPopup(actionResult.authPageUrl);
       } else {
         alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요');
       }

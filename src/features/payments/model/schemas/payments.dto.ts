@@ -1,16 +1,18 @@
+import { type InventoryItem } from '@/entities/inventory/model/inventory-schema';
+import type { BasePaymentContext } from './payments-context/base.schema';
 import type {
-  BasePaymentContext,
   BankTransferPaymentInitContext,
   BankTransferPaymentAfterOrderContext,
+} from './payments-context/bank-transfer.schema';
+import type {
   PGPaymentInitContext,
-  PGPaymentContextAfterApproval,
-  PGPaymentContextAfterOrder,
-} from './payments-context-schema';
-import { InventoryItem } from '@/entities/inventory/model/inventory-schema';
-import { EnrichedOrderListItem } from './payment-order-list.schema';
+  PGPaymentAfterApprovalContext,
+  PGPaymentAfterOrderContext,
+} from './payments-context/pg.schema';
+import { type EnrichedOrderListItem } from './payment-order-list.schema';
 
 export const PaymentDto = {
-  createOrderForPG: (context: PGPaymentContextAfterApproval) => {
+  createOrderForPG: (context: PGPaymentAfterApprovalContext) => {
     const dto = {
       user: context.userId,
       orderNo: context.shopOrderNo,
@@ -43,7 +45,7 @@ export const PaymentDto = {
   },
 
   createOrderProduct: (
-    context: PGPaymentContextAfterOrder | BankTransferPaymentAfterOrderContext,
+    context: PGPaymentAfterOrderContext | BankTransferPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) => {
     const dto = {
@@ -72,7 +74,7 @@ export const PaymentDto = {
     return dto;
   },
 
-  createPaymentHistory: (context: PGPaymentContextAfterOrder) => {
+  createPaymentHistory: (context: PGPaymentAfterOrderContext) => {
     const dto = {
       order: context.orderId,
       amount: context.amount,

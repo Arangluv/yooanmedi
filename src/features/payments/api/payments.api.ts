@@ -1,13 +1,11 @@
 'use server';
 
-import { EndPointResult, failure, ok } from '@/shared/lib/end-point-result';
-import { normalizeError } from '@/shared/model/errors/normalize-error';
-import { Logger } from '@/shared/model/logger/logger';
+import { EndPointResult, failure, ok, normalizeError, Logger } from '@/shared';
 import { BankTransferPaymentCommand } from '../model/command/bank-transfer-payment-command';
-import { PaymentRequestDto } from '../model/schema/payments-request.schema';
+import { BankTransferRequestDto } from '../model/schemas/bank-transfer-request.schema';
 
 export const paymentBybankTransfer = async (
-  requestDto: PaymentRequestDto,
+  requestDto: BankTransferRequestDto,
 ): Promise<EndPointResult> => {
   try {
     const command = new BankTransferPaymentCommand(requestDto);

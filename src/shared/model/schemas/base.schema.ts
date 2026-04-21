@@ -38,9 +38,9 @@ export const numberSchema = (options: NumberSchemaOptions) =>
     max: options.max,
   });
 
-export const PayloadImageSchema = z.object({
+export const payloadImageSchema = z.object({
   id: z.number(),
   url: urlSchema,
   filename: z.string(),
 });
-export type PayloadImage = z.infer<typeof PayloadImageSchema>;
+export type PayloadImage = z.infer<typeof payloadImageSchema>;
