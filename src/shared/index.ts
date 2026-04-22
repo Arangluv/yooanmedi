@@ -20,14 +20,8 @@ export {
   ZodParseError,
 } from './model/errors/domain.error';
 export { normalizeError } from './model/errors/normalize-error';
-export {
-  urlSchema,
-  collectionIdSchema,
-  numberSchema,
-  stringSchema,
-  payloadImageSchema,
-} from './model/schemas/base.schema';
-export { PaymentsBaseSchema } from './model/schemas/payments.base.schema';
+export * as BaseSchema from './model/schemas/base.schema';
+export * as PaymentBaseSchema from './model/schemas/payments.base.schema';
 
 // api
 export { getSiteMetadata } from './api/get-site-metadata';

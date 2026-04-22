@@ -97,15 +97,15 @@ export const numberSchema = ({
     },
   });
 
-  if (min) {
+  if (min !== undefined) {
     schema = schema.gte(min, {
       error: () => {
-        return `${min} 이상의 숫자를 입력해주세요`;
+        return `${min} 이상의 숫자를 입력해주세요.`;
       },
     });
   }
 
-  if (max) {
+  if (max !== undefined) {
     schema = schema.lte(max, {
       error: () => {
         return `${max} 이하의 숫자를 입력해주세요`;

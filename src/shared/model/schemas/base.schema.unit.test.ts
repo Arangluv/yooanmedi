@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { urlSchema, numberSchema, stringSchema } from './base.schema';
+import { urlSchema, numberSchema, stringSchema, collectionIdSchema } from './base.schema';
 
 describe('BaseSchema', () => {
   describe('urlSchema', () => {
@@ -153,6 +153,24 @@ describe('BaseSchema', () => {
 
       const resultNotEnoughMax = numberSchema({ min: 10, max: 20 }).safeParse(5);
       expect(resultNotEnoughMax.success).toBe(false);
+    });
+  });
+
+  describe('collectionIdSchema', () => {
+    it('파싱에 성공한다', () => {
+      const result = collectionIdSchema({
+        required_message: '컬렉션 아이디는 비어있을 수 없습니다',
+      }).safeParse(1);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('파싱에 실패한다', () => {
+      const result = collectionIdSchema({
+        required_message: '컬렉션 아이디는 비어있을 수 없습니다',
+      }).safeParse(undefined);
+
+      expect(result.success).toBe(false);
     });
   });
 });
