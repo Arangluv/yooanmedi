@@ -51,7 +51,6 @@ const usePaymentsAction = ({
   const { mutate } = useMutation({
     mutationFn: () => registerTransaction(dto),
     onSuccess: (actionResult) => {
-      console.log(`actionResult: ${JSON.stringify(actionResult, null, 2)}`);
       if (actionResult.isSuccess) {
         openPaymentsPopup(actionResult.data.authPageUrl);
       } else {

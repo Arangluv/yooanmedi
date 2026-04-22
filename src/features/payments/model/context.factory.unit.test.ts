@@ -57,7 +57,10 @@ describe('PGContextFactory', () => {
   });
 });
 
-function createPGBaseContext(contextFactory: PaymentContextFactory, easypayService: IEasyPay) {
+export function createPGBaseContext(
+  contextFactory: PaymentContextFactory,
+  easypayService: IEasyPay,
+) {
   const requestDto = createPGRequestDtoFixture();
   let data = {} as any;
   requestDto.forEach((value: any, key: string) => {
