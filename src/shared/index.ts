@@ -21,6 +21,7 @@ export {
 } from './model/errors/domain.error';
 export { normalizeError } from './model/errors/normalize-error';
 export * as BaseSchema from './model/schemas/base.schema';
+export { type PayloadImage } from './model/schemas/base.schema';
 export * as PaymentsBaseSchema from './model/schemas/payments.base.schema';
 
 // api

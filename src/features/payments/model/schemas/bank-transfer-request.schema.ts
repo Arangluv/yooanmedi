@@ -7,7 +7,7 @@ export const bankTransferRequestSchema = z.object({
   usedPoint: PaymentsBaseSchema.usedPoint,
   amount: PaymentsBaseSchema.amount,
   minOrderPrice: PaymentsBaseSchema.minOrderPrice,
-  userId: BaseSchema.collectionIdSchema({
+  userId: BaseSchema.collectionId({
     required_message: '유저는 비어있을 수 없습니다.',
     invalid_message: '유저 아이디는 숫자여야 합니다.',
   }),

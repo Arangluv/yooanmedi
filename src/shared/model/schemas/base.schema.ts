@@ -18,7 +18,7 @@ interface StringSchemaOptions {
   length?: number;
 }
 
-export const urlSchema = z.url({
+export const url = z.url({
   error: (iss) => {
     if (iss.code == 'invalid_type' && iss.input === undefined) {
       return 'URL이 누락되었습니다.';
@@ -32,13 +32,13 @@ export const urlSchema = z.url({
   },
 });
 
-export const collectionIdSchema = (options: BaseSchemaOptions) =>
-  numberSchema({
+export const collectionId = (options: BaseSchemaOptions) =>
+  number({
     required_message: options.required_message,
     invalid_message: options.invalid_message,
   });
 
-export const stringSchema = ({
+export const string = ({
   required_message = '문자열이 누락되었습니다',
   invalid_message = '문자열 타입이 아닙니다',
   minLength,
@@ -81,12 +81,7 @@ export const stringSchema = ({
   return schema;
 };
 
-export const numberSchema = ({
-  required_message,
-  invalid_message,
-  min,
-  max,
-}: NumberSchemaOptions) => {
+export const number = ({ required_message, invalid_message, min, max }: NumberSchemaOptions) => {
   let schema = z.number({
     error: (iss) => {
       if (iss.input === undefined) {
@@ -116,9 +111,9 @@ export const numberSchema = ({
   return schema;
 };
 
-export const payloadImageSchema = z.object({
+export const payloadImage = z.object({
   id: z.number(),
-  url: urlSchema,
+  url: url,
   filename: z.string(),
 });
-export type PayloadImage = z.infer<typeof payloadImageSchema>;
+export type PayloadImage = z.infer<typeof payloadImage>;

@@ -1,3 +1,6 @@
+import { shopOrderNoFixture } from '@/shared/__mock__/base.fixture';
+import { createProductFixture } from '@/shared/__mock__/product.fixture';
+
 export const bankTransferRequestDtoFixture = {
   deliveryRequest: '배송요청사항입니다',
   orderList: [
@@ -115,3 +118,46 @@ export const createPGRequestDtoFixture = () => {
 
   return formData;
 };
+
+export const basePaymentContextFixture = {
+  shopOrderNo: shopOrderNoFixture,
+  userId: 1,
+  usedPoint: 3000,
+  minOrderPrice: 30000,
+  orderList: [
+    {
+      product: createProductFixture({
+        id: 1,
+      }),
+      quantity: 3,
+    },
+    {
+      product: createProductFixture({
+        id: 2,
+      }),
+      quantity: 1,
+    },
+  ],
+  deliveryRequest: '',
+};
+
+export const enrichedOrderListFixture = [
+  {
+    product: createProductFixture({
+      id: 1,
+    }),
+    quantity: 3,
+    totalAmount: 1665,
+    orderProductDeliveryFee: 0,
+    calculatedUsedPoint: 595,
+  },
+  {
+    product: createProductFixture({
+      id: 2,
+    }),
+    quantity: 2,
+    totalAmount: 2333,
+    orderProductDeliveryFee: 0,
+    calculatedUsedPoint: 0,
+  },
+];

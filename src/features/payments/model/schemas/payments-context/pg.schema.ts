@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { PaymentsBaseSchema, BaseSchema } from '@/shared';
 import { enrichedOrderListSchema } from '../payment-order-list.schema';
 import { basePaymentContextSchema } from './base.schema';
-import { PaymentsBaseSchema, collectionIdSchema } from '@/shared';
 
 /**
  * PG사 결제 context schema
@@ -14,7 +14,6 @@ import { PaymentsBaseSchema, collectionIdSchema } from '@/shared';
  * shopValue5: paymentsMethod
  * shopValue6: minOrderPrice
  */
-
 export const paymentInitContextSchema = basePaymentContextSchema.extend({
   authorizationId: PaymentsBaseSchema.authorizationId,
   paymentsMethod: PaymentsBaseSchema.paymentsMethodUsedCard,
@@ -23,17 +22,15 @@ export const paymentInitContextSchema = basePaymentContextSchema.extend({
 
 export type PGPaymentInitContext = z.infer<typeof paymentInitContextSchema>;
 
-// after approval
-const paymentAfterApprovalContextSchema = paymentInitContextSchema.extend({
+export const paymentAfterApprovalContextSchema = paymentInitContextSchema.extend({
   amount: PaymentsBaseSchema.amount,
   pgCno: PaymentsBaseSchema.pgCno,
   approvalDate: PaymentsBaseSchema.approvalDate,
 });
 export type PGPaymentAfterApprovalContext = z.infer<typeof paymentAfterApprovalContextSchema>;
 
-// after order
-const paymentAfterOrderContextSchema = paymentAfterApprovalContextSchema.extend({
-  orderId: collectionIdSchema({
+export const paymentAfterOrderContextSchema = paymentAfterApprovalContextSchema.extend({
+  orderId: BaseSchema.number({
     required_message: '주문 아이디는 비어있을 수 없습니다.',
     invalid_message: '유효하지 않은 주문 아이디입니다.',
   }),

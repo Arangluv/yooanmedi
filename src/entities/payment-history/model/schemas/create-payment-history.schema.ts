@@ -1,14 +1,13 @@
 import { z } from 'zod';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
-import { collectionIdSchema, numberSchema } from '@/shared/model/schemas/base.schema';
-import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
+import { PaymentsBaseSchema, BaseSchema } from '@/shared';
 
 const createPaymentBaseSchema = z.object({
-  order: collectionIdSchema({
+  order: BaseSchema.collectionId({
     required_message: '주문 아이디가 누락되었거나, 올바르지 않습니다.',
     invalid_message: '유효하지 않은 주문 아이디입니다.',
   }),
-  amount: numberSchema({
+  amount: BaseSchema.number({
     required_message: '금액은 필수값입니다.',
     invalid_message: '금액은 숫자여야 합니다.',
     min: 0,
