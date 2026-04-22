@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { DeliveryFeeManager } from './delivery-fee-manager';
 import { createMockInventoryItem } from '@/shared/__mock__/inventory.fixture';
-import { createMockProduct } from '@/shared/__mock__/product.fixture';
+import { createProductFixture } from '@/shared/__mock__/product.fixture';
 
 describe('DeliveryFeeManager', () => {
   describe('isFreeDelivery', () => {
@@ -32,7 +32,7 @@ describe('DeliveryFeeManager', () => {
       ({ price, quantity, minOrderPrice, expected }) => {
         const inventory = [
           createMockInventoryItem({
-            product: createMockProduct({ price, is_free_delivery: true }),
+            product: createProductFixture({ price, is_free_delivery: true }),
             quantity,
           }),
         ];
@@ -46,7 +46,11 @@ describe('DeliveryFeeManager', () => {
       const minOrderPrice = 10000;
       const inventory = [
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 6000, price: 4000, is_free_delivery: true }),
+          product: createProductFixture({
+            delivery_fee: 6000,
+            price: 4000,
+            is_free_delivery: true,
+          }),
           quantity: 1,
         }),
       ];
@@ -60,15 +64,27 @@ describe('DeliveryFeeManager', () => {
       const minOrderPrice = 10000;
       const inventory = [
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 6000, price: 4000, is_free_delivery: true }),
+          product: createProductFixture({
+            delivery_fee: 6000,
+            price: 4000,
+            is_free_delivery: true,
+          }),
           quantity: 1,
         }),
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 6000, price: 4000, is_free_delivery: false }),
+          product: createProductFixture({
+            delivery_fee: 6000,
+            price: 4000,
+            is_free_delivery: false,
+          }),
           quantity: 1,
         }),
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 6000, price: 4000, is_free_delivery: false }),
+          product: createProductFixture({
+            delivery_fee: 6000,
+            price: 4000,
+            is_free_delivery: false,
+          }),
           quantity: 1,
         }),
       ];
@@ -84,15 +100,27 @@ describe('DeliveryFeeManager', () => {
       const minOrderPrice = 10000;
       const inventory = [
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 3000, price: 13000, is_free_delivery: true }),
+          product: createProductFixture({
+            delivery_fee: 3000,
+            price: 13000,
+            is_free_delivery: true,
+          }),
           quantity: 5,
         }),
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 2000, price: 12000, is_free_delivery: false }),
+          product: createProductFixture({
+            delivery_fee: 2000,
+            price: 12000,
+            is_free_delivery: false,
+          }),
           quantity: 3,
         }),
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 4500, price: 16500, is_free_delivery: true }),
+          product: createProductFixture({
+            delivery_fee: 4500,
+            price: 16500,
+            is_free_delivery: true,
+          }),
           quantity: 1,
         }),
       ];
@@ -108,19 +136,31 @@ describe('DeliveryFeeManager', () => {
       const minOrderPrice = 999999;
       const inventory = [
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 3000, price: 13000, is_free_delivery: true }),
+          product: createProductFixture({
+            delivery_fee: 3000,
+            price: 13000,
+            is_free_delivery: true,
+          }),
           quantity: 5,
         }),
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 2000, price: 12000, is_free_delivery: false }),
+          product: createProductFixture({
+            delivery_fee: 2000,
+            price: 12000,
+            is_free_delivery: false,
+          }),
           quantity: 3,
         }),
         createMockInventoryItem({
-          product: createMockProduct({ delivery_fee: 4500, price: 16500, is_free_delivery: true }),
+          product: createProductFixture({
+            delivery_fee: 4500,
+            price: 16500,
+            is_free_delivery: true,
+          }),
           quantity: 1,
         }),
         createMockInventoryItem({
-          product: createMockProduct({
+          product: createProductFixture({
             delivery_fee: 2000,
             price: 8300,
             is_free_delivery: true,

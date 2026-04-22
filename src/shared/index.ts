@@ -21,7 +21,7 @@ export {
 } from './model/errors/domain.error';
 export { normalizeError } from './model/errors/normalize-error';
 export * as BaseSchema from './model/schemas/base.schema';
-export * as PaymentBaseSchema from './model/schemas/payments.base.schema';
+export * as PaymentsBaseSchema from './model/schemas/payments.base.schema';
 
 // api
 export { getSiteMetadata } from './api/get-site-metadata';

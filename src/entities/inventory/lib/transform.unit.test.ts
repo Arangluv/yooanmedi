@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { transformOrderListToInventory } from './transform';
-import { createMockProduct } from '@/shared/__mock__/product.fixture';
+import { createProductFixture } from '@/shared/__mock__/product.fixture';
 
 vi.mock('@/entities/product', () => ({
   getProductById: vi.fn(),
 }));
+import { getProductById } from '@/entities/product/api/get-product-by-id';
 
-import { getProductById } from '@/entities/product';
 const mockGetProductById = getProductById;
 
 describe('transformOrderListToInventory', () => {
@@ -17,9 +17,9 @@ describe('transformOrderListToInventory', () => {
   it('orderList를 inventory entity로 변환한다.', async () => {
     // 1. mock 반환값 설정
     vi.mocked(mockGetProductById)
-      .mockResolvedValueOnce(createMockProduct())
+      .mockResolvedValueOnce(createProductFixture())
       .mockResolvedValueOnce(
-        createMockProduct({
+        createProductFixture({
           id: 1683,
           name: '부로멜라장용정',
           price: 18000,
@@ -54,7 +54,7 @@ describe('transformOrderListToInventory', () => {
 
   it('가격은 getProductById의 반환값이 아닌, orderList의 값을 사용한다.', async () => {
     // 1. mock 반환값 설정
-    vi.mocked(mockGetProductById).mockResolvedValue(createMockProduct());
+    vi.mocked(mockGetProductById).mockResolvedValue(createProductFixture());
 
     // 2. 입력값
     const orderList = [{ product: { id: 1681, price: 9999 }, quantity: 1 }];
