@@ -1,14 +1,7 @@
 import { z } from 'zod';
-import {
-  zodSafeParse,
-  collectionIdSchema,
-  generate15digitsNumberBasedOnDate,
-  PaymentsBaseSchema,
-  PAYMENTS_METHOD,
-} from '@/shared';
+import { collectionIdSchema, PaymentsBaseSchema } from '@/shared';
 import { bankTransferRequestSchema } from '../bank-transfer-request.schema';
-import { type EnrichedOrderList, enrichedOrderListSchema } from '../payment-order-list.schema';
-import { type BankTransferRequestDto } from '../bank-transfer-request.schema';
+import { enrichedOrderListSchema } from '../payment-order-list.schema';
 
 /**
  * 무통장 입금 결제 context schema
@@ -19,15 +12,6 @@ export const bankTransferPaymentInitContextSchema = bankTransferRequestSchema.ex
   orderList: enrichedOrderListSchema,
 });
 export type BankTransferPaymentInitContext = z.infer<typeof bankTransferPaymentInitContextSchema>;
-export const toBankTransferInitContext = (
-  data: BankTransferRequestDto & { orderList: EnrichedOrderList },
-) => {
-  return zodSafeParse(bankTransferPaymentInitContextSchema, {
-    ...data,
-    shopOrderNo: generate15digitsNumberBasedOnDate(),
-    paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
-  });
-};
 
 // after order
 const bankTransferPaymentContextAfterOrderSchema = bankTransferPaymentInitContextSchema.extend({

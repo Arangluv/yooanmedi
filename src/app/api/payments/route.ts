@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Logger } from '@/shared';
+import { Logger } from '@/shared/infrastructure';
 import { PGPaymentCommand } from '@/features/payments/model/command/pg-payment-command';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const manager = new PGPaymentCommand(formData);
-
     const result = await manager.execute();
 
     const url = request.nextUrl.clone();

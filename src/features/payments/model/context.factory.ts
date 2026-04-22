@@ -16,13 +16,15 @@ export interface PaymentContextFactory {
 
 export class BankTransferContextFactory implements PaymentContextFactory {
   createBase(dto: BankTransferRequestDto) {
-    return zodSafeParse(basePaymentContextSchema, dto);
-  }
-
-  initialize(dto: BankTransferRequestDto & { orderList: EnrichedOrderList }) {
-    return zodSafeParse(bankTransferPaymentInitContextSchema, {
+    return zodSafeParse(basePaymentContextSchema, {
       ...dto,
       shopOrderNo: generate15digitsNumberBasedOnDate(),
+    });
+  }
+
+  initialize(ctx: BasePaymentContext & { orderList: EnrichedOrderList; amount: number }) {
+    return zodSafeParse(bankTransferPaymentInitContextSchema, {
+      ...ctx,
       paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
     });
   }
@@ -41,19 +43,20 @@ export class BankTransferContextFactory implements PaymentContextFactory {
  */
 export class PGContextFactory implements PaymentContextFactory {
   createBase(dto: RegisterTransactionResult) {
-    return zodSafeParse(basePaymentContextSchema, dto);
-  }
-
-  initialize(dto: RegisterTransactionResult & { orderList: EnrichedOrderList }) {
-    return zodSafeParse(paymentInitContextSchema, {
-      authorizationId: dto.authorizationId,
+    return zodSafeParse(basePaymentContextSchema, {
       shopOrderNo: dto.shopOrderNo,
       deliveryRequest: dto.shopValue1,
       orderList: dto.shopValue2,
       usedPoint: dto.shopValue3,
       userId: dto.shopValue4,
-      paymentsMethod: dto.shopValue5,
       minOrderPrice: dto.shopValue6,
+    });
+  }
+
+  initialize(ctx: BasePaymentContext & { orderList: EnrichedOrderList; authorizationId: string }) {
+    return zodSafeParse(paymentInitContextSchema, {
+      ...ctx,
+      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
     });
   }
 }

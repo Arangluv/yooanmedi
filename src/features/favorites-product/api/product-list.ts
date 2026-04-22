@@ -1,7 +1,7 @@
 'use server';
 
 import type { FavoriteValue } from '@/features/favorites-product/model/types';
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 
 export const getFavoritesProductList = async (favorites: FavoriteValue[]) => {
   try {

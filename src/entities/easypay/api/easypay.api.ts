@@ -18,7 +18,9 @@ export const registerTransaction = async (
     const result = await easypayService.registerTransaction(dto);
 
     return okWithData({
-      data: result,
+      data: {
+        authPageUrl: result.authPageUrl,
+      },
     });
   } catch (error) {
     const normalizedError = normalizeError(error);

@@ -51,8 +51,9 @@ const usePaymentsAction = ({
   const { mutate } = useMutation({
     mutationFn: () => registerTransaction(dto),
     onSuccess: (actionResult) => {
+      console.log(`actionResult: ${JSON.stringify(actionResult, null, 2)}`);
       if (actionResult.isSuccess) {
-        openPaymentsPopup(actionResult.authPageUrl);
+        openPaymentsPopup(actionResult.data.authPageUrl);
       } else {
         alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요');
       }

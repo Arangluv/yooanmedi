@@ -9,7 +9,7 @@ import {
 } from '@/entities/point';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 import { generateUUID32digits } from '@/shared/lib/identifier';
 
 import {

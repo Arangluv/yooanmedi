@@ -2,7 +2,8 @@ import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 import { OrderService } from '@/entities/order/model/services/service';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
-import { PAYMENTS_METHOD, runWithTransaction, TransactionalCommand } from '@/shared';
+import { runWithTransaction, TransactionalCommand } from '@/shared/infrastructure';
+import { PAYMENTS_METHOD } from '@/shared';
 import { PaymentDto } from '../schemas/payments.dto';
 import { EnrichedOrderListItem } from '../schemas/payment-order-list.schema';
 import { enrichOrderList } from '../enrich-order-list';
@@ -25,7 +26,6 @@ export class BankTransferPaymentCommand
 
   public async run(): Promise<void> {
     const contextFactory = new BankTransferContextFactory();
-
     const initCtx = await this.initializeContext(contextFactory);
     const afterOrderCtx = await this.createOrder(initCtx);
 
@@ -42,7 +42,7 @@ export class BankTransferPaymentCommand
     const baseContext = contextFactory.createBase(this.requestDto);
     const orderList = await enrichOrderList(baseContext);
 
-    return contextFactory.initialize({ baseContext, orderList });
+    return contextFactory.initialize({ baseContext, orderList, amount: this.requestDto.amount });
   }
 
   private async createOrder(

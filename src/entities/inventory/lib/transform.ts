@@ -1,6 +1,6 @@
 'use server';
 
-import { getProductById } from '@/entities/product';
+import { getProductById } from '@/entities/product/api/get-product-by-id';
 import type { InventoryItem } from '../model/type';
 import { inventorySchema, type Inventory } from '../model/inventory-schema';
 import { zodSafeParse } from '@/shared/lib/zod';

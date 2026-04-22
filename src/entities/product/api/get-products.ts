@@ -1,5 +1,5 @@
 import 'server-only';
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 
 export const getProducts = async (ids: number[]) => {
   const payload = await getPayload();

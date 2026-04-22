@@ -24,9 +24,9 @@ export {
   urlSchema,
   collectionIdSchema,
   numberSchema,
+  stringSchema,
   payloadImageSchema,
 } from './model/schemas/base.schema';
-export { stringSchema } from './model/schemas/string.schema';
 export { PaymentsBaseSchema } from './model/schemas/payments.base.schema';
 
 // api

@@ -1,8 +1,6 @@
 import { z } from 'zod';
 import moment from 'moment';
-import { stringSchema } from './string.schema';
-import { numberSchema } from './number.schema';
-import { urlSchema } from './base.schema';
+import { urlSchema, stringSchema, numberSchema } from './base.schema';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 

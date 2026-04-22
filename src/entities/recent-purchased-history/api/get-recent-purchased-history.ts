@@ -2,7 +2,7 @@
 
 import { User } from '@/entities/user/@x/recent-purchased-history';
 import { ProductItem } from '@/entities/product/@x/recent-purchased-history';
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 
 type GetRecentPurchasedHistoryParams = {
   user: User;

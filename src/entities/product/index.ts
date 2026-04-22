@@ -1,7 +1,6 @@
 // apis
 export { getProductList } from './api/get-product-list';
 export { getProductCategory } from './api/get-product-category';
-export { getProductById } from './api/get-product-by-id';
 
 // constants
 export {

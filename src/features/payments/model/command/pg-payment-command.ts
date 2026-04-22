@@ -3,20 +3,17 @@ import {
   UsePointTransaction,
   EarnPointTransaction,
 } from '@/entities/point/model/point-transaction';
-
 import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
 import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductService } from '@/entities/order-product/model/services/service';
 import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
+import { EasyPayService } from '@/entities/easypay/model/easypay.service';
+import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
+import { runWithTransaction, TransactionalCommand } from '@/shared/infrastructure';
 import { PaymentDto } from '../schemas/payments.dto';
 import { EnrichedOrderListItem } from '../schemas/payment-order-list.schema';
 import { enrichOrderList } from '../enrich-order-list';
-import { EasyPayService } from '@/entities/easypay/model/easypay.service';
-import { runWithTransaction } from '@/shared/lib/run-with-transaction';
-
-// 아래로 import
-import { TransactionalCommand } from '@/shared/lib/run-with-transaction';
 import { IPaymentsCommand } from '../interfaces';
 import { PaymentContextFactory, PGContextFactory } from '../context.factory';
 import {
@@ -24,7 +21,6 @@ import {
   PGPaymentAfterOrderContext,
   PGPaymentInitContext,
 } from '../schemas/payments-context/pg.schema';
-import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
 
 export interface PGPaymentCommandResult {
   approvalDate: string;
@@ -49,6 +45,7 @@ export class PGPaymentCommand
   public async run(): Promise<PGPaymentCommandResult> {
     const contextFactory = new PGContextFactory();
     const initCtx = await this.initializeContext(contextFactory);
+
     // step 1. 결제승인 요청
     const afterApprovalCtx = await this.approvePayment(initCtx);
     // step 2. 주문 생성
@@ -80,7 +77,11 @@ export class PGPaymentCommand
     const baseContext = PaymentContextFactory.createBase(registerResult);
     const orderList = enrichOrderList(baseContext);
 
-    const initCtx = PaymentContextFactory.initialize({ baseContext, orderList });
+    const initCtx = PaymentContextFactory.initialize({
+      baseContext,
+      orderList,
+      authorizationId: registerResult.authorizationId,
+    });
     this.context = initCtx;
 
     return initCtx;
