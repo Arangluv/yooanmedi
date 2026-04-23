@@ -15,16 +15,17 @@ import { zodSafeParse } from '@/shared/lib/zod';
 export class RecentPurchasedHistoryService implements IRecentPurchasedHistoryService {
   public async createHistory(dto: CreateRecentPurchasedHistoryRequestDto): Promise<void> {
     const entity = zodSafeParse(createRecentPurchasedHistorySchema, dto);
-    const histories = await RecentPurchasedHistoryRepository.getList({
-      userId: entity.user,
-      productId: entity.product,
-    });
+    // TODO:: 구매히스토리 테이블 3개만 유지하기 -> 해당 함수에서 분리해야함 (단일책임X)
+    // const histories = await RecentPurchasedHistoryRepository.getList({
+    //   userId: entity.user,
+    //   productId: entity.product,
+    // });
 
-    const MAX_ALLOWED_HISTORIES = 3;
-    if (histories.length === MAX_ALLOWED_HISTORIES) {
-      const OLDEST_HISTORY_INDEX = MAX_ALLOWED_HISTORIES - 1;
-      await this.deleteRecentPurchasedHistory(histories[OLDEST_HISTORY_INDEX]);
-    }
+    // const MAX_ALLOWED_HISTORIES = 3;
+    // if (histories.length === MAX_ALLOWED_HISTORIES) {
+    //   const OLDEST_HISTORY_INDEX = MAX_ALLOWED_HISTORIES - 1;
+    //   await this.deleteRecentPurchasedHistory(histories[OLDEST_HISTORY_INDEX]);
+    // }
 
     await RecentPurchasedHistoryRepository.create(entity);
   }

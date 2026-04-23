@@ -1,10 +1,12 @@
 import { z } from 'zod';
 import moment from 'moment';
-import { generateUUID32digits } from '@/shared/lib/identifier';
-import { getNowYYYYMMDD } from '@/shared/lib/date';
-import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
-import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
-import { zodSafeParse } from '@/shared/lib/zod';
+import {
+  generateUUID32digits,
+  getNowYYYYMMDD,
+  PaymentsBaseSchema,
+  EASYPAY_CONFIG,
+  zodSafeParse,
+} from '@/shared';
 
 const paymentApprovalRequestSchema = z.object({
   authorizationId: PaymentsBaseSchema.authorizationId,

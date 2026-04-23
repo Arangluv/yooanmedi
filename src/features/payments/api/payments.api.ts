@@ -11,9 +11,6 @@ export const paymentBybankTransfer = async (
   try {
     const command = new BankTransferPaymentCommand(requestDto);
     await command.execute();
-
-    throw new Error('test');
-
     return ok('무통장 입금 주문을 생성하였습니다.');
   } catch (error) {
     const normalizedError = normalizeError(error);

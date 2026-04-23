@@ -1,11 +1,12 @@
 import { z } from 'zod';
+import { ProductCategory } from './product-category';
 import { type PayloadImage, BaseSchema } from '@/shared';
 
 export const productSchema = z.object({
   id: z.number(),
   image: z.custom<PayloadImage>().nullable(),
   name: z.string(),
-  category: z.number().nullable(),
+  category: z.number().nullable().or(z.custom<ProductCategory>()),
   insurance_code: z.string().nullable(),
   specification: z.string().nullable(),
   manufacturer: z.string(),
@@ -44,7 +45,14 @@ export const productSchema = z.object({
   updatedAt: z.string(),
   createdAt: z.string(),
 });
-export type Product = z.infer<typeof productSchema>;
+type ProductBase = z.infer<typeof productSchema>;
+export type Product<TCategoty = number | ProductCategory | null> = Omit<ProductBase, 'category'> & {
+  category: TCategoty;
+};
 
-export const productListSchema = z.array(productSchema);
-export type ProductList = z.infer<typeof productListSchema>;
+export const productListSchema = z.array(
+  productSchema.extend({
+    category: z.custom<ProductCategory>().nullable(),
+  }),
+);
+export type ProductList = Product<ProductCategory | null>[];

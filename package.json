@@ -13,7 +13,9 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest --ui --config vitest.unit.config.ts",
+    "test:integration": "vitest --ui --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@heroui/checkbox": "^2.3.27",

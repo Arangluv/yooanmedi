@@ -42,7 +42,7 @@ export class BankTransferPaymentCommand
     const baseContext = contextFactory.createBase(this.requestDto);
     const orderList = await enrichOrderList(baseContext);
 
-    return contextFactory.initialize({ baseContext, orderList, amount: this.requestDto.amount });
+    return contextFactory.initialize({ ...baseContext, orderList, amount: this.requestDto.amount });
   }
 
   private async createOrder(

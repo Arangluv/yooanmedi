@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(url, { status: 302 });
   } catch (error: any) {
     Logger.error(error);
-
     // 리다이렉트 -> TODO: searchParams를 set하는 방식에 대해 고민이 필요합니다
     const url = request.nextUrl.clone();
     url.pathname = '/order/payments/popup-callback';

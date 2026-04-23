@@ -38,15 +38,29 @@ const BankTransferButton = ({
   const { clearInventory } = useInventoryStore();
 
   const { mutate } = useMutation({
-    mutationFn: () =>
-      paymentBybankTransfer({
+    mutationFn: () => {
+      const dto = {
         deliveryRequest,
         orderList: inventory,
         usedPoint,
         userId,
         minOrderPrice,
         amount,
-      }),
+      };
+      console.log('dto');
+      console.log(dto);
+
+      throw new Error('hello world');
+    },
+    // mutationFn: () =>
+    //   paymentBybankTransfer({
+    //     deliveryRequest,
+    //     orderList: inventory,
+    //     usedPoint,
+    //     userId,
+    //     minOrderPrice,
+    //     amount,
+    //   }),
     onSuccess: (data) => {
       if (!data.isSuccess) {
         alert(data.message);

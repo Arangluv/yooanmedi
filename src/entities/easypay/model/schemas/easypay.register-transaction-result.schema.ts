@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
-import { PaymentsBaseSchema } from '@/shared/model/schemas/payments.base.schema';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { EASYPAY_CONFIG, zodSafeParse, PaymentsBaseSchema } from '@/shared';
 
 const registerTransactionBaseSchema = z.object({
   resCd: z.string(),

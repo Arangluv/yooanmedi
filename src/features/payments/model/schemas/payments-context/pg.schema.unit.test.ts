@@ -21,7 +21,6 @@ describe('PGPaymentsContextSchema', () => {
 
   it('paymentInitContextSchema로 파싱된다', () => {
     const result = paymentInitContextSchema.safeParse(baseCtx);
-    console.log(result);
     expect(result.success).toBe(true);
   });
 

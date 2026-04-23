@@ -1,46 +1,46 @@
-'use client'
+'use client';
 
-import clsx from 'clsx'
-import { PopupFramerCarousel } from '@/components/ui/popup-framer-carousel'
-import { useEffect, useState } from 'react'
+import clsx from 'clsx';
+import { PopupFramerCarousel } from '@/components/ui/popup-framer-carousel';
+import { useEffect, useState } from 'react';
 
 export default function Popup({ popup }: { popup: any }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false) // 로딩 상태 추가
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false); // 로딩 상태 추가
 
   useEffect(() => {
     // 오늘 날짜 확인
-    const today = new Date().toDateString()
-    const hideUntil = localStorage.getItem('popup-hide-until')
+    const today = new Date().toDateString();
+    const hideUntil = localStorage.getItem('popup-hide-until');
 
     // 저장된 날짜가 오늘과 다르면 팝업 표시
     if (hideUntil !== today) {
-      setIsOpen(true)
+      setIsOpen(true);
     } else {
-      setIsOpen(false)
+      setIsOpen(false);
     }
 
-    setIsLoaded(true) // 로딩 완료
-  }, [])
+    setIsLoaded(true); // 로딩 완료
+  }, []);
 
   const handleHideToday = () => {
-    const today = new Date().toDateString()
-    localStorage.setItem('popup-hide-until', today)
-    setIsOpen(false)
-  }
+    const today = new Date().toDateString();
+    localStorage.setItem('popup-hide-until', today);
+    setIsOpen(false);
+  };
 
-  if (!isOpen || !isLoaded || !popup.popupItems.length) return null
+  if (!isOpen || !isLoaded || !popup.popupItems.length) return null;
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black/20 flex flex-col items-center justify-center z-50">
-      <div className="w-[400px] h-[520px] bg-white">
+    <div className="fixed inset-0 z-50 flex h-full w-full flex-col items-center justify-center bg-black/20">
+      <div className="h-[520px] w-[400px] bg-white">
         <PopupFramerCarousel popup={popup} />
       </div>
-      <div className="w-[400px] flex justify-between bg-brand">
+      <div className="bg-brand flex w-[400px] justify-between">
         <button
           className={clsx(
-            'w-1/2 flex items-center justify-center text-white text-[14px] py-4 font-bold border-r border-white/20',
-            'hover:bg-brandWeek transition-colors duration-300 cursor-pointer',
+            'flex w-1/2 items-center justify-center border-r border-white/20 py-4 text-[14px] font-bold text-white',
+            'hover:bg-brandWeek cursor-pointer transition-colors duration-300',
           )}
           onClick={handleHideToday}
         >
@@ -48,8 +48,8 @@ export default function Popup({ popup }: { popup: any }) {
         </button>
         <button
           className={clsx(
-            'w-1/2 flex items-center justify-center text-white text-[14px] py-4 font-bold',
-            'hover:bg-brandWeek transition-colors duration-300 cursor-pointer',
+            'flex w-1/2 items-center justify-center py-4 text-[14px] font-bold text-white',
+            'hover:bg-brandWeek cursor-pointer transition-colors duration-300',
           )}
           onClick={() => setIsOpen(false)}
         >
@@ -57,5 +57,5 @@ export default function Popup({ popup }: { popup: any }) {
         </button>
       </div>
     </div>
-  )
+  );
 }
