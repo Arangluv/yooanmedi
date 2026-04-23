@@ -1,4 +1,4 @@
-import { getPayload } from '@/shared/lib/get-payload';
+import { getPayload } from '@/shared/infrastructure';
 import { SystemError } from '@/shared/model/errors/domain.error';
 import { transactionContext } from './transaction-context';
 

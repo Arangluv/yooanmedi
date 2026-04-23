@@ -1,25 +1,25 @@
 import { describe, it, expect } from 'vitest';
 import {
-  pgCnoSchema,
-  approvalReqDateSchema,
-  approvalDateSchema,
-  shopTransactionIdSchema,
-  authorizationIdSchema,
-  clientTypeCodeSchema,
-  payMethodTypeCodeSchema,
-  currencySchema,
-  deviceTypeCodeSchema,
-  orderNoSchema,
-  orderListSchema,
-  orderListJsonSchema,
-  deliveryRequestSchema,
-  usedPointSchema,
-  minOrderPriceSchema,
-  amountSchema,
-  mallIdSchema,
-  paymentSuccessCodeSchema,
-  paymentsMethodUsedCardSchema,
-  paymentsMethodUsedBankTransferSchema,
+  pgCno,
+  approvalReqDate,
+  approvalDate,
+  shopTransactionId,
+  authorizationId,
+  clientTypeCode,
+  payMethodTypeCode,
+  currency,
+  deviceTypeCode,
+  orderNo,
+  orderList,
+  orderListJson,
+  deliveryRequest,
+  usedPoint,
+  minOrderPrice,
+  amount,
+  mallId,
+  paymentSuccessCode,
+  paymentsMethodUsedCard,
+  paymentsMethodUsedBankTransfer,
 } from './payments.base.schema';
 import { pgCnoFixture } from '../../__mock__/base.fixture';
 import { generate15digitsNumberBasedOnDate, generateUUID32digits } from '@/shared/lib/identifier';
@@ -27,156 +27,135 @@ import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 
 describe('PaymentsBaseSchema', () => {
-  describe('pgCnoSchema', () => {
+  describe('pgCno', () => {
     it('데이터 파싱에 성공한다', () => {
-      const result = pgCnoSchema.safeParse(pgCnoFixture);
+      const result = pgCno.safeParse(pgCnoFixture);
       expect(result.success).toBe(true);
     });
 
     it('길이가 20자리가 아니면 파싱에 실패한다', () => {
-      const pgCno = 'test';
-      const result = pgCnoSchema.safeParse(pgCno);
-
+      const result = pgCno.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('approvalReqDateSchema', () => {
+  describe('approvalReqDate', () => {
     it('데이터 파싱에 성공한다.', () => {
-      const approvalReqDate = '20260422';
-      const result = approvalReqDateSchema.safeParse(approvalReqDate);
-
+      const result = approvalReqDate.safeParse('20260422');
       expect(result.success).toBe(true);
     });
 
     it('길이가 8자리가 아니면 파싱에 실패한다', () => {
-      const approvalReqDate = '2026';
-      const result = approvalReqDateSchema.safeParse(approvalReqDate);
-
+      const result = approvalReqDate.safeParse('2026');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('approvalDateSchema', () => {
+  describe('approvalDate', () => {
     it('데이터 파싱에 성공한다.', () => {
-      const approvalDate = '20260422133022';
-      const result = approvalDateSchema.safeParse(approvalDate);
-
+      const result = approvalDate.safeParse('20260422133022');
       expect(result.success).toBe(true);
     });
 
     it('YYYYMMDDHHmmss 형식이 아닌경우 파싱에 실패한다', () => {
-      const approvalDate = '20260422';
-      const result = approvalDateSchema.safeParse(approvalDate);
-
+      const result = approvalDate.safeParse('20260422');
       expect(result.success).toBe(false);
     });
 
     it('YYYYMMDDHHmmss이 ISO String으로 변경된다', () => {
-      const approvalDate = '20260422133022';
-      const result = approvalDateSchema.safeParse(approvalDate);
-
+      const result = approvalDate.safeParse('20260422133022');
       expect(result.data).toEqual('2026-04-22T04:30:22.000Z');
     });
   });
 
-  describe('shopTransactionIdSchema', () => {
+  describe('shopTransactionId', () => {
     it('파싱에 성공한다', () => {
-      const shopTransactionId = generateUUID32digits();
-      const result = shopTransactionIdSchema.safeParse(shopTransactionId);
-
+      const result = shopTransactionId.safeParse(generateUUID32digits());
       expect(result.success).toBe(true);
     });
 
     it('32자리가 아닌 경우 파싱에 실패한다', () => {
-      const shopTransactionId = 'test';
-      const result = shopTransactionIdSchema.safeParse(shopTransactionId);
-
+      const result = shopTransactionId.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('authorizationIdSchema', () => {
+  describe('authorizationId', () => {
     it('파싱에 성공한다', () => {
-      const authorizationId = '26042210595810898910';
-      const result = authorizationIdSchema.safeParse(authorizationId);
-
+      const result = authorizationId.safeParse('26042210595810898910');
       expect(result.success).toBe(true);
     });
 
     it('20자리가 아닌 경우 파싱에 실패한다', () => {
-      const authorizationId = 'test';
-      const result = authorizationIdSchema.safeParse(authorizationId);
+      const result = authorizationId.safeParse('test');
 
       expect(result.success).toBe(false);
     });
   });
 
-  describe('clientTypeCodeSchema', () => {
+  describe('clientTypeCode', () => {
     it('파싱에 성공한다', () => {
-      const result = clientTypeCodeSchema.safeParse(EASYPAY_CONFIG.clientTypeCode);
+      const result = clientTypeCode.safeParse(EASYPAY_CONFIG.clientTypeCode);
       expect(result.success).toBe(true);
     });
 
     it('파싱에 실패한다', () => {
-      const result = clientTypeCodeSchema.safeParse('test');
+      const result = clientTypeCode.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('payMethodTypeCodeSchema', () => {
+  describe('payMethodTypeCode', () => {
     it('파싱에 성공한다', () => {
-      const result = payMethodTypeCodeSchema.safeParse(EASYPAY_CONFIG.payMethodTypeCode);
+      const result = payMethodTypeCode.safeParse(EASYPAY_CONFIG.payMethodTypeCode);
       expect(result.success).toBe(true);
     });
 
     it('파싱에 실패한다', () => {
-      const result = payMethodTypeCodeSchema.safeParse('test');
+      const result = payMethodTypeCode.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('currencySchema', () => {
+  describe('currency', () => {
     it('파싱에 성공한다', () => {
-      const result = currencySchema.safeParse(EASYPAY_CONFIG.currency);
+      const result = currency.safeParse(EASYPAY_CONFIG.currency);
       expect(result.success).toBe(true);
     });
 
     it('파싱에 실패한다', () => {
-      const result = currencySchema.safeParse('test');
+      const result = currency.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('deviceTypeCodeSchema', () => {
+  describe('deviceTypeCode', () => {
     it('파싱에 성공한다', () => {
-      const result = deviceTypeCodeSchema.safeParse(EASYPAY_CONFIG.deviceTypeCode);
+      const result = deviceTypeCode.safeParse(EASYPAY_CONFIG.deviceTypeCode);
       expect(result.success).toBe(true);
     });
 
     it('디바이스 코드가 pc가 아닌 경우 파싱에 실패한다', () => {
-      const result = deviceTypeCodeSchema.safeParse('mobile');
+      const result = deviceTypeCode.safeParse('mobile');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('orderNoSchema', () => {
+  describe('orderNo', () => {
     it('파싱에 성공한다', () => {
-      const shopOrderNo = generate15digitsNumberBasedOnDate();
-      const result = orderNoSchema.safeParse(shopOrderNo);
-
+      const result = orderNo.safeParse(generate15digitsNumberBasedOnDate());
       expect(result.success).toBe(true);
     });
 
     it('길이가 15자리가 아니면 파싱에 실패한다', () => {
-      const result = orderNoSchema.safeParse('test');
+      const result = orderNo.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('orderListSchema', () => {
+  describe('orderList', () => {
     it('파싱에 성공한다', () => {
-      const orderList = [
+      const result = orderList.safeParse([
         {
           product: {
             id: 1,
@@ -191,9 +170,7 @@ describe('PaymentsBaseSchema', () => {
           },
           quantity: 1,
         },
-      ];
-      const result = orderListSchema.safeParse(orderList);
-
+      ]);
       expect(result.success).toBe(true);
     });
 
@@ -290,141 +267,139 @@ describe('PaymentsBaseSchema', () => {
       ],
       ['주문상품이 없는 경우', []],
     ])('%s → 파싱에 실패한다', (_, input) => {
-      const result = orderListSchema.safeParse(input);
-
+      const result = orderList.safeParse(input);
       expect(result.success).toBe(false);
     });
   });
 
-  describe('orderListJsonSchema', () => {
+  describe('orderListJson', () => {
     it('파싱에 성공한다', () => {
-      const orderListJson =
-        '[{"product":{"id":1,"price":3000},"quantity":2},{"product":{"id":2,"price":0},"quantity":1}]';
-      const result = orderListJsonSchema.safeParse(orderListJson);
-
+      const result = orderListJson.safeParse(
+        '[{"product":{"id":1,"price":3000},"quantity":2},{"product":{"id":2,"price":0},"quantity":1}]',
+      );
       expect(result.success).toBe(true);
     });
 
     it.skip('문자열이 JSON이 아닌 경우 파싱에 실패한다 -> 사용처에 위임');
   });
 
-  describe('deliveryRequestSchema', () => {
+  describe('deliveryRequest', () => {
     it('파싱에 성공한다', () => {
-      const result = deliveryRequestSchema.safeParse('배송 요청사항 입니다');
+      const result = deliveryRequest.safeParse('배송 요청사항 입니다');
       expect(result.success).toBe(true);
     });
 
     it('빈 문자열을 전달하면 파싱에 성공한다', () => {
-      const result = deliveryRequestSchema.safeParse('');
+      const result = deliveryRequest.safeParse('');
       expect(result.success).toBe(true);
     });
 
     it('undefined를 전달한 경우 파싱에 실패한다', () => {
-      const result = deliveryRequestSchema.safeParse(undefined);
+      const result = deliveryRequest.safeParse(undefined);
       expect(result.success).toBe(false);
     });
 
     it('null을 전달한 경우 파싱에 실패한다', () => {
-      const result = deliveryRequestSchema.safeParse(null);
+      const result = deliveryRequest.safeParse(null);
       expect(result.success).toBe(false);
     });
   });
 
-  describe('usedPointSchema', () => {
+  describe('usedPoint', () => {
     it('파싱에 성공한다', () => {
-      const result = usedPointSchema.safeParse(2000);
+      const result = usedPoint.safeParse(2000);
       expect(result.success).toBe(true);
     });
 
     it('0 포인트를 사용해도 파싱에 성공한다', () => {
-      const result = usedPointSchema.safeParse(0);
+      const result = usedPoint.safeParse(0);
       expect(result.success).toBe(true);
     });
 
     it('사용포인트가 음수인 경우 파싱에 실패한다', () => {
-      const result = usedPointSchema.safeParse(-100);
+      const result = usedPoint.safeParse(-100);
       expect(result.success).toBe(false);
     });
   });
 
-  describe('minOrderPriceSchema', () => {
+  describe('minOrderPrice', () => {
     it('파싱에 성공한다', () => {
-      const result = minOrderPriceSchema.safeParse(30000);
+      const result = minOrderPrice.safeParse(30000);
       expect(result.success).toBe(true);
     });
 
     it('0원이라도 파싱에 성공한다', () => {
-      const result = minOrderPriceSchema.safeParse(0);
+      const result = minOrderPrice.safeParse(0);
       expect(result.success).toBe(true);
     });
 
     it('무료배송 최소주문금액이 음수인 경우 파싱에 실패한다', () => {
-      const result = minOrderPriceSchema.safeParse(-100);
+      const result = minOrderPrice.safeParse(-100);
       expect(result.success).toBe(false);
     });
   });
 
-  describe('amountSchema', () => {
+  describe('amount', () => {
     it('파싱에 성공한다', () => {
-      const result = amountSchema.safeParse(30000);
+      const result = amount.safeParse(30000);
       expect(result.success).toBe(true);
     });
 
     it('0원이라도 파싱에 성공한다', () => {
-      const result = amountSchema.safeParse(0);
+      const result = amount.safeParse(0);
       expect(result.success).toBe(true);
     });
 
     it('결제금액이 음수인 경우 파싱에 실패한다', () => {
-      const result = amountSchema.safeParse(-100);
+      const result = amount.safeParse(-100);
       expect(result.success).toBe(false);
     });
   });
 
-  describe('mallIdSchema', () => {
+  describe('mallId', () => {
     it('파싱에 성공한다', () => {
-      const result = mallIdSchema.safeParse('T1234567');
+      const result = mallId.safeParse('T1234567');
       expect(result.success).toBe(true);
     });
 
     it('파싱에 실패한다', () => {
-      const result = mallIdSchema.safeParse(undefined);
+      const result = mallId.safeParse(undefined);
       expect(result.success).toBe(false);
     });
   });
 
-  describe('paymentSuccessCodeSchema', () => {
+  describe('paymentSuccessCode', () => {
     it('파싱에 성공한다', () => {
-      const result = paymentSuccessCodeSchema.safeParse(EASYPAY_CONFIG.successResponseCode);
+      const result = paymentSuccessCode.safeParse(EASYPAY_CONFIG.successResponseCode);
       expect(result.success).toBe(true);
     });
 
     it('성공코드가 올바르지 않은 경우 파싱에 실패한다', () => {
-      const result = paymentSuccessCodeSchema.safeParse('9999');
+      const result = paymentSuccessCode.safeParse('9999');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('paymentsMethodUsedCardSchema', () => {
+  describe('paymentsMethodUsedCard', () => {
     it('파싱에 성공한다', () => {
-      const result = paymentsMethodUsedCardSchema.safeParse(PAYMENTS_METHOD.CREDIT_CARD);
+      const result = paymentsMethodUsedCard.safeParse(PAYMENTS_METHOD.CREDIT_CARD);
       expect(result.success).toBe(true);
     });
 
     it('파싱에 실패한다', () => {
-      const result = paymentsMethodUsedCardSchema.safeParse('test');
+      const result = paymentsMethodUsedCard.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
 
-  describe('paymentsMethodUsedBankTransferSchema', () => {
+  describe('paymentsMethodUsedBankTransfer', () => {
     it('파싱에 성공한다', () => {
-      const result = paymentsMethodUsedBankTransferSchema.safeParse(PAYMENTS_METHOD.BANK_TRANSFER);
+      const result = paymentsMethodUsedBankTransfer.safeParse(PAYMENTS_METHOD.BANK_TRANSFER);
       expect(result.success).toBe(true);
     });
 
     it('파싱에 실패한다', () => {
-      const result = paymentsMethodUsedBankTransferSchema.safeParse('test');
+      const result = paymentsMethodUsedBankTransfer.safeParse('test');
       expect(result.success).toBe(false);
     });
   });
