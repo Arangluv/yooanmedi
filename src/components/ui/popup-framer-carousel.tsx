@@ -98,18 +98,6 @@ export function PopupFramerCarousel({ popup }: { popup: any }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </motion.button>
-        {/* Progress Indicator */}
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-xl border border-white/30 bg-white/20 p-2">
-          {popupItems.map((item: any, i: number) => (
-            <button
-              key={i}
-              onClick={() => setIndex(i)}
-              className={`h-2 rounded-full transition-all ${
-                i === index ? 'w-8 bg-black' : 'w-2 bg-black/50'
-              }`}
-            />
-          ))}
-        </div>
       </div>
     </div>
   );
