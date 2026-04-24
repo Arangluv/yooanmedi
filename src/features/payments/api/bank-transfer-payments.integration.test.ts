@@ -1,12 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { paymentBybankTransfer } from './payments.api';
+import { BasePayload } from 'payload';
 import {
   getPayload,
   transactionContext,
   runWithTransaction,
   TransactionalCommand,
 } from '@/shared/infrastructure';
-import { BasePayload } from 'payload';
+import { successCases, requestDto } from '../__test__/integration.fixture';
+import { paymentBybankTransfer } from './payments.api';
+import { SystemError } from '@/shared';
+import { BankTransferPaymentCommand } from '../model/command/bank-transfer-payment-command';
 
 vi.mock('@/shared/lib/run-with-transaction', () => ({
   runWithTransaction: vi.fn(),
@@ -24,7 +27,7 @@ describe('무통장입금 결제 통합테스트', () => {
 
       const user = await payload.findByID({
         collection: 'users',
-        id: 3,
+        id: 24,
       });
       initialUserPoint = user.point as number;
 
@@ -45,77 +48,7 @@ describe('무통장입금 결제 통합테스트', () => {
       initialUserPoint = null;
     });
 
-    it.each([
-      {
-        caseName: '포인트 사용X',
-        requestDto: {
-          deliveryRequest: '문앞에 놔주세요',
-          orderList: [
-            {
-              product: {
-                id: 1685,
-                image: null,
-                name: '둘코락스좌약',
-                insurance_code: '',
-                specification: '10mg/50T',
-                manufacturer: '오펠라헬스케어코리아주식회사',
-                stock: 999,
-                returnable: false,
-                price: 2000,
-                cashback_rate: 0.5,
-                cashback_rate_for_bank: 1.5,
-                delivery_fee: 0,
-                is_cost_per_unit: false,
-                is_free_delivery: false,
-              },
-              quantity: 3,
-            },
-            {
-              product: {
-                id: 1684,
-                image: null,
-                name: '아스피린프로텍트정100mg',
-                insurance_code: '641100270',
-                specification: '98T',
-                manufacturer: '바이엘코리아',
-                stock: 999,
-                returnable: false,
-                price: 2000,
-                cashback_rate: 0.5,
-                cashback_rate_for_bank: 1.5,
-                delivery_fee: 0,
-                is_cost_per_unit: false,
-                is_free_delivery: false,
-              },
-              quantity: 4,
-            },
-            {
-              product: {
-                id: 1683,
-                image: null,
-                name: '부로멜라장용정',
-                insurance_code: '649801890',
-                specification: '100mg/300T',
-                manufacturer: '(사용X)명문제약',
-                stock: 999,
-                returnable: false,
-                price: 2000,
-                cashback_rate: 0.5,
-                cashback_rate_for_bank: 1.5,
-                delivery_fee: 0,
-                is_cost_per_unit: false,
-                is_free_delivery: false,
-              },
-              quantity: 1,
-            },
-          ],
-          usedPoint: 0,
-          userId: 3,
-          minOrderPrice: 30000,
-          amount: 16000,
-        },
-      },
-    ])('$caseName', async ({ requestDto }) => {
+    it.each(successCases)('$caseName', async ({ requestDto }) => {
       await paymentBybankTransfer(requestDto);
       // 1. order 생성되었는가?
       const { docs: orderDocs } = await (payload as BasePayload).find({
@@ -142,7 +75,7 @@ describe('무통장입금 결제 통합테스트', () => {
       const order = orderDocs[0];
       expect(order).toBeDefined();
       expect(order.usedPoint).toEqual(requestDto.usedPoint);
-      expect(order.finalPrice).toEqual(requestDto.amount - requestDto.usedPoint);
+      expect(order.finalPrice).toEqual(requestDto.amount);
 
       // 2. 주문상품을 생성했는가?
       const orderProductIds: number[] = (order.orderProducts?.docs as any).map(
@@ -214,5 +147,94 @@ describe('무통장입금 결제 통합테스트', () => {
     });
   });
 
-  describe('결제실패 통합 테스트', () => {});
+  describe('결제실패 통합 테스트', async () => {
+    let initialUserPoint: null | number = null;
+    const payload = await getPayload();
+
+    beforeEach(async () => {
+      // 다시 기존함수로 runWithTransaction을 mocking
+      vi.mocked(runWithTransaction).mockImplementation(
+        async (command: TransactionalCommand<any>) => {
+          const payload = await getPayload();
+          const transactionID = await payload.db.beginTransaction();
+
+          if (!transactionID) {
+            const error = new SystemError('시스템 문제가 발생했습니다');
+            error.setDevMessage(
+              '해당 DB가 트랜젝션을 지원하지 않거나, Adapter가 정상적으로 연결되지 않았습니다',
+            );
+            throw error;
+          }
+
+          try {
+            const result = await transactionContext.run({ transactionID, payload }, () =>
+              command.run(),
+            );
+            await payload.db.commitTransaction(transactionID);
+            return result;
+          } catch (error) {
+            await payload.db.rollbackTransaction(transactionID);
+            await command.onRollback?.();
+            throw error;
+          }
+        },
+      );
+
+      vi.spyOn(BankTransferPaymentCommand.prototype, 'run').mockRejectedValue(
+        new Error('강제 롤백 테스트'),
+      );
+
+      const user = await payload.findByID({
+        collection: 'users',
+        id: 24,
+      });
+      initialUserPoint = user.point as number;
+    });
+
+    it('트랜젝션이 롤백되어 DB에 아무것도 남지않아야한다.', async () => {
+      await paymentBybankTransfer(requestDto);
+
+      const { docs: orderDocs } = await payload.find({
+        collection: 'order',
+        limit: 1,
+        where: {
+          user: {
+            equals: 24,
+          },
+        },
+      });
+
+      const order = orderDocs[0];
+      expect(order).toBeUndefined(); // 자동으로 order-product도 cover
+
+      const { docs: recentPurchasHistoryDocs } = await payload.find({
+        collection: 'recent-purchased-history',
+        where: {
+          user: {
+            equals: 24,
+          },
+        },
+      });
+      expect(recentPurchasHistoryDocs.length).toBe(0);
+
+      const { docs: pointTransactionHistoryDocs } = await payload.find({
+        collection: 'point-transaction',
+        where: {
+          user: {
+            equals: 24,
+          },
+        },
+      });
+      expect(pointTransactionHistoryDocs.length).toBe(0);
+
+      const afterPaymentsUser = await payload.findByID({
+        collection: 'users',
+        id: requestDto.userId,
+        select: {
+          point: true,
+        },
+      });
+      expect(afterPaymentsUser.point).toBe(initialUserPoint);
+    });
+  });
 });

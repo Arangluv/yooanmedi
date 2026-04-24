@@ -54,7 +54,33 @@ export class Logger {
       return;
     }
 
+    // {
+    //   "data": {
+    //     "id": 3,
+    //     "collection": "users",
+    //     "errors": [
+    //       {
+    //         "label": "적립금",
+    //         "message": "적립금은 0 이상이어야 합니다.",
+    //         "path": "point"
+    //       }
+    //     ]
+    //   },
+    //   "isOperational": true,
+    //   "isPublic": false,
+    //   "status": 400,
+    //   "name": "ValidationError"
+    // }
+    if (error && typeof error === 'object' && error?.constructor?.name === 'ValidationError') {
+      // payload validation error
+      console.log(error);
+
+      return;
+    }
+
     if (error instanceof Error) {
+      console.log(`error?.constructor?.name ${error?.constructor?.name}`);
+
       console.log(SPACER);
       console.log('[Logger] - Message');
       console.log(error.message ?? 'Empty Message');
