@@ -75,10 +75,10 @@ export class PGPaymentCommand
   private async initializeContext(PaymentContextFactory: PaymentContextFactory) {
     const registerResult = this.refineEasypayRegisterResult();
     const baseContext = PaymentContextFactory.createBase(registerResult);
-    const orderList = enrichOrderList(baseContext);
+    const orderList = await enrichOrderList(baseContext);
 
     const initCtx = PaymentContextFactory.initialize({
-      baseContext,
+      ...baseContext,
       orderList,
       authorizationId: registerResult.authorizationId,
     });

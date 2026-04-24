@@ -44,7 +44,7 @@ export class BankTransferContextFactory implements PaymentContextFactory {
 export class PGContextFactory implements PaymentContextFactory {
   createBase(dto: RegisterTransactionResult) {
     return zodSafeParse(basePaymentContextSchema, {
-      shopOrderNo: dto.shopOrderNo,
+      shopOrderNo: generate15digitsNumberBasedOnDate(),
       deliveryRequest: dto.shopValue1,
       orderList: dto.shopValue2,
       usedPoint: dto.shopValue3,

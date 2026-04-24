@@ -26,7 +26,6 @@ export const registerTransactionSuccessResultSchema = registerTransactionBaseSch
   resCd: z.literal(EASYPAY_CONFIG.successResponseCode),
   resMsg: z.string(),
   authorizationId: z.string(),
-  shopOrderNo: PaymentsBaseSchema.orderNo,
   shopValue1: PaymentsBaseSchema.deliveryRequest,
   shopValue2: PaymentsBaseSchema.orderList,
   shopValue3: PaymentsBaseSchema.usedPoint,

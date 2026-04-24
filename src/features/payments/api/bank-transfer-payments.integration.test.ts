@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { BasePayload } from 'payload';
+import { SystemError } from '@/shared';
 import {
   getPayload,
   transactionContext,
   runWithTransaction,
   TransactionalCommand,
 } from '@/shared/infrastructure';
-import { successCases, requestDto } from '../__test__/integration.fixture';
+import { successCases, requestDto, TEST_USER_ID } from '../__test__/integration.fixture';
 import { paymentBybankTransfer } from './payments.api';
-import { SystemError } from '@/shared';
 import { BankTransferPaymentCommand } from '../model/command/bank-transfer-payment-command';
 
 vi.mock('@/shared/lib/run-with-transaction', () => ({
@@ -27,7 +27,7 @@ describe('무통장입금 결제 통합테스트', () => {
 
       const user = await payload.findByID({
         collection: 'users',
-        id: 24,
+        id: TEST_USER_ID,
       });
       initialUserPoint = user.point as number;
 
@@ -49,7 +49,9 @@ describe('무통장입금 결제 통합테스트', () => {
     });
 
     it.each(successCases)('$caseName', async ({ requestDto }) => {
-      await paymentBybankTransfer(requestDto);
+      const result = await paymentBybankTransfer(requestDto);
+      expect(result.isSuccess).toBe(true);
+
       // 1. order 생성되었는가?
       const { docs: orderDocs } = await (payload as BasePayload).find({
         collection: 'order',
@@ -186,20 +188,21 @@ describe('무통장입금 결제 통합테스트', () => {
 
       const user = await payload.findByID({
         collection: 'users',
-        id: 24,
+        id: TEST_USER_ID,
       });
       initialUserPoint = user.point as number;
     });
 
-    it('트랜젝션이 롤백되어 DB에 아무것도 남지않아야한다.', async () => {
-      await paymentBybankTransfer(requestDto);
+    it('트랜젝션이 롤백되어 DB에 아무것도 남지 않아야 한다.', async () => {
+      const result = await paymentBybankTransfer(requestDto);
+      expect(result.isSuccess).toBe(false);
 
       const { docs: orderDocs } = await payload.find({
         collection: 'order',
         limit: 1,
         where: {
           user: {
-            equals: 24,
+            equals: TEST_USER_ID,
           },
         },
       });
@@ -211,7 +214,7 @@ describe('무통장입금 결제 통합테스트', () => {
         collection: 'recent-purchased-history',
         where: {
           user: {
-            equals: 24,
+            equals: TEST_USER_ID,
           },
         },
       });
@@ -221,7 +224,7 @@ describe('무통장입금 결제 통합테스트', () => {
         collection: 'point-transaction',
         where: {
           user: {
-            equals: 24,
+            equals: TEST_USER_ID,
           },
         },
       });
