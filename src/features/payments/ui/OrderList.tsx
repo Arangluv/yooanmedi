@@ -54,7 +54,8 @@ const OrderListItem = ({
     <div className="flex items-center gap-4">
       {/* 상품 이미지 */}
       <div className="border-foreground-200 flex h-16 w-16 items-center justify-center overflow-hidden rounded-sm border-1 bg-neutral-50">
-        {isPayloadImageRenderable(inventoryItem.product.image) ? (
+        {/* TODO :: 해당 부분 개선 */}
+        {inventoryItem?.product?.image ? (
           <Image
             src={inventoryItem.product.image.url}
             alt={'상품 이미지'}

@@ -6,13 +6,13 @@ import { Logger } from '@/shared/model/logger/logger';
 import { EasyPayService } from '../model/easypay.service';
 import { type RegisterTransactionRequestDto } from '../model/schemas/easypay.register-transaction.schema';
 
-export interface RegisterTransactionResponseDto {
+export interface RegisterTransactionResponse {
   authPageUrl: string;
 }
 
 export const registerTransaction = async (
   dto: RegisterTransactionRequestDto,
-): Promise<EndPointResult<RegisterTransactionResponseDto>> => {
+): Promise<EndPointResult<RegisterTransactionResponse>> => {
   try {
     const easypayService = new EasyPayService();
     const result = await easypayService.registerTransaction(dto);

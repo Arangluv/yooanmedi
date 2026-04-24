@@ -1,12 +1,12 @@
 'use server';
 
 import { User } from '@/entities/user/@x/recent-purchased-history';
-import { ProductItem } from '@/entities/product/@x/recent-purchased-history';
+import { Product } from '@/entities/product/@x/recent-purchased-history';
 import { getPayload } from '@/shared/infrastructure';
 
 type GetRecentPurchasedHistoryParams = {
   user: User;
-  product: ProductItem;
+  product: Product;
 };
 
 export const getRecentPurchasedHistory = async ({

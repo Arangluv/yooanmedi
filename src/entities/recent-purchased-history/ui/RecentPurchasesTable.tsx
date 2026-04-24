@@ -4,14 +4,14 @@ import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 
 import type { User } from '@/entities/user/@x/recent-purchased-history';
-import type { ProductItem } from '@/entities/product/@x/recent-purchased-history';
+import type { Product } from '@/entities/product/@x/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
 
 import { recentPurchasedHistoryQueries } from '../model/recent-purchased-history.queries';
 
 type RecentPurchasesTableProps = {
   user: User;
-  product: ProductItem;
+  product: Product;
 };
 
 const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {

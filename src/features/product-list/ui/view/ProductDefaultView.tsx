@@ -1,4 +1,4 @@
-import type { ProductItem } from '@/entities/product';
+import type { Product } from '@/entities/product';
 import ProductList from '../ProductList';
 
 import ProductListPagination from '../ProductListPagination';
@@ -10,7 +10,7 @@ const ProductDefaultView = ({
   products,
   totalPages,
 }: {
-  products: ProductItem[];
+  products: Product[];
   totalPages: number;
 }) => {
   return (
@@ -22,7 +22,7 @@ const ProductDefaultView = ({
   );
 };
 
-const DefaultListSection = ({ products }: { products: ProductItem[] }) => {
+const DefaultListSection = ({ products }: { products: Product[] }) => {
   return (
     <div className="flex w-full flex-col gap-6">
       <h2 className="text-2xl font-bold">

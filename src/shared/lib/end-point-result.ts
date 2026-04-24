@@ -1,19 +1,25 @@
-interface EndPointBaseResult {
-  isSuccess: boolean;
+interface EndPointSuccessResult {
+  isSuccess: true;
   message: string;
 }
 
-interface EndPointSuccessResultWithDataResult<TData> {
+interface EndPointSuccessResultWithData<TData> {
   isSuccess: true;
   message: string;
   data: TData;
 }
 
-export type EndPointResult<TData = void> =
-  | EndPointBaseResult
-  | (TData extends void ? EndPointBaseResult : EndPointSuccessResultWithDataResult<TData>);
+interface EndPointFailureResult {
+  isSuccess: false;
+  message: string;
+}
 
-export const ok = (message: string = 'ok'): EndPointBaseResult => ({
+// TData가 void면 data 없는 성공, 아니면 data 있는 성공
+export type EndPointResult<TData = void> =
+  | (TData extends void ? EndPointSuccessResult : EndPointSuccessResultWithData<TData>)
+  | EndPointFailureResult;
+
+export const ok = (message: string = 'ok'): EndPointSuccessResult => ({
   isSuccess: true,
   message,
 });
@@ -24,13 +30,13 @@ export const okWithData = <TData>({
 }: {
   message?: string;
   data: TData;
-}): EndPointSuccessResultWithDataResult<TData> => ({
+}): EndPointSuccessResultWithData<TData> => ({
   isSuccess: true,
   message,
-  data: data,
+  data,
 });
 
-export const failure = (message: string): EndPointBaseResult => ({
+export const failure = (message: string): EndPointFailureResult => ({
   isSuccess: false,
   message,
 });

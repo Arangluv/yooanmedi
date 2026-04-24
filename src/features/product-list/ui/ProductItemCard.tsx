@@ -3,17 +3,16 @@
 import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
-import type { ProductItem } from '@/entities/product';
+import type { Product } from '@/entities/product';
 import { getMaxPointOnPurchase } from '@/entities/point';
 
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
-import { isPayloadImageRenderable } from '@/shared/lib/validation';
 
 import AddToCartBtn from './AddToCartBtn';
 import useProductDetailStore from '../model/useProductDetailStore';
 import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
 
-const ProductItemCard = ({ product }: { product: ProductItem }) => {
+const ProductItemCard = ({ product }: { product: Product }) => {
   const { setClieckedProduct } = useProductDetailStore();
 
   return (
@@ -23,7 +22,7 @@ const ProductItemCard = ({ product }: { product: ProductItem }) => {
         onClick={() => setClieckedProduct(product)}
       >
         <div className="border-foreground-200 relative mb-4 aspect-square w-full overflow-hidden rounded-lg border-1 bg-neutral-50">
-          {isPayloadImageRenderable(product.image) ? (
+          {product?.image ? (
             <Image
               src={product.image.url}
               alt={'상품 이미지'}

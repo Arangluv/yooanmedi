@@ -16,7 +16,7 @@ export { generateSearchParams, type ProductSearchParamsType } from './lib/genera
 
 // model
 export type { Product } from './model/schemas/product.schema';
-export type { ProductItem, ProductCategory, SearchParamsType } from './model/types';
+export type { ProductCategory } from './model/schemas/product-category';
 export { default as useSearchQueryState } from './model/useSearchQueryState';
 
 // ui

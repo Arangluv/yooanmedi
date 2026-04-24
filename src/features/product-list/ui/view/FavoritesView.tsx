@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { EmptyProductList, ProductItem } from '@/entities/product';
+import { EmptyProductList, Product } from '@/entities/product';
 
 import ProductList from '../ProductList';
 
@@ -22,12 +22,12 @@ const FavoritesView = () => {
 
   return (
     <section className="mt-16 flex w-5xl flex-shrink-0 flex-col gap-16">
-      <ListSection products={data} />
+      <ListSection products={data as Product[]} />
     </section>
   );
 };
 
-const ListSection = ({ products }: { products: ProductItem[] }) => {
+const ListSection = ({ products }: { products: Product[] }) => {
   return (
     <div className="flex w-full flex-col gap-6">
       <h2 className="text-2xl font-bold">
@@ -36,7 +36,10 @@ const ListSection = ({ products }: { products: ProductItem[] }) => {
       {products.length > 0 ? (
         <ProductList products={products} />
       ) : (
-        <EmptyProductList title="등록된 관심상품이 없습니다." description="등록된 관심상품이 없습니다." />
+        <EmptyProductList
+          title="등록된 관심상품이 없습니다."
+          description="등록된 관심상품이 없습니다."
+        />
       )}
     </div>
   );

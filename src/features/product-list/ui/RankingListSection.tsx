@@ -2,14 +2,14 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import type { ProductItem } from '@/entities/product/model/types';
+import type { Product } from '@/entities/product';
 import EmptyProductList from '@/entities/product/ui/EmptyProductList';
 
 import ProductList from './ProductList';
 import { getProductListConvertedToCustomPrice } from '@/features/custom-price/api/get-product-list';
 
 const RankingListSection = () => {
-  const { data: rankingProducts, isLoading } = useQuery<ProductItem[]>({
+  const { data: rankingProducts, isLoading } = useQuery<Product[]>({
     queryKey: ['ranking-products'],
     queryFn: () => getProductListConvertedToCustomPrice(),
   });

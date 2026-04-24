@@ -1,5 +1,5 @@
 import type { CustomPriceTable } from '../model/custom-price-table';
-import type { ProductItem } from '@/entities/product';
+import type { Product } from '@/entities/product';
 
 /**
  * 커스텀 가격 테이블을 사용하여 제품 가격을 변환합니다.
@@ -9,7 +9,7 @@ import type { ProductItem } from '@/entities/product';
  */
 
 export const convertToCustomPrice = (
-  productList: ProductItem[],
+  productList: Product[],
   customPriceTable: CustomPriceTable[],
 ) => {
   const customPriceMap = new Map(

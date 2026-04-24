@@ -1,3 +1,3 @@
-import type { ProductItem as ProductItemEntity } from '../model/types';
+import { Product as ProductEntity } from '@/entities/product';
 
-export interface ProductItem extends Pick<ProductItemEntity, 'id'> {}
+export interface Product extends Pick<ProductEntity, 'id'> {}
