@@ -1,7 +1,7 @@
 'use server';
 
 import { Where } from 'payload';
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 import { OrderStatus } from '../constants/order-status';
 
 // TODO :: 반드시 리팩토링 해야함

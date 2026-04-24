@@ -6,13 +6,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     projects: [
-      // {
-      //   extends: true,
-      //   test: {
-      //     name: 'base',
-      //     include: ['**/*.test.ts'],
-      //   },
-      // },
       {
         extends: true,
         test: {
@@ -35,14 +28,18 @@ export default defineConfig({
         },
       },
     ],
+    setupFiles: [path.resolve(__dirname, './vitest.setup.ts')],
+    coverage: {
+      exclude: ['**/__test__/**', '**/collections/**', '**/index.ts', '**/ui', '**/api'],
+    },
   },
-  // optional
   plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@lib': path.resolve(__dirname, './src/lib'),
       '@shared': path.resolve(__dirname, './src/shared'),
+      'server-only': path.resolve(__dirname, './src/shared/__mock__/empty-server-only.ts'),
     },
   },
 });

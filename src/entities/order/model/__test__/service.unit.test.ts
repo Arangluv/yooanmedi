@@ -5,10 +5,10 @@ import { BankTransferOrderService } from '../services/bank-transfer.service';
 import { PAYMENTS_METHOD } from '../../constants/payments-options';
 import { BusinessLogicError, ZodParseError } from '@/shared/model/errors/domain.error';
 import { OrderRepository } from '../repository';
-import { generateShopOrderNo } from '@/features/payments/lib/order-uuid'; // -> todo :: refactoring이 필요하다
 import { PAYMENT_STATUS } from '../../constants/payment-status';
 import { FLG_STATUS } from '../../constants/flg-status';
 import { ORDER_STATUS } from '../../constants/order-status';
+import { generate15digitsNumberBasedOnDate } from '@/shared';
 
 vi.mock('../repository', () => ({
   OrderRepository: {
@@ -36,7 +36,7 @@ describe('OrderServiceForPG', () => {
     vi.mocked(OrderRepository.create).mockResolvedValue({ id: 1 });
     const orderRequestDto = {
       user: 1,
-      orderNo: generateShopOrderNo(),
+      orderNo: generate15digitsNumberBasedOnDate(),
       orderRequest: 'test',
       finalPrice: 10000,
       usedPoint: 1000,
@@ -58,7 +58,7 @@ describe('OrderServiceForPG', () => {
     const orderServiceForPG = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
     const orderRequestDto = {
       user: 1,
-      orderNo: generateShopOrderNo(),
+      orderNo: generate15digitsNumberBasedOnDate(),
     } as any;
 
     await expect(orderServiceForPG.createOrder(orderRequestDto)).rejects.toThrow(ZodParseError);
@@ -72,7 +72,7 @@ describe('OrderServiceForBankTransfer', () => {
     vi.mocked(OrderRepository.create).mockResolvedValue({ id: 1 });
     const orderRequestDto = {
       user: 1,
-      orderNo: generateShopOrderNo(),
+      orderNo: generate15digitsNumberBasedOnDate(),
       orderRequest: 'test',
       finalPrice: 10000,
       usedPoint: 1000,
@@ -94,7 +94,7 @@ describe('OrderServiceForBankTransfer', () => {
     const orderServiceForBankTransfer = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
     const orderRequestDto = {
       user: 1,
-      orderNo: generateShopOrderNo(),
+      orderNo: generate15digitsNumberBasedOnDate(),
     } as any;
     await expect(orderServiceForBankTransfer.createOrder(orderRequestDto)).rejects.toThrow(
       ZodParseError,

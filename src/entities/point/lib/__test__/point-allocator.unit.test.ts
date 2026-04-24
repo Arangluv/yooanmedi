@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createMockInventoryItem } from '@/shared/__mock__/inventory.fixture';
-import { createMockProduct } from '@/shared/__mock__/product.fixture';
+import { createProductFixture } from '@/shared/__mock__/product.fixture';
 import { PointAllocator } from '../use/point-allocator';
 import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
 
@@ -9,7 +9,7 @@ const testCases = [
     case: '단일상품 - 포인트 사용X',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 1240 }),
+        product: createProductFixture({ id: 1, price: 1240 }),
         quantity: 1,
       }),
     ],
@@ -22,7 +22,7 @@ const testCases = [
     case: '단일상품 - 총 구매가격 > 사용포인트',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 2230 }),
+        product: createProductFixture({ id: 1, price: 2230 }),
         quantity: 3,
       }),
     ],
@@ -35,7 +35,7 @@ const testCases = [
     case: '단일상품 - 총 구매가격 < 사용포인트',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 3350 }),
+        product: createProductFixture({ id: 1, price: 3350 }),
         quantity: 11,
       }),
     ],
@@ -48,15 +48,15 @@ const testCases = [
     case: '여러상품 - 포인트 사용X',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 2300 }),
+        product: createProductFixture({ id: 1, price: 2300 }),
         quantity: 1,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 2, price: 1240 }),
+        product: createProductFixture({ id: 2, price: 1240 }),
         quantity: 3,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 3, price: 65500 }),
+        product: createProductFixture({ id: 3, price: 65500 }),
         quantity: 6,
       }),
     ],
@@ -69,23 +69,23 @@ const testCases = [
     case: '여러상품 - 총 구매가격 > 사용포인트',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 2650 }),
+        product: createProductFixture({ id: 1, price: 2650 }),
         quantity: 1,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 2, price: 1548 }),
+        product: createProductFixture({ id: 2, price: 1548 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 3, price: 5122 }),
+        product: createProductFixture({ id: 3, price: 5122 }),
         quantity: 6,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 4, price: 12000 }),
+        product: createProductFixture({ id: 4, price: 12000 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 5, price: 16500 }),
+        product: createProductFixture({ id: 5, price: 16500 }),
         quantity: 4,
       }),
     ],
@@ -98,19 +98,19 @@ const testCases = [
     case: '여러상품 - 총 구매가격 === 사용포인트',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 1240 }),
+        product: createProductFixture({ id: 1, price: 1240 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 2, price: 8432 }),
+        product: createProductFixture({ id: 2, price: 8432 }),
         quantity: 3,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 3, price: 5135 }),
+        product: createProductFixture({ id: 3, price: 5135 }),
         quantity: 4,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 4, price: 8435 }),
+        product: createProductFixture({ id: 4, price: 8435 }),
         quantity: 1,
       }),
     ],
@@ -123,19 +123,19 @@ const testCases = [
     case: '여러상품 - 포인트 사용X (엣지케이스)',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 6240 }),
+        product: createProductFixture({ id: 1, price: 6240 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 2, price: 5432 }),
+        product: createProductFixture({ id: 2, price: 5432 }),
         quantity: 3,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 3, price: 1265 }),
+        product: createProductFixture({ id: 3, price: 1265 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 4, price: 135122 }),
+        product: createProductFixture({ id: 4, price: 135122 }),
         quantity: 8,
       }),
     ],
@@ -148,19 +148,19 @@ const testCases = [
     case: '여러상품 - 총 구매가격 > 사용포인트 (엣지케이스)',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 6240 }),
+        product: createProductFixture({ id: 1, price: 6240 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 2, price: 5432 }),
+        product: createProductFixture({ id: 2, price: 5432 }),
         quantity: 3,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 3, price: 1265 }),
+        product: createProductFixture({ id: 3, price: 1265 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 4, price: 135122 }),
+        product: createProductFixture({ id: 4, price: 135122 }),
         quantity: 8,
       }),
     ],
@@ -173,19 +173,19 @@ const testCases = [
     case: '여러상품 - 총 구매가격 === 사용포인트 (엣지케이스)',
     inventory: [
       createMockInventoryItem({
-        product: createMockProduct({ id: 1, price: 6240 }),
+        product: createProductFixture({ id: 1, price: 6240 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 2, price: 5432 }),
+        product: createProductFixture({ id: 2, price: 5432 }),
         quantity: 3,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 3, price: 1265 }),
+        product: createProductFixture({ id: 3, price: 1265 }),
         quantity: 2,
       }),
       createMockInventoryItem({
-        product: createMockProduct({ id: 4, price: 135122 }),
+        product: createProductFixture({ id: 4, price: 135122 }),
         quantity: 8,
       }),
     ],

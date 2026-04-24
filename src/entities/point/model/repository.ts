@@ -6,7 +6,7 @@ import {
   createPointHistoryResultSchema,
   pointHistoriesSchema,
 } from './schema/history.schema';
-import { updateUserPoint } from '../api/increment-point';
+import { updateUserPoint } from '../api/update-point';
 import { userSchema, User } from './schema/update-point.schema';
 import { getUser } from '../api/user';
 

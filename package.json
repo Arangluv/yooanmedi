@@ -13,7 +13,9 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest --ui --config vitest.unit.config.ts",
+    "test:integration": "vitest --ui --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@heroui/checkbox": "^2.3.27",
@@ -81,6 +83,7 @@
     "@types/react-dom": "19.1.6",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^5.1.4",
+    "@vitest/coverage-v8": "4.0.18",
     "@vitest/ui": "4.0.18",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.16.0",

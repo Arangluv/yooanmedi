@@ -1,9 +1,9 @@
-import type { ProductItem } from '../model/types';
+import type { Product } from '../model/schemas/product.schema';
 
 type DetailDeliveryFeeRowProps = {
   label: string;
   value: string;
-  product: ProductItem;
+  product: Product;
 };
 
 const DetailDeliveryFeeRow = ({ label, value, product }: DetailDeliveryFeeRowProps) => {

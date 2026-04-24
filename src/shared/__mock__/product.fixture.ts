@@ -24,7 +24,7 @@ export const baseProduct = {
 };
 
 // product fixture factory 함수
-export const createMockProduct = (override?: Partial<typeof baseProduct>) => {
+export const createProductFixture = (override?: Partial<typeof baseProduct>) => {
   return {
     ...baseProduct,
     ...override,

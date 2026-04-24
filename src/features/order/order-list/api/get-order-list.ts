@@ -7,7 +7,7 @@ import type { User } from '@/entities/user';
 import { OrderProduct } from '@/entities/order-product';
 import { Order } from '@/entities/order';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 
 import type { OrderListSearchParamsType } from '../model/sever-search-params';
 import { orderListSchema } from '../model/order-list-schema';

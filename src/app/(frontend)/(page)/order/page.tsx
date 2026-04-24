@@ -1,8 +1,6 @@
 import { BrandLogo } from '@/shared';
 import Link from 'next/link';
-
 import type { SearchParams } from 'nuqs';
-
 /** features */
 import { getCustomPriceList } from '@/features/custom-price';
 import {
@@ -11,9 +9,8 @@ import {
   ProductAsideDetail,
 } from '@/features/product-list';
 import { InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
-
 /** entities */
-import { generateSearchParams, getProductCategory } from '@/entities/product';
+import { generateSearchParams, getProductCategory, type ProductCategory } from '@/entities/product';
 import OrderLink from '@/entities/order/ui/OrderLink';
 import ProductListView from '@/features/product-list/ui/view/ProductListView';
 
@@ -27,7 +24,7 @@ export default async function OrderPage({ searchParams }: PageProps) {
   const { productList, totalProductPages, totalProductDocs } =
     await getCustomPriceList(serverSearchParams);
 
-  // TODO: 개선 필요할 수도 있음
+  // TODO: 개선이 필요함
   const productCategory = await getProductCategory();
 
   return (
@@ -52,7 +49,7 @@ export default async function OrderPage({ searchParams }: PageProps) {
       {/* bottom area */}
       <div className="flex w-full max-w-5xl items-center">
         {/* 제품카테고리 */}
-        <ProductCategotyNavigation categories={productCategory} />
+        <ProductCategotyNavigation categories={productCategory as ProductCategory[]} />
       </div>
       {/* 메인 컨텐츠 영역 */}
       <div className="flex w-full">

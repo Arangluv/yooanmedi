@@ -10,7 +10,6 @@ import { DetailPointBenefitRow } from '@/entities/point';
 import { useAuthStore } from '@/entities/user';
 import { RecentPurchasesTable } from '@/entities/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
-import { isPayloadImageRenderable } from '@/shared';
 import DetailQuantityInputRow from './DetailQuantityInputRow';
 import useProductDetailStore from '../model/useProductDetailStore';
 
@@ -32,7 +31,8 @@ const ProductAsideDetail = () => {
         <span className="font-bold">상품 정보</span>
         <div className="flex flex-col gap-1">
           <div className="mb-4 h-[150px] w-full overflow-hidden rounded-md bg-neutral-100">
-            {isPayloadImageRenderable(clieckedProduct.image) ? (
+            {/* TODO:: 해당부분 개선 */}
+            {clieckedProduct?.image?.url ? (
               <Image
                 src={clieckedProduct.image.url}
                 alt={'상품 이미지'}

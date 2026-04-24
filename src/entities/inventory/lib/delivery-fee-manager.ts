@@ -1,4 +1,4 @@
-import type { Inventory } from '@/entities/inventory/@x/point';
+import type { Inventory } from '@/entities/inventory/model/inventory-schema';
 import type { PointAllocator } from '@/entities/point/lib/use/point-allocator';
 import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price/lib/calculator';
 

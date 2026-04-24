@@ -3,14 +3,14 @@ import Link from 'next/link';
 import { Search, CircleArrowRight } from 'lucide-react';
 
 import { EmptyProductList } from '@/entities/product';
-import type { ProductItem } from '@/entities/product';
+import type { Product } from '@/entities/product';
 import { KeywordSearchConditionKey } from '@/entities/product/constant/search-keyword-condition';
 
 import ProductListPagination from '../ProductListPagination';
 import ProductList from '../ProductList';
 
 interface SearchResultProps {
-  products: ProductItem[];
+  products: Product[];
   totalPages: number;
   keyword: string;
   condition: KeywordSearchConditionKey;

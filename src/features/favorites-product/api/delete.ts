@@ -1,6 +1,6 @@
 'use server';
 
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 
 type DeleteFavoritesProductDto = {
   userId: number;

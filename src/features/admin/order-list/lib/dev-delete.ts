@@ -1,6 +1,6 @@
 'use server';
 
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 
 export const deleteAllOrder = async () => {
   const payload = await getPayload();

@@ -2,7 +2,7 @@
 
 import { OrderProduct } from '@/entities/order-product/model/types';
 import { User } from '@/entities/user';
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 import { PaymentsMethod } from '@/entities/order/constants/payments-options';
 import { OrderStatus } from '@/entities/order/constants/order-status';
 

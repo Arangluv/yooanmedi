@@ -4,11 +4,11 @@ import useInventoryStore from '@/entities/inventory/model/useInventoryStore';
 import { toast } from 'sonner';
 import { ShoppingCart } from 'lucide-react';
 
-import type { ProductItem } from '@/entities/product';
+import type { Product } from '@/entities/product';
 import { AddedProductToast, ExistingProductToast } from '@/entities/product';
 import CardActionButton from '@/shared/ui/CardActionButton';
 
-const AddToCartBtn = ({ product }: { product: ProductItem }) => {
+const AddToCartBtn = ({ product }: { product: Product }) => {
   const { addInventory, isExistingProduct } = useInventoryStore();
 
   const handleAddToInventory = () => {

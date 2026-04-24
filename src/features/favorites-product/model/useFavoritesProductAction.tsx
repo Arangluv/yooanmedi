@@ -3,14 +3,14 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import type { ProductItem } from '@/entities/product';
+import type { Product } from '@/entities/product';
 import { useAuthStore } from '@/entities/user';
 
 import { createFavoritesProduct } from '../api/create';
 import { deleteFavoritesProduct } from '../api/delete';
 import useFavoritesProductStore from './useFavoritesProductStore';
 
-const useFavoritesProductAction = ({ product }: { product: ProductItem }) => {
+const useFavoritesProductAction = ({ product }: { product: Product }) => {
   const user = useAuthStore((state) => state.user);
   const { addFavoritesProduct, removeFavoritesProduct } = useFavoritesProductStore();
 

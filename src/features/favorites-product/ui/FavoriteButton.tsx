@@ -1,12 +1,12 @@
 'use client';
 
 import { Heart } from 'lucide-react';
-import type { ProductItem } from '@/entities/product';
+import type { Product } from '@/entities/product';
 import CardActionButton from '@/shared/ui/CardActionButton';
 import useFavoritesProductAction from '../model/useFavoritesProductAction';
 import useFavoritesProductStore from '../model/useFavoritesProductStore';
 
-const FavoriteButton = ({ product }: { product: ProductItem }) => {
+const FavoriteButton = ({ product }: { product: Product }) => {
   const favoritesList = useFavoritesProductStore((state) => state.favoritesList);
 
   const { createMutation, deleteMutation, isCreating, isDeleting } = useFavoritesProductAction({

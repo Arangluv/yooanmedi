@@ -1,6 +1,6 @@
 'use server';
 
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 import type { User } from '@/entities/user';
 import { BeforeNormalizeFavoritesProduct } from '../lib/normalize';
 

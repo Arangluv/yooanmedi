@@ -1,11 +1,11 @@
 'use client';
 
-import { ProductItem } from '@/entities/product';
+import { Product } from '@/entities/product';
 import { create } from 'zustand';
 
 type ProductDetailStore = {
-  clieckedProduct: ProductItem | null;
-  setClieckedProduct: (targetProduct: ProductItem | null) => void;
+  clieckedProduct: Product | null;
+  setClieckedProduct: (targetProduct: Product | null) => void;
 };
 
 const useProductDetailStore = create<ProductDetailStore>((set) => ({

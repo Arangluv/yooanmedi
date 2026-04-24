@@ -1,4 +1,4 @@
-import { ProductItem } from '@/entities/product';
+import { Product } from '@/entities/product';
 import { KeywordSearchConditionKey } from '@/entities/product/constant/search-keyword-condition';
 
 import ProductDefaultView from './ProductDefaultView';
@@ -7,7 +7,7 @@ import ProductSearchResultView from './ProductSearchResultView';
 import resolveViewState from '../../lib/resolve-view-state';
 
 interface ProductListViewProps {
-  products: ProductItem[];
+  products: Product[];
   totalPages: number;
   totalProducts: number;
   condition: KeywordSearchConditionKey;

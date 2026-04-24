@@ -1,7 +1,6 @@
 // apis
 export { getProductList } from './api/get-product-list';
 export { getProductCategory } from './api/get-product-category';
-export { getProductById } from './api/get-product-by-id';
 
 // constants
 export {
@@ -16,7 +15,8 @@ export { generationCondition } from './lib/generate-condition';
 export { generateSearchParams, type ProductSearchParamsType } from './lib/generate-searchparams';
 
 // model
-export type { Product, ProductItem, ProductCategory, SearchParamsType } from './model/types';
+export type { Product } from './model/schemas/product.schema';
+export type { ProductCategory } from './model/schemas/product-category';
 export { default as useSearchQueryState } from './model/useSearchQueryState';
 
 // ui

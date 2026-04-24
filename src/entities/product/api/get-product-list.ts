@@ -2,14 +2,16 @@
 
 import { getPayload } from '@shared/lib/get-payload';
 import { generationCondition } from '../lib/generate-condition';
-import type { ProductItem } from '../model/types';
+import type { Product } from '../model/schemas/product.schema';
 import type { ProductSearchParamsType } from '../lib/generate-searchparams';
 
 export type ProductList = {
-  productList: ProductItem[];
+  productList: Product[];
   totalProductPages: number;
   totalProductDocs: number;
 };
+
+// todo:: will deprecate
 
 export const getProductList = async (
   searchParams: ProductSearchParamsType,
@@ -43,14 +45,14 @@ export const getProductList = async (
     limit: LIMIT,
   });
 
-  return { productList: docs, totalProductPages: totalPages, totalProductDocs: totalDocs };
+  // todo 해당 부분 계층을 나누는식으로 개선해야한다. -> payloadcms는 불친절한 타입을 가진다
+  return { productList: docs as any, totalProductPages: totalPages, totalProductDocs: totalDocs };
 };
 
 // TODO: refactor Ranking 상품을 가져오는 것과 모든 상품을 가져오는 것을 이렇게 분리할 필요가 있을까
-// 가독성 측면에서는 분리하는게 좋아보인다.
 
 export type ProductRankingList = {
-  productList: ProductItem[];
+  productList: Product[];
 };
 
 export const getProductRankingList = async (): Promise<ProductRankingList> => {
@@ -83,5 +85,5 @@ export const getProductRankingList = async (): Promise<ProductRankingList> => {
     limit: LIMIT,
   });
 
-  return { productList: productList as ProductItem[] };
+  return { productList: productList as Product[] };
 };

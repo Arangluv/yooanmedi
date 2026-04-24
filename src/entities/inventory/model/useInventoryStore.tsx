@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import type { InventoryItem } from './type';
-import type { ProductItem } from '@/entities/product/@x/inventory';
+import { type Product } from '@/entities/product';
 
 type InventoryStore = {
   inventory: InventoryItem[];
   addInventory: (inventory: InventoryItem) => void;
   removeInventory: (inventory: InventoryItem) => void;
   isExistingProduct: (productId: number) => boolean;
-  updateInventory: ({ product, quantity }: { product: ProductItem; quantity: number }) => void;
+  updateInventory: ({ product, quantity }: { product: Product; quantity: number }) => void;
   clearInventory: () => void;
 };
 

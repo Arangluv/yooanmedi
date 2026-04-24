@@ -1,6 +1,6 @@
 'use server';
 
-import { getPayload } from '@/shared';
+import { getPayload } from '@/shared/infrastructure';
 
 // TODO ::현재 order-product의 cancel api에서 참조중이지만
 // 같은 entity에서는 참조하면 안된다 -> 리팩토링 필요

@@ -1,4 +1,4 @@
-import { getUuidWithoutHyphen } from '@/shared/lib/get-uuid';
+import { generateUUID32digits } from '@/shared/lib/identifier';
 import crypto from 'crypto';
 import moment from 'moment-timezone';
 import { CANCEL_REVISE_TYPE } from '../constant/cancel-revise-type';
@@ -6,7 +6,7 @@ import { cancelPaymentSchema } from '../model/cancel-schema';
 
 // TODO:: 결제 트랜젝션 롤백을 구현하기위해 임시로 해당파일에 위치시켰으며 추후 리팩토링이 필요합니다.
 export const cancelPgPaymentAll = async (amount: number, pgCno: string) => {
-  const shopTransactionId = getUuidWithoutHyphen();
+  const shopTransactionId = generateUUID32digits();
   const authMsg = `${pgCno}|${shopTransactionId}`;
   const hashedAuthMsg = crypto
     .createHmac('sha256', process.env.PAYMENTS_MSG_AUTH_VALUE as string)

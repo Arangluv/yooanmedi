@@ -1,15 +1,11 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-
 import type { InventoryItem } from '@/entities/inventory';
 import type { User } from '@/entities/user';
-import { PAYMENTS_METHOD } from '@/entities/order';
-
-import { paymentsRegisterApplicationDtoSchema } from './schema/payments-register-schema';
-import { paymentRegistration } from '../api/payment-registration';
+import { RegisterTransactionRequestDto } from '@/entities/easypay/model/schemas/easypay.register-transaction.schema';
 import { openPaymentsPopup } from '../lib/open-payments-popup';
-import { generateShopOrderNo } from '../lib/order-uuid';
+import { registerTransaction } from '@/entities/easypay/api/easypay.api';
 
 interface UsePaymentsActionProps {
   inventory: InventoryItem[];
@@ -30,12 +26,6 @@ const usePaymentsAction = ({
 }: UsePaymentsActionProps) => {
   const dto = {
     amount: amount - usedPoint,
-    clientTypeCode: '00',
-    payMethodTypeCode: '11',
-    currency: '00',
-    deviceTypeCode: 'pc',
-    returnUrl: process.env.NEXT_PUBLIC_SITE_URL + '/api/payments',
-    shopOrderNo: generateShopOrderNo(),
     orderInfo: {
       goodsName: getGoodsName(inventory),
       customerInfo: {
@@ -54,22 +44,21 @@ const usePaymentsAction = ({
       })),
       usedPoint: usedPoint,
       userId: user.id,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
       minOrderPrice,
     },
-  };
+  } as RegisterTransactionRequestDto;
 
   const { mutate } = useMutation({
-    mutationFn: () => paymentRegistration(paymentsRegisterApplicationDtoSchema.parse(dto)),
-    onSuccess: (data) => {
-      if (data.success) {
-        openPaymentsPopup(data.authPageUrl);
+    mutationFn: () => registerTransaction(dto),
+    onSuccess: (actionResult) => {
+      if (actionResult.isSuccess) {
+        openPaymentsPopup(actionResult.data.authPageUrl);
       } else {
         alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요');
       }
     },
     onError: (error) => {
-      // TODO: ZOD 에러 처리
+      // todo :: mudation onError 처리 정리하기
       alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요');
     },
   });
