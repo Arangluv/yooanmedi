@@ -70,7 +70,7 @@ export const getExcelExportData = async () => {
     },
   });
 
-  return normalizeData(data.docs);
+  return normalizeData(data.docs as ExcelExportRowData[]);
 };
 
 const normalizeData = (data: ExcelExportRowData[]) => {

@@ -1,4 +1,4 @@
-import { Inventory } from '@/entities/inventory/model/schemas/inventory-schema';
+import { Inventory } from '@/entities/inventory';
 
 // todo :: will removed
 export const baseBankTransferDtoFixture = {

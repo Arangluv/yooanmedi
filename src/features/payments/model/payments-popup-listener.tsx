@@ -18,25 +18,43 @@ type PopupErrorEventData = {
 const PaymentsPopupListener = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
+  // TODO :: 해당부분 반드시 리팩토링
   useEffect(() => {
-    const popupHandler = (event: MessageEvent<PopupSuccessEventData | PopupErrorEventData>) => {
-      if (event.data.status === 'success') {
-        const amount = event.data.amount;
-        const approvalDate = event.data.approvalDate;
-        const shopOrderNo = event.data.shopOrderNo;
+    const popupHandler = (event: MessageEvent<unknown>) => {
+      const data = event.data;
+
+      if (!data || typeof data !== 'object') {
+        return;
+      }
+
+      if (!('status' in data)) {
+        return;
+      }
+
+      if (data.status === 'success') {
+        if (!('amount' in data) || !('approvalDate' in data) || !('shopOrderNo' in data)) {
+          return;
+        }
 
         router.push(
           '/order/payments/result?status=success&amount=' +
-            amount +
+            String(data.amount) +
             '&approvalDate=' +
-            approvalDate +
+            encodeURIComponent(String(data.approvalDate)) +
             '&shopOrderNo=' +
-            shopOrderNo,
+            encodeURIComponent(String(data.shopOrderNo)),
         );
-      } else if (event.data.status === 'error') {
-        router.push('/order/payments/result?status=error&message=' + event.data.message);
-      } else {
-        alert('결제 주문 등록 실패');
+        return;
+      }
+
+      if (data.status === 'error') {
+        if (!('message' in data)) {
+          return;
+        }
+
+        router.push(
+          '/order/payments/result?status=error&message=' + encodeURIComponent(String(data.message)),
+        );
       }
     };
 
@@ -45,7 +63,7 @@ const PaymentsPopupListener = ({ children }: { children: React.ReactNode }) => {
     return () => {
       window.removeEventListener('message', popupHandler);
     };
-  }, []);
+  }, [router]);
 
   return children;
 };

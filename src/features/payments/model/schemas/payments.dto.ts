@@ -1,4 +1,4 @@
-import { type InventoryItem } from '@/entities/inventory/model/schemas/inventory-schema';
+import { type InventoryItem } from '@/entities/inventory';
 import type { BasePaymentContext } from './payments-context/base.schema';
 import type {
   BankTransferPaymentInitContext,

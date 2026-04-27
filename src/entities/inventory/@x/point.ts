@@ -1,3 +1,1 @@
-import type { InventoryItem } from '../model/type';
-
-export type Inventory = Array<InventoryItem>;
+export { type Inventory } from '../model/schemas/inventory.schema';

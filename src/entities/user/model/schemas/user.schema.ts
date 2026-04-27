@@ -7,7 +7,7 @@ export const userSchema = z.object({
     required_message: '유저 아이디는 필수값입니다',
     invalid_message: '잘못된 유저타입 입니다',
   }), // collection 유니크 아이디
-  role: z.literal(USER_ROLE.client),
+  role: z.enum([USER_ROLE.client, USER_ROLE.admin]),
   isApproved: z.boolean(),
   point: BaseSchema.number({
     min: 0,

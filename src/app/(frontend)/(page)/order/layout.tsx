@@ -1,6 +1,6 @@
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-import { getUserByHeader, AuthGuard } from '@/entities/user';
+import { AuthGuard } from '@/entities/user';
 import { getSiteMetadata, SiteMetadataSetter } from '@/shared';
 import LayoutTopNavbar from '@/entities/order/ui/LayoutTopNavbar';
 import InventoryModal from '@/features/inventory/ui/InventoryModal';

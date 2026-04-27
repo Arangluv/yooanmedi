@@ -1,4 +1,4 @@
-import type { Inventory } from '@/entities/inventory/@x/price';
+import type { Inventory, InventoryItem } from '@/entities/inventory/@x/price';
 
 export const getOriginalPriceFromInventory = ({ inventory }: { inventory: Inventory }) => {
   return inventory.reduce((acc, { product, quantity }) => acc + product.price * quantity, 0);
@@ -51,7 +51,7 @@ export const getDeliveryFeeFromProductCosiderFlg = ({
   inventoryItem,
   freeDeliveryFlg,
 }: {
-  inventoryItem: Inventory[number];
+  inventoryItem: InventoryItem;
   freeDeliveryFlg: boolean;
 }) => {
   const { product } = inventoryItem;

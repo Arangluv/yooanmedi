@@ -27,7 +27,7 @@ const createUseAuthStore = (initProps: AuthProps) => {
         return set({ user: initProps.user });
       }
 
-      return set({ user: newUser });
+      return set({ user: newUser as User }); // todo :: 해당 부분 타입단언 제거하기
     },
     logout: async () => {
       const res = await logout();

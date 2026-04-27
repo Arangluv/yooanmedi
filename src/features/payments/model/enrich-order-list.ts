@@ -8,9 +8,9 @@ import {
 } from './schemas/payment-order-list.schema';
 import { type Product } from '@/entities/product/model/schemas/product.schema';
 import { ProductRepository } from '@/entities/product/api/repository';
-import { zodSafeParse, BusinessLogicError, IFindOptionResolver } from '@/shared';
+import { zodSafeParse, BusinessLogicError, FindOption } from '@/shared';
 import { type BasePaymentContext } from './schemas/payments-context/base.schema';
-import { ProductService } from '@/entities/product/infrastructure';
+import { buildProductsFindOption } from '../lib/build-find-options';
 
 interface ClinentOrderList {
   product: Pick<Product, 'id' | 'price'>;
@@ -48,22 +48,9 @@ export const enrichOrderList = async (
 const populateProductDetails = async (
   orderList: ClinentOrderList[],
 ): Promise<PopulatedOrderList> => {
-  const productService = new ProductService();
   const productIds = orderList.map((item) => item.product.id);
-  // TODO :: 해당 부분 리팩토링 필요함
-  const optionResolver: IFindOptionResolver = {
-    buildOption: () => {
-      return {
-        pagination: false,
-        where: {
-          id: {
-            in: productIds,
-          },
-        },
-      };
-    },
-  };
-  const { data: products } = await productService.getProducts(optionResolver);
+  const { products } = await ProductRepository.findMany(buildProductsFindOption(productIds));
+
   const populatedOrderList = orderList.map((item) => {
     const product = products.find((product) => product.id === item.product.id);
     if (!product) {
