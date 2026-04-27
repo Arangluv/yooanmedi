@@ -1,24 +1,21 @@
 import { Product } from '@/entities/product';
-import { KeywordSearchConditionKey } from '@/entities/product/constant/search-keyword-condition';
-
 import ProductDefaultView from './ProductDefaultView';
 import FavoritesView from './FavoritesView';
 import ProductSearchResultView from './ProductSearchResultView';
+import { type SearchFieldKey } from '../../constant/search-field';
 import resolveViewState from '../../lib/resolve-view-state';
 
 interface ProductListViewProps {
   products: Product[];
-  totalPages: number;
-  totalProducts: number;
-  condition: KeywordSearchConditionKey;
+  totalCount: number;
+  condition: SearchFieldKey;
   keyword: string;
   opt: 'favorites' | null;
 }
 
 const ProductListView = ({
   products,
-  totalPages,
-  totalProducts,
+  totalCount,
   condition,
   keyword,
   opt,
@@ -32,14 +29,13 @@ const ProductListView = ({
       return (
         <ProductSearchResultView
           products={products}
-          totalPages={totalPages}
-          totalProducts={totalProducts}
+          totalCount={totalCount}
           condition={condition}
           keyword={keyword}
         />
       );
     case 'DEFAULT':
-      return <ProductDefaultView products={products} totalPages={totalPages} />;
+      return <ProductDefaultView products={products} totalCount={totalCount} />;
   }
 };
 

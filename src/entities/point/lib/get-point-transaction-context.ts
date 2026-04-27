@@ -1,5 +1,6 @@
 'use server';
 
+import { UserRepository } from '@/entities/user/infrastructure';
 import { getPayload } from '@/shared/infrastructure';
 
 interface GetPointTransactionContextParams {
@@ -17,13 +18,7 @@ export const getPointTransactionContext = async ({
   const payload = await getPayload();
 
   try {
-    const user = await payload.findByID({
-      collection: 'users',
-      id: userId,
-      select: {
-        point: true,
-      },
-    });
+    const user = await UserRepository.findById(userId);
 
     const orderProduct = await payload.findByID({
       collection: 'order-product',

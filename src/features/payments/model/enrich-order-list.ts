@@ -8,8 +8,9 @@ import {
 } from './schemas/payment-order-list.schema';
 import { type Product } from '@/entities/product/model/schemas/product.schema';
 import { ProductRepository } from '@/entities/product/api/repository';
-import { zodSafeParse, BusinessLogicError } from '@/shared';
+import { zodSafeParse, BusinessLogicError, FindOption } from '@/shared';
 import { type BasePaymentContext } from './schemas/payments-context/base.schema';
+import { buildProductsFindOption } from '../lib/build-find-options';
 
 interface ClinentOrderList {
   product: Pick<Product, 'id' | 'price'>;
@@ -48,7 +49,7 @@ const populateProductDetails = async (
   orderList: ClinentOrderList[],
 ): Promise<PopulatedOrderList> => {
   const productIds = orderList.map((item) => item.product.id);
-  const products = await ProductRepository.findAll(productIds);
+  const { products } = await ProductRepository.findMany(buildProductsFindOption(productIds));
 
   const populatedOrderList = orderList.map((item) => {
     const product = products.find((product) => product.id === item.product.id);

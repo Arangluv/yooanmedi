@@ -3,7 +3,6 @@
 import useInventoryStore from '@/entities/inventory/model/useInventoryStore';
 import { toast } from 'sonner';
 import { ShoppingCart } from 'lucide-react';
-
 import type { Product } from '@/entities/product';
 import { AddedProductToast, ExistingProductToast } from '@/entities/product';
 import CardActionButton from '@/shared/ui/CardActionButton';

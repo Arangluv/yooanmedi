@@ -1,21 +1,16 @@
 'use server';
 
-import { getPayload } from '@shared/lib/get-payload';
 import { headers as nextHeaders } from 'next/headers';
-import type { User } from '../model/type';
+import { getPayload } from '@shared/infrastructure';
 
-export const getUserByHeader = async (): Promise<User | null> => {
+export const getUserByHeader = async () => {
   const nextHeader = await nextHeaders();
   const payload = await getPayload();
 
-  const payloadAuthResult = await payload.auth({
+  const { user } = await payload.auth({
     headers: nextHeader,
     canSetHeaders: false,
   });
 
-  if (!payloadAuthResult.user) {
-    return null;
-  }
-
-  return payloadAuthResult.user;
+  return user;
 };

@@ -1,3 +1,1 @@
-import type { User as PayloadUser } from '@/payload-types';
-
-export type User = PayloadUser;
+export type { User } from './schemas/user.schema';

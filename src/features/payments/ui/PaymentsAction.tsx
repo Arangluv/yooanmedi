@@ -130,7 +130,10 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
               radius="sm"
               className="bg-brand w-full text-white"
               isDisabled={payablePrice === 0 || inventory.length === 0}
-              onPress={() => registerOrderMutation()}
+              onPress={() => {
+                console.log('바로 평가가 되나요?');
+                registerOrderMutation();
+              }}
             >
               카드결제
             </Button>

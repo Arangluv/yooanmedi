@@ -117,3 +117,13 @@ export const payloadImage = z.object({
   filename: z.string(),
 });
 export type PayloadImage = z.infer<typeof payloadImage>;
+
+export const email = z.email({
+  error: (iss) => {
+    if (iss.code === 'invalid_format') {
+      return '이메일 형식이 아닙니다.';
+    }
+
+    return '이메일은 필수 입력항목 입니다';
+  },
+});

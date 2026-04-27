@@ -1,4 +1,5 @@
 import React from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import '../globals.css';
 import { Providers } from './providers';
 import { Metadata, Viewport } from 'next';
@@ -76,6 +77,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
               <Popup popup={popup} />
               <main>{children}</main>
               <Footer />
+              <ReactQueryDevtools />
             </TooltipProvider>
           </QueryProvider>
         </Providers>
