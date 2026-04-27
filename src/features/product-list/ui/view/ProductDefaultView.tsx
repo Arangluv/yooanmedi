@@ -8,16 +8,16 @@ import RankingListSection from '../RankingListSection';
 
 const ProductDefaultView = ({
   products,
-  totalPages,
+  totalCount,
 }: {
   products: Product[];
-  totalPages: number;
+  totalCount: number;
 }) => {
   return (
     <section className="mt-16 flex w-5xl flex-shrink-0 flex-col gap-16">
       <RankingListSection />
       <DefaultListSection products={products} />
-      <ProductListPagination totalPages={totalPages} />
+      <ProductListPagination totalCount={totalCount} />
     </section>
   );
 };

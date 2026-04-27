@@ -1,28 +1,23 @@
 import Link from 'next/link';
-
 import { Search, CircleArrowRight } from 'lucide-react';
-
 import { EmptyProductList } from '@/entities/product';
 import type { Product } from '@/entities/product';
-import { KeywordSearchConditionKey } from '@/entities/product/constant/search-keyword-condition';
-
+import { SearchFieldKey } from '../../constant/search-field';
 import ProductListPagination from '../ProductListPagination';
 import ProductList from '../ProductList';
 
 interface SearchResultProps {
   products: Product[];
-  totalPages: number;
+  totalCount: number;
   keyword: string;
-  condition: KeywordSearchConditionKey;
-  totalProducts: number;
+  condition: SearchFieldKey;
 }
 
 const ProductSearchResultView = ({
   products,
-  totalPages,
   keyword,
   condition,
-  totalProducts,
+  totalCount,
 }: SearchResultProps) => {
   return (
     <section className="mt-16 flex w-5xl flex-shrink-0 flex-col">
@@ -53,7 +48,7 @@ const ProductSearchResultView = ({
         </div>
         <div>
           <span className="text-foreground-600 text-[13px]">
-            총 {totalProducts}개의 상품이 있습니다.
+            총 {totalCount}개의 상품이 있습니다.
           </span>
         </div>
       </div>
@@ -67,7 +62,7 @@ const ProductSearchResultView = ({
         />
       )}
       {/* pagination */}
-      <ProductListPagination totalPages={totalPages} />
+      <ProductListPagination totalCount={totalCount} />
     </section>
   );
 };

@@ -1,14 +1,13 @@
 import 'server-only';
-import { getPayload } from '@/shared/infrastructure';
+import { FindOption } from '@/shared';
+import { getPayload } from '@shared/infrastructure';
 
-export const getProducts = async (ids: number[]) => {
+export const getProducts = async (options: FindOption): Promise<any> => {
   const payload = await getPayload();
-  const { docs } = await payload.find({
+  const { docs, totalDocs } = await payload.find({
     collection: 'product',
-    where: {
-      id: { in: ids },
-    },
+    ...options,
   });
 
-  return docs;
+  return { products: docs, totalCount: totalDocs };
 };

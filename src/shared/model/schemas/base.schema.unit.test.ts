@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { url, number, string, collectionId } from './base.schema';
+import { url, number, string, collectionId, email } from './base.schema';
 
 describe('BaseSchema', () => {
   describe('url', () => {
@@ -168,6 +168,23 @@ describe('BaseSchema', () => {
         required_message: '컬렉션 아이디는 비어있을 수 없습니다',
       }).safeParse(undefined);
 
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('email', () => {
+    it('파싱에 성공한다', () => {
+      const result = email.safeParse('test@gmail.com');
+      expect(result.success).toBe(true);
+    });
+
+    it('이메일 형식이 아닌 경우 파싱에 실패한다', () => {
+      const result = email.safeParse('test');
+      expect(result.success).toBe(false);
+    });
+
+    it('값이 빈 경우 파싱에 실패한다', () => {
+      const result = email.safeParse(undefined);
       expect(result.success).toBe(false);
     });
   });

@@ -1,34 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { Form, Input, Select, SelectItem } from '@heroui/react';
 import clsx from 'clsx';
 import { Search } from 'lucide-react';
-
 import {
-  KEYWORD_SEARCH_CONDITION_KEY,
-  KEYWORD_SEARCH_CONDITION_LABEL,
-  useSearchQueryState,
-} from '@/entities/product';
-import type { KeywordSearchConditionKey } from '@/entities/product';
+  SEARCH_FIELD_KEY,
+  SEARCH_FIELD_LABEL,
+  type SearchFieldKey,
+} from '../constant/search-field';
+import { useSearchQueryState } from '../model/useSearchQueryState';
 
-const searchKeywordCondition = KEYWORD_SEARCH_CONDITION_KEY.map((key) => ({
+const searchKeywordCondition = SEARCH_FIELD_KEY.map((key) => ({
   key,
-  label: KEYWORD_SEARCH_CONDITION_LABEL[key],
+  label: SEARCH_FIELD_LABEL[key],
 }));
 
 const ProductSearchForm = () => {
   const { filters, updateKeyword, resetFilters } = useSearchQueryState();
 
-  const [condition, setCondition] = useState<KeywordSearchConditionKey>(filters.condition);
+  const [condition, setCondition] = useState<SearchFieldKey>(filters.condition);
   const [keyword, setKeyword] = useState<string>(filters.keyword);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const condition = formData.get('condition') as KeywordSearchConditionKey;
+    const condition = formData.get('condition') as SearchFieldKey;
     const keyword = formData.get('keyword') as string;
 
     if (keyword.trim() === '') {
@@ -52,7 +50,7 @@ const ProductSearchForm = () => {
       <Select
         radius="sm"
         selectedKeys={[condition]}
-        onChange={(e) => setCondition(e.target.value as KeywordSearchConditionKey)}
+        onChange={(e) => setCondition(e.target.value as SearchFieldKey)}
         name="condition"
         variant="bordered"
         aria-label="검색 조건"

@@ -1,18 +1,22 @@
 import 'server-only';
-
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse, FindOption } from '@/shared';
+import { productsSchema, productSchema, type Product } from '../model/schemas/product.schema';
+import { productCategoriesSchema, type ProductCategory } from '../model/schemas/product-category';
 import { getProductById } from './get-product-by-id';
 import { getProducts } from './get-products';
-import type { Product } from '../model/schemas/product.schema';
-import { productListSchema, productSchema } from '../model/schemas/product.schema';
+import { getProductCategories } from './get-product-categories';
 
 export const ProductRepository = {
   findById: async (id: number): Promise<Product> => {
     const product = await getProductById(id);
     return zodSafeParse(productSchema, product);
   },
-  findAll: async (ids: number[]): Promise<Product[]> => {
-    const products = await getProducts(ids);
-    return zodSafeParse(productListSchema, products);
+  findMany: async (options: FindOption) => {
+    const products = await getProducts(options);
+    return zodSafeParse(productsSchema, products);
+  },
+  findAllCategories: async (): Promise<ProductCategory[]> => {
+    const categories = await getProductCategories();
+    return zodSafeParse(productCategoriesSchema, categories);
   },
 };

@@ -1,7 +1,5 @@
 import Link from 'next/link';
-
 import { TriangleAlert } from 'lucide-react';
-
 import type { User } from './type';
 import { checkAuthValidate } from '../lib/validates';
 import { AuthStoreProvider } from './auth-store-provider';

@@ -50,9 +50,14 @@ export type Product<TCategoty = number | ProductCategory | null> = Omit<ProductB
   category: TCategoty;
 };
 
-export const productListSchema = z.array(
-  productSchema.extend({
-    category: z.custom<ProductCategory>().nullable(),
+export const productsSchema = z.object({
+  products: z.array(
+    productSchema.extend({
+      category: z.custom<ProductCategory>().nullable(),
+    }),
+  ),
+  totalCount: BaseSchema.number({
+    min: 0,
   }),
-);
-export type ProductList = Product<ProductCategory | null>[];
+});
+export type Products = Product<ProductCategory | null>[];

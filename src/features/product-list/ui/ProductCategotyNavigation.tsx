@@ -1,13 +1,10 @@
 'use client';
 
-import { Tabs, Tab } from '@heroui/react';
-
-import {
-  ProductSearchParamsType,
-  useSearchQueryState,
-  type ProductCategory,
-} from '@/entities/product';
 import { useEffect, useState } from 'react';
+import { Tabs, Tab } from '@heroui/react';
+import { type ProductCategory } from '@/entities/product';
+import { useSearchQueryState } from '../model/useSearchQueryState';
+import { ProductListSearchParams } from '../lib/generate-search-params';
 
 const ProductCategotyNavigation = ({ categories }: { categories: ProductCategory[] }) => {
   const { filters, updateCategory, updateFavorites } = useSearchQueryState();
@@ -60,7 +57,7 @@ const ProductCategotyNavigation = ({ categories }: { categories: ProductCategory
   );
 };
 
-const keyResolver = (filters: ProductSearchParamsType) => {
+const keyResolver = (filters: ProductListSearchParams) => {
   if (filters.opt) return filters.opt;
   if (filters.category) return String(filters.category);
   return 'all';

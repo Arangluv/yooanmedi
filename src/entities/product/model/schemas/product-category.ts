@@ -7,3 +7,5 @@ export const productCategorySchema = z.object({
   createdAt: z.string(),
 });
 export type ProductCategory = z.infer<typeof productCategorySchema>;
+
+export const productCategoriesSchema = z.array(productCategorySchema);

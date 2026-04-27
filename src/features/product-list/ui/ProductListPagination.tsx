@@ -1,21 +1,21 @@
 'use client';
 
 import { Pagination } from '@heroui/react';
+import { PAGE_SIZE } from '../config/product-list.config';
+import { useSearchQueryState } from '../model/useSearchQueryState';
 
-import { useSearchQueryState } from '@/entities/product';
-
-export default function ProductListPagination({ totalPages }: { totalPages: number }) {
+export default function ProductListPagination({ totalCount }: { totalCount: number }) {
   const { filters, updatePage } = useSearchQueryState();
 
   return (
     <div className="flex w-full justify-center">
       <Pagination
-        total={totalPages}
-        showControls
+        className="cursor-pointer"
+        total={Math.ceil(totalCount / PAGE_SIZE)}
         defaultValue={filters.page}
         page={filters.page}
         onChange={(page) => updatePage(page)}
-        className="cursor-pointer"
+        showControls
       />
     </div>
   );

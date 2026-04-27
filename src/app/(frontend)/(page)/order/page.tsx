@@ -1,31 +1,25 @@
 import { BrandLogo } from '@/shared';
 import Link from 'next/link';
 import type { SearchParams } from 'nuqs';
-/** features */
-import { getCustomPriceList } from '@/features/custom-price';
 import {
   ProductSearchForm,
   ProductCategotyNavigation,
   ProductAsideDetail,
+  ProductListView,
 } from '@/features/product-list';
-import { InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
-/** entities */
-import { generateSearchParams, getProductCategory, type ProductCategory } from '@/entities/product';
+import { ProductListService } from '@/features/product-list/infrastructure';
+import { ProductRepository } from '@/entities/product/infrastructure';
 import OrderLink from '@/entities/order/ui/OrderLink';
-import ProductListView from '@/features/product-list/ui/view/ProductListView';
+import { InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
 
-type PageProps = {
-  searchParams: Promise<SearchParams>;
-};
+export default async function OrderPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const productListService = new ProductListService();
+  const [productListResponse, categories] = await Promise.all([
+    await productListService.getProductListAppliedCustomPrice(searchParams),
+    await ProductRepository.findAllCategories(),
+  ]);
 
-export default async function OrderPage({ searchParams }: PageProps) {
-  const serverSearchParams = await generateSearchParams(searchParams);
-
-  const { productList, totalProductPages, totalProductDocs } =
-    await getCustomPriceList(serverSearchParams);
-
-  // TODO: 개선이 필요함
-  const productCategory = await getProductCategory();
+  const safeSearchParam = await productListService.getSafeSearchParams(searchParams);
 
   return (
     <Wrapper>
@@ -49,18 +43,17 @@ export default async function OrderPage({ searchParams }: PageProps) {
       {/* bottom area */}
       <div className="flex w-full max-w-5xl items-center">
         {/* 제품카테고리 */}
-        <ProductCategotyNavigation categories={productCategory as ProductCategory[]} />
+        <ProductCategotyNavigation categories={categories} />
       </div>
       {/* 메인 컨텐츠 영역 */}
       <div className="flex w-full">
         <div className="w-[calc((100%-1024px)/2)]"></div>
         <ProductListView
-          products={productList}
-          totalPages={totalProductPages}
-          totalProducts={totalProductDocs}
-          condition={serverSearchParams.condition}
-          keyword={serverSearchParams.keyword}
-          opt={serverSearchParams.opt}
+          products={productListResponse.products}
+          totalCount={productListResponse.totalCount}
+          condition={safeSearchParam.condition}
+          keyword={safeSearchParam.keyword}
+          opt={safeSearchParam.opt}
         />
         <ProductAsideDetail />
       </div>
@@ -76,3 +69,13 @@ function Wrapper({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+// 이상적으로 리팩토링하고 싶은 props 부부은
+const condition = {
+  field: 'pn',
+  keyword: 'test',
+  options: {
+    // somefield..
+    // ex. opt: parsedSearchParm.opt
+  },
+};
