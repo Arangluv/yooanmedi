@@ -22,6 +22,7 @@ import { Payments } from './collections/payments';
 import { RecentPurchasedHistory } from './collections/recent-purchased-history';
 import { Favorites } from './collections/favorites';
 import { ProductPrice } from './collections/product-price';
+import { ShoppingCart } from './collections/shopping-cart';
 import { Banner } from './collections/banner';
 import { BannerImage } from './collections/banner-image';
 
@@ -70,6 +71,7 @@ export default buildConfig({
     Payments,
     PointTransaction,
     Favorites,
+    ShoppingCart,
   ],
   globals: [PopupSetting, Terms, PrivacyPolicy, MetaSetting, Banner],
   editor: lexicalEditor(),

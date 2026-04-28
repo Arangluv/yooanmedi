@@ -80,6 +80,7 @@ export interface Config {
     payment: Payment;
     'point-transaction': PointTransaction;
     favorites: Favorite;
+    'shopping-cart': ShoppingCart;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -103,6 +104,7 @@ export interface Config {
     payment: PaymentSelect<false> | PaymentSelect<true>;
     'point-transaction': PointTransactionSelect<false> | PointTransactionSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
+    'shopping-cart': ShoppingCartSelect<false> | ShoppingCartSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -404,6 +406,18 @@ export interface Favorite {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shopping-cart".
+ */
+export interface ShoppingCart {
+  id: number;
+  user: number | User;
+  product?: (number | null) | Product;
+  quantity: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -460,6 +474,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'favorites';
         value: number | Favorite;
+      } | null)
+    | ({
+        relationTo: 'shopping-cart';
+        value: number | ShoppingCart;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -708,6 +726,17 @@ export interface PointTransactionSelect<T extends boolean = true> {
 export interface FavoritesSelect<T extends boolean = true> {
   user?: T;
   product?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shopping-cart_select".
+ */
+export interface ShoppingCartSelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
+  quantity?: T;
   updatedAt?: T;
   createdAt?: T;
 }
