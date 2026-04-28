@@ -25,4 +25,25 @@ describe('ShoppingCartService', () => {
       await expect(() => service.createShoppingCartItem(null as any)).rejects.toThrowError();
     });
   });
+
+  describe('getShoppingCart', () => {
+    const findAllSpy = vi.spyOn(ShoppingCartRepository, 'findAll').mockResolvedValue([]);
+
+    it('데이터를 가져오는데 성공한다', async () => {
+      const USER_ID = 1;
+      const service = new ShoppingCartService();
+      const result = await service.getShoppingCart(USER_ID);
+
+      expect(findAllSpy).toBeCalled();
+      expect(findAllSpy).toBeCalledTimes(1);
+      expect(result).toBeDefined();
+    });
+
+    it('유저 아이디가 올바르지 않다면, error를 throw한다', async () => {
+      const USER_ID = null;
+      const service = new ShoppingCartService();
+
+      await expect(() => service.getShoppingCart(USER_ID as any)).rejects.toThrow();
+    });
+  });
 });

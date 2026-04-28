@@ -1,8 +1,8 @@
-import { BusinessLogicError, normalizeError, zodSafeParse } from '@/shared';
+import { BusinessLogicError, zodSafeParse } from '@/shared';
 import {
   createShoppingCartItemSchema,
+  ShoppingCart,
   type CreateShoppingCartItemDto,
-  type ShoppingCartItem,
 } from './shopping-cart.schema';
 import { ShoppingCartRepository } from '../api/repository';
 
@@ -17,7 +17,21 @@ export class ShoppingCartService {
     }
   }
 
-  // Read
+  public async getShoppingCart(userId: number): Promise<ShoppingCart> {
+    try {
+      this.validateUserId(userId);
+      return await ShoppingCartRepository.findAll(userId);
+    } catch (error) {
+      throw new BusinessLogicError('장바구니 데이터를 가져오는데 문제가 발생했습니다');
+    }
+  }
+
+  private validateUserId(userId: number) {
+    if (typeof userId !== 'number' || !userId) {
+      throw Error('잘못된 유저타입이거나, 비어있습니다');
+    }
+  }
+
   // Update
   // Delete
 }

@@ -23,6 +23,9 @@ export const shoppingCartItemSchema = shoppingCartBaseSchema.extend({
 });
 export type ShoppingCartItem = z.infer<typeof shoppingCartItemSchema>;
 
+export const shoppingCartSchema = z.array(shoppingCartItemSchema);
+export type ShoppingCart = z.infer<typeof shoppingCartSchema>;
+
 export const createShoppingCartItemSchema = shoppingCartBaseSchema;
 export type CreateShoppingCartItemDto = z.input<typeof createShoppingCartItemSchema>;
 export type CreateShoppingCartItemEntity = z.output<typeof createShoppingCartItemSchema>;
