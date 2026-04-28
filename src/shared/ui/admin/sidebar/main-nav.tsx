@@ -5,7 +5,7 @@ import {
   ChevronDown,
   ChartCandlestick,
   User,
-  Cart,
+  ShoppingCart,
   PackageSearch,
   PackagePlus,
   Grid2x2Check,
@@ -68,7 +68,7 @@ const data = [
     menu: [
       {
         label: '주문관리',
-        icon: Cart,
+        icon: ShoppingCart,
         href: `${COLLECTION_BASE_URL}/order?breadcrumbs=주문관리`,
       },
     ],
@@ -148,6 +148,11 @@ const data = [
 const onlyDevMenu = {
   groupLabel: '개발',
   menu: [
+    {
+      label: '장바구니',
+      icon: Bug,
+      href: `${COLLECTION_BASE_URL}/carts?breadcrumbs=장바구니`,
+    },
     {
       label: '주문상품 리스트',
       icon: Bug,

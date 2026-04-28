@@ -1,7 +1,7 @@
 import 'server-only';
 import { zodSafeParse } from '@/shared';
 import { createCartItem, updateCartItem, deleteCartItem, deleteAllCartItem } from './cart-items';
-import { getAllCart } from './carts';
+import { getAllCart, createCart } from './carts';
 import {
   cartSchema,
   cartItemActionResultSchema,
@@ -12,7 +12,10 @@ import {
 } from '../model/cart.schema';
 
 export class CartRepository {
-  public static async save(item: CreateCartItemEntity) {
+  public static async create(userId: number) {
+    await createCart(userId);
+  }
+  public static async saveItem(item: CreateCartItemEntity) {
     await createCartItem(item);
   }
 

@@ -16,3 +16,13 @@ export const getAllCart = async (userId: number) => {
 
   return docs;
 };
+
+export const createCart = async (userId: number) => {
+  const payload = await getPayload();
+  await payload.create({
+    collection: 'carts',
+    data: {
+      user: userId,
+    },
+  });
+};

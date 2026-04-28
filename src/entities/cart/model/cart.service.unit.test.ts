@@ -8,8 +8,30 @@ import {
 } from '../__test__/cart.fixture';
 
 describe('CartService', () => {
+  describe('createCart', () => {
+    it('장바구니가 생성된다', async () => {
+      const createSpy = vi.spyOn(CartRepository, 'create').mockResolvedValue(undefined);
+      const TEST_USER_ID = 1;
+
+      const service = new CartService();
+      await service.createCart(TEST_USER_ID);
+
+      expect(createSpy).toBeCalledTimes(1);
+    });
+
+    it('장바구니이 실패하면 error를 throw한다', async () => {
+      vi.spyOn(CartRepository, 'create').mockRejectedValue(() => {
+        throw new Error('장바구니 생성 실패');
+      });
+      const TEST_USER_ID = 1;
+
+      const service = new CartService();
+      await expect(() => service.createCart(TEST_USER_ID)).rejects.toThrowError();
+    });
+  });
+
   describe('createCartItem', () => {
-    const saveSpy = vi.spyOn(CartRepository, 'save').mockResolvedValue(undefined);
+    const saveSpy = vi.spyOn(CartRepository, 'saveItem').mockResolvedValue(undefined);
 
     it('데이터가 올바르게 저장된다', async () => {
       const service = new CartService();

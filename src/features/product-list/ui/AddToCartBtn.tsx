@@ -2,7 +2,7 @@
 
 import useInventoryStore from '@/entities/inventory/model/useInventoryStore';
 import { toast } from 'sonner';
-import { Cart } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import type { Product } from '@/entities/product';
 import { AddedProductToast, ExistingProductToast } from '@/entities/product';
 import CardActionButton from '@/shared/ui/CardActionButton';
@@ -21,7 +21,7 @@ const AddToCartBtn = ({ product }: { product: Product }) => {
 
   return (
     <CardActionButton
-      icon={<Cart className="h-4 w-4 text-white" strokeWidth={1.5} />}
+      icon={<ShoppingCart className="h-4 w-4 text-white" strokeWidth={1.5} />}
       description="장바구니 담기"
       onClick={handleAddToInventory}
     />

@@ -5,10 +5,19 @@ import { CartRepository } from '../api/repository';
 
 export class CartService {
   // TODO :: 오류처리에 대한 경계를 다시한번 생각해볼 필요가 있다.
+  public async createCart(userId: number) {
+    try {
+      this.validateId(userId);
+      await CartRepository.create(userId);
+    } catch (error) {
+      throw new BusinessLogicError('장바구니를 생성하는데 문제가 발생했습니다');
+    }
+  }
+
   public async createCartItem(dto: CreateCartItemRequestDto): Promise<void> {
     try {
       const createEntity = toCreateCartItemEntity(dto);
-      await CartRepository.save(createEntity);
+      await CartRepository.saveItem(createEntity);
     } catch (error) {
       throw new BusinessLogicError('장바구니에 상품을 담는데 문제가 발생했습니다');
     }

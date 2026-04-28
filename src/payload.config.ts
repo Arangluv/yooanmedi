@@ -26,6 +26,7 @@ import { Carts } from './collections/carts';
 import { CartItems } from './collections/cart-items';
 import { Banner } from './collections/banner';
 import { BannerImage } from './collections/banner-image';
+import { seedCarts } from './entities/cart/@x/payload-seed';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -86,6 +87,9 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
+  onInit: async (payload) => {
+    await seedCarts(payload);
+  },
   sharp,
   i18n: {
     fallbackLanguage: 'ko',

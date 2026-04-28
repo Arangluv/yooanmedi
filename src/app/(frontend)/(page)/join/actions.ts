@@ -2,9 +2,12 @@
 
 import config from '@/payload.config';
 import { APIError, getPayload } from 'payload';
+import { CartService } from '@/entities/cart/infrastructure';
 
+// 해당 코드는 현재 FSD 아키텍쳐를 따르고 있지 않으며 반드시 리팩토링이 필요합니다
 export async function join(formData: FormData) {
   const payload = await getPayload({ config: config });
+  const cartService = new CartService();
 
   try {
     const id = formData.get('id') as string;
@@ -69,7 +72,7 @@ export async function join(formData: FormData) {
       }
     }
 
-    await payload.create({
+    const user = await payload.create({
       collection: 'users',
       data: {
         username: id,
@@ -88,6 +91,7 @@ export async function join(formData: FormData) {
       },
     });
 
+    await cartService.createCart(user.id);
     return { success: true, message: '' };
   } catch (error) {
     if (error instanceof APIError) {
