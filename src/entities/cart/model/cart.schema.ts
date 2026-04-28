@@ -55,7 +55,7 @@ export const toCreateCartItemEntity = (dto: CreateCartItemRequestDto) => {
 export type CreateCartItemRequestDto = z.infer<typeof createCartItemRequestSchema>;
 export type CreateCartItemEntity = z.infer<typeof createCartItemEntitySchema>;
 
-export const updateCartItemResultSchema = z.object({
+export const cartItemActionResultSchema = z.object({
   id: BaseSchema.collectionId({}),
 });
-export type UpdateCartItemResult = z.infer<typeof updateCartItemResultSchema>;
+export type CartItemActionResult = z.infer<typeof cartItemActionResultSchema>;

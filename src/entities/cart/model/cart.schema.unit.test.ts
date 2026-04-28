@@ -6,7 +6,7 @@ import {
   createCartItemRequestSchema,
   createCartItemEntitySchema,
   toCreateCartItemEntity,
-  updateCartItemResultSchema,
+  cartItemActionResultSchema,
 } from './cart.schema';
 import {
   createBaseCartItemFixture,
@@ -135,9 +135,9 @@ describe('cartSchema', () => {
     });
   });
 
-  describe('updateCartItemResultSchema', () => {
+  describe('cartItemActionResultSchema', () => {
     it('파싱에 성공한다', () => {
-      const result = updateCartItemResultSchema.safeParse({ id: 3 });
+      const result = cartItemActionResultSchema.safeParse({ id: 3 });
       expect(result.success).toBe(true);
     });
   });
