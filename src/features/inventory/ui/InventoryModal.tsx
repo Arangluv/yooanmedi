@@ -1,11 +1,9 @@
 'use client';
 
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
-
 import { useInventoryStore } from '@/entities/inventory';
 import { getDeliveryFeeFromProduct } from '@/entities/price';
 import { formatNumberWithCommas, useSiteMetaStore } from '@/shared';
-
 import InventoryQuantityEditCell from './InventoryQuantityEditCell';
 import InventoryItemDeleteCell from './InventoryItemDeleteCell';
 import PriceOverview from './PriceOverview';

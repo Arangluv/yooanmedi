@@ -1,7 +1,5 @@
 'use client';
 
-import { useDisclosure } from '@heroui/react';
-
 import { create } from 'zustand';
 
 type InventoryOpenStateStore = {
