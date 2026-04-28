@@ -1,5 +1,5 @@
 // model
-export type { Product } from './model/schemas/product.schema';
+export { productSchema, type Product } from './model/schemas/product.schema';
 export type { ProductCategory } from './model/schemas/product-category';
 
 // ui

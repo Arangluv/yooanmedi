@@ -80,7 +80,8 @@ export interface Config {
     payment: Payment;
     'point-transaction': PointTransaction;
     favorites: Favorite;
-    'shopping-cart': ShoppingCart;
+    carts: Cart;
+    'cart-items': CartItem;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -104,7 +105,8 @@ export interface Config {
     payment: PaymentSelect<false> | PaymentSelect<true>;
     'point-transaction': PointTransactionSelect<false> | PointTransactionSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
-    'shopping-cart': ShoppingCartSelect<false> | ShoppingCartSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
+    'cart-items': CartItemsSelect<false> | CartItemsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -406,12 +408,23 @@ export interface Favorite {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "shopping-cart".
+ * via the `definition` "carts".
  */
-export interface ShoppingCart {
+export interface Cart {
   id: number;
   user: number | User;
-  product?: (number | null) | Product;
+  items?: (number | CartItem)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart-items".
+ */
+export interface CartItem {
+  id: number;
+  carts: number | Cart;
+  product: number | Product;
   quantity: number;
   updatedAt: string;
   createdAt: string;
@@ -476,8 +489,12 @@ export interface PayloadLockedDocument {
         value: number | Favorite;
       } | null)
     | ({
-        relationTo: 'shopping-cart';
-        value: number | ShoppingCart;
+        relationTo: 'carts';
+        value: number | Cart;
+      } | null)
+    | ({
+        relationTo: 'cart-items';
+        value: number | CartItem;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -731,10 +748,20 @@ export interface FavoritesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "shopping-cart_select".
+ * via the `definition` "carts_select".
  */
-export interface ShoppingCartSelect<T extends boolean = true> {
+export interface CartsSelect<T extends boolean = true> {
   user?: T;
+  items?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart-items_select".
+ */
+export interface CartItemsSelect<T extends boolean = true> {
+  carts?: T;
   product?: T;
   quantity?: T;
   updatedAt?: T;

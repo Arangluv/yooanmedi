@@ -1,4 +1,4 @@
-const baseUserFixture = {
+export const baseUserFixture = {
   id: 3,
   role: 'client',
   isApproved: true,

@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingCart } from 'lucide-react';
+import { Cart } from 'lucide-react';
 
 import useInventoryOpenStateStore from '../model/useInventoryOpenStateStore';
 
@@ -12,7 +12,7 @@ const InventoryBtnAsLink = () => {
   return (
     <TextWithIconAlignVertical
       text="장바구니"
-      icon={<ShoppingCart className="size-6" strokeWidth={1.5} />}
+      icon={<Cart className="size-6" strokeWidth={1.5} />}
       onClick={() => onOpen()}
     />
   );

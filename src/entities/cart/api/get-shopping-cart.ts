@@ -1,10 +1,10 @@
 import 'server-only';
 import { getPayload } from '@/shared/infrastructure';
 
-export const getAllShoppingCart = async (userId: number) => {
+export const getAllCart = async (userId: number) => {
   const payload = await getPayload();
   const { docs } = await payload.find({
-    collection: 'shopping-cart',
+    collection: 'carts',
     where: {
       users: {
         equals: {
