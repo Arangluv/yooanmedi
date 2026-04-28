@@ -6,6 +6,7 @@ import {
   createCartItemRequestSchema,
   createCartItemEntitySchema,
   toCreateCartItemEntity,
+  updateCartItemResultSchema,
 } from './cart.schema';
 import {
   createBaseCartItemFixture,
@@ -131,6 +132,13 @@ describe('cartSchema', () => {
     it('requestDto를 create Entity로 변환한다', () => {
       const result = toCreateCartItemEntity(createCartItemRequestDtoFixture());
       expect(result).toEqual(expect.schemaMatching(createCartItemEntitySchema));
+    });
+  });
+
+  describe('updateCartItemResultSchema', () => {
+    it('파싱에 성공한다', () => {
+      const result = updateCartItemResultSchema.safeParse({ id: 3 });
+      expect(result.success).toBe(true);
     });
   });
 });

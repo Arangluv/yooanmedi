@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CartRepository } from '../api/repository';
 import { CartService } from './cart.service';
-import { createCartItemRequestDtoFixture } from '../__test__/cart.fixture';
+import { createCartItemRequestDtoFixture, createCartItemFixture } from '../__test__/cart.fixture';
 
 describe('CartService', () => {
   describe('createCartItem', () => {
@@ -39,5 +39,23 @@ describe('CartService', () => {
 
       await expect(() => service.getCart(USER_ID as any)).rejects.toThrow();
     });
+  });
+
+  describe('updateCart', () => {
+    const updateSpy = vi.spyOn(CartRepository, 'updateItem').mockResolvedValue({ id: 1 });
+
+    it('장바구니 데이터를 업데이트 한다', async () => {
+      const updateList = [
+        createCartItemFixture(),
+        createCartItemFixture(),
+        createCartItemFixture(),
+      ];
+      const service = new CartService();
+      await service.updateCart(updateList);
+
+      expect(updateSpy).toBeCalledTimes(updateList.length);
+    });
+
+    it.todo('Promise all이 reject시에 대한 테스트 케이스를 작성한다');
   });
 });

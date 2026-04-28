@@ -1,5 +1,6 @@
-import { BusinessLogicError } from '@/shared';
-import { toCreateCartItemEntity, type Cart, type CreateCartItemRequestDto } from './cart.schema';
+import { BusinessLogicError, zodSafeParse } from '@/shared';
+import { toCreateCartItemEntity, CartItem, cartItemSchema } from './cart.schema';
+import type { Cart, CreateCartItemRequestDto, UpdateCartItemResult } from './cart.schema';
 import { CartRepository } from '../api/repository';
 
 export class CartService {
@@ -19,6 +20,29 @@ export class CartService {
       return await CartRepository.findOne(userId);
     } catch (error) {
       throw new BusinessLogicError('장바구니 데이터를 가져오는데 문제가 발생했습니다');
+    }
+  }
+
+  public async updateCart(dto: CartItem[]): Promise<any> {
+    try {
+      const cartItems = dto.map((item) => zodSafeParse(cartItemSchema, item));
+      const result = await Promise.all(
+        cartItems.map((item) => {
+          return this.updateCartItem(item);
+        }),
+      );
+
+      return result;
+    } catch (error) {
+      throw new BusinessLogicError('장바구니를 업데이트 하는데 문제가 발생했습니다');
+    }
+  }
+
+  private async updateCartItem(entity: CartItem): Promise<UpdateCartItemResult> {
+    try {
+      return await CartRepository.updateItem(entity);
+    } catch (error) {
+      throw new BusinessLogicError('장바구니 품목을 업데이트 하는데 문제가 발생했습니다');
     }
   }
 
