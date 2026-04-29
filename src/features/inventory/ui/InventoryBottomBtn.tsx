@@ -2,9 +2,7 @@
 
 import { Badge } from '@heroui/react';
 import { CreditCard } from 'lucide-react';
-
 import { useInventoryStore } from '@/entities/inventory';
-
 import useInventoryOpenStateStore from '../model/useInventoryOpenStateStore';
 
 const InventoryBottomBtn = () => {

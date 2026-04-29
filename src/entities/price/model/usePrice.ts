@@ -9,10 +9,10 @@ import {
   getDeliveryFeeFromInventory,
   getDiscountedDeliveryFeeFromInventory,
 } from '../lib/calculator';
-// TODO :: useReducer로 관리하는 것이 좋을 것 같음
+import { CartItem } from '@/entities/cart';
 
 type UsePriceProps = {
-  inventory: Inventory;
+  cartItems: CartItem[];
   minOrderPrice: number;
 };
 
@@ -25,12 +25,13 @@ type UsePriceReturn = {
 };
 
 /**
+ * TODO:: 해당 부분 리팩토링이 필요합니다
  * 할인을 제외한 총 상품금액(originalPrice)
  * 적용된 할인 금액(discountedPrice)
  * 결제 금액(payablePrice)
  * 할인 적용 여부(discountFlg)
  */
-const usePrice = ({ inventory, minOrderPrice }: UsePriceProps): UsePriceReturn => {
+const usePrice = ({ cartItems, minOrderPrice }: UsePriceProps): UsePriceReturn => {
   const [originalPrice, setOriginalPrice] = useState<number>(0);
   const [originalDeliveryFee, setOriginalDeliveryFee] = useState<number>(0);
   const [discountedPrice, setDiscountedPrice] = useState<number>(0);
@@ -38,10 +39,10 @@ const usePrice = ({ inventory, minOrderPrice }: UsePriceProps): UsePriceReturn =
   const [discountFlg, setDiscountFlg] = useState<boolean>(false);
 
   useEffect(() => {
-    const originalPrice = getOriginalPriceFromInventory({ inventory });
-    const originalDeliveryFee = getDeliveryFeeFromInventory({ inventory });
+    const originalPrice = getOriginalPriceFromInventory({ cartItems });
+    const originalDeliveryFee = getDeliveryFeeFromInventory({ cartItems });
     const discountedDeliveryFee = getDiscountedDeliveryFeeFromInventory({
-      inventory,
+      cartItems,
       minOrderPrice,
     });
 
@@ -50,7 +51,7 @@ const usePrice = ({ inventory, minOrderPrice }: UsePriceProps): UsePriceReturn =
     setDiscountedPrice(discountedDeliveryFee);
     setPayablePrice(originalPrice + originalDeliveryFee - discountedDeliveryFee);
     setDiscountFlg(originalPrice >= minOrderPrice && discountedDeliveryFee > 0);
-  }, [inventory, minOrderPrice]);
+  }, [cartItems, minOrderPrice]);
 
   return { originalPrice, originalDeliveryFee, discountedPrice, payablePrice, discountFlg };
 };

@@ -24,7 +24,6 @@ export const createCartItemFixture = (override?: Partial<typeof cartItemFixture>
 
 const cartFixture = {
   id: 1,
-  user: 4,
   items: [cartItemFixture, cartItemFixture],
 };
 export const createCartFixture = (override?: Partial<typeof cartFixture>) => {

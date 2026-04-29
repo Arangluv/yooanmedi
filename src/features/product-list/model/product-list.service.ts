@@ -2,6 +2,7 @@ import type { SearchParams } from 'nuqs';
 import { UserRepository } from '@/entities/user/infrastructure';
 import { CustomPriceRepository } from '@/entities/custom-price/api/repository';
 import { ProductRepository } from '@/entities/product/api/repository';
+import { applyCustomPriceToProducts } from '@/entities/custom-price';
 import { IProductListService } from './interfaces';
 import { generateProductListQueries } from '../lib/generate-product-list-queries';
 import { generateSearchParams } from '../lib/generate-search-params';
@@ -10,7 +11,6 @@ import {
   buildCustomPriceFindOption,
   buildRankingProductsFindOption,
 } from '../lib/build-find-options';
-import { applyCustomPriceToProducts } from '../lib/apply-custom-price-to-product-list';
 
 export class ProductListService implements IProductListService {
   public async getProductListAppliedCustomPrice(rawSearchParams: Promise<SearchParams>) {

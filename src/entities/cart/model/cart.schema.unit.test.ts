@@ -95,7 +95,7 @@ describe('cartSchema', () => {
       const result = testSchema.safeParse(
         createCartFixture({
           user: {
-            id: 1,
+            id: "1",
             name: '테스트 병원',
           },
         } as any),

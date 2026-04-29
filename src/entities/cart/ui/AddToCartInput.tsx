@@ -1,50 +1,31 @@
-// 20260429 - will deprecated
-
 'use client';
 
 import { useState } from 'react';
-
 import { Form, NumberInput, Button } from '@heroui/react';
 import { toast } from 'sonner';
+import { useCart } from '../model/hooks/useCart';
 
-import { useInventoryStore } from '@/entities/inventory';
-import { AddedProductToast, ExistingProductToast } from '@/entities/product';
-
-import useProductDetailStore from '../model/useProductDetailStore';
-
-const DetailQuantityInputRow = () => {
+const AddToCartInput = ({ productId }: { productId: number }) => {
   const [value, setValue] = useState<number>(0);
+  const { addToCart } = useCart();
 
-  const { clieckedProduct } = useProductDetailStore();
-  const { addInventory, isExistingProduct } = useInventoryStore();
-
-  const addInventoryWithQuantity = (quantity: number) => {
-    if (!clieckedProduct) {
-      return;
-    }
-
+  const onAddToCart = () => {
     if (value < 1 || value > 999) {
       toast.error('주문수량은 1 이상 999 이하이어야 합니다.');
       setValue(0);
       return;
     }
 
-    if (isExistingProduct(clieckedProduct.id)) {
-      toast.info(<ExistingProductToast />);
-      setValue(0);
-      return;
-    }
-
-    addInventory({ product: clieckedProduct, quantity: Number(quantity) });
+    addToCart({
+      quantity: value,
+      product: productId,
+    });
     setValue(0);
-    toast.success(<AddedProductToast count={Number(quantity)} />);
   };
 
   const handleQuantitySaveSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { quantity } = Object.fromEntries(new FormData(e.target as HTMLFormElement));
-
-    addInventoryWithQuantity(Number(quantity));
+    onAddToCart();
   };
 
   return (
@@ -72,12 +53,7 @@ const DetailQuantityInputRow = () => {
             input: 'text-right',
           }}
         />
-        <Button
-          size="sm"
-          radius="sm"
-          className="bg-brand text-white"
-          onPress={() => addInventoryWithQuantity(value)}
-        >
+        <Button size="sm" radius="sm" className="bg-brand text-white" onPress={() => onAddToCart()}>
           확인
         </Button>
       </div>
@@ -85,4 +61,4 @@ const DetailQuantityInputRow = () => {
   );
 };
 
-export default DetailQuantityInputRow;
+export default AddToCartInput;

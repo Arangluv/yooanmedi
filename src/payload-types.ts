@@ -413,7 +413,6 @@ export interface Favorite {
 export interface Cart {
   id: number;
   user: number | User;
-  items?: (number | CartItem)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -752,7 +751,6 @@ export interface FavoritesSelect<T extends boolean = true> {
  */
 export interface CartsSelect<T extends boolean = true> {
   user?: T;
-  items?: T;
   updatedAt?: T;
   createdAt?: T;
 }

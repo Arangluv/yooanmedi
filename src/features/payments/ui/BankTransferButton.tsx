@@ -19,7 +19,7 @@ import { paymentBybankTransfer } from '../api/payments.api';
 
 interface BankTransferButtonProps {
   deliveryRequest: string;
-  inventory: InventoryItem[];
+  cartItems: CartItem[];
   usedPoint: number;
   userId: number;
   minOrderPrice: number;

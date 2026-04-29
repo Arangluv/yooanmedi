@@ -2,27 +2,28 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-
 import { ImageIcon } from 'lucide-react';
-
-import type { InventoryItem } from '@/entities/inventory';
-import { useInventoryStore } from '@/entities/inventory';
+import type { CartItem } from '@/entities/cart';
 import { getMaxPointOnPurchase } from '@/entities/point';
 import { usePrice } from '@/entities/price';
-import { formatNumberWithCommas, isPayloadImageRenderable, useSiteMetaStore } from '@/shared';
+import { formatNumberWithCommas, useSiteMetaStore } from '@/shared';
+import { useCartQuery } from '@/entities/cart';
 
 const OrderList = () => {
-  const { inventory } = useInventoryStore();
+  const {
+    result: { data },
+  } = useCartQuery();
+
   const { minOrderPrice } = useSiteMetaStore();
-  const { discountFlg } = usePrice({ inventory, minOrderPrice }); // 최소주문금액 만족 여부 확인
+  const { discountFlg } = usePrice({ cartItems: data.items, minOrderPrice }); // 최소주문금액 만족 여부 확인
 
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-xl font-bold">주문 리스트</span>
-      {inventory.length > 0 ? (
+      {data.items.length > 0 ? (
         <div className="border-foreground-200 flex w-full flex-col gap-3 rounded-lg border-1 p-3">
-          {inventory.map((item) => (
-            <OrderListItem key={item.product.id} inventoryItem={item} discountFlg={discountFlg} />
+          {data.items.map((item) => (
+            <OrderListItem key={item.product.id} cartItem={item} discountFlg={discountFlg} />
           ))}
         </div>
       ) : (
@@ -43,21 +44,15 @@ const EmptyOrderList = () => {
   );
 };
 
-const OrderListItem = ({
-  inventoryItem,
-  discountFlg,
-}: {
-  inventoryItem: InventoryItem;
-  discountFlg: boolean;
-}) => {
+const OrderListItem = ({ cartItem, discountFlg }: { cartItem: CartItem; discountFlg: boolean }) => {
   return (
     <div className="flex items-center gap-4">
       {/* 상품 이미지 */}
       <div className="border-foreground-200 flex h-16 w-16 items-center justify-center overflow-hidden rounded-sm border-1 bg-neutral-50">
         {/* TODO :: 해당 부분 개선 */}
-        {inventoryItem?.product?.image ? (
+        {cartItem?.product?.image ? (
           <Image
-            src={inventoryItem.product.image.url}
+            src={cartItem.product.image.url}
             alt={'상품 이미지'}
             width={64}
             height={64}
@@ -70,16 +65,16 @@ const OrderListItem = ({
       </div>
       {/* 상품 정보 */}
       <div className="flex flex-col">
-        <span>{inventoryItem.product.name}</span>
+        <span>{cartItem.product.name}</span>
         <div className="text-foreground-600 flex gap-1 text-[13px]">
-          <span>수량 {inventoryItem.quantity}개</span>
+          <span>수량 {cartItem.quantity}개</span>
           <span>|</span>
-          <DeliveryFeePart inventoryItem={inventoryItem} discountFlg={discountFlg} />
+          <DeliveryFeePart cartItem={cartItem} discountFlg={discountFlg} />
           <span>|</span>
-          <span>{inventoryItem.product.returnable ? '반품가능' : '반품불가'}</span>
+          <span>{cartItem.product.returnable ? '반품가능' : '반품불가'}</span>
         </div>
         <span className="text-brand text-[13px]">
-          구매 시 최대 적립금 {getMaxPointOnPurchase(inventoryItem.product)}원
+          구매 시 최대 적립금 {getMaxPointOnPurchase(cartItem.product)}원
         </span>
       </div>
     </div>
@@ -87,21 +82,21 @@ const OrderListItem = ({
 };
 
 const DeliveryFeePart = ({
-  inventoryItem,
+  cartItem,
   discountFlg,
 }: {
-  inventoryItem: InventoryItem;
+  cartItem: CartItem;
   discountFlg: boolean;
 }) => {
-  if (inventoryItem.product.is_free_delivery && discountFlg) {
+  if (cartItem.product.is_free_delivery && discountFlg) {
     return <span>배송비 무료</span>;
   }
 
   return (
     <span className="flex items-center gap-1">
-      <span>배송비 {formatNumberWithCommas(inventoryItem.product.delivery_fee)}원</span>
+      <span>배송비 {formatNumberWithCommas(cartItem.product.delivery_fee)}원</span>
       <span className="text-brandWeek text-[13px] font-bold">
-        {inventoryItem.product.is_cost_per_unit ? '(수량 당)' : ''}
+        {cartItem.product.is_cost_per_unit ? '(수량 당)' : ''}
       </span>
     </span>
   );

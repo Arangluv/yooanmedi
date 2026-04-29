@@ -10,7 +10,7 @@ import {
 import { ProductListService } from '@/features/product-list/infrastructure';
 import { ProductRepository } from '@/entities/product/infrastructure';
 import OrderLink from '@/entities/order/ui/OrderLink';
-import { InventoryBtnAsLink, InventoryBottomBtn } from '@/features/inventory';
+import { CartModal, CartModalOpenTextButton, CartModalOpenBottomButton } from '@/entities/cart';
 
 export default async function OrderPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const productListService = new ProductListService();
@@ -32,7 +32,7 @@ export default async function OrderPage({ searchParams }: { searchParams: Promis
             {/* search area */}
             <ProductSearchForm />
             <div className="flex gap-2">
-              <InventoryBtnAsLink />
+              <CartModalOpenTextButton />
               <OrderLink />
             </div>
           </header>
@@ -57,7 +57,8 @@ export default async function OrderPage({ searchParams }: { searchParams: Promis
         />
         <ProductAsideDetail />
       </div>
-      <InventoryBottomBtn />
+      <CartModalOpenBottomButton />
+      <CartModal />
     </Wrapper>
   );
 }
@@ -69,13 +70,3 @@ function Wrapper({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
-// 이상적으로 리팩토링하고 싶은 props 부부은
-const condition = {
-  field: 'pn',
-  keyword: 'test',
-  options: {
-    // somefield..
-    // ex. opt: parsedSearchParm.opt
-  },
-};

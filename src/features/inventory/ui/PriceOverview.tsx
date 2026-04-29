@@ -1,22 +1,21 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-
 import { Button } from '@heroui/react';
-
-import { useInventoryStore } from '@/entities/inventory';
 import { usePrice } from '@/entities/price';
 import { formatNumberWithCommas } from '@/shared';
-
-import DiscountAlertBox from './DiscountAlertBox';
+import DiscountAlertBox from '@/entities/cart/ui/DiscountAlertBox';
 import useInventoryOpenStateStore from '../model/useInventoryOpenStateStore';
+import { useCartQuery } from '@/entities/cart';
 
 const PriceOverview = ({ minOrderPrice }: { minOrderPrice: number }) => {
   const router = useRouter();
-  const { inventory } = useInventoryStore();
+  const {
+    result: { data },
+  } = useCartQuery();
   const { onOpenChange } = useInventoryOpenStateStore();
   const { originalPrice, originalDeliveryFee, discountedPrice, payablePrice } = usePrice({
-    inventory,
+    cartItems: data.items,
     minOrderPrice,
   });
 
@@ -53,13 +52,13 @@ const PriceOverview = ({ minOrderPrice }: { minOrderPrice: number }) => {
         className="bg-brand !h-[56px] text-white"
         size="lg"
         radius="sm"
-        isDisabled={inventory.length === 0}
+        isDisabled={data.items.length === 0}
         onPress={() => {
           router.push('/order/payments');
           onOpenChange(false);
         }}
       >
-        총 {inventory?.length ?? 0}개의 상품 구매하기
+        총 {data.items?.length ?? 0}개의 상품 구매하기
       </Button>
     </div>
   );

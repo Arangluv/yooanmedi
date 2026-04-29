@@ -4,33 +4,32 @@ import Link from 'next/link';
 
 import { Button, NumberInput, Divider } from '@heroui/react';
 import { ChevronRight } from 'lucide-react';
-
-import type { InventoryItem } from '@/entities/inventory';
-import { useInventoryStore } from '@/entities/inventory';
 import { usePrice } from '@/entities/price';
 import { useEarnPoint } from '@/entities/point';
-
+import type { CartItem } from '@/entities/cart';
 import { useSiteMetaStore, formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';
 import { useUsedPoint } from '@/entities/point';
-
 import PaymentsPopupListener from '../model/payments-popup-listener';
 import usePaymentsAction from '../model/usePaymentsAction';
 import BankTransferButton from './BankTransferButton';
+import { useCartQuery } from '@/entities/cart';
 
 const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
-  const { inventory } = useInventoryStore();
+  const {
+    result: { data },
+  } = useCartQuery();
   const { minOrderPrice } = useSiteMetaStore();
   const user = useAuthStore((state) => state.user);
 
   const { originalPrice, originalDeliveryFee, discountedPrice, payablePrice } = usePrice({
-    inventory,
+    cartItems: data.items,
     minOrderPrice,
   });
 
   const { pointStatus, updatePoint, updateFieldToMaxUseablePoint } = useUsedPoint({ user });
   const { mutate: registerOrderMutation } = usePaymentsAction({
-    inventory,
+    cartItems: data.items,
     user,
     amount: payablePrice,
     minOrderPrice,
@@ -53,7 +52,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
               <span className="font-bold">{formatNumberWithCommas(originalDeliveryFee)}원</span>
             </div>
             <DeliveryDiscountInfo discountedDeliveryFee={discountedPrice} />
-            <TotalGetPoint inventory={inventory} />
+            <TotalGetPoint cartItems={data.items} />
             <div className="flex justify-between gap-4">
               <span className="text-foreground-600 flex-shrink-0">적립금 사용</span>
               <div className="flex gap-2">
@@ -63,7 +62,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
                     radius="sm"
                     aria-label="적립금 사용"
                     variant="bordered"
-                    isDisabled={pointStatus.maxUseablePoint === 0 || inventory.length === 0}
+                    isDisabled={pointStatus.maxUseablePoint === 0 || data.items.length === 0}
                     hideStepper
                     value={pointStatus.usedPoint}
                     minValue={0}
@@ -86,7 +85,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
                   className="bg-brand h-8 text-white"
                   radius="sm"
                   onPress={() => updateFieldToMaxUseablePoint({ payablePrice })}
-                  isDisabled={pointStatus.maxUseablePoint === 0 || inventory.length === 0}
+                  isDisabled={pointStatus.maxUseablePoint === 0 || data.items.length === 0}
                 >
                   전액사용
                 </Button>
@@ -119,7 +118,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
           <div className="flex items-center gap-2">
             <BankTransferButton
               deliveryRequest={userRequest}
-              inventory={inventory}
+              cartItems={data.items}
               usedPoint={pointStatus.usedPoint}
               userId={user.id}
               minOrderPrice={minOrderPrice}
@@ -129,11 +128,8 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
               size="lg"
               radius="sm"
               className="bg-brand w-full text-white"
-              isDisabled={payablePrice === 0 || inventory.length === 0}
-              onPress={() => {
-                console.log('바로 평가가 되나요?');
-                registerOrderMutation();
-              }}
+              isDisabled={payablePrice === 0 || data.items.length === 0}
+              onPress={() => registerOrderMutation()}
             >
               카드결제
             </Button>
@@ -155,8 +151,8 @@ const DeliveryDiscountInfo = ({ discountedDeliveryFee }: { discountedDeliveryFee
   );
 };
 
-const TotalGetPoint = ({ inventory }: { inventory: InventoryItem[] }) => {
-  const { cardPoint, bankPoint } = useEarnPoint({ inventory });
+const TotalGetPoint = ({ cartItems }: { cartItems: CartItem[] }) => {
+  const { cardPoint, bankPoint } = useEarnPoint({ cartItems });
 
   return (
     <div className="my-1 flex items-start justify-between">

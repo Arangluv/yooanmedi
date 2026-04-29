@@ -1,9 +1,7 @@
 'use client';
 
 import { ShoppingCart } from 'lucide-react';
-
 import useInventoryOpenStateStore from '../model/useInventoryOpenStateStore';
-
 import TextWithIconAlignVertical from '@/shared/ui/TextWithIconAlignVertical';
 
 const InventoryBtnAsLink = () => {

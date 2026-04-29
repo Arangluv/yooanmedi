@@ -12,6 +12,7 @@ import { RecentPurchasesTable } from '@/entities/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
 import DetailQuantityInputRow from './DetailQuantityInputRow';
 import useProductDetailStore from '../model/useProductDetailStore';
+import { AddToCartInput } from '@/entities/cart';
 
 const ProductAsideDetail = () => {
   const { clieckedProduct } = useProductDetailStore();
@@ -75,7 +76,7 @@ const ProductAsideDetail = () => {
           <RecentPurchasesTable product={clieckedProduct} user={user} />
           <Divider className="my-2" />
           <DetailPointBenefitRow product={clieckedProduct} />
-          <DetailQuantityInputRow />
+          <AddToCartInput productId={clieckedProduct.id} />
         </div>
       </div>
     </div>

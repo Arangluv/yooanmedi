@@ -1,13 +1,13 @@
-import type { Inventory, InventoryItem } from '@/entities/inventory/@x/price';
+import { CartItem } from '@/entities/cart/@x/price';
 
-export const getOriginalPriceFromInventory = ({ inventory }: { inventory: Inventory }) => {
-  return inventory.reduce((acc, { product, quantity }) => acc + product.price * quantity, 0);
+export const getOriginalPriceFromInventory = ({ cartItems }: { cartItems: CartItem[] }) => {
+  return cartItems.reduce((acc, { product, quantity }) => acc + product.price * quantity, 0);
 };
 
-export const getDeliveryFeeFromInventory = ({ inventory }: { inventory: Inventory }) => {
+export const getDeliveryFeeFromInventory = ({ cartItems }: { cartItems: CartItem[] }) => {
   let originalDeliveryFee = 0;
 
-  inventory.forEach(({ product, quantity }) => {
+  cartItems.forEach(({ product, quantity }) => {
     if (product.is_cost_per_unit) {
       originalDeliveryFee += product.delivery_fee * quantity;
     } else {
@@ -19,25 +19,25 @@ export const getDeliveryFeeFromInventory = ({ inventory }: { inventory: Inventor
 };
 
 export const getDiscountedDeliveryFeeFromInventory = ({
-  inventory,
+  cartItems,
   minOrderPrice,
 }: {
-  inventory: Inventory;
+  cartItems: CartItem[];
   minOrderPrice: number;
 }) => {
   let discountedDeliveryFee = 0;
-  const originalPrice = getOriginalPriceFromInventory({ inventory });
+  const originalPrice = getOriginalPriceFromInventory({ cartItems });
 
-  inventory.forEach(({ product, quantity }) => {
-    if (product.is_free_delivery && originalPrice >= minOrderPrice) {
-      discountedDeliveryFee += getDeliveryFeeFromProduct({ product, quantity });
+  cartItems.forEach((item) => {
+    if (item.product.is_free_delivery && originalPrice >= minOrderPrice) {
+      discountedDeliveryFee += getDeliveryFeeFromProduct(item);
     }
   });
 
   return discountedDeliveryFee;
 };
 
-export const getDeliveryFeeFromProduct = (item: Inventory[number]) => {
+export const getDeliveryFeeFromProduct = (item: CartItem) => {
   const { product, quantity } = item;
 
   if (product.is_cost_per_unit) {
@@ -48,17 +48,17 @@ export const getDeliveryFeeFromProduct = (item: Inventory[number]) => {
 };
 
 export const getDeliveryFeeFromProductCosiderFlg = ({
-  inventoryItem,
+  cartItems,
   freeDeliveryFlg,
 }: {
-  inventoryItem: InventoryItem;
+  cartItems: CartItem;
   freeDeliveryFlg: boolean;
 }) => {
-  const { product } = inventoryItem;
+  const { product } = cartItems;
 
   if (freeDeliveryFlg && product.is_free_delivery) {
     return 0;
   }
 
-  return getDeliveryFeeFromProduct(inventoryItem);
+  return getDeliveryFeeFromProduct(cartItems);
 };
