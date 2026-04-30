@@ -15,7 +15,8 @@ import {
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
 import { paymentBybankTransfer } from '../api/payments.api';
-import type { CartItem } from '@/entities/cart';
+import { type CartItem } from '@/entities/cart';
+import { useCart } from '@/entities/cart';
 
 interface BankTransferButtonProps {
   deliveryRequest: string;
@@ -34,6 +35,7 @@ const BankTransferButton = ({
   minOrderPrice,
   amount,
 }: BankTransferButtonProps) => {
+  const { clearCart } = useCart();
   const { isOpen, onOpen } = useDisclosure();
 
   const { mutate } = useMutation({
@@ -46,13 +48,12 @@ const BankTransferButton = ({
         minOrderPrice,
         amount,
       }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (!data.isSuccess) {
         alert(data.message);
         return;
       }
-
-      // TODO :: 20260430 - 장바구니 비우기 로직 추가
+      clearCart();
       onOpen();
     },
     onError: (error) => {

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Form, NumberInput, Button } from '@heroui/react';
 import { toast } from 'sonner';
-import { useCart } from '../model/hooks/useCart';
+import useCart from '../model/hooks/useCart';
 
 const AddToCartInput = ({ productId }: { productId: number }) => {
   const [value, setValue] = useState<number>(0);

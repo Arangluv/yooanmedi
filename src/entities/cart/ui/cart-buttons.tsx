@@ -5,7 +5,7 @@ import { ShoppingCart, CreditCard } from 'lucide-react';
 import useCartModalStore from '../model/hooks/useCartModalStore';
 import { TextWithIconAlignVertical, CardActionButton } from '@/shared';
 import { Product } from '@/entities/product/@x/carts';
-import { useCart } from '../model/hooks/useCart';
+import useCart from '../model/hooks/useCart';
 import { useCartQuery } from '../model/hooks/useCartQuery';
 
 // TODO:: 해당 네이밍으로 작성하는건 매우 좋지않음 -> 기능완성 후 반드시 리팩토링

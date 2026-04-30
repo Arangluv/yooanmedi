@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import {
   Modal,
   ModalContent,
@@ -19,7 +19,7 @@ import { useCartQuery } from '../model/hooks/useCartQuery';
 import { type CartItem } from '../model/cart.schema';
 import DiscountAlertBox from './DiscountAlertBox';
 import { Minus, Plus, Trash } from 'lucide-react';
-import { useCart } from '../model/hooks/useCart';
+import useCart from '../model/hooks/useCart';
 
 const CartModal = () => {
   const { isOpen, onOpenChange } = useCartModalStore();
@@ -38,6 +38,7 @@ const CartModal = () => {
     return map;
   });
 
+  // TODO:: UI에 로직이 들어가 있다. -> 해당 부분 제거하기
   const onSaveClick = () => {
     const cartItems = [...data.items];
     cartItems.forEach((item) => {
@@ -48,7 +49,7 @@ const CartModal = () => {
       updateCart(cartItems);
       setIsModified(false);
     } catch (error) {
-      console.log('변경 사항을 저장하는데 문제가 발생했습니다');
+      alert('변경 사항을 저장하는데 문제가 발생했습니다');
     }
   };
 

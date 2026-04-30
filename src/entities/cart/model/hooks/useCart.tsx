@@ -4,21 +4,15 @@ import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartQueryKey, useCartQuery } from './useCartQuery';
 import type { CartItem, CreateCartItemRequestDto } from '../cart.schema';
-import {
-  ErrorCartToast,
-  ExistingCartToast,
-  AddedCartToast,
-  AlreadyRemoveCartToast,
-  RemoveCartItemToast,
-  UpdateCartItemToast,
-} from '../../ui/toasts';
+import CartToast from '../../ui/CartToast';
 import {
   createCartItem as createCartItemApi,
   deleteCartItem as deleteCartItemApi,
   updateCart as updateCartApi,
+  clearCart as clearCartApi,
 } from '../../api/carts.api';
 
-export const useCart = () => {
+const useCart = () => {
   const {
     result: { data },
   } = useCartQuery();
@@ -32,9 +26,9 @@ export const useCart = () => {
         queryClient.invalidateQueries({
           queryKey: cartQueryKey,
         });
-        toast.success(<AddedCartToast />);
+        toast.success(<CartToast message={result.message} />);
       } else {
-        toast.info(<ErrorCartToast />);
+        toast.info(<CartToast message={result.message} />);
       }
     },
   });
@@ -46,9 +40,9 @@ export const useCart = () => {
         queryClient.invalidateQueries({
           queryKey: cartQueryKey,
         });
-        toast.success(<RemoveCartItemToast />);
+        toast.success(<CartToast message={result.message} />);
       } else {
-        toast.info(<ErrorCartToast />);
+        toast.info(<CartToast message={result.message} />);
       }
     },
   });
@@ -60,9 +54,22 @@ export const useCart = () => {
         queryClient.invalidateQueries({
           queryKey: cartQueryKey,
         });
-        toast.success(<UpdateCartItemToast />);
+        toast.success(<CartToast message={result.message} />);
       } else {
-        toast.info(<ErrorCartToast />);
+        toast.info(<CartToast message={result.message} />);
+      }
+    },
+  });
+
+  const { mutate: clearCartMutate } = useMutation({
+    mutationFn: () => clearCartApi(),
+    onSuccess: (result) => {
+      if (result.isSuccess) {
+        queryClient.invalidateQueries({
+          queryKey: cartQueryKey,
+        });
+      } else {
+        toast.info(<CartToast message={result.message} />);
       }
     },
   });
@@ -78,7 +85,7 @@ export const useCart = () => {
       const isAlreadyAdded = cartItems.some((item) => item.product.id === dto.product);
 
       if (isAlreadyAdded) {
-        toast.info(<ExistingCartToast />);
+        toast.info(<CartToast message={'상품이 장바구니에 이미 담겨있습니다. '} />);
         return;
       }
     }
@@ -96,7 +103,7 @@ export const useCart = () => {
       const isExistTargetItem = cartItems.some((item) => item.id === cartItemId);
 
       if (!isExistTargetItem) {
-        toast.info(<AlreadyRemoveCartToast />);
+        toast.info(<CartToast message={'이미 장바구니에서 제거된 상품입니다'} />);
         return;
       }
     }
@@ -112,5 +119,11 @@ export const useCart = () => {
     updateCartMutate(dto);
   };
 
-  return { addToCart, deleteCartItem, updateCart };
+  const clearCart = () => {
+    clearCartMutate();
+  };
+
+  return { addToCart, deleteCartItem, updateCart, clearCart };
 };
+
+export default useCart;

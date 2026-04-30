@@ -72,7 +72,6 @@ export class CartService {
 
       return result;
     } catch (error) {
-      console.log(error);
       throw new BusinessLogicError('장바구니를 업데이트 하는데 문제가 발생했습니다');
     }
   }
@@ -90,7 +89,6 @@ export class CartService {
       this.validateId(cartItemId);
       return await CartItemRepository.delete(cartItemId);
     } catch (error) {
-      console.log(error);
       throw new BusinessLogicError('장바구니 품목을 삭제하는데 문제가 발생했습니다');
     }
   }
