@@ -2,15 +2,12 @@
 
 import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
-
 import type { Product } from '@/entities/product';
 import { getMaxPointOnPurchase } from '@/entities/point';
-
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
-
-import AddToCartBtn from './AddToCartBtn';
 import useProductDetailStore from '../model/useProductDetailStore';
 import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
+import { AddToCartButton } from '@/entities/cart';
 
 const ProductItemCard = ({ product }: { product: Product }) => {
   const { setClieckedProduct } = useProductDetailStore();
@@ -38,7 +35,7 @@ const ProductItemCard = ({ product }: { product: Product }) => {
             </div>
           )}
           <div className="absolute right-2 bottom-2 flex items-center justify-center gap-2">
-            <AddToCartBtn product={product} />
+            <AddToCartButton product={product} />
             <FavoriteButton product={product} />
           </div>
         </div>

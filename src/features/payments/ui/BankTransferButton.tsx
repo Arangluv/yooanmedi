@@ -14,12 +14,13 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
-import { useInventoryStore, type InventoryItem } from '@/entities/inventory';
 import { paymentBybankTransfer } from '../api/payments.api';
+import { type CartItem } from '@/entities/cart';
+import { useCart } from '@/entities/cart';
 
 interface BankTransferButtonProps {
   deliveryRequest: string;
-  inventory: InventoryItem[];
+  cartItems: CartItem[];
   usedPoint: number;
   userId: number;
   minOrderPrice: number;
@@ -28,32 +29,31 @@ interface BankTransferButtonProps {
 
 const BankTransferButton = ({
   deliveryRequest,
-  inventory,
+  cartItems,
   usedPoint,
   userId,
   minOrderPrice,
   amount,
 }: BankTransferButtonProps) => {
+  const { clearCart } = useCart();
   const { isOpen, onOpen } = useDisclosure();
-  const { clearInventory } = useInventoryStore();
 
   const { mutate } = useMutation({
     mutationFn: () =>
       paymentBybankTransfer({
         deliveryRequest,
-        orderList: inventory,
+        orderList: cartItems,
         usedPoint,
         userId,
         minOrderPrice,
         amount,
       }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (!data.isSuccess) {
         alert(data.message);
         return;
       }
-
-      clearInventory();
+      clearCart();
       onOpen();
     },
     onError: (error) => {

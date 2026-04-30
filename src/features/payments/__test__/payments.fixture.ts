@@ -1,5 +1,5 @@
 import { shopOrderNoFixture } from '@/shared/__mock__/base.fixture';
-import { createProductFixture } from '@/shared/__mock__/product.fixture';
+import { createProductFixture } from '@/entities/product';
 
 export const bankTransferRequestDtoFixture = {
   deliveryRequest: '배송요청사항입니다',

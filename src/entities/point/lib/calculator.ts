@@ -1,6 +1,5 @@
-import type { Inventory } from '@/entities/inventory/@x/point';
 import type { Product } from '@/entities/product/model/schemas/product.schema';
-
+import type { CartItem } from '@/entities/cart/@x/point';
 /**
  * @description 카드 결제 시 적립되는 적립금
  */
@@ -29,10 +28,10 @@ export const getMaxPointOnPurchase = (product: Product) => {
 /**
  * @description 카드 결제 시 적립되는 적립금
  */
-export const getTotalPointWhenUsingCardPayments = (inventory: Inventory) => {
+export const getTotalPointWhenUsingCardPayments = (cartItems: CartItem[]) => {
   let totalPoint = 0;
 
-  inventory.forEach(({ product, quantity }) => {
+  cartItems.forEach(({ product, quantity }) => {
     totalPoint += getPointWhenUsingCard(product) * quantity;
   });
 
@@ -42,10 +41,10 @@ export const getTotalPointWhenUsingCardPayments = (inventory: Inventory) => {
 /**
  * @description 무통장 입금 시 적립되는 적립금
  */
-export const getTotalPointWhenUsingBankTransfer = (inventory: Inventory) => {
+export const getTotalPointWhenUsingBankTransfer = (cartItems: CartItem[]) => {
   let totalPoint = 0;
 
-  inventory.forEach(({ product, quantity }) => {
+  cartItems.forEach(({ product, quantity }) => {
     totalPoint += getPointWhenUsingBankTransfer(product) * quantity;
   });
 

@@ -1,7 +1,7 @@
-import type { Inventory } from '@/entities/inventory/@x/point';
 import { getPointWhenUsingBankTransfer, getPointWhenUsingCard } from '../lib/calculator';
+import type { CartItem } from '@/entities/cart/@x/point';
 
-const DetailPointBenefitRow = ({ product }: Pick<Inventory[number], 'product'>) => {
+const DetailPointBenefitRow = ({ product }: Pick<CartItem, 'product'>) => {
   const willEarnPointForCard = getPointWhenUsingCard(product);
   const willEarnPointForBankTransfer = getPointWhenUsingBankTransfer(product);
 

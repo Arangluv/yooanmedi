@@ -16,6 +16,7 @@ export const getRecentPurchasedHistoryList = async (dto: RecentPurchasedHistoryL
       user: { equals: dto.userId },
       product: { equals: dto.productId },
     },
+    limit: 3,
   });
 
   return docs;

@@ -80,6 +80,8 @@ export interface Config {
     payment: Payment;
     'point-transaction': PointTransaction;
     favorites: Favorite;
+    carts: Cart;
+    'cart-items': CartItem;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -103,6 +105,8 @@ export interface Config {
     payment: PaymentSelect<false> | PaymentSelect<true>;
     'point-transaction': PointTransactionSelect<false> | PointTransactionSelect<true>;
     favorites: FavoritesSelect<false> | FavoritesSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
+    'cart-items': CartItemsSelect<false> | CartItemsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -404,6 +408,28 @@ export interface Favorite {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: number;
+  user: number | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart-items".
+ */
+export interface CartItem {
+  id: number;
+  carts: number | Cart;
+  product: number | Product;
+  quantity: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -460,6 +486,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'favorites';
         value: number | Favorite;
+      } | null)
+    | ({
+        relationTo: 'carts';
+        value: number | Cart;
+      } | null)
+    | ({
+        relationTo: 'cart-items';
+        value: number | CartItem;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -708,6 +742,26 @@ export interface PointTransactionSelect<T extends boolean = true> {
 export interface FavoritesSelect<T extends boolean = true> {
   user?: T;
   product?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts_select".
+ */
+export interface CartsSelect<T extends boolean = true> {
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart-items_select".
+ */
+export interface CartItemsSelect<T extends boolean = true> {
+  carts?: T;
+  product?: T;
+  quantity?: T;
   updatedAt?: T;
   createdAt?: T;
 }

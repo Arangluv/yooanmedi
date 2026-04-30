@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { baseProduct } from '@/shared/__mock__/product.fixture';
+import { createProductFixture } from '@/entities/product';
 import { populatedOrderListSchema, enrichedOrderListSchema } from './payment-order-list.schema';
 
 describe('populatedOrderListSchema', () => {
@@ -7,11 +7,11 @@ describe('populatedOrderListSchema', () => {
     it('파싱에 성공한다', () => {
       const data = [
         {
-          product: baseProduct,
+          product: createProductFixture(),
           quantity: 2,
         },
         {
-          product: baseProduct,
+          product: createProductFixture(),
           quantity: 4,
         },
       ];
@@ -30,14 +30,14 @@ describe('populatedOrderListSchema', () => {
     it('파싱에 성공한다', () => {
       const data = [
         {
-          product: baseProduct,
+          product: createProductFixture(),
           quantity: 2,
           totalAmount: 0,
           orderProductDeliveryFee: 2000,
           calculatedUsedPoint: 0,
         },
         {
-          product: baseProduct,
+          product: createProductFixture(),
           quantity: 4,
           totalAmount: 6000,
           orderProductDeliveryFee: 0,
@@ -57,7 +57,7 @@ describe('populatedOrderListSchema', () => {
     it('총 주문 금액이 음수면 파싱에 실패한다', () => {
       const data = [
         {
-          product: baseProduct,
+          product: createProductFixture(),
           quantity: 2,
           totalAmount: -100,
           orderProductDeliveryFee: 2000,
@@ -72,7 +72,7 @@ describe('populatedOrderListSchema', () => {
     it('상품 배송비가 음수면 파싱에 실패한다', () => {
       const data = [
         {
-          product: baseProduct,
+          product: createProductFixture(),
           quantity: 2,
           totalAmount: 0,
           orderProductDeliveryFee: -2000,
@@ -87,7 +87,7 @@ describe('populatedOrderListSchema', () => {
     it('계산된 사용포인트가 음수면 파싱에 실패한다', () => {
       const data = [
         {
-          product: baseProduct,
+          product: createProductFixture(),
           quantity: 2,
           totalAmount: 0,
           orderProductDeliveryFee: 2000,

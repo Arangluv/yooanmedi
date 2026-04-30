@@ -1,14 +1,14 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import type { InventoryItem } from '@/entities/inventory';
+import type { CartItem } from '@/entities/cart';
 import type { User } from '@/entities/user';
 import { RegisterTransactionRequestDto } from '@/entities/easypay/model/schemas/easypay.register-transaction.schema';
 import { openPaymentsPopup } from '../lib/open-payments-popup';
 import { registerTransaction } from '@/entities/easypay/api/easypay.api';
 
 interface UsePaymentsActionProps {
-  inventory: InventoryItem[];
+  cartItems: CartItem[];
   user: User;
   amount: number;
   usedPoint: number;
@@ -17,7 +17,7 @@ interface UsePaymentsActionProps {
 }
 
 const usePaymentsAction = ({
-  inventory,
+  cartItems,
   user,
   amount,
   minOrderPrice,
@@ -27,7 +27,7 @@ const usePaymentsAction = ({
   const dto = {
     amount: amount - usedPoint,
     orderInfo: {
-      goodsName: getGoodsName(inventory),
+      goodsName: getGoodsName(cartItems),
       customerInfo: {
         customerId: user.username,
         customerName: user.hospitalName,
@@ -38,7 +38,7 @@ const usePaymentsAction = ({
     },
     shopValueInfo: {
       deliveryRequest: userRequest,
-      orderList: inventory.map((item) => ({
+      orderList: cartItems.map((item) => ({
         product: { id: item.product.id, price: item.product.price },
         quantity: item.quantity,
       })),
@@ -66,16 +66,16 @@ const usePaymentsAction = ({
   return { mutate };
 };
 
-const getGoodsName = (inventory: InventoryItem[]) => {
-  if (inventory.length === 0) {
+const getGoodsName = (cartItems: CartItem[]) => {
+  if (cartItems.length === 0) {
     return '';
   }
 
-  if (inventory.length === 1) {
-    return inventory[0].product.name;
+  if (cartItems.length === 1) {
+    return cartItems[0].product.name;
   }
 
-  return inventory[0].product.name + ' 외 ' + (inventory.length - 1) + '개의 상품';
+  return cartItems[0].product.name + ' 외 ' + (cartItems.length - 1) + '개의 상품';
 };
 
 export default usePaymentsAction;

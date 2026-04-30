@@ -149,6 +149,11 @@ const onlyDevMenu = {
   groupLabel: '개발',
   menu: [
     {
+      label: '장바구니',
+      icon: Bug,
+      href: `${COLLECTION_BASE_URL}/carts?breadcrumbs=장바구니`,
+    },
+    {
       label: '주문상품 리스트',
       icon: Bug,
       href: `${COLLECTION_BASE_URL}/order-product?breadcrumbs=주문상품 리스트`,

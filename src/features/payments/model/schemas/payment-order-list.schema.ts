@@ -1,14 +1,8 @@
 import { z } from 'zod';
-import { productSchema } from '@/entities/product/model/schemas/product.schema';
-import { BaseSchema } from '@/shared';
+import { cartItemSchema } from '@/entities/cart/model/cart.schema';
 
-export const populatedOrderListItemSchema = z.object({
-  product: productSchema,
-  quantity: BaseSchema.number({
-    required_message: '주문 수량은 비어있을 수 없습니다.',
-    invalid_message: '주문 수량은 숫자여야 합니다.',
-    min: 1,
-  }),
+export const populatedOrderListItemSchema = cartItemSchema.omit({
+  id: true,
 });
 
 export type PopulatedOrderListItem = z.infer<typeof populatedOrderListItemSchema>;

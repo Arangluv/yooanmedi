@@ -1,7 +1,5 @@
 export { default as useProductDetailStore } from './model/useProductDetailStore';
 
-export { default as AddToCartBtn } from './ui/AddToCartBtn';
-export { default as DetailQuantityInputRow } from './ui/DetailQuantityInputRow';
 export { default as ProductAsideDetail } from './ui/ProductAsideDetail';
 export { default as ProductCategotyNavigation } from './ui/ProductCategotyNavigation';
 export { default as ProductDefaultView } from './ui/view/ProductDefaultView';

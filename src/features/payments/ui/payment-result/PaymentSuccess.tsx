@@ -1,14 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-
 import { CircleCheckBig } from 'lucide-react';
 import moment from 'moment';
-
 import { formatNumberWithCommas } from '@/shared';
 import useAuthStore from '@/entities/user/model/useAuthStore';
 import { useEffect } from 'react';
-import { useInventoryStore } from '@/entities/inventory';
+import { useCart } from '@/entities/cart';
 
 const PaymentSuccess = ({
   amount,
@@ -20,11 +18,11 @@ const PaymentSuccess = ({
   shopOrderNo: string;
 }) => {
   const refreshUser = useAuthStore((state) => state.refreshUser);
-  const { clearInventory } = useInventoryStore();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     refreshUser();
-    clearInventory();
+    clearCart();
   }, []);
 
   return (

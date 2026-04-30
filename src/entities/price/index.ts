@@ -1,10 +1,10 @@
 // lib
 export {
-  getOriginalPriceFromInventory,
-  getDeliveryFeeFromInventory,
-  getDiscountedDeliveryFeeFromInventory,
-  getDeliveryFeeFromProduct,
-  getDeliveryFeeFromProductCosiderFlg,
+  getOriginalPriceFromCartItems,
+  getDeliveryFeeFromCartItems,
+  getDiscountedDeliveryFeeFromCartItems,
+  getDeliveryFeeFromCartItem,
+  getDeliveryFeeFromCartItemCosiderFlg,
 } from './lib/calculator';
 
 // models

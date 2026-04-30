@@ -1,4 +1,4 @@
-import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
+import { DeliveryFeeManager } from '@/entities/cart';
 
 export class PointAllocator {
   private readonly deliveryFeeManager: DeliveryFeeManager;
@@ -19,18 +19,18 @@ export class PointAllocator {
    */
   private createRatioMap() {
     const ratioMap = new Map<number, number>();
-    const inventory = this.deliveryFeeManager.getInventory();
-    const totalPriceWithoutDeliveryFee = inventory.reduce(
+    const cartItems = this.deliveryFeeManager.getCartItems();
+    const totalPriceWithoutDeliveryFee = cartItems.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
       0,
     );
 
     let remainingWeightSum = 100;
 
-    inventory.forEach((item, idx) => {
+    cartItems.forEach((item, idx) => {
       const orderProductPrice = item.product.price * item.quantity;
       const weight =
-        idx === inventory.length - 1
+        idx === cartItems.length - 1
           ? remainingWeightSum
           : this.calculateWeight(totalPriceWithoutDeliveryFee, orderProductPrice);
 
@@ -43,9 +43,9 @@ export class PointAllocator {
 
   private createPointMap() {
     const pointMap = new Map<number, number>();
-    const inventory = this.deliveryFeeManager.getInventory();
+    const cartItems = this.deliveryFeeManager.getCartItems();
 
-    inventory.forEach((item) => {
+    cartItems.forEach((item) => {
       const ratio = this.ratioMap.get(item.product.id);
       if (!ratio) throw new Error('주문 상품의 가중치가 존재하지 않습니다');
 
@@ -58,7 +58,7 @@ export class PointAllocator {
     let remainingPoint = this.usedPoint - distributedPointSum;
 
     // 1원씩 순서대로 분배 (floor로 생긴 잔여 포인트는 소액이므로 순회로 처리)
-    for (const item of inventory) {
+    for (const item of cartItems) {
       if (remainingPoint <= 0) break;
 
       const productPrice = item.product.price * item.quantity;
