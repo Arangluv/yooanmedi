@@ -42,12 +42,13 @@ export const CartModalOpenBottomButton = () => {
 };
 
 export const AddToCartButton = ({ product }: { product: Product }) => {
-  const { addToCart } = useCart();
+  const { addToCart, isAddToCartPending } = useCart();
 
   return (
     <CardActionButton
       icon={<ShoppingCart className="h-4 w-4 text-white" strokeWidth={1.5} />}
       description="장바구니 담기"
+      isLoading={isAddToCartPending}
       onClick={() =>
         addToCart({
           product: product.id,

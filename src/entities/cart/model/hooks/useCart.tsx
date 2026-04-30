@@ -12,13 +12,13 @@ import {
   clearCart as clearCartApi,
 } from '../../api/carts.api';
 
+/** TODO :: 빠르게 두번실행되는 액션을 막는 방법에 대한 리팩토링이 필요합니다 */
 const useCart = () => {
   const {
     result: { data },
   } = useCartQuery();
   const queryClient = useQueryClient();
 
-  // TODO :: mutate 아래 코드 공통화 작업
   const { mutate: addToCartMutate, isPending: isAddToCartPending } = useMutation({
     mutationFn: (dto: CreateCartItemRequestDto) => createCartItemApi(dto),
     onSuccess: (result) => {
@@ -74,12 +74,7 @@ const useCart = () => {
     },
   });
 
-  // TODO:: 상품을 중복으로 담지 못하는 더 확실히 무결한 코드로 refactoring
   const addToCart = (dto: Omit<CreateCartItemRequestDto, 'cartId'>) => {
-    if (isAddToCartPending) {
-      return;
-    }
-
     if (data.items.length > 0) {
       const cartItems = data.items;
       const isAlreadyAdded = cartItems.some((item) => item.product.id === dto.product);
@@ -123,7 +118,7 @@ const useCart = () => {
     clearCartMutate();
   };
 
-  return { addToCart, deleteCartItem, updateCart, clearCart };
+  return { addToCart, isAddToCartPending, deleteCartItem, updateCart, clearCart };
 };
 
 export default useCart;
