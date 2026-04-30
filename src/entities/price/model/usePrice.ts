@@ -1,13 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-import type { Inventory } from '@/entities/inventory/@x/price';
-
 import {
-  getOriginalPriceFromInventory,
-  getDeliveryFeeFromInventory,
-  getDiscountedDeliveryFeeFromInventory,
+  getOriginalPriceFromCartItems,
+  getDeliveryFeeFromCartItems,
+  getDiscountedDeliveryFeeFromCartItems,
 } from '../lib/calculator';
 import { CartItem } from '@/entities/cart';
 
@@ -39,9 +36,9 @@ const usePrice = ({ cartItems, minOrderPrice }: UsePriceProps): UsePriceReturn =
   const [discountFlg, setDiscountFlg] = useState<boolean>(false);
 
   useEffect(() => {
-    const originalPrice = getOriginalPriceFromInventory({ cartItems });
-    const originalDeliveryFee = getDeliveryFeeFromInventory({ cartItems });
-    const discountedDeliveryFee = getDiscountedDeliveryFeeFromInventory({
+    const originalPrice = getOriginalPriceFromCartItems({ cartItems });
+    const originalDeliveryFee = getDeliveryFeeFromCartItems({ cartItems });
+    const discountedDeliveryFee = getDiscountedDeliveryFeeFromCartItems({
       cartItems,
       minOrderPrice,
     });

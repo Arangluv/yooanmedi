@@ -1,5 +1,6 @@
-import { DeliveryFeeManager } from '@/entities/inventory/lib/delivery-fee-manager';
+import { CartItem, DeliveryFeeManager } from '@/entities/cart';
 import { PointAllocator } from '@/entities/point/lib/use/point-allocator';
+import { zodSafeParse, BusinessLogicError } from '@/shared';
 import {
   enrichedOrderListSchema,
   populatedOrderListSchema,
@@ -8,7 +9,6 @@ import {
 } from './schemas/payment-order-list.schema';
 import { type Product } from '@/entities/product/model/schemas/product.schema';
 import { ProductRepository } from '@/entities/product/api/repository';
-import { zodSafeParse, BusinessLogicError, FindOption } from '@/shared';
 import { type BasePaymentContext } from './schemas/payments-context/base.schema';
 import { buildProductsFindOption } from '../lib/build-find-options';
 
@@ -47,7 +47,7 @@ export const enrichOrderList = async (
 
 const populateProductDetails = async (
   orderList: ClinentOrderList[],
-): Promise<PopulatedOrderList> => {
+): Promise<Omit<CartItem, 'id'>[]> => {
   const productIds = orderList.map((item) => item.product.id);
   const { products } = await ProductRepository.findMany(buildProductsFindOption(productIds));
 

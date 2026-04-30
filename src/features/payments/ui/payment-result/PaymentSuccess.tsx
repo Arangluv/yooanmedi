@@ -1,14 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-
 import { CircleCheckBig } from 'lucide-react';
 import moment from 'moment';
-
 import { formatNumberWithCommas } from '@/shared';
 import useAuthStore from '@/entities/user/model/useAuthStore';
 import { useEffect } from 'react';
-import { useInventoryStore } from '@/entities/inventory';
 
 const PaymentSuccess = ({
   amount,
@@ -20,11 +17,10 @@ const PaymentSuccess = ({
   shopOrderNo: string;
 }) => {
   const refreshUser = useAuthStore((state) => state.refreshUser);
-  const { clearInventory } = useInventoryStore();
 
   useEffect(() => {
     refreshUser();
-    clearInventory();
+    // todo :: 20260430 --> 장바구니 비우기 로직 추가
   }, []);
 
   return (

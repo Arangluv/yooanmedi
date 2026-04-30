@@ -10,7 +10,6 @@ import { DetailPointBenefitRow } from '@/entities/point';
 import { useAuthStore } from '@/entities/user';
 import { RecentPurchasesTable } from '@/entities/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
-import DetailQuantityInputRow from './DetailQuantityInputRow';
 import useProductDetailStore from '../model/useProductDetailStore';
 import { AddToCartInput } from '@/entities/cart';
 

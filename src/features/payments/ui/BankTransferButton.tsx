@@ -14,8 +14,8 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
-import { useInventoryStore, type InventoryItem } from '@/entities/inventory';
 import { paymentBybankTransfer } from '../api/payments.api';
+import type { CartItem } from '@/entities/cart';
 
 interface BankTransferButtonProps {
   deliveryRequest: string;
@@ -28,20 +28,19 @@ interface BankTransferButtonProps {
 
 const BankTransferButton = ({
   deliveryRequest,
-  inventory,
+  cartItems,
   usedPoint,
   userId,
   minOrderPrice,
   amount,
 }: BankTransferButtonProps) => {
   const { isOpen, onOpen } = useDisclosure();
-  const { clearInventory } = useInventoryStore();
 
   const { mutate } = useMutation({
     mutationFn: () =>
       paymentBybankTransfer({
         deliveryRequest,
-        orderList: inventory,
+        orderList: cartItems,
         usedPoint,
         userId,
         minOrderPrice,
@@ -53,7 +52,7 @@ const BankTransferButton = ({
         return;
       }
 
-      clearInventory();
+      // TODO :: 20260430 - 장바구니 비우기 로직 추가
       onOpen();
     },
     onError: (error) => {

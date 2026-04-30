@@ -10,9 +10,7 @@ export const getCart = async (userId: number) => {
         equals: userId,
       },
     },
-    populate: {
-      users: {},
-    },
+    depth: 0,
   });
 
   return docs;

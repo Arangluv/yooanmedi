@@ -1,9 +1,8 @@
 import Link from 'next/link';
 
-import UserInfo from '@/entities/user/ui/UserInfo';
 import { BrandLogo } from '@/shared';
 import OrderLink from './OrderLink';
-import InventoryBtnAsLink from '@/features/inventory/ui/InvetoryBtnAsLink';
+import { CartModalOpenTextButton } from '@/entities/cart';
 
 const Navbar = () => {
   return (
@@ -12,9 +11,8 @@ const Navbar = () => {
         <Link href="/order" prefetch={false}>
           <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
         </Link>
-        {/* <UserInfo /> */}
         <div className="flex gap-2">
-          <InventoryBtnAsLink />
+          <CartModalOpenTextButton />
           <OrderLink />
         </div>
       </div>

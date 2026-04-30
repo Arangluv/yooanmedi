@@ -1,10 +1,10 @@
 import { CartItem } from '@/entities/cart/@x/price';
 
-export const getOriginalPriceFromInventory = ({ cartItems }: { cartItems: CartItem[] }) => {
+export const getOriginalPriceFromCartItems = ({ cartItems }: { cartItems: CartItem[] }) => {
   return cartItems.reduce((acc, { product, quantity }) => acc + product.price * quantity, 0);
 };
 
-export const getDeliveryFeeFromInventory = ({ cartItems }: { cartItems: CartItem[] }) => {
+export const getDeliveryFeeFromCartItems = ({ cartItems }: { cartItems: CartItem[] }) => {
   let originalDeliveryFee = 0;
 
   cartItems.forEach(({ product, quantity }) => {
@@ -18,7 +18,7 @@ export const getDeliveryFeeFromInventory = ({ cartItems }: { cartItems: CartItem
   return originalDeliveryFee;
 };
 
-export const getDiscountedDeliveryFeeFromInventory = ({
+export const getDiscountedDeliveryFeeFromCartItems = ({
   cartItems,
   minOrderPrice,
 }: {
@@ -26,19 +26,19 @@ export const getDiscountedDeliveryFeeFromInventory = ({
   minOrderPrice: number;
 }) => {
   let discountedDeliveryFee = 0;
-  const originalPrice = getOriginalPriceFromInventory({ cartItems });
+  const originalPrice = getOriginalPriceFromCartItems({ cartItems });
 
   cartItems.forEach((item) => {
     if (item.product.is_free_delivery && originalPrice >= minOrderPrice) {
-      discountedDeliveryFee += getDeliveryFeeFromProduct(item);
+      discountedDeliveryFee += getDeliveryFeeFromCartItem(item);
     }
   });
 
   return discountedDeliveryFee;
 };
 
-export const getDeliveryFeeFromProduct = (item: CartItem) => {
-  const { product, quantity } = item;
+export const getDeliveryFeeFromCartItem = (cartItem: CartItem) => {
+  const { product, quantity } = cartItem;
 
   if (product.is_cost_per_unit) {
     return product.delivery_fee * quantity;
@@ -47,18 +47,18 @@ export const getDeliveryFeeFromProduct = (item: CartItem) => {
   return product.delivery_fee;
 };
 
-export const getDeliveryFeeFromProductCosiderFlg = ({
-  cartItems,
+export const getDeliveryFeeFromCartItemCosiderFlg = ({
+  cartItem,
   freeDeliveryFlg,
 }: {
-  cartItems: CartItem;
+  cartItem: CartItem;
   freeDeliveryFlg: boolean;
 }) => {
-  const { product } = cartItems;
+  const { product } = cartItem;
 
   if (freeDeliveryFlg && product.is_free_delivery) {
     return 0;
   }
 
-  return getDeliveryFeeFromProduct(cartItems);
+  return getDeliveryFeeFromCartItem(cartItem);
 };

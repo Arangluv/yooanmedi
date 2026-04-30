@@ -1,4 +1,3 @@
-import { type InventoryItem } from '@/entities/inventory';
 import type { BasePaymentContext } from './payments-context/base.schema';
 import type {
   BankTransferPaymentInitContext,
@@ -10,6 +9,7 @@ import type {
   PGPaymentAfterOrderContext,
 } from './payments-context/pg.schema';
 import { type EnrichedOrderListItem } from './payment-order-list.schema';
+import type { CartItem } from '@/entities/cart';
 
 export const PaymentDto = {
   createOrderForPG: (context: PGPaymentAfterApprovalContext) => {
@@ -63,12 +63,12 @@ export const PaymentDto = {
     return dto;
   },
 
-  createRecentPurchasedHistory: (context: BasePaymentContext, inventoryItem: InventoryItem) => {
+  createRecentPurchasedHistory: (context: BasePaymentContext, cartItem: Omit<CartItem, 'id'>) => {
     const dto = {
       user: context.userId,
-      product: inventoryItem.product.id,
-      quantity: inventoryItem.quantity,
-      amount: inventoryItem.product.price,
+      product: cartItem.product.id,
+      quantity: cartItem.quantity,
+      amount: cartItem.product.price,
     };
 
     return dto;

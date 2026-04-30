@@ -1,3 +1,5 @@
+import type { Product } from '../model/schemas/product.schema';
+
 export const productFixture = {
   id: 1680,
   image: {
@@ -31,7 +33,7 @@ export const productFixture = {
   is_free_delivery: false,
   updatedAt: '2026-04-20T05:48:26.376Z',
   createdAt: '2026-02-14T10:00:24.748Z',
-};
+} as Product;
 
 export const productFixtureNoImage = {
   id: 1685,
@@ -53,4 +55,11 @@ export const productFixtureNoImage = {
   is_free_delivery: false,
   updatedAt: '2026-03-22T07:13:33.985Z',
   createdAt: '2026-02-14T10:00:24.782Z',
+} as Product;
+
+export const createProductFixture = (override?: Partial<Product>) => {
+  return {
+    ...productFixture,
+    ...override,
+  };
 };

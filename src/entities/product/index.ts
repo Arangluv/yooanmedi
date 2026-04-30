@@ -1,3 +1,5 @@
+export { createProductFixture } from './__test__/product.fixture';
+
 // model
 export { productSchema, type Product } from './model/schemas/product.schema';
 export type { ProductCategory } from './model/schemas/product-category';

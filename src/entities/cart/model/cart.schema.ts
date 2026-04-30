@@ -8,12 +8,15 @@ export const cartItemBaseSchema = z.object({
   }),
 });
 
-export const cartItemSchema = cartItemBaseSchema.extend({
+export const cartItemSchema = z.object({
   id: BaseSchema.collectionId({
     required_message: '장바구니 아이템의 아이디는 비어있을 수 없습니다',
     invalid_message: '잘못된 장바구니 아이템 타입 입니다',
   }),
   product: productSchema,
+  quantity: BaseSchema.number({
+    min: 1,
+  }),
 });
 export const cartItemListSchema = z.array(cartItemSchema);
 export type CartItem = z.infer<typeof cartItemSchema>;
@@ -23,14 +26,14 @@ export const cartEntitySchema = z.object({
     required_message: '장바구니 아이디는 비어있을 수 없습니다',
     invalid_message: '잘못된 장바구니 id 타입입니다',
   }),
+  user: BaseSchema.collectionId({
+    required_message: '유저 아이디는 비어있을 수 없습니다',
+    invalid_message: '잘못된 유저 id 타입입니다',
+  }),
 });
 export type CartEntity = z.infer<typeof cartEntitySchema>;
 
-export const cartSchema = z.object({
-  id: BaseSchema.collectionId({
-    required_message: '장바구니 아이디는 비어있을 수 없습니다',
-    invalid_message: '잘못된 장바구니 id 타입입니다',
-  }),
+export const cartSchema = cartEntitySchema.extend({
   items: z.array(cartItemSchema),
 });
 export type Cart = z.infer<typeof cartSchema>;

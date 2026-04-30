@@ -1,19 +1,21 @@
 import type { PointAllocator } from '@/entities/point/lib/use/point-allocator';
-import { getDeliveryFeeFromProductCosiderFlg } from '@/entities/price/lib/calculator';
-import type { Inventory } from '../model/schemas/inventory.schema';
+import { getDeliveryFeeFromCartItemCosiderFlg } from '@/entities/price';
+import type { CartItem } from '@/entities/cart';
+
+type DeliveryFeeManagerCartItem = Omit<CartItem, 'id'>;
 
 export class DeliveryFeeManager {
-  private readonly inventory: Inventory;
+  private readonly cartItems: DeliveryFeeManagerCartItem[];
   private readonly freeDelivery: boolean;
 
-  constructor(inventory: Inventory, minOrderPrice: number) {
-    this.inventory = inventory;
+  constructor(cartItems: DeliveryFeeManagerCartItem[], minOrderPrice: number) {
+    this.cartItems = cartItems;
     this.freeDelivery = this.calcIsFreeDelivery(minOrderPrice);
   }
 
   // 최소 주문금액 이상 주문 시 배송비 무료가 적용되는 상품을 필터링 후 총 금액을 계산하여 반환합니다
   private getFreeDeliveryEligibleTotalPrice() {
-    const eligibleProducts = this.inventory.filter(({ product }) => product.is_free_delivery);
+    const eligibleProducts = this.cartItems.filter(({ product }) => product.is_free_delivery);
     const eligibleTotalPrice = eligibleProducts.reduce(
       (acc, { product, quantity }) => acc + product.price * quantity,
       0,
@@ -36,9 +38,9 @@ export class DeliveryFeeManager {
   /**
    * 주문 상품의 배송비를 배송비 무료 여부를 고려하여 계산하여 반환합니다.
    */
-  public getOrderProductDeliveryFee(orderProduct: Inventory[number]) {
-    const deliveryFee = getDeliveryFeeFromProductCosiderFlg({
-      inventoryItem: orderProduct,
+  public getOrderProductDeliveryFee(cartItem: DeliveryFeeManagerCartItem) {
+    const deliveryFee = getDeliveryFeeFromCartItemCosiderFlg({
+      cartItem,
       freeDeliveryFlg: this.freeDelivery,
     });
 
@@ -52,14 +54,15 @@ export class DeliveryFeeManager {
    *
    * @see {@link PointAllocator}
    */
-  public getOrderProductSubtotal(orderProduct: Inventory[number]) {
-    const { product, quantity } = orderProduct;
-    const subtotal = product.price * quantity + this.getOrderProductDeliveryFee(orderProduct);
+  public getOrderProductSubtotal(cartItem: DeliveryFeeManagerCartItem) {
+    const { product, quantity } = cartItem;
+    const subtotal = product.price * quantity + this.getOrderProductDeliveryFee(cartItem);
 
     return subtotal;
   }
 
-  public getInventory() {
-    return this.inventory;
+  // TODO :: will deprecated
+  public getCartItems() {
+    return this.cartItems;
   }
 }

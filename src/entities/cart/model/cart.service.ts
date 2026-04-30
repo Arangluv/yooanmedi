@@ -33,7 +33,7 @@ export class CartService {
       const cartEntity = await CartRepository.findOne(user.id);
       const cartItems = await this.getCartItems(cartEntity.id);
 
-      // TODO:: 아래부분 리팩토링
+      // TODO:: 아래 부분 리팩토링 -> 함수가 하는일이 많음
       const customPrices = await CustomPriceRepository.findMany(buildCustomPriceFindOption(user));
       const customPriceMap = new Map(
         customPrices.map((item: CustomPrice) => [item.product.id, item.price]),
@@ -43,7 +43,7 @@ export class CartService {
       });
 
       return {
-        id: cartEntity.id,
+        ...cartEntity,
         items: cartItems,
       };
     } catch (error) {

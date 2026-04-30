@@ -13,7 +13,7 @@ import {
 } from '@heroui/react';
 import { Button } from '@/shared';
 import { formatNumberWithCommas, useSiteMetaStore } from '@/shared';
-import { getDeliveryFeeFromProduct, usePrice } from '@/entities/price';
+import { getDeliveryFeeFromCartItem, usePrice } from '@/entities/price';
 import useCartModalStore from '../model/hooks/useCartModalStore';
 import { useCartQuery } from '../model/hooks/useCartQuery';
 import { type CartItem } from '../model/cart.schema';
@@ -117,7 +117,7 @@ const CartModal = () => {
                       {formatNumberWithCommas(product.delivery_fee)}원
                     </td>
                     <td className="border-foreground-200 border-r-1 pr-2 text-end">
-                      {getDeliveryFeeFromProduct(item)}원
+                      {getDeliveryFeeFromCartItem(item)}원
                     </td>
                     <td>
                       <CartItemDeleteCell item={item} />
