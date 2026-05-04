@@ -1,3 +1,5 @@
+export { getProductList } from './api/product-list.api';
+
 export { default as useProductDetailStore } from './model/useProductDetailStore';
 
 export { default as ProductAsideDetail } from './ui/ProductAsideDetail';

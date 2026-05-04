@@ -21,12 +21,17 @@ export const getCart = async (): Promise<EndPointResult<Cart>> => {
   }
 };
 
-export const createCartItem = async (dto: CreateCartItemRequestDto) => {
+export const createCartItem = async (
+  dto: CreateCartItemRequestDto,
+): Promise<EndPointResult<CartItem>> => {
   try {
     const cartService = new CartService();
-    await cartService.createCartItem(dto);
+    const createdItem = await cartService.createCartItem(dto);
 
-    return ok(`상품을 장바구니에 ${dto.quantity}개 담았습니다`);
+    return okWithData({
+      message: `상품을 장바구니에 ${dto.quantity}개 담았습니다`,
+      data: createdItem,
+    });
   } catch (error) {
     const { message } = normalizeError(error);
     Logger.error(error);
@@ -35,12 +40,15 @@ export const createCartItem = async (dto: CreateCartItemRequestDto) => {
   }
 };
 
-export const deleteCartItem = async (cartItemId: number) => {
+export const deleteCartItem = async (cartItem: CartItem): Promise<EndPointResult<CartItem>> => {
   try {
     const cartService = new CartService();
-    await cartService.deleteCartItem(cartItemId);
+    const deletedItem = await cartService.deleteCartItem(cartItem);
 
-    return ok('장바구니에서 상품을 삭제했습니다');
+    return okWithData({
+      message: `상품을 장바구니에서 삭제했습니다`,
+      data: deletedItem,
+    });
   } catch (error) {
     const { message } = normalizeError(error);
     Logger.error(error);

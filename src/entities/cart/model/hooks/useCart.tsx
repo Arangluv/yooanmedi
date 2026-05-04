@@ -11,13 +11,28 @@ import {
   updateCart as updateCartApi,
   clearCart as clearCartApi,
 } from '../../api/carts.api';
+import { useEffect, useRef } from 'react';
 
-/** TODO :: 빠르게 두번실행되는 액션을 막는 방법에 대한 리팩토링이 필요합니다 */
+type CartProductIdSet = Set<number>;
+
 const useCart = () => {
   const {
     result: { data },
   } = useCartQuery();
+
   const queryClient = useQueryClient();
+  const cartProductIdSet = useRef<CartProductIdSet>(new Set());
+
+  useEffect(() => {
+    const cartProductIds = data.items.map((item) => item.product.id);
+    const idSet = new Set<number>();
+
+    cartProductIds.forEach((id) => {
+      idSet.add(id);
+    });
+
+    cartProductIdSet.current = idSet;
+  }, [data]);
 
   const { mutate: addToCartMutate, isPending: isAddToCartPending } = useMutation({
     mutationFn: (dto: CreateCartItemRequestDto) => createCartItemApi(dto),
@@ -26,6 +41,10 @@ const useCart = () => {
         queryClient.invalidateQueries({
           queryKey: cartQueryKey,
         });
+
+        const createdProductId = result.data.product.id;
+        cartProductIdSet.current.add(createdProductId);
+
         toast.success(<CartToast message={result.message} />);
       } else {
         toast.info(<CartToast message={result.message} />);
@@ -33,13 +52,17 @@ const useCart = () => {
     },
   });
 
-  const { mutate: deleteItemMutate, isPending: isDeleteItemPending } = useMutation({
-    mutationFn: (cartItemId: number) => deleteCartItemApi(cartItemId),
+  const { mutate: deleteItemMutate } = useMutation({
+    mutationFn: (cartItem: CartItem) => deleteCartItemApi(cartItem),
     onSuccess: (result) => {
       if (result.isSuccess) {
         queryClient.invalidateQueries({
           queryKey: cartQueryKey,
         });
+
+        const deletedProductId = result.data.product.id;
+        cartProductIdSet.current.delete(deletedProductId);
+
         toast.success(<CartToast message={result.message} />);
       } else {
         toast.info(<CartToast message={result.message} />);
@@ -68,6 +91,7 @@ const useCart = () => {
         queryClient.invalidateQueries({
           queryKey: cartQueryKey,
         });
+        cartProductIdSet.current.clear();
       } else {
         toast.info(<CartToast message={result.message} />);
       }
@@ -75,50 +99,31 @@ const useCart = () => {
   });
 
   const addToCart = (dto: Omit<CreateCartItemRequestDto, 'cartId'>) => {
-    if (data.items.length > 0) {
-      const cartItems = data.items;
-      const isAlreadyAdded = cartItems.some((item) => item.product.id === dto.product);
-
-      if (isAlreadyAdded) {
-        toast.info(<CartToast message={'상품이 장바구니에 이미 담겨있습니다. '} />);
-        return;
-      }
+    if (cartProductIdSet.current.has(dto.product)) {
+      toast.info(<CartToast message={'상품이 장바구니에 이미 담겨있습니다. '} />);
+      return;
     }
 
     addToCartMutate({ ...dto, cartId: data.id });
   };
 
-  const deleteCartItem = (cartItemId: number) => {
-    if (isDeleteItemPending) {
+  const deleteCartItem = (cartItem: CartItem) => {
+    if (!cartProductIdSet.current.has(cartItem.product.id)) {
+      toast.info(<CartToast message={'이미 장바구니에서 제거된 상품입니다'} />);
       return;
     }
 
-    if (data.items.length > 0) {
-      const cartItems = data.items;
-      const isExistTargetItem = cartItems.some((item) => item.id === cartItemId);
-
-      if (!isExistTargetItem) {
-        toast.info(<CartToast message={'이미 장바구니에서 제거된 상품입니다'} />);
-        return;
-      }
-    }
-
-    deleteItemMutate(cartItemId);
+    deleteItemMutate(cartItem);
   };
 
-  const updateCart = (dto: CartItem[]) => {
-    if (isUpdateCartPending) {
-      return;
-    }
-
-    updateCartMutate(dto);
+  return {
+    addToCart,
+    isAddToCartPending,
+    deleteCartItem,
+    updateCart: updateCartMutate,
+    isUpdateCartPending,
+    clearCart: clearCartMutate,
   };
-
-  const clearCart = () => {
-    clearCartMutate();
-  };
-
-  return { addToCart, isAddToCartPending, deleteCartItem, updateCart, clearCart };
 };
 
 export default useCart;

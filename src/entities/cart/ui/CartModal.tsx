@@ -26,7 +26,7 @@ const CartModal = () => {
   const {
     result: { data },
   } = useCartQuery();
-  const { updateCart } = useCart();
+  const { updateCart, isUpdateCartPending } = useCart();
 
   const [isModified, setIsModified] = useState(false);
   const [quantityInfo, setQuantityInfo] = useState(() => {
@@ -40,9 +40,13 @@ const CartModal = () => {
 
   // TODO:: UI에 로직이 들어가 있다. -> 해당 부분 제거하기
   const onSaveClick = () => {
+    if (isUpdateCartPending) return;
+
     const cartItems = [...data.items];
     cartItems.forEach((item) => {
-      item.quantity = quantityInfo.get(item.id);
+      if (quantityInfo.get(item.id)) {
+        item.quantity = quantityInfo.get(item.id);
+      }
     });
 
     try {
@@ -146,9 +150,10 @@ const CartModal = () => {
 
 const CartItemDeleteCell = ({ item }: { item: CartItem }) => {
   const { deleteCartItem } = useCart();
+
   return (
     <div className="mx-auto flex w-fit justify-center">
-      <button className="cursor-pointer" onClick={() => deleteCartItem(item.id)}>
+      <button className="cursor-pointer" onClick={() => deleteCartItem(item)}>
         <Trash className="text-danger-400 h-4 w-4 cursor-pointer" />
       </button>
     </div>

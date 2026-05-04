@@ -17,4 +17,3 @@ const customPriceSchema = z.object({
 export type CustomPrice = z.infer<typeof customPriceSchema>;
 
 export const customPriceListSchema = z.array(customPriceSchema);
-export type CustomPriceList = z.infer<typeof customPriceListSchema>;
