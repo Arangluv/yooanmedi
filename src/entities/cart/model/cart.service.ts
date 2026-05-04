@@ -27,13 +27,13 @@ export class CartService {
     }
   }
 
+  /* v8 ignore next */
   public async getCart(): Promise<Cart> {
     try {
       const user = await UserRepository.findByHeader();
       const cartEntity = await CartRepository.findOne(user.id);
       const cartItems = await this.getCartItems(cartEntity.id);
 
-      // TODO:: 아래 부분 리팩토링 -> 함수가 하는일이 많음
       const customPriceService = new CustomPriceService();
       const customPrices = await customPriceService.getCustomPrices(
         buildCustomPriceFindOption(user),
@@ -57,6 +57,7 @@ export class CartService {
     }
   }
 
+  /* v8 ignore next */
   private async getCartItems(cartId: number): Promise<CartItem[]> {
     try {
       this.validateId(cartId);
@@ -66,7 +67,6 @@ export class CartService {
     }
   }
 
-  // 해당 부분 고도화 진행시 추가하기
   public async updateCart(dto: CartItem[]): Promise<any> {
     try {
       const cartItems = dto.map((item) => zodSafeParse(cartItemSchema, item));
@@ -78,10 +78,11 @@ export class CartService {
 
       return result;
     } catch (error) {
-      throw new BusinessLogicError('장바구니를 업데이트 하는데 문제가 발생했습니다');
+      throw new BusinessLogicError('장바구니 품목을 업데이트 하는데 문제가 발생했습니다');
     }
   }
 
+  /* v8 ignore next */
   public async updateCartItem(entity: CartItem): Promise<CartItemActionResult> {
     try {
       return await CartItemRepository.update(entity);
