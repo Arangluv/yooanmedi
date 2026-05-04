@@ -21,14 +21,18 @@ const useCart = () => {
   } = useCartQuery();
 
   const queryClient = useQueryClient();
-  const cartProductIds = useRef<CartProductIdSet>(new Set());
+  const cartProductIdSet = useRef<CartProductIdSet>(new Set());
 
   useEffect(() => {
-    const initCartItemsId = data.items.map((item) => item.id);
-    initCartItemsId.forEach((id) => {
-      cartProductIds.current.add(id);
+    const cartProductIds = data.items.map((item) => item.product.id);
+    const idSet = new Set<number>();
+
+    cartProductIds.forEach((id) => {
+      idSet.add(id);
     });
-  }, []);
+
+    cartProductIdSet.current = idSet;
+  }, [data]);
 
   const { mutate: addToCartMutate, isPending: isAddToCartPending } = useMutation({
     mutationFn: (dto: CreateCartItemRequestDto) => createCartItemApi(dto),
@@ -39,7 +43,7 @@ const useCart = () => {
         });
 
         const createdProductId = result.data.product.id;
-        cartProductIds.current.add(createdProductId);
+        cartProductIdSet.current.add(createdProductId);
 
         toast.success(<CartToast message={result.message} />);
       } else {
@@ -57,7 +61,7 @@ const useCart = () => {
         });
 
         const deletedProductId = result.data.product.id;
-        cartProductIds.current.delete(deletedProductId);
+        cartProductIdSet.current.delete(deletedProductId);
 
         toast.success(<CartToast message={result.message} />);
       } else {
@@ -87,6 +91,7 @@ const useCart = () => {
         queryClient.invalidateQueries({
           queryKey: cartQueryKey,
         });
+        cartProductIdSet.current.clear();
       } else {
         toast.info(<CartToast message={result.message} />);
       }
@@ -94,7 +99,7 @@ const useCart = () => {
   });
 
   const addToCart = (dto: Omit<CreateCartItemRequestDto, 'cartId'>) => {
-    if (cartProductIds.current.has(dto.product)) {
+    if (cartProductIdSet.current.has(dto.product)) {
       toast.info(<CartToast message={'상품이 장바구니에 이미 담겨있습니다. '} />);
       return;
     }
@@ -103,7 +108,7 @@ const useCart = () => {
   };
 
   const deleteCartItem = (cartItem: CartItem) => {
-    if (cartProductIds.current.has(cartItem.product.id)) {
+    if (!cartProductIdSet.current.has(cartItem.product.id)) {
       toast.info(<CartToast message={'이미 장바구니에서 제거된 상품입니다'} />);
       return;
     }

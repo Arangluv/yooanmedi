@@ -44,7 +44,9 @@ const CartModal = () => {
 
     const cartItems = [...data.items];
     cartItems.forEach((item) => {
-      item.quantity = quantityInfo.get(item.id);
+      if (quantityInfo.get(item.id)) {
+        item.quantity = quantityInfo.get(item.id);
+      }
     });
 
     try {
