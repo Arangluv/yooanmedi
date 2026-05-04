@@ -15,7 +15,7 @@ import { CustomPriceService } from '@/entities/custom-price/infrastructure';
 
 export class ProductListService implements IProductListService {
   public async getProductListAppliedCustomPrice(rawSearchParams: Promise<SearchParams>) {
-    const searchParams = await this.getSafeSearchParams(rawSearchParams);
+    const searchParams = await ProductListService.getSafeSearchParams(rawSearchParams);
     const queries = generateProductListQueries(searchParams);
     const productList = await ProductRepository.findMany(
       buildProductsFindOption(queries, searchParams.page),
@@ -24,7 +24,7 @@ export class ProductListService implements IProductListService {
     const customPriceService = new CustomPriceService();
     const user = await UserRepository.findByHeader();
 
-    const customPriceList = await customPriceService.getCustomPriceList(
+    const customPriceList = await customPriceService.getCustomPrices(
       buildCustomPriceFindOption(user),
     );
     const productsAppliedCustomPrice = customPriceService.applyCustomPriceListToProducts({
@@ -48,7 +48,7 @@ export class ProductListService implements IProductListService {
     return productsAppliedCustomPrice;
   }
 
-  public async getSafeSearchParams(rawSearchParams: Promise<SearchParams>) {
+  public static async getSafeSearchParams(rawSearchParams: Promise<SearchParams>) {
     return await generateSearchParams(rawSearchParams);
   }
 }

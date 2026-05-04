@@ -21,14 +21,9 @@ describe('CustomPriceService', () => {
 
   describe('getCustomPriceMap', () => {
     it('커스텀 가격 설정이 된 Map을 반환한다', () => {
-      const result = customPriceService.getCustomPriceMap({ products, customPrices });
+      const result = customPriceService.getCustomPriceMap(customPrices);
 
       expect(result.size).toEqual(customPrices.length);
-    });
-
-    it('products가 빈 경우 error를 throw한다', () => {
-      const products = [] as any;
-      expect(() => customPriceService.getCustomPriceMap({ products, customPrices })).toThrowError();
     });
   });
 

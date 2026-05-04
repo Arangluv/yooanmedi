@@ -10,19 +10,7 @@ export class CustomPriceService {
     return customPrices;
   }
 
-  public getCustomPriceMap({
-    products,
-    customPrices,
-  }: {
-    products: Product[];
-    customPrices: CustomPrice[];
-  }) {
-    if (products.length === 0) {
-      const error = new BusinessLogicError('상품은 비어있을 수 없습니다');
-      error.setDevMessage('개별가격 설정 시 상품은 비어있을 수 없습니다.');
-      throw error;
-    }
-
+  public getCustomPriceMap(customPrices: CustomPrice[]) {
     const customPriceMap = new Map<number, number>();
 
     for (const { product, price } of customPrices) {
@@ -37,7 +25,7 @@ export class CustomPriceService {
     customPrices: CustomPrice[];
   }) {
     const { products } = params;
-    const customPriceMap = this.getCustomPriceMap(params);
+    const customPriceMap = this.getCustomPriceMap(params.customPrices);
 
     for (const product of products) {
       const customPrice = customPriceMap.get(product.id);

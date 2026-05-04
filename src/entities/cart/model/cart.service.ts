@@ -38,11 +38,7 @@ export class CartService {
       const customPrices = await customPriceService.getCustomPrices(
         buildCustomPriceFindOption(user),
       );
-      const products = cartItems.map((cartItem) => cartItem.product);
-      const customPriceMap = customPriceService.getCustomPriceMap({
-        products,
-        customPrices,
-      });
+      const customPriceMap = customPriceService.getCustomPriceMap(customPrices);
 
       cartItems.forEach((item) => {
         item.product.price = customPriceMap.get(item.product.id) || item.product.price;

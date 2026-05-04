@@ -1,25 +1,30 @@
-import { BrandLogo } from '@/shared';
-import Link from 'next/link';
 import type { SearchParams } from 'nuqs';
+import Link from 'next/link';
+import { BrandLogo } from '@/shared';
+import OrderLink from '@/entities/order/ui/OrderLink';
+import { CartModal, CartModalOpenTextButton, CartModalOpenBottomButton } from '@/entities/cart';
+import { getProductCategories } from '@/entities/product';
 import {
   ProductSearchForm,
   ProductCategotyNavigation,
   ProductAsideDetail,
   ProductListView,
+  getProductList,
 } from '@/features/product-list';
 import { ProductListService } from '@/features/product-list/infrastructure';
-import { ProductRepository } from '@/entities/product/infrastructure';
-import OrderLink from '@/entities/order/ui/OrderLink';
-import { CartModal, CartModalOpenTextButton, CartModalOpenBottomButton } from '@/entities/cart';
 
 export default async function OrderPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const productListService = new ProductListService();
   const [productListResponse, categories] = await Promise.all([
-    await productListService.getProductListAppliedCustomPrice(searchParams),
-    await ProductRepository.findAllCategories(),
+    await getProductList(searchParams),
+    await getProductCategories(),
   ]);
 
-  const safeSearchParam = await productListService.getSafeSearchParams(searchParams);
+  // TODO :: EndPointResult에서 isSuccess가 false인 경우에 대한 UI처리를 고민해봐야한다
+  if (!productListResponse.isSuccess || !categories.isSuccess) {
+    throw new Error('상품리스트를 가져오는데 문제가 발생했습니다');
+  }
+
+  const safeSearchParam = await ProductListService.getSafeSearchParams(searchParams);
 
   return (
     <Wrapper>
@@ -43,14 +48,14 @@ export default async function OrderPage({ searchParams }: { searchParams: Promis
       {/* bottom area */}
       <div className="flex w-full max-w-5xl items-center">
         {/* 제품카테고리 */}
-        <ProductCategotyNavigation categories={categories} />
+        <ProductCategotyNavigation categories={categories.data} />
       </div>
       {/* 메인 컨텐츠 영역 */}
       <div className="flex w-full">
         <div className="w-[calc((100%-1024px)/2)]"></div>
         <ProductListView
-          products={productListResponse.products}
-          totalCount={productListResponse.totalCount}
+          products={productListResponse.data.products}
+          totalCount={productListResponse.data.totalCount}
           condition={safeSearchParam.condition}
           keyword={safeSearchParam.keyword}
           opt={safeSearchParam.opt}

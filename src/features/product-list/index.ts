@@ -1,3 +1,5 @@
+export { getProductList } from './api/product-list.api';
+
 export { default as useProductDetailStore } from './model/useProductDetailStore';
 
 export { default as ProductAsideDetail } from './ui/ProductAsideDetail';
@@ -9,4 +11,3 @@ export { default as ProductListPagination } from './ui/ProductListPagination';
 export { default as ProductSearchForm } from './ui/ProductSearchForm';
 export { default as ProductSearchResultView } from './ui/view/ProductSearchResultView';
 export { default as ProductListView } from './ui/view/ProductListView';
-
