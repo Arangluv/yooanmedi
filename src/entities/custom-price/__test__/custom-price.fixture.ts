@@ -1,12 +1,16 @@
+import type { CustomPrice } from '../model/schemas/custom-price.schema';
+
 const baseCustomPriceFixture = {
   id: 1,
   product: {
     id: 3,
   },
   price: 3000,
-};
+} as CustomPrice;
 
-export const createCustomPriceFixture = (overide?: Partial<typeof baseCustomPriceFixture>) => {
+export const createCustomPriceFixture = (
+  overide?: Partial<typeof baseCustomPriceFixture>,
+): CustomPrice => {
   return {
     ...baseCustomPriceFixture,
     ...overide,

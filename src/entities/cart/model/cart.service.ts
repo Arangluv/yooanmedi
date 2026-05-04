@@ -9,7 +9,7 @@ import { buildCustomPriceFindOption } from '../lib/build-find-option';
 
 export class CartService {
   // TODO :: 오류처리에 대한 경계를 다시한번 생각해볼 필요가 있다.
-  public async createCart(userId: number) {
+  public async createCart(userId: number): Promise<void> {
     try {
       this.validateId(userId);
       await CartRepository.create(userId);
@@ -18,10 +18,10 @@ export class CartService {
     }
   }
 
-  public async createCartItem(dto: CreateCartItemRequestDto): Promise<void> {
+  public async createCartItem(dto: CreateCartItemRequestDto): Promise<CartItem> {
     try {
       const createEntity = toCreateCartItemEntity(dto);
-      await CartItemRepository.save(createEntity);
+      return await CartItemRepository.save(createEntity);
     } catch (error) {
       throw new BusinessLogicError('장바구니에 상품을 담는데 문제가 발생했습니다');
     }
@@ -33,6 +33,7 @@ export class CartService {
       const cartEntity = await CartRepository.findOne(user.id);
       const cartItems = await this.getCartItems(cartEntity.id);
 
+      // 
       // TODO:: 아래 부분 리팩토링 -> 함수가 하는일이 많음
       const customPrices = await CustomPriceRepository.findMany(buildCustomPriceFindOption(user));
       const customPriceMap = new Map(
@@ -84,10 +85,10 @@ export class CartService {
     }
   }
 
-  public async deleteCartItem(cartItemId: number) {
+  public async deleteCartItem(cartItem: CartItem) {
     try {
-      this.validateId(cartItemId);
-      return await CartItemRepository.delete(cartItemId);
+      this.validateId(cartItem.id);
+      return await CartItemRepository.delete(cartItem.id);
     } catch (error) {
       throw new BusinessLogicError('장바구니 품목을 삭제하는데 문제가 발생했습니다');
     }

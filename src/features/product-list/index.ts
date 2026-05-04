@@ -9,3 +9,4 @@ export { default as ProductListPagination } from './ui/ProductListPagination';
 export { default as ProductSearchForm } from './ui/ProductSearchForm';
 export { default as ProductSearchResultView } from './ui/view/ProductSearchResultView';
 export { default as ProductListView } from './ui/view/ProductListView';
+

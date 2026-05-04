@@ -24,7 +24,8 @@ export class CartItemRepository {
   }
 
   public static async save(entity: CreateCartItemEntity) {
-    await createCartItem(entity);
+    const result = await createCartItem(entity);
+    return zodSafeParse(cartItemSchema, result);
   }
 
   public static async update(cartItem: CartItem): Promise<CartItemActionResult> {
@@ -33,10 +34,10 @@ export class CartItemRepository {
     return zodSafeParse(cartItemActionResultSchema, result[UNIQUE_FIRST_INDEX]);
   }
 
-  public static async delete(cartItemId: number): Promise<CartItemActionResult> {
+  public static async delete(id: number): Promise<CartItem> {
     const UNIQUE_FIRST_INDEX = 0;
-    const result = await deleteCartItem(cartItemId);
-    return zodSafeParse(cartItemActionResultSchema, result[UNIQUE_FIRST_INDEX]);
+    const result = await deleteCartItem(id);
+    return zodSafeParse(cartItemSchema, result[UNIQUE_FIRST_INDEX]);
   }
 
   // TODO :: 해당부분 payload에서 어떻게 return해주는지 보고 return과 type작성

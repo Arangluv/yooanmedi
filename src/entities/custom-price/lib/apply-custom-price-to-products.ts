@@ -1,3 +1,5 @@
+// 20260504 - will deprecated
+
 import type { Product } from '@/entities/product';
 import type { CustomPrice } from '@/entities/custom-price';
 

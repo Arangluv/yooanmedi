@@ -26,12 +26,14 @@ export const getCartItem = async (cartItemId: number) => {
   return result;
 };
 
-export const createCartItem = async (entity: CreateCartItemEntity): Promise<void> => {
+export const createCartItem = async (entity: CreateCartItemEntity) => {
   const payload = await getPayload();
-  await payload.create({
+  const cartItem = await payload.create({
     collection: 'cart-items',
     data: entity,
   });
+
+  return cartItem;
 };
 
 export const updateCartItem = async (data: CartItem) => {
@@ -50,14 +52,13 @@ export const updateCartItem = async (data: CartItem) => {
   return successUpdatedDocs;
 };
 
-export const deleteCartItem = async (cartItemId: number) => {
+export const deleteCartItem = async (id: number) => {
   const payload = await getPayload();
   const { docs } = await payload.delete({
     collection: 'cart-items',
-    select: {},
     where: {
       id: {
-        equals: cartItemId,
+        equals: id,
       },
     },
   });
