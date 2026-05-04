@@ -33,7 +33,7 @@ describe('PaymentHistoryService', () => {
     await service.createHistory(dto);
     expect(PaymentHistoryRepository.create).toBeCalledWith({
       ...dto,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      paymentsMethod: PAYMENTS_METHOD.credit_card,
     });
   });
 });

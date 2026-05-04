@@ -113,7 +113,7 @@ export class PGPaymentCommand
   }
 
   private async createOrder(ctx: PGPaymentAfterApprovalContext) {
-    const orderService = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
+    const orderService = OrderService.for(PAYMENTS_METHOD.credit_card);
     const dto = PaymentDto.createOrderForPG(ctx);
     const order = await orderService.createOrder(dto);
 
@@ -166,7 +166,7 @@ export class PGPaymentCommand
     ctx: PGPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.CREDIT_CARD);
+    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.credit_card);
     const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
     const orderProduct = await orderProductService.createOrderProduct(requestDto);
 

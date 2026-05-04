@@ -1,19 +1,19 @@
 export const ORDER_PRODUCT_STATUS = {
-  PENDING: 'pending', // 입금확인
-  PREPARING: 'preparing', // 상품준비
-  SHIPPING: 'shipping', // 배송시작
-  DELIVERED: 'delivered', // 배송완료
-  CANCEL_REQUEST: 'cancel_request', // 취소 요청
-  CANCELLED: 'cancelled', // 주문취소
+  pending: 'pending', // 입금확인
+  preparing: 'preparing', // 상품준비
+  shipping: 'shipping', // 배송시작
+  delivered: 'delivered', // 배송완료
+  cancel_request: 'cancel_request', // 취소 요청
+  cancelled: 'cancelled', // 주문취소
 } as const;
 
 export const ORDER_PRODUCT_STATUS_NAME = {
-  [ORDER_PRODUCT_STATUS.PENDING]: '입금확인중',
-  [ORDER_PRODUCT_STATUS.PREPARING]: '상품준비',
-  [ORDER_PRODUCT_STATUS.SHIPPING]: '배송시작',
-  [ORDER_PRODUCT_STATUS.DELIVERED]: '배송완료',
-  [ORDER_PRODUCT_STATUS.CANCEL_REQUEST]: '취소요청',
-  [ORDER_PRODUCT_STATUS.CANCELLED]: '주문취소',
+  [ORDER_PRODUCT_STATUS.pending]: '입금확인중',
+  [ORDER_PRODUCT_STATUS.preparing]: '상품준비',
+  [ORDER_PRODUCT_STATUS.shipping]: '배송시작',
+  [ORDER_PRODUCT_STATUS.delivered]: '배송완료',
+  [ORDER_PRODUCT_STATUS.cancel_request]: '취소요청',
+  [ORDER_PRODUCT_STATUS.cancelled]: '주문취소',
 } as const;
 
 export type OrderProductStatus = (typeof ORDER_PRODUCT_STATUS)[keyof typeof ORDER_PRODUCT_STATUS];

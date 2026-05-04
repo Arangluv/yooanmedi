@@ -10,9 +10,9 @@ import { ApproveCancelRequestCommand } from './command/approve-cancel-request-co
 export class CancelCommandFactory {
   static createCommand(fromStatus: OrderStatus, action: OrderAction): OrderCommand {
     switch (fromStatus) {
-      case ORDER_STATUS.PENDING:
+      case ORDER_STATUS.pending:
         return new CancelBeforePaymentCommand();
-      case ORDER_STATUS.PREPARING:
+      case ORDER_STATUS.preparing:
         if (action === ORDER_ACTION.CREATE_CANCEL_REQUEST) {
           return new CreateCancelRequestCommand();
         }
@@ -21,11 +21,11 @@ export class CancelCommandFactory {
           return new CancelAfterPaymentCommand();
         }
         break;
-      case ORDER_STATUS.SHIPPING:
+      case ORDER_STATUS.shipping:
         return new CancelAfterPaymentCommand();
-      case ORDER_STATUS.DELIVERED:
+      case ORDER_STATUS.delivered:
         return new CancelAfterPaymentCommand();
-      case ORDER_STATUS.CANCEL_REQUEST:
+      case ORDER_STATUS.cancel_request:
         return new ApproveCancelRequestCommand();
     }
 

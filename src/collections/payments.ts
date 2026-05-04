@@ -1,6 +1,6 @@
 import { CollectionConfig } from 'payload';
 
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 
 export const Payments: CollectionConfig = {
   slug: 'payment',
@@ -43,10 +43,10 @@ export const Payments: CollectionConfig = {
       options: [
         {
           label: '신용카드',
-          value: PAYMENTS_METHOD.CREDIT_CARD,
+          value: PAYMENTS_METHOD.credit_card,
         },
       ],
-      defaultValue: PAYMENTS_METHOD.CREDIT_CARD,
+      defaultValue: PAYMENTS_METHOD.credit_card,
       required: true,
     },
   ],

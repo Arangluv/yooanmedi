@@ -29,7 +29,7 @@ export class CancelAfterPaymentCommand extends BaseCancelCommand {
         select: {},
         where: {
           order: { equals: targetOrderId },
-          orderProductStatus: { not_equals: ORDER_PRODUCT_STATUS.CANCELLED },
+          orderProductStatus: { not_equals: ORDER_PRODUCT_STATUS.cancelled },
         },
       });
 

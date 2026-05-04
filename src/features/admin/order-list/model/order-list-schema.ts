@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ORDER_STATUS } from '@/entities/order';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { FLG_STATUS } from '@/entities/order/constants/flg-status';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 
 // {
 //   "docs": [

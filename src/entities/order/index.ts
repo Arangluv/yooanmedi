@@ -6,7 +6,7 @@ export { type Order } from './model/type';
 export { createOrderSchema } from './model/schemas/create-order.schema';
 
 // constants
-export { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './constants/payments-options';
+export { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './constants/payments-method';
 export { ORDER_STATUS, ORDER_STATUS_NAME } from './constants/order-status';
 
 // ui

@@ -8,7 +8,7 @@ export const placeholderData = {
     updatedAt: '',
     orderNo: '',
     progressOrder: {
-      inProgressOrderStatus: ORDER_STATUS.PENDING,
+      inProgressOrderStatus: ORDER_STATUS.pending,
       orderProducts: [],
     },
     cancelRequestOrder: {
@@ -19,8 +19,8 @@ export const placeholderData = {
     },
   },
   paymentInfo: {
-    paymentMethod: PAYMENTS_METHOD.CREDIT_CARD,
-    paymentStatus: PAYMENT_STATUS.PENDING,
+    paymentMethod: PAYMENTS_METHOD.credit_card,
+    paymentStatus: PAYMENT_STATUS.pending,
     usedPoint: 0,
     finalPrice: 0,
   },

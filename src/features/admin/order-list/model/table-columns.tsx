@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 
 import { PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
-import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-method';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
 import { Checkbox } from '@/shared/ui/shadcn/checkbox';

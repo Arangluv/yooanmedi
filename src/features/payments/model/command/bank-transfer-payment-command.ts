@@ -48,7 +48,7 @@ export class BankTransferPaymentCommand
   private async createOrder(
     ctx: BankTransferPaymentInitContext,
   ): Promise<BankTransferPaymentAfterOrderContext> {
-    const orderService = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const orderService = OrderService.for(PAYMENTS_METHOD.bank_transfer);
     const dto = PaymentDto.createOrderForBankTransfer(ctx);
     const order = await orderService.createOrder(dto);
 
@@ -93,7 +93,7 @@ export class BankTransferPaymentCommand
     ctx: BankTransferPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.bank_transfer);
     const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
     const orderProduct = await orderProductService.createOrderProduct(requestDto);
 

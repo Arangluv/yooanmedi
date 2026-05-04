@@ -1,7 +1,7 @@
 'use client';
 
 import { PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
-import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-method';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/shared/ui/shadcn/card';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 

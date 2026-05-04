@@ -60,7 +60,7 @@ export const toRegisterTransactionServiceDto = (data: RegisterTransactionRequest
       value2: JSON.stringify(data.shopValueInfo.orderList),
       value3: data.shopValueInfo.usedPoint,
       value4: data.shopValueInfo.userId,
-      value5: PAYMENTS_METHOD.CREDIT_CARD,
+      value5: PAYMENTS_METHOD.credit_card,
       value6: data.shopValueInfo.minOrderPrice,
     },
   });

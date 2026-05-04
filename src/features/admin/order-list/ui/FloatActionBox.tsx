@@ -9,7 +9,7 @@ const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) =
   const { filters } = useOrderListSearch();
 
   // 체크박스가 없는 상태에서는 플로팅 액션 박스를 보여주지 않음
-  if (filters.orderStatus === 'all' || filters.orderStatus === ORDER_STATUS.CANCELLED) {
+  if (filters.orderStatus === 'all' || filters.orderStatus === ORDER_STATUS.cancelled) {
     return null;
   }
 

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { Image } from '@/payload-types';
 
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 

@@ -66,8 +66,8 @@ const OrderItem = ({ order }: { order: OrderListItem }) => {
         </div>
       </div>
       <Divider />
-      {order.paymentsMethod === PAYMENTS_METHOD.BANK_TRANSFER &&
-        order.orderStatus === ORDER_STATUS.PENDING && <BankTransferPendingAlert />}
+      {order.paymentsMethod === PAYMENTS_METHOD.bank_transfer &&
+        order.orderStatus === ORDER_STATUS.pending && <BankTransferPendingAlert />}
       {/* 구매 상품 리스트 영역 */}
       <div className="flex flex-col gap-6">
         {order.orderProducts.map((orderProduct) => (
@@ -110,8 +110,8 @@ interface OrderProductItemProps {
 
 const OrderProductItem = ({ orderProduct, orderId }: OrderProductItemProps) => {
   const canCancelOrderProduct =
-    orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.PENDING ||
-    orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.PREPARING;
+    orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.pending ||
+    orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.preparing;
 
   return (
     <div className="flex flex-col gap-2">

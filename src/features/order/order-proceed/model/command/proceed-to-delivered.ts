@@ -17,7 +17,7 @@ export class ProceedToDeliveredCommand extends BaseProceedCommand {
 
       const orderProductIds = await findOrderProductIdsByStatus(
         targetOrderId,
-        ORDER_STATUS.SHIPPING,
+        ORDER_STATUS.shipping,
       );
 
       for (const orderProductId of orderProductIds) {
@@ -26,13 +26,13 @@ export class ProceedToDeliveredCommand extends BaseProceedCommand {
           collection: 'order-product',
           id: orderProductId,
           data: {
-            orderProductStatus: ORDER_PRODUCT_STATUS.DELIVERED,
+            orderProductStatus: ORDER_PRODUCT_STATUS.delivered,
           },
         });
       }
 
       // step 2. update order status to shipping
-      await this.updateOrderStatus(targetOrderId, ORDER_STATUS.DELIVERED);
+      await this.updateOrderStatus(targetOrderId, ORDER_STATUS.delivered);
 
       return {
         success: true,

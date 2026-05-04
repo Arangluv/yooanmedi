@@ -23,7 +23,7 @@ export class ApproveCancelRequestCommand extends BaseCancelCommand {
       select: {},
       where: {
         order: { equals: targetOrderId },
-        orderProductStatus: { equals: ORDER_PRODUCT_STATUS.CANCEL_REQUEST },
+        orderProductStatus: { equals: ORDER_PRODUCT_STATUS.cancel_request },
       },
     });
     const orderProductIds = orderProducts.docs.map((orderProduct) => orderProduct.id);
@@ -35,7 +35,7 @@ export class ApproveCancelRequestCommand extends BaseCancelCommand {
       };
     }
 
-    const strategy = PaymentCancelStrategyFactory.getStrategy(PAYMENTS_METHOD.BANK_TRANSFER);
+    const strategy = PaymentCancelStrategyFactory.getStrategy(PAYMENTS_METHOD.bank_transfer);
 
     const results = await Promise.allSettled(
       orderProductIds.map(async (orderProductId) => {

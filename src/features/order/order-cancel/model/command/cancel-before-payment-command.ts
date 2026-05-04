@@ -18,7 +18,7 @@ export class CancelBeforePaymentCommand extends BaseCancelCommand {
 
       const targetOrderProductIds = await getOrderProductsIdByStatus(
         targetOrderId,
-        ORDER_STATUS.PENDING,
+        ORDER_STATUS.pending,
       );
 
       if (targetOrderProductIds.length === 0) {
@@ -34,7 +34,7 @@ export class CancelBeforePaymentCommand extends BaseCancelCommand {
           collection: 'order-product',
           id: orderProductId,
           data: {
-            orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+            orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
           },
         });
       }
@@ -64,7 +64,7 @@ export class CancelBeforePaymentCommand extends BaseCancelCommand {
         collection: 'order-product',
         id: orderProductId,
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
         },
       });
 

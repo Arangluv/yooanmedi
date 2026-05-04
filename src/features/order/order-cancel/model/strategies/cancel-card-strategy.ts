@@ -7,7 +7,7 @@ import {
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 import { cancelPgPayment } from '@/entities/payment/lib/cancel-pg-payment';
 import { createPayment } from '@/entities/payment/api/create';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 
 export class CancelCardPaymentStrategy extends CancelStrategy {
   async runCancel(orderProduct: CancelOrderProduct): Promise<void> {
@@ -39,7 +39,7 @@ export class CancelCardPaymentStrategy extends CancelStrategy {
           },
         },
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
         },
       });
 
@@ -53,7 +53,7 @@ export class CancelCardPaymentStrategy extends CancelStrategy {
       await createPayment({
         order: orderProduct.orderId,
         amount: cancelResponse.cancelAmount,
-        paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+        paymentsMethod: PAYMENTS_METHOD.credit_card,
         pgCno: cancelResponse.cancelPgCno,
       });
     } catch (error) {

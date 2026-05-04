@@ -1,21 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { getPayload } from '@/shared/infrastructure';
+import { orderEntitySchema, orderSchema, toOrderSchema } from './order.schema';
+import { createOrderEntityFixture } from '../../__test__/order.fixture';
 
 describe('orderSchema', () => {
-  it('order 스키마 테스트를 진행해주세요', async () => {
-    const payload = await getPayload();
-    const { docs } = await payload.find({
-      collection: 'order',
-      populate: {
-        users: {},
-      },
-    });
-    // console.log('docs[0]');
-    // console.log(JSON.stringify(docs[0], null, 2));
-    const order = await payload.findByID({
-      collection: 'order',
-      id: 644,
-    });
-    console.log(JSON.stringify(order, null, 2));
+  it('데이터가 payload order entity로 파싱된다', () => {
+    const result = orderEntitySchema.safeParse(createOrderEntityFixture());
+    expect(result.success).toBe(true);
+  });
+
+  it('데이터가 어플리케이션에서 사용하는 order entity로 파싱된다', () => {
+    const dto = toOrderSchema(createOrderEntityFixture());
+    const result = orderSchema.safeParse(dto);
+
+    expect(result.success).toBe(true);
   });
 });

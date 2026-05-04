@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { OrderService } from '../services/service';
-import { PGOrderService } from '../services/pg.service';
-import { BankTransferOrderService } from '../services/bank-transfer.service';
-import { PAYMENTS_METHOD } from '../../constants/payments-options';
+import { OrderService } from './service';
+import { PGOrderService } from './pg.service';
+import { BankTransferOrderService } from './bank-transfer.service';
+import { PAYMENTS_METHOD } from '../../constants/payments-method';
 import { BusinessLogicError, ZodParseError } from '@/shared/model/errors/domain.error';
 import { OrderRepository } from '../repository';
 import { PAYMENT_STATUS } from '../../constants/payment-status';
@@ -18,8 +18,8 @@ vi.mock('../repository', () => ({
 
 describe('OrderService', () => {
   it('결제방식에 따른 주문서비스를 반환한다.', () => {
-    const orderServiceForPG = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
-    const orderServiceForBankTransfer = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const orderServiceForPG = OrderService.for(PAYMENTS_METHOD.credit_card);
+    const orderServiceForBankTransfer = OrderService.for(PAYMENTS_METHOD.bank_transfer);
     expect(orderServiceForPG).toBeInstanceOf(PGOrderService);
     expect(orderServiceForBankTransfer).toBeInstanceOf(BankTransferOrderService);
   });
@@ -31,7 +31,7 @@ describe('OrderService', () => {
 
 describe('OrderServiceForPG', () => {
   it('주문을 생성한다', async () => {
-    const orderServiceForPG = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
+    const orderServiceForPG = OrderService.for(PAYMENTS_METHOD.credit_card);
 
     vi.mocked(OrderRepository.create).mockResolvedValue({ id: 1 });
     const orderRequestDto = {
@@ -47,15 +47,15 @@ describe('OrderServiceForPG', () => {
     expect(orderForPG.id).toBe(1);
     expect(OrderRepository.create).toHaveBeenCalledWith({
       ...orderRequestDto,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-      orderStatus: ORDER_STATUS.PREPARING,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.COMPLETE,
+      paymentsMethod: PAYMENTS_METHOD.credit_card,
+      orderStatus: ORDER_STATUS.preparing,
+      flgStatus: FLG_STATUS.init_normal,
+      paymentStatus: PAYMENT_STATUS.complete,
     });
   });
 
   it('주문 생성에 실패하고, 에러를 throw한다', async () => {
-    const orderServiceForPG = OrderService.for(PAYMENTS_METHOD.CREDIT_CARD);
+    const orderServiceForPG = OrderService.for(PAYMENTS_METHOD.credit_card);
     const orderRequestDto = {
       user: 1,
       orderNo: generate15digitsNumberBasedOnDate(),
@@ -67,7 +67,7 @@ describe('OrderServiceForPG', () => {
 
 describe('OrderServiceForBankTransfer', () => {
   it('주문을 생성한다', async () => {
-    const orderServiceForBankTransfer = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const orderServiceForBankTransfer = OrderService.for(PAYMENTS_METHOD.bank_transfer);
 
     vi.mocked(OrderRepository.create).mockResolvedValue({ id: 1 });
     const orderRequestDto = {
@@ -83,15 +83,15 @@ describe('OrderServiceForBankTransfer', () => {
     expect(orderForBankTransfer.id).toBe(1);
     expect(OrderRepository.create).toHaveBeenCalledWith({
       ...orderRequestDto,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
-      orderStatus: ORDER_STATUS.PENDING,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.PENDING,
+      paymentsMethod: PAYMENTS_METHOD.bank_transfer,
+      orderStatus: ORDER_STATUS.pending,
+      flgStatus: FLG_STATUS.init_normal,
+      paymentStatus: PAYMENT_STATUS.pending,
     });
   });
 
   it('주문 생성에 실패하고, 에러를 throw한다', async () => {
-    const orderServiceForBankTransfer = OrderService.for(PAYMENTS_METHOD.BANK_TRANSFER);
+    const orderServiceForBankTransfer = OrderService.for(PAYMENTS_METHOD.bank_transfer);
     const orderRequestDto = {
       user: 1,
       orderNo: generate15digitsNumberBasedOnDate(),

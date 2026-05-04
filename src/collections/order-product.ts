@@ -55,28 +55,28 @@ export const OrderProduct: CollectionConfig = {
       },
       options: [
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.PENDING],
-          value: ORDER_PRODUCT_STATUS.PENDING,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.pending],
+          value: ORDER_PRODUCT_STATUS.pending,
         },
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.PREPARING],
-          value: ORDER_PRODUCT_STATUS.PREPARING,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.preparing],
+          value: ORDER_PRODUCT_STATUS.preparing,
         },
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.SHIPPING],
-          value: ORDER_PRODUCT_STATUS.SHIPPING,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.shipping],
+          value: ORDER_PRODUCT_STATUS.shipping,
         },
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.DELIVERED],
-          value: ORDER_PRODUCT_STATUS.DELIVERED,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.delivered],
+          value: ORDER_PRODUCT_STATUS.delivered,
         },
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.CANCEL_REQUEST],
-          value: ORDER_PRODUCT_STATUS.CANCEL_REQUEST,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.cancel_request],
+          value: ORDER_PRODUCT_STATUS.cancel_request,
         },
         {
-          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.CANCELLED],
-          value: ORDER_PRODUCT_STATUS.CANCELLED,
+          label: ORDER_PRODUCT_STATUS_NAME[ORDER_PRODUCT_STATUS.cancelled],
+          value: ORDER_PRODUCT_STATUS.cancelled,
         },
       ],
     },

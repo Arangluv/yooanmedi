@@ -1,4 +1,4 @@
-import { PAYMENTS_METHOD, PaymentsMethod } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD, PaymentsMethod } from '@/entities/order/constants/payments-method';
 
 import { CancelStrategy } from './cancel-strategy';
 import { CancelCardPaymentStrategy } from './cancel-card-strategy';
@@ -6,8 +6,8 @@ import { CancelBankTransferStrategy } from './cancel-banktransfer-strategy';
 
 export class PaymentCancelStrategyFactory {
   private static strategies = new Map<PaymentsMethod, CancelStrategy>([
-    [PAYMENTS_METHOD.CREDIT_CARD, new CancelCardPaymentStrategy()],
-    [PAYMENTS_METHOD.BANK_TRANSFER, new CancelBankTransferStrategy()],
+    [PAYMENTS_METHOD.credit_card, new CancelCardPaymentStrategy()],
+    [PAYMENTS_METHOD.bank_transfer, new CancelBankTransferStrategy()],
   ]);
 
   static getStrategy(paymentsMethod: PaymentsMethod): CancelStrategy {

@@ -49,11 +49,11 @@ export abstract class CancelStrategy {
   }
 
   protected validate(orderProduct: CancelOrderProduct) {
-    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED) {
+    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled) {
       throw new Error('이미 취소 처리된 주문입니다');
     }
 
-    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCEL_REQUEST) {
+    if (orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancel_request) {
       throw new Error('이미 취소 요청된 주문입니다');
     }
   }

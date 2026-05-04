@@ -34,7 +34,7 @@ export class CancelBankTransferStrategy extends CancelStrategy {
           },
         },
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
         },
       });
     } catch (error) {

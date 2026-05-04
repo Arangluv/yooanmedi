@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 
 import { ORDER_PRODUCT_STATUS } from '../constants/order-product-status';
 

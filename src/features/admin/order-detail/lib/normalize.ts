@@ -61,10 +61,10 @@ const createOrderProductsInfo = (orderRowData: Order) => {
   const orderProducts = orderProductsArraySchema.parse(orderRowData?.orderProducts?.docs);
   orderProducts.forEach((orderProduct) => {
     switch (orderProduct.orderProductStatus) {
-      case ORDER_PRODUCT_STATUS.CANCEL_REQUEST:
+      case ORDER_PRODUCT_STATUS.cancel_request:
         orderProductsInfo.cancelRequestOrder.orderProducts.push(orderProduct);
         break;
-      case ORDER_PRODUCT_STATUS.CANCELLED:
+      case ORDER_PRODUCT_STATUS.cancelled:
         orderProductsInfo.cancelledOrder.orderProducts.push(orderProduct);
         break;
       default:

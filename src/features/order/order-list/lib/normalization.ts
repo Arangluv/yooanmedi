@@ -2,7 +2,7 @@ import { Image } from '@/payload-types';
 
 import { ORDER_PRODUCT_STATUS, OrderProduct } from '@/entities/order-product';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 
 import type { OrderListItemBeforeNormalize } from '../api/get-order-list';
 

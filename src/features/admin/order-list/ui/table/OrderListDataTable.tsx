@@ -60,7 +60,7 @@ const OrderListDataTable = <TData, TValue>({
     // 전체 상태 탭에서는 checkbox를 숨김 처리
     const checkboxColumns = table.getColumn('select');
     checkboxColumns?.toggleVisibility(
-      filters.orderStatus !== 'all' && filters.orderStatus !== ORDER_STATUS.CANCELLED,
+      filters.orderStatus !== 'all' && filters.orderStatus !== ORDER_STATUS.cancelled,
     );
 
     // 탭이 변경되면 selected row 초기화
@@ -96,7 +96,7 @@ const OrderListDataTable = <TData, TValue>({
                     // 전체 상태 탭에서는 select action 동작을 수행하지 않음
                     if (
                       filters.orderStatus !== 'all' &&
-                      filters.orderStatus !== ORDER_STATUS.CANCELLED
+                      filters.orderStatus !== ORDER_STATUS.cancelled
                     ) {
                       row.toggleSelected();
                     }

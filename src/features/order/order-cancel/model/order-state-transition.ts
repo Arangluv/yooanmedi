@@ -38,7 +38,7 @@ export const summarizeOrderStatusAfterCancelAction = (
   orderProducts: OrderProducts[],
 ): OrderStatusSummaryAfterCancelAction => {
   const inProgressOrderProducts = orderProducts.filter(
-    (orderProduct) => orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.CANCELLED,
+    (orderProduct) => orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.cancelled,
   );
 
   const totalCount = orderProducts.length;
@@ -77,18 +77,18 @@ export interface OrderStateTransitionStrategy {
 export class BeforePaymentStateTransitionStrategy implements OrderStateTransitionStrategy {
   determineStateForTotalCancel(): OrderStateUpdate {
     return {
-      orderStatus: ORDER_STATUS.CANCELLED,
-      paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
-      flgStatus: FLG_STATUS.COMPLETE,
+      orderStatus: ORDER_STATUS.cancelled,
+      paymentStatus: PAYMENT_STATUS.total_cancel,
+      flgStatus: FLG_STATUS.complete,
     };
   }
 
   determineStateForPartialCancel(summary: OrderStatusSummaryAfterCancelAction): OrderStateUpdate {
     if (summary.inAllCancelled) {
       return {
-        orderStatus: ORDER_STATUS.CANCELLED,
-        paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
-        flgStatus: FLG_STATUS.COMPLETE,
+        orderStatus: ORDER_STATUS.cancelled,
+        paymentStatus: PAYMENT_STATUS.total_cancel,
+        flgStatus: FLG_STATUS.complete,
       };
     }
 
@@ -98,8 +98,8 @@ export class BeforePaymentStateTransitionStrategy implements OrderStateTransitio
 
     return {
       orderStatus: summary.inProgressStatus,
-      paymentStatus: PAYMENT_STATUS.PARTIAL_CANCEL,
-      flgStatus: FLG_STATUS.COMPLETE,
+      paymentStatus: PAYMENT_STATUS.partial_cancel,
+      flgStatus: FLG_STATUS.complete,
     };
   }
 }
@@ -111,18 +111,18 @@ export class BeforePaymentStateTransitionStrategy implements OrderStateTransitio
 export class AfterPaymentStateTransitionStrategy implements OrderStateTransitionStrategy {
   determineStateForTotalCancel(): OrderStateUpdate {
     return {
-      orderStatus: ORDER_STATUS.CANCELLED,
-      paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
-      flgStatus: FLG_STATUS.COMPLETE,
+      orderStatus: ORDER_STATUS.cancelled,
+      paymentStatus: PAYMENT_STATUS.total_cancel,
+      flgStatus: FLG_STATUS.complete,
     };
   }
 
   determineStateForPartialCancel(summary: OrderStatusSummaryAfterCancelAction): OrderStateUpdate {
     if (summary.inAllCancelled) {
       return {
-        orderStatus: ORDER_STATUS.CANCELLED,
-        paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
-        flgStatus: FLG_STATUS.COMPLETE,
+        orderStatus: ORDER_STATUS.cancelled,
+        paymentStatus: PAYMENT_STATUS.total_cancel,
+        flgStatus: FLG_STATUS.complete,
       };
     }
 
@@ -132,8 +132,8 @@ export class AfterPaymentStateTransitionStrategy implements OrderStateTransition
 
     return {
       orderStatus: summary.inProgressStatus,
-      paymentStatus: PAYMENT_STATUS.PARTIAL_CANCEL,
-      flgStatus: FLG_STATUS.COMPLETE,
+      paymentStatus: PAYMENT_STATUS.partial_cancel,
+      flgStatus: FLG_STATUS.complete,
     };
   }
 }
@@ -149,8 +149,8 @@ export class CreateCancelRequestStateTransitionStrategy implements OrderStateTra
 
   determineStateForPartialCancel(): OrderStateUpdate {
     return {
-      orderStatus: ORDER_STATUS.CANCEL_REQUEST,
-      flgStatus: FLG_STATUS.NEED_PROCESS,
+      orderStatus: ORDER_STATUS.cancel_request,
+      flgStatus: FLG_STATUS.need_process,
     };
   }
 }
@@ -163,9 +163,9 @@ export class ApproveCancelRequestStateTransitionStrategy implements OrderStateTr
   determineStateForTotalCancel(summary: OrderStatusSummaryAfterCancelAction): OrderStateUpdate {
     if (summary.inAllCancelled) {
       return {
-        orderStatus: ORDER_STATUS.CANCELLED,
-        paymentStatus: PAYMENT_STATUS.TOTAL_CANCEL,
-        flgStatus: FLG_STATUS.COMPLETE,
+        orderStatus: ORDER_STATUS.cancelled,
+        paymentStatus: PAYMENT_STATUS.total_cancel,
+        flgStatus: FLG_STATUS.complete,
       };
     }
 
@@ -175,8 +175,8 @@ export class ApproveCancelRequestStateTransitionStrategy implements OrderStateTr
 
     return {
       orderStatus: summary.inProgressStatus,
-      paymentStatus: PAYMENT_STATUS.PARTIAL_CANCEL,
-      flgStatus: FLG_STATUS.COMPLETE,
+      paymentStatus: PAYMENT_STATUS.partial_cancel,
+      flgStatus: FLG_STATUS.complete,
     };
   }
 

@@ -132,7 +132,7 @@ export const OrderCancelRequestInfoCard = () => {
     <OrderInfoCard
       type="cancelRequest"
       orderId={orderId}
-      orderStatus={ORDER_STATUS.CANCEL_REQUEST}
+      orderStatus={ORDER_STATUS.cancel_request}
       date={updatedAt}
       orderNo={orderNo}
       orderProducts={cancelRequestOrder.orderProducts}
@@ -145,7 +145,7 @@ export const OrderCancelRequestInfoCard = () => {
               viewType: 'order-detail',
             }}
             targetOrderIds={[orderId]}
-            currentStatus={ORDER_STATUS.CANCEL_REQUEST}
+            currentStatus={ORDER_STATUS.cancel_request}
           />
         </CardFooter>
       )}
@@ -164,7 +164,7 @@ export const OrderCancelledInfoCard = () => {
     <OrderInfoCard
       type="cancelled"
       orderId={orderId}
-      orderStatus={ORDER_STATUS.CANCELLED}
+      orderStatus={ORDER_STATUS.cancelled}
       date={updatedAt}
       orderNo={orderNo}
       orderProducts={cancelledOrder.orderProducts}

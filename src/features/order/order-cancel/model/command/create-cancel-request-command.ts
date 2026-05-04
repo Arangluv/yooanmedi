@@ -29,7 +29,7 @@ export class CreateCancelRequestCommand extends BaseCancelCommand {
           },
         },
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCEL_REQUEST,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancel_request,
         },
       });
 

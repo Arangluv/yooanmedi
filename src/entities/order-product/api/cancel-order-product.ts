@@ -8,7 +8,7 @@ import {
   createCancelUsePointTransaction,
 } from '@/entities/point';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 import { getPayload } from '@/shared/infrastructure';
 import { generateUUID32digits } from '@/shared/lib/identifier';
 
@@ -64,16 +64,16 @@ export const cancelOrderProduct = async ({
     const targetOrderProduct = cancelOrderProductSchema.parse(orderProduct);
 
     // validate
-    if (targetOrderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCELLED) {
+    if (targetOrderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled) {
       throw new Error('이미 취소처리된 주문입니다');
     }
 
-    if (targetOrderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.CANCEL_REQUEST) {
+    if (targetOrderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancel_request) {
       throw new Error('이미 취소요청된 주문입니다');
     }
 
     // USECASE 1. 카드 결제 취소시
-    if (targetOrderProduct.paymentsMethod == PAYMENTS_METHOD.CREDIT_CARD) {
+    if (targetOrderProduct.paymentsMethod == PAYMENTS_METHOD.credit_card) {
       // 사용된 적립금 환불 처리
       if (targetOrderProduct.usedPoint > 0) {
         await createCancelUsePointTransaction({
@@ -97,7 +97,7 @@ export const cancelOrderProduct = async ({
           },
         },
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
         },
       });
 
@@ -146,7 +146,7 @@ export const cancelOrderProduct = async ({
       await createPayment({
         order: targetOrderProduct.orderId,
         amount: cancelResponse.cancelAmount,
-        paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+        paymentsMethod: PAYMENTS_METHOD.credit_card,
         pgCno: cancelResponse.cancelPgCno,
       });
 
@@ -157,7 +157,7 @@ export const cancelOrderProduct = async ({
 
     // USECASE 2.무통장 입금 취소 시
     // USECASE 2-1. 입금 전 취소 시 -> 상품 상태만 업데이트
-    if (targetOrderProduct.orderStatus === ORDER_STATUS.PENDING) {
+    if (targetOrderProduct.orderStatus === ORDER_STATUS.pending) {
       // 사용된 적립금 환불 처리
       if (targetOrderProduct.usedPoint > 0) {
         await createCancelUsePointTransaction({
@@ -175,13 +175,13 @@ export const cancelOrderProduct = async ({
           },
         },
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCELLED,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
         },
       });
     }
 
     // USECASE 2-2. 입금된 이후 상품 취소 시 (admin only)
-    if (targetOrderProduct.orderStatus === ORDER_STATUS.PREPARING) {
+    if (targetOrderProduct.orderStatus === ORDER_STATUS.preparing) {
       // 상품주문 상태 업데이트 하기
       await payload.update({
         collection: 'order-product',
@@ -191,7 +191,7 @@ export const cancelOrderProduct = async ({
           },
         },
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCEL_REQUEST,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancel_request,
         },
       });
 
@@ -211,7 +211,7 @@ export const cancelOrderProduct = async ({
     }
 
     // USECASE 3. 입금된 이후 상품 취소 시 (user only)
-    if (targetOrderProduct.orderStatus === ORDER_STATUS.PREPARING) {
+    if (targetOrderProduct.orderStatus === ORDER_STATUS.preparing) {
       // 상품주문 상태 업데이트 하기
       await payload.update({
         collection: 'order-product',
@@ -221,7 +221,7 @@ export const cancelOrderProduct = async ({
           },
         },
         data: {
-          orderProductStatus: ORDER_PRODUCT_STATUS.CANCEL_REQUEST,
+          orderProductStatus: ORDER_PRODUCT_STATUS.cancel_request,
         },
       });
 

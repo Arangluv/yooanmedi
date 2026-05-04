@@ -156,11 +156,11 @@ export const paymentSuccessCode = z.literal(
 );
 
 export const paymentsMethodUsedCard = z.literal(
-  PAYMENTS_METHOD.CREDIT_CARD,
+  PAYMENTS_METHOD.credit_card,
   '카드결제 타입이 아닙니다',
 );
 
 export const paymentsMethodUsedBankTransfer = z.literal(
-  PAYMENTS_METHOD.BANK_TRANSFER,
+  PAYMENTS_METHOD.bank_transfer,
   '무통장입금 결제 타입이 아닙니다',
 );
