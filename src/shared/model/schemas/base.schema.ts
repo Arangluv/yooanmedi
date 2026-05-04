@@ -18,6 +18,16 @@ interface StringSchemaOptions {
   length?: number;
 }
 
+export const isoString = z.iso.datetime({
+  error: (iss) => {
+    if (iss.code === 'invalid_format') {
+      return '유효하지 않은 iso date 타입입니다';
+    }
+
+    return 'date가 누락되었습니다';
+  },
+});
+
 export const url = z.url({
   error: (iss) => {
     if (iss.code == 'invalid_type' && iss.input === undefined) {
