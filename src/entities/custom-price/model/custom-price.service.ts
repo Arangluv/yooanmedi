@@ -5,12 +5,12 @@ import { CustomPriceRepository } from '../api/repository';
 
 export class CustomPriceService {
   /* v8 ignore next */
-  public async getCustomPriceList(option: FindOption): Promise<CustomPrice[]> {
-    const customPriceList = await CustomPriceRepository.findMany(option);
-    return customPriceList;
+  public async getCustomPrices(option: FindOption): Promise<CustomPrice[]> {
+    const customPrices = await CustomPriceRepository.findMany(option);
+    return customPrices;
   }
 
-  public applyCustomPriceListToProducts({
+  public getCustomPriceMap({
     products,
     customPrices,
   }: {
@@ -28,6 +28,16 @@ export class CustomPriceService {
     for (const { product, price } of customPrices) {
       customPriceMap.set(product.id, price);
     }
+
+    return customPriceMap;
+  }
+
+  public applyCustomPriceListToProducts(params: {
+    products: Product[];
+    customPrices: CustomPrice[];
+  }) {
+    const { products } = params;
+    const customPriceMap = this.getCustomPriceMap(params);
 
     for (const product of products) {
       const customPrice = customPriceMap.get(product.id);

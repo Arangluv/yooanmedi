@@ -4,22 +4,35 @@ import { createProductFixture } from '@/entities/product/@x/custom-price';
 import { CustomPriceService } from './custom-price.service';
 
 describe('CustomPriceService', () => {
+  const customPriceService = new CustomPriceService();
+  const ORIGINAL_PRICE = 1000;
+  const CUSTOM_PRICE = 2000;
+  const NOT_TARGER_PRODUCT_ID = 3;
+
+  const products = [
+    createProductFixture({ id: 1, price: ORIGINAL_PRICE }),
+    createProductFixture({ id: 2, price: ORIGINAL_PRICE }),
+    createProductFixture({ id: NOT_TARGER_PRODUCT_ID, price: ORIGINAL_PRICE }),
+  ];
+  const customPrices = [
+    createCustomPriceFixture({ product: { id: 1 }, price: CUSTOM_PRICE }),
+    createCustomPriceFixture({ product: { id: 2 }, price: CUSTOM_PRICE }),
+  ];
+
+  describe('getCustomPriceMap', () => {
+    it('커스텀 가격 설정이 된 Map을 반환한다', () => {
+      const result = customPriceService.getCustomPriceMap({ products, customPrices });
+
+      expect(result.size).toEqual(customPrices.length);
+    });
+
+    it('products가 빈 경우 error를 throw한다', () => {
+      const products = [] as any;
+      expect(() => customPriceService.getCustomPriceMap({ products, customPrices })).toThrowError();
+    });
+  });
+
   describe('applyCustomPriceListToProducts', () => {
-    const customPriceService = new CustomPriceService();
-    const ORIGINAL_PRICE = 1000;
-    const CUSTOM_PRICE = 2000;
-    const NOT_TARGER_PRODUCT_ID = 3;
-
-    const products = [
-      createProductFixture({ id: 1, price: ORIGINAL_PRICE }),
-      createProductFixture({ id: 2, price: ORIGINAL_PRICE }),
-      createProductFixture({ id: NOT_TARGER_PRODUCT_ID, price: ORIGINAL_PRICE }),
-    ];
-    const customPrices = [
-      createCustomPriceFixture({ product: { id: 1 }, price: CUSTOM_PRICE }),
-      createCustomPriceFixture({ product: { id: 2 }, price: CUSTOM_PRICE }),
-    ];
-
     it('커스텀 설정 가격이 products에 정상적으로 반영된다', () => {
       const result = customPriceService.applyCustomPriceListToProducts({ products, customPrices });
 
@@ -37,13 +50,6 @@ describe('CustomPriceService', () => {
       for (const product of notChangedProducts) {
         expect(product.price).toEqual(ORIGINAL_PRICE);
       }
-    });
-
-    it('products가 빈 경우 error를 throw한다', () => {
-      const products = [] as any;
-      expect(() =>
-        customPriceService.applyCustomPriceListToProducts({ products, customPrices }),
-      ).toThrowError();
     });
   });
 });

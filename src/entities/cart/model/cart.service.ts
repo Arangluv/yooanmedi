@@ -4,8 +4,8 @@ import type { Cart, CreateCartItemRequestDto, CartItemActionResult } from './car
 import { UserRepository } from '@/entities/user/infrastructure';
 import { CartRepository } from '../api/cart.repository';
 import { CartItemRepository } from '../api/cart-items.repository';
-import { CustomPrice, CustomPriceRepository } from '@/entities/custom-price';
 import { buildCustomPriceFindOption } from '../lib/build-find-option';
+import { CustomPriceService } from '@/entities/custom-price/infrastructure';
 
 export class CartService {
   // TODO :: 오류처리에 대한 경계를 다시한번 생각해볼 필요가 있다.
@@ -33,12 +33,17 @@ export class CartService {
       const cartEntity = await CartRepository.findOne(user.id);
       const cartItems = await this.getCartItems(cartEntity.id);
 
-      // 
       // TODO:: 아래 부분 리팩토링 -> 함수가 하는일이 많음
-      const customPrices = await CustomPriceRepository.findMany(buildCustomPriceFindOption(user));
-      const customPriceMap = new Map(
-        customPrices.map((item: CustomPrice) => [item.product.id, item.price]),
+      const customPriceService = new CustomPriceService();
+      const customPrices = await customPriceService.getCustomPrices(
+        buildCustomPriceFindOption(user),
       );
+      const products = cartItems.map((cartItem) => cartItem.product);
+      const customPriceMap = customPriceService.getCustomPriceMap({
+        products,
+        customPrices,
+      });
+
       cartItems.forEach((item) => {
         item.product.price = customPriceMap.get(item.product.id) || item.product.price;
       });
