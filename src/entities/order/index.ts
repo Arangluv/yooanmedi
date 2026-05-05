@@ -7,7 +7,7 @@ export { createOrderSchema } from './model/schemas/create-order.schema';
 
 // constants
 export { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './constants/payments-method';
-export { ORDER_STATUS, ORDER_STATUS_NAME } from './constants/order-status';
+export { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from './constants/order-status';
 
 // ui
 export { default as Navbar } from './ui/Navbar';
