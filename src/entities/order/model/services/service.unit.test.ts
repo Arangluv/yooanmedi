@@ -4,7 +4,7 @@ import { PGOrderService } from './pg.service';
 import { BankTransferOrderService } from './bank-transfer.service';
 import { PAYMENTS_METHOD } from '../../constants/payments-method';
 import { BusinessLogicError, ZodParseError } from '@/shared/model/errors/domain.error';
-import { OrderRepository } from '../repository';
+import { OrderRepository } from '../../api/repository';
 import { PAYMENT_STATUS } from '../../constants/payment-status';
 import { FLG_STATUS } from '../../constants/flg-status';
 import { ORDER_STATUS } from '../../constants/order-status';

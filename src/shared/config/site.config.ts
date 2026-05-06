@@ -9,8 +9,8 @@ export const siteConfig = {
  * 유안메디팜에서 제공하는 결제 방법
  */
 export const PAYMENTS_METHOD = {
-  CREDIT_CARD: 'creditCard',
-  BANK_TRANSFER: 'bankTransfer',
+  credit_card: 'creditCard',
+  bank_transfer: 'bankTransfer',
 } as const;
 
 export const PAYMENTS_METHOD_NAME = {

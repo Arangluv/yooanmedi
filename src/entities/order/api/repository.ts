@@ -1,5 +1,5 @@
-import { CreateOrderEntity, CreateOrderResponseDto } from './schemas/create-order.schema';
-import { createOrder } from '../api/create-order';
+import { CreateOrderEntity, CreateOrderResponseDto } from '../model/schemas/create-order.schema';
+import { createOrder } from './create-order';
 
 export class OrderRepository {
   public static async create(entity: CreateOrderEntity): Promise<CreateOrderResponseDto> {

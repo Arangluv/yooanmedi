@@ -4,7 +4,7 @@ import {
   CreateOrderResponseDto,
   type CreateOrderRequestDto,
 } from '../schemas/create-order.schema';
-import { OrderRepository } from '../repository';
+import { OrderRepository } from '../../api/repository';
 import { zodSafeParse } from '@/shared/lib/zod';
 
 export class BankTransferOrderService implements IOrderService {
