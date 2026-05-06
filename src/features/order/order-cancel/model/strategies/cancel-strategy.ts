@@ -2,7 +2,7 @@ import { getPayload } from '@/shared/lib/get-payload';
 import {
   CancelOrderProduct,
   cancelOrderProductSchema,
-} from '@/entities/order-product/model/cancel-order-product-schema';
+} from '@/entities/order-product/model/schemas/cancel-order-product-schema';
 import { BasePayload } from 'payload';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 

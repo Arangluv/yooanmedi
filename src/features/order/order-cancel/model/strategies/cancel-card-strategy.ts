@@ -1,4 +1,4 @@
-import { CancelOrderProduct } from '@/entities/order-product/model/cancel-order-product-schema';
+import { CancelOrderProduct } from '@/entities/order-product/model/schemas/cancel-order-product-schema';
 import { CancelStrategy } from './cancel-strategy';
 import {
   createCancelEarnPointTransaction,

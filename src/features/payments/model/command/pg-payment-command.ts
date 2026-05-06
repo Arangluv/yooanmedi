@@ -6,7 +6,7 @@ import {
 import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
 import { OrderService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
-import { OrderProductService } from '@/entities/order-product/model/services/service';
+import { OrderProductPaymentService } from '@/entities/order-product/model/services/order-product-payments.service';
 import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
@@ -166,9 +166,9 @@ export class PGPaymentCommand
     ctx: PGPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.credit_card);
+    const OrderProductPaymentService = OrderProductPaymentService.for(PAYMENTS_METHOD.credit_card);
     const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
-    const orderProduct = await orderProductService.createOrderProduct(requestDto);
+    const orderProduct = await OrderProductPaymentService.createOrderProduct(requestDto);
 
     return orderProduct;
   }

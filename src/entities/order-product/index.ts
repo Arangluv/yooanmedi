@@ -5,7 +5,11 @@ export {
   cancelOrderProductSchema,
   cancelResponseSchema,
   type CancelOrderProduct,
-} from './model/cancel-order-product-schema';
+} from './model/schemas/cancel-order-product-schema';
+export {
+  OrderProductService,
+  type IOrderProductService,
+} from './model/services/order-product.service';
 
 export { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from './constants/order-product-status';
 

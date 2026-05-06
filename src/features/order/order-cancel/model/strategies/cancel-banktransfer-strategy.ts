@@ -1,4 +1,4 @@
-import { CancelOrderProduct } from '@/entities/order-product/model/cancel-order-product-schema';
+import { CancelOrderProduct } from '@/entities/order-product/model/schemas/cancel-order-product-schema';
 import { CancelStrategy } from './cancel-strategy';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 import { createCancelUsePointTransaction } from '@/entities/point/lib/cancel-use/create-transaction';

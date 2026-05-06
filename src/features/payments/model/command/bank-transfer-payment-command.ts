@@ -1,6 +1,6 @@
 import { UsePointTransaction } from '@/entities/point/model/point-transaction';
 import { OrderService } from '@/entities/order/model/services/service';
-import { OrderProductService } from '@/entities/order-product/model/services/service';
+import { OrderProductPaymentService } from '@/entities/order-product/model/services/order-product-payments.service';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
 import { runWithTransaction, TransactionalCommand } from '@/shared/infrastructure';
 import { PAYMENTS_METHOD } from '@/shared';
@@ -93,9 +93,11 @@ export class BankTransferPaymentCommand
     ctx: BankTransferPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const orderProductService = OrderProductService.for(PAYMENTS_METHOD.bank_transfer);
+    const OrderProductPaymentService = OrderProductPaymentService.for(
+      PAYMENTS_METHOD.bank_transfer,
+    );
     const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
-    const orderProduct = await orderProductService.createOrderProduct(requestDto);
+    const orderProduct = await OrderProductPaymentService.createOrderProduct(requestDto);
 
     return orderProduct;
   }

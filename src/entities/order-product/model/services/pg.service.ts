@@ -1,4 +1,5 @@
-import { IOrderProductService } from '../interfaces';
+/** TODO :: refactoring -> order-product.service.ts로 로직 이동 */
+import { IOrderProductPaymentService } from '../interfaces';
 import { zodSafeParse } from '@/shared/lib/zod';
 import {
   createCreditCardOrderProductSchema,
@@ -7,7 +8,7 @@ import {
 } from '../schemas/create-order-product.schema';
 import { OrderProductRepository } from '../repository';
 
-export class PGOrderProductService implements IOrderProductService {
+export class PGOrderProductPaymentService implements IOrderProductPaymentService {
   async createOrderProduct(
     dto: CreateOrderProductRequestDto,
   ): Promise<CreateOrderProductResponseDto> {

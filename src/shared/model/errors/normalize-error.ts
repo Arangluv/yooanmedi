@@ -53,7 +53,7 @@ export const normalizeError = (error: unknown): ErrorResponse => {
   if (error instanceof Error) {
     return {
       code: ERROR_CODE,
-      message: '알 수 없는 에러가 발생했습니다.',
+      message: error.message,
     };
   }
 

@@ -1,3 +1,5 @@
+/** TODO :: refactoring -> order-product.service.ts로 로직 이동 */
+
 'use server';
 
 import crypto from 'crypto';
@@ -15,7 +17,7 @@ import { generateUUID32digits } from '@/shared/lib/identifier';
 import {
   cancelOrderProductSchema,
   cancelResponseSchema,
-} from '../model/cancel-order-product-schema';
+} from '../model/schemas/cancel-order-product-schema';
 import { ORDER_PRODUCT_STATUS } from '../constants/order-product-status';
 import { CANCEL_REVISE_TYPE, createPayment, getPaymentPgCno } from '@/entities/payment';
 import { cancelPaymentSchema } from '@/entities/payment/model/cancel-schema';

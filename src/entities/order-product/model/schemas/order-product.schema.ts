@@ -33,3 +33,5 @@ export const orderProductSchema = z.object({
   createdAt: BaseSchema.isoString,
 });
 export type OrderProduct = z.infer<typeof orderProductSchema>;
+
+export const orderProductsSchema = z.array(orderProductSchema);
