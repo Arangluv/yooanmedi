@@ -1,3 +1,5 @@
+import { type OrderProduct } from '../model/schemas/order-product.schema';
+
 const baseOrderProductFixture = {
   id: 1179,
   product: 1685,
@@ -12,9 +14,11 @@ const baseOrderProductFixture = {
   cashback_rate_for_bank: 1.5,
   updatedAt: '2026-05-04T04:49:04.470Z',
   createdAt: '2026-05-04T04:49:04.852Z',
-};
+} as OrderProduct;
 
-export const createOrderProductFixture = (override?: Partial<typeof baseOrderProductFixture>) => {
+export const createOrderProductFixture = (
+  override?: Partial<typeof baseOrderProductFixture>,
+): OrderProduct => {
   return {
     ...baseOrderProductFixture,
     ...override,

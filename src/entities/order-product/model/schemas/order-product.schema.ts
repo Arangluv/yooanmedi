@@ -35,3 +35,11 @@ export const orderProductSchema = z.object({
 export type OrderProduct = z.infer<typeof orderProductSchema>;
 
 export const orderProductsSchema = z.array(orderProductSchema);
+
+/** 수정가능한 필드는 pick을 통해 명시적으로 열어둘 수 있습니다 */
+export const updateOrderProductSchema = orderProductSchema
+  .pick({
+    orderProductStatus: true,
+  })
+  .partial();
+export type UpdateOrderProductDto = z.infer<typeof updateOrderProductSchema>;
