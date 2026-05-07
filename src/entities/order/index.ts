@@ -1,7 +1,9 @@
-export { type Order, type OrderEntity } from './model/schemas/order.schema';
+export { type Order, type OrderEntity, orderSchema } from './model/schemas/order.schema';
 export { createOrderSchema } from './model/schemas/create-order.schema';
 export { toOrderSchema } from './model/schemas/order.schema';
+export { type IOrderService } from './model/services/order.service';
 
+export { PAYMENT_STATUS } from './constants/payment-status';
 export { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './constants/payments-method';
 export { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from './constants/order-status';
 

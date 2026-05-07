@@ -67,3 +67,11 @@ export const toOrderSchema = (entity: OrderEntity): Order => {
 
 export const orderEntityListSchema = z.array(orderEntitySchema);
 export const orderListSchema = z.array(orderSchema);
+
+export const updateOrderSchema = orderSchema
+  .pick({
+    orderStatus: true,
+    paymentStatus: true,
+  })
+  .partial();
+export type UpdateOrderDto = z.infer<typeof updateOrderSchema>;

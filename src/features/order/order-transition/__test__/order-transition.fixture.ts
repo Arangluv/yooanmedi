@@ -1,9 +1,10 @@
-import { ORDER_STATUS } from '@/entities/order';
+import { ORDER_STATUS, createOrderFixture } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
 
 const baseOrderTransition = {
+  order: createOrderFixture(),
   fromOrderStatus: ORDER_STATUS.pending,
-  toStatus: ORDER_STATUS.preparing,
+  toOrderStatus: ORDER_STATUS.preparing,
   fromOrderProductStatus: ORDER_PRODUCT_STATUS.pending,
   toOrderProductStatus: ORDER_PRODUCT_STATUS.preparing,
   successMessage: '주문상태가 상품준비 단계로 변경되었습니다',

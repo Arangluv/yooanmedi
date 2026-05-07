@@ -5,6 +5,7 @@ import { createOrderTransitionFixture } from '../../__test__/order-transition.fi
 describe('transitionContextSchema', () => {
   it('스키마가 파싱된다', () => {
     const result = orderTransitionContextSchema.safeParse(createOrderTransitionFixture());
+
     expect(result.success).toBe(true);
   });
 });

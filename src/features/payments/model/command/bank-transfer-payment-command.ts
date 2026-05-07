@@ -1,5 +1,5 @@
 import { UsePointTransaction } from '@/entities/point/model/point-transaction';
-import { OrderService } from '@/entities/order/model/services/service';
+import { OrderPaymentsService } from '@/entities/order/model/services/service';
 import { OrderProductPaymentService } from '@/entities/order-product/model/services/order-product-payments.service';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
 import { runWithTransaction, TransactionalCommand } from '@/shared/infrastructure';
@@ -48,9 +48,9 @@ export class BankTransferPaymentCommand
   private async createOrder(
     ctx: BankTransferPaymentInitContext,
   ): Promise<BankTransferPaymentAfterOrderContext> {
-    const orderService = OrderService.for(PAYMENTS_METHOD.bank_transfer);
+    const orderPaymentService = OrderPaymentsService.for(PAYMENTS_METHOD.bank_transfer);
     const dto = PaymentDto.createOrderForBankTransfer(ctx);
-    const order = await orderService.createOrder(dto);
+    const order = await orderPaymentService.createOrder(dto);
 
     return {
       ...ctx,
@@ -93,11 +93,9 @@ export class BankTransferPaymentCommand
     ctx: BankTransferPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const OrderProductPaymentService = OrderProductPaymentService.for(
-      PAYMENTS_METHOD.bank_transfer,
-    );
+    const orderProductService = OrderProductPaymentService.for(PAYMENTS_METHOD.bank_transfer);
     const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
-    const orderProduct = await OrderProductPaymentService.createOrderProduct(requestDto);
+    const orderProduct = await orderProductService.createOrderProduct(requestDto);
 
     return orderProduct;
   }

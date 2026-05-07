@@ -1,4 +1,4 @@
-import { IOrderService } from '../interfaces';
+import { IOrderPaymentsService } from '../interfaces';
 import {
   createBankTransferOrderSchema,
   CreateOrderResponseDto,
@@ -7,7 +7,7 @@ import {
 import { OrderRepository } from '../../api/repository';
 import { zodSafeParse } from '@/shared/lib/zod';
 
-export class BankTransferOrderService implements IOrderService {
+export class BankTransferOrderPaymentsService implements IOrderPaymentsService {
   public async createOrder(data: CreateOrderRequestDto): Promise<CreateOrderResponseDto> {
     const entity = zodSafeParse(createBankTransferOrderSchema, data);
     return await OrderRepository.create(entity);

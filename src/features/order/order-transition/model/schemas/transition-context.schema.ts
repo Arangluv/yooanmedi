@@ -1,11 +1,13 @@
 import { z } from 'zod';
 import { BaseSchema } from '@/shared';
+import { orderSchema, type IOrderService } from '@/entities/order';
 import { ORDER_STATUS } from '@/entities/order';
-import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
+import { ORDER_PRODUCT_STATUS, type OrderProduct } from '@/entities/order-product';
 
 export const orderTransitionContextSchema = z.object({
+  order: orderSchema,
   fromOrderStatus: z.enum([ORDER_STATUS.pending, ORDER_STATUS.preparing, ORDER_STATUS.shipping]),
-  toStatus: z.enum([ORDER_STATUS.preparing, ORDER_STATUS.shipping, ORDER_STATUS.delivered]),
+  toOrderStatus: z.enum([ORDER_STATUS.preparing, ORDER_STATUS.shipping, ORDER_STATUS.delivered]),
   fromOrderProductStatus: z.enum([
     ORDER_PRODUCT_STATUS.pending,
     ORDER_PRODUCT_STATUS.preparing,
@@ -22,6 +24,8 @@ export const orderTransitionContextSchema = z.object({
   errorMessage: BaseSchema.string({
     required_message: '실패메세지가 누락되었습니다',
   }),
-  afterTransition: z.custom<(params: any) => any>().optional(),
+  afterTransition: z
+    .custom<(orderService: IOrderService, orderProducts: OrderProduct[]) => Promise<void>>()
+    .optional(), // todo type 작성
 });
 export type OrderTransitionContext = z.infer<typeof orderTransitionContextSchema>;

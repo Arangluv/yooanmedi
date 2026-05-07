@@ -12,7 +12,7 @@ describe('OrderTransitionCommandFactory', () => {
       dto: createOrderFixture({ orderStatus: ORDER_STATUS.pending }),
       expectdContaining: {
         fromOrderStatus: ORDER_STATUS.pending,
-        toStatus: ORDER_STATUS.preparing,
+        toOrderStatus: ORDER_STATUS.preparing,
         fromOrderProductStatus: ORDER_PRODUCT_STATUS.pending,
         toOrderProductStatus: ORDER_PRODUCT_STATUS.preparing,
       },
@@ -23,7 +23,7 @@ describe('OrderTransitionCommandFactory', () => {
       dto: createOrderFixture({ orderStatus: ORDER_STATUS.preparing }),
       expectdContaining: {
         fromOrderStatus: ORDER_STATUS.preparing,
-        toStatus: ORDER_STATUS.shipping,
+        toOrderStatus: ORDER_STATUS.shipping,
         fromOrderProductStatus: ORDER_PRODUCT_STATUS.preparing,
         toOrderProductStatus: ORDER_PRODUCT_STATUS.shipping,
       },
@@ -34,7 +34,7 @@ describe('OrderTransitionCommandFactory', () => {
       dto: createOrderFixture({ orderStatus: ORDER_STATUS.shipping }),
       expectdContaining: {
         fromOrderStatus: ORDER_STATUS.shipping,
-        toStatus: ORDER_STATUS.delivered,
+        toOrderStatus: ORDER_STATUS.delivered,
         fromOrderProductStatus: ORDER_PRODUCT_STATUS.shipping,
         toOrderProductStatus: ORDER_PRODUCT_STATUS.delivered,
       },
@@ -46,6 +46,38 @@ describe('OrderTransitionCommandFactory', () => {
 
       expect(command).toBeInstanceOf(OrderTransitionCommand);
       expect(command.context).toMatchObject(expectdContaining);
+    },
+  );
+
+  it.each([
+    {
+      to: 'pending',
+      expectedName: '정의되어 있어야한다',
+      dto: createOrderFixture({ orderStatus: ORDER_STATUS.pending }),
+      isDefined: true,
+    },
+    {
+      to: 'preparing',
+      expectedName: '정의되어 있으면 안된다',
+      dto: createOrderFixture({ orderStatus: ORDER_STATUS.preparing }),
+      isDefined: false,
+    },
+    {
+      to: 'shipping',
+      expectedName: '정의되어 있으면 안된다',
+      dto: createOrderFixture({ orderStatus: ORDER_STATUS.shipping }),
+      isDefined: false,
+    },
+  ])(
+    '주문이 $to 상태인 경우 -> context에 afterTransition이 $expectedName',
+    ({ dto, isDefined }) => {
+      const command = OrderTransitionCommandFactory.createCommand(dto);
+
+      if (isDefined) {
+        expect(command.context.afterTransition).toBeDefined();
+      } else {
+        expect(command.context.afterTransition).not.toBeDefined();
+      }
     },
   );
 

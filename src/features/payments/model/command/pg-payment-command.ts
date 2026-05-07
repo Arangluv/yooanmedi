@@ -4,7 +4,7 @@ import {
   EarnPointTransaction,
 } from '@/entities/point/model/point-transaction';
 import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
-import { OrderService } from '@/entities/order/model/services/service';
+import { OrderPaymentsService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductPaymentService } from '@/entities/order-product/model/services/order-product-payments.service';
 import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
@@ -113,9 +113,9 @@ export class PGPaymentCommand
   }
 
   private async createOrder(ctx: PGPaymentAfterApprovalContext) {
-    const orderService = OrderService.for(PAYMENTS_METHOD.credit_card);
+    const orderPaymentsService = OrderPaymentsService.for(PAYMENTS_METHOD.credit_card);
     const dto = PaymentDto.createOrderForPG(ctx);
-    const order = await orderService.createOrder(dto);
+    const order = await orderPaymentsService.createOrder(dto);
 
     const afterOrderCtx = {
       ...ctx,
@@ -166,9 +166,9 @@ export class PGPaymentCommand
     ctx: PGPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) {
-    const OrderProductPaymentService = OrderProductPaymentService.for(PAYMENTS_METHOD.credit_card);
+    const orderProductPaymentService = OrderProductPaymentService.for(PAYMENTS_METHOD.credit_card);
     const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
-    const orderProduct = await OrderProductPaymentService.createOrderProduct(requestDto);
+    const orderProduct = await orderProductPaymentService.createOrderProduct(requestDto);
 
     return orderProduct;
   }
