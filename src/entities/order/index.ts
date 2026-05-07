@@ -1,6 +1,6 @@
 export { type Order, type OrderEntity, orderSchema } from './model/schemas/order.schema';
 export { createOrderSchema } from './model/schemas/create-order.schema';
-export { toOrderSchema } from './model/schemas/order.schema';
+export { toOrderSchema, type OrderListResult } from './model/schemas/order.schema';
 export { type IOrderService } from './model/services/order.service';
 
 export { PAYMENT_STATUS } from './constants/payment-status';

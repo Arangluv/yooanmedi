@@ -13,10 +13,7 @@ const targetFilters = {
 const useOrderListSearch = () => {
   const [filters, setFilters] = useQueryStates(targetFilters, {
     history: 'push',
-    limitUrlUpdates: {
-      method: 'debounce',
-      timeMs: 200,
-    },
+    shallow: false,
   });
 
   const updateOrderStatus = (status: OrderStatus | 'all') => {

@@ -1,4 +1,3 @@
-import 'server-only';
 import { type FindOption } from '@/shared';
 import { getPayload, getTransactionContext } from '@/shared/infrastructure';
 import { type UpdateOrderProductDto } from '../model/schemas/order-product.schema';

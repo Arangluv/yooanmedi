@@ -3,7 +3,7 @@
 import useOrderListSearch from '../model/useOrderListSearch';
 import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-status';
 import { RowSelectionState } from '@tanstack/react-table';
-import { OrderAction } from '@/features/admin/order-detail/model/order-action-dialog-provider';
+import { OrderAction } from '@/pages/admin/order-detail/model/order-action-dialog-provider';
 
 const FloatActionBox = ({ selectedRows }: { selectedRows: RowSelectionState }) => {
   const { filters } = useOrderListSearch();

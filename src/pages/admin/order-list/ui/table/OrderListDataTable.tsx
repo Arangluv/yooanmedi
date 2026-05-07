@@ -29,13 +29,13 @@ import { ScrollArea } from '@/shared/ui/shadcn/scroll-area';
 interface OrderListDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  totalPages: number;
+  totalCount: number;
 }
 
 const OrderListDataTable = <TData, TValue>({
   columns,
   data,
-  totalPages,
+  totalCount,
 }: OrderListDataTableProps<TData, TValue>) => {
   const { filters } = useOrderListSearch();
   const [rowSelection, setRowSelection] = useState({});
@@ -119,7 +119,7 @@ const OrderListDataTable = <TData, TValue>({
           </TableBody>
         </Table>
       </ScrollArea>
-      <TablePagination totalPages={totalPages} />
+      <TablePagination totalCount={totalCount} />
       <FloatActionBox selectedRows={rowSelection} />
     </div>
   );

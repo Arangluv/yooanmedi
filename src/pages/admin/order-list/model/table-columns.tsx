@@ -1,19 +1,17 @@
 'use client';
 
+import Link from 'next/link';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
-
 import { PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
 import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-method';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
+import { type Order } from '@/entities/order';
+import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import { Checkbox } from '@/shared/ui/shadcn/checkbox';
-
 import FlgStatusBadge from '../ui/badge/FlgStatusBadge';
-import { OrderListItem } from './order-list-schema';
-import Link from 'next/link';
 
-export const columns: ColumnDef<OrderListItem>[] = [
+export const columns: ColumnDef<Order>[] = [
   {
     id: 'select',
     header: ({ table }) => (

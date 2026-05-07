@@ -66,7 +66,22 @@ export const toOrderSchema = (entity: OrderEntity): Order => {
 };
 
 export const orderEntityListSchema = z.array(orderEntitySchema);
-export const orderListSchema = z.array(orderSchema);
+export const orderListResultSchema = z.object({
+  totalCount: BaseSchema.number({ min: 0 }),
+  orders: z.array(orderSchema),
+});
+export type OrderListResult = z.infer<typeof orderListResultSchema>;
+
+export const toOrderListResultSchema = (
+  entities: OrderEntity[],
+  totalCount: number,
+): OrderListResult => {
+  const orderList = entities.map((entity) => ({
+    ...entity,
+    orderProducts: entity.orderProducts.docs,
+  }));
+  return zodSafeParse(orderListResultSchema, { orders: orderList, totalCount });
+};
 
 export const updateOrderSchema = orderSchema
   .pick({

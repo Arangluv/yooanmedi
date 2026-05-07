@@ -3,18 +3,20 @@
 import { Pagination, PaginationContent, PaginationItem } from '@/shared/ui/shadcn/pagination';
 import { Button } from '@/shared/ui/shadcn/button';
 import useOrderListSearch from '../../model/useOrderListSearch';
+import { SHOW_ORDER_LIST_COUNT } from '../../config/admin-order-list.config';
 
-const TablePagination = ({ totalPages }: { totalPages: number }) => {
+const TablePagination = ({ totalCount }: { totalCount: number }) => {
   const { filters, updatePage } = useOrderListSearch();
+  const totalPage = Math.ceil(totalCount / SHOW_ORDER_LIST_COUNT);
 
-  if (totalPages === 1) {
+  if (totalPage === 1) {
     return null;
   }
 
   return (
     <Pagination className="mt-8 shrink-0">
       <PaginationContent>
-        {Array.from({ length: totalPages }).map((_, index) => (
+        {Array.from({ length: totalPage }).map((_, index) => (
           <PaginationItem key={index}>
             <Button
               variant={filters.page === index + 1 ? 'outline' : 'ghost'}

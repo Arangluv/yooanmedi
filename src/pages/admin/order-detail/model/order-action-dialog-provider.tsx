@@ -3,8 +3,7 @@
 import { createContext, useContext, useState } from 'react';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
-
-import useProceedActionExecute from '@/features/order/order-proceed/model/useProceedActionExecute'; // todo: 잘못된 참조방식
+import useProceedActionExecute from '@/features/order/order-proceed/model/useProceedActionExecute';
 import useCancelActionExecute from '@/features/order/order-cancel/model/useCancelActionExecute';
 import {
   ActionUiConfig,

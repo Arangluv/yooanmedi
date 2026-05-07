@@ -29,11 +29,11 @@ export const Order: CollectionConfig = {
       views: {
         edit: {
           default: {
-            Component: '@/features/admin/order-detail/ui/CollectionView',
+            Component: '@/pages/admin/order-detail/ui/page',
           },
         },
         list: {
-          Component: '@/features/admin/order-list/ui/ListView',
+          Component: '@/pages/admin/order-list/ui/page',
         },
       },
     },

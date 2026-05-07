@@ -15,7 +15,7 @@ interface CollectionDocumentViewProps {
   };
 }
 
-const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
+const AdminOrderDetailPage = ({ doc }: CollectionDocumentViewProps) => {
   return (
     <OrderCollectionProvider orderId={doc.id}>
       <OrderAction>
@@ -42,4 +42,4 @@ const CollectionView = ({ doc }: CollectionDocumentViewProps) => {
   );
 };
 
-export default CollectionView;
+export default AdminOrderDetailPage;

@@ -2,7 +2,6 @@
 
 import { Fragment } from 'react';
 import moment from 'moment';
-
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
 import { useOrderCollection } from '../model/order-provider';
 import { ORDER_STATUS } from '@/entities/order';

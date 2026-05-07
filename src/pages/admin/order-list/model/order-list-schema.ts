@@ -1,3 +1,5 @@
+// todo :: will-deprecated
+
 import { z } from 'zod';
 import { ORDER_STATUS } from '@/entities/order';
 import { PAYMENT_STATUS } from '@/entities/order/constants/payment-status';
