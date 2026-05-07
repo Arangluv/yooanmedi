@@ -58,8 +58,12 @@ const createOrderProductsInfo = (orderRowData: Order) => {
   };
 
   // step 1. 진행중인 주문 / 취소요청 주문 / 취소처리된 주문 분류
-  const orderProducts = orderProductsArraySchema.parse(orderRowData?.orderProducts?.docs);
-  orderProducts.forEach((orderProduct) => {
+  const orderProducts = orderProductsArraySchema.safeParse(orderRowData?.orderProducts?.docs);
+  if (!orderProducts.success) {
+    return orderProductsInfo;
+  }
+
+  orderProducts.data.forEach((orderProduct) => {
     switch (orderProduct.orderProductStatus) {
       case ORDER_PRODUCT_STATUS.CANCEL_REQUEST:
         orderProductsInfo.cancelRequestOrder.orderProducts.push(orderProduct);

@@ -1,16 +1,10 @@
 'use client';
 
-import { Sheet, SlidersHorizontal } from 'lucide-react';
-
+import { Sheet } from 'lucide-react';
 import { ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
 import { Button } from '@/shared/ui/shadcn/button';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/shared/ui/shadcn/collapsible';
+import { Collapsible, CollapsibleContent } from '@/shared/ui/shadcn/collapsible';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/shared/ui/shadcn/tooltip';
-
 import useOrderListSearch from '../../model/useOrderListSearch';
 import { ExportExcel } from '../../lib/excel-export';
 
