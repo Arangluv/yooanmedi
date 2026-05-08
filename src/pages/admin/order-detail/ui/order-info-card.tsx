@@ -16,11 +16,11 @@ import {
   CardFooter,
 } from '@/shared/ui/shadcn/card';
 import { ItemGroup, ItemSeparator } from '@/shared/ui/shadcn/item';
-
 import OrderProductItem from './OrderProductItem';
 import { OrderAction } from '../model/order-action-dialog-provider';
 import { ORDER_DETAIL_UI_CONFIG, OrderInfomationCardType } from '../config/order-detail-ui-config';
-import { OrderProduct } from '../model/order-detail-schema';
+import useOrderDetail from '../model/hooks/useOrderDetail';
+import { OrderProduct } from '@/entities/order-product';
 
 interface OrderInfoCardProps {
   type: OrderInfomationCardType;
@@ -81,14 +81,11 @@ const OrderInfoCard = ({
   );
 };
 
-export const OrderProgressInfoCard = () => {
-  const {
-    orderInfo: { progressOrder, orderNo, createdAt, id: orderId },
-  } = useOrderCollection();
+export const OrderProgressInfoCard = ({ orderId }: { orderId: number }) => {
+  const { orderDetail, getProgressdOrderProductContext } = useOrderDetail(orderId);
+  const { orderProducts, status } = getProgressdOrderProductContext();
 
-  const isEmpty = progressOrder.orderProducts.length === 0;
-
-  if (!progressOrder.inProgressOrderStatus) {
+  if (orderProducts.length === 0) {
     return null;
   }
 
@@ -96,77 +93,75 @@ export const OrderProgressInfoCard = () => {
     <OrderInfoCard
       type="progress"
       orderId={orderId}
-      orderStatus={progressOrder.inProgressOrderStatus}
-      orderNo={orderNo}
-      date={createdAt}
-      orderProducts={progressOrder.orderProducts}
+      orderStatus={status as any}
+      orderNo={orderDetail.orderNo}
+      date={orderDetail.createdAt}
+      orderProducts={orderProducts}
     >
-      {!isEmpty && (
-        <CardFooter className="justify-end">
-          <OrderAction.ProceedTrigger
-            display={{
-              count: progressOrder.orderProducts.length,
-              viewType: 'order-detail',
-            }}
-            targetOrderIds={[orderId]}
-            currentStatus={progressOrder.inProgressOrderStatus}
-          />
-        </CardFooter>
-      )}
-      {/* Dialog Modal Contents */}
+      <CardFooter className="justify-end">
+        <OrderAction.ProceedTrigger
+          display={{
+            count: orderProducts.length,
+            viewType: 'order-detail',
+          }}
+          targetOrderIds={[orderId]}
+          currentStatus={status as any}
+        />
+      </CardFooter>
       <OrderAction.ProceedContent />
       <OrderAction.CancelContent />
     </OrderInfoCard>
   );
 };
 
-export const OrderCancelRequestInfoCard = () => {
-  const {
-    orderInfo: { cancelRequestOrder, orderNo, updatedAt, id: orderId },
-  } = useOrderCollection();
+export const OrderCancelRequestInfoCard = ({ orderId }: { orderId: number }) => {
+  const { orderDetail, getCancelRequestOrderProductContext } = useOrderDetail(orderId);
+  const { orderProducts, status } = getCancelRequestOrderProductContext();
 
-  const isEmpty = cancelRequestOrder.orderProducts.length === 0;
+  if (orderProducts.length === 0) {
+    return null;
+  }
 
   return (
     <OrderInfoCard
       type="cancelRequest"
-      orderId={orderId}
-      orderStatus={ORDER_STATUS.cancel_request}
-      date={updatedAt}
-      orderNo={orderNo}
-      orderProducts={cancelRequestOrder.orderProducts}
+      orderId={orderDetail.id}
+      orderStatus={status}
+      date={orderDetail.updatedAt}
+      orderNo={orderDetail.orderNo}
+      orderProducts={orderProducts}
     >
-      {!isEmpty && (
-        <CardFooter className="justify-end">
-          <OrderAction.CancelTrigger
-            display={{
-              count: cancelRequestOrder.orderProducts.length,
-              viewType: 'order-detail',
-            }}
-            targetOrderIds={[orderId]}
-            currentStatus={ORDER_STATUS.cancel_request}
-          />
-        </CardFooter>
-      )}
-      {/* Dialog Modal Contents */}
+      <CardFooter className="justify-end">
+        <OrderAction.CancelTrigger
+          display={{
+            count: orderProducts.length,
+            viewType: 'order-detail',
+          }}
+          targetOrderIds={[orderId]}
+          currentStatus={ORDER_STATUS.cancel_request}
+        />
+      </CardFooter>
       <OrderAction.CancelContent />
     </OrderInfoCard>
   );
 };
 
-export const OrderCancelledInfoCard = () => {
-  const {
-    orderInfo: { cancelledOrder, orderNo, updatedAt, id: orderId },
-  } = useOrderCollection();
+export const OrderCancelledInfoCard = ({ orderId }: { orderId: number }) => {
+  const { orderDetail, getCancelRequestOrderProductContext } = useOrderDetail(orderId);
+  const { orderProducts, status } = getCancelRequestOrderProductContext();
+
+  if (orderProducts.length === 0) {
+    return null;
+  }
 
   return (
     <OrderInfoCard
       type="cancelled"
-      orderId={orderId}
-      orderStatus={ORDER_STATUS.cancelled}
-      date={updatedAt}
-      orderNo={orderNo}
-      orderProducts={cancelledOrder.orderProducts}
+      orderId={orderDetail.id}
+      orderStatus={status}
+      date={orderDetail.updatedAt}
+      orderNo={orderDetail.orderNo}
+      orderProducts={orderProducts}
     />
   );
 };

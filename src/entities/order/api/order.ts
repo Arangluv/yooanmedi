@@ -24,7 +24,18 @@ export const updateOrder = async (orderId: number, data: UpdateOrderDto) => {
   });
 };
 
-export const getOrders = async (option: FindOption) => {
+export const getOrder = async (orderId: number) => {
+  const payload = await getPayload();
+  const order = await payload.findByID({
+    collection: 'order',
+    id: orderId,
+    depth: 0,
+  });
+
+  return order;
+};
+
+export const getOrderList = async (option: FindOption) => {
   const payload = await getPayload();
   const { docs, totalDocs } = await payload.find({
     collection: 'order',

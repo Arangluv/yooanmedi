@@ -11,7 +11,7 @@ import {
   type UpdateOrderDto,
   type OrderListResult,
 } from '../model/schemas/order.schema';
-import { getOrders, updateOrder, createOrder } from './order';
+import { getOrderList, getOrder, updateOrder, createOrder } from './order';
 import { FindOption, zodSafeParse } from '@/shared';
 
 export class OrderRepository {
@@ -23,16 +23,15 @@ export class OrderRepository {
     await updateOrder(orderId, data);
   }
 
-  public static async findOne(option: FindOption): Promise<Order> {
-    const { docs } = await getOrders(option);
-    const UNIQUE_INDEX = 0;
-    const orderEntity = zodSafeParse(orderEntitySchema, docs[UNIQUE_INDEX]);
+  public static async findOne(orderId: number): Promise<Order> {
+    const order = await getOrder(orderId);
+    const orderEntity = zodSafeParse(orderEntitySchema, order);
 
     return toOrderSchema(orderEntity);
   }
 
   public static async findMany(option: FindOption): Promise<OrderListResult> {
-    const { docs, totalDocs } = await getOrders(option);
+    const { docs, totalDocs } = await getOrderList(option);
     const orderListEntity = zodSafeParse(orderEntityListSchema, docs);
     return toOrderListResultSchema(orderListEntity, totalDocs);
   }

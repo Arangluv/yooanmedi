@@ -5,7 +5,7 @@ import OrderListTableSection from './table/OrderListTableSection';
 import { OrderAction } from '@/pages/admin/order-detail/model/order-action-dialog-provider';
 import { SearchParams } from 'nuqs';
 import { getOrderList } from '@/entities/order/api/order.api';
-import { OrderListHydrationProvider } from '@/entities/order/model/providers/OrderListHydrationProvider';
+import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
 
 const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
   const safeSearchParam = await generateSearchParams(searchParams);

@@ -1,14 +1,10 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { type OrderStatus } from '@/entities/order';
+import { BusinessLogicError } from '@/shared';
 import { getOrderList } from '../../api/order-list.api';
 import { type AdminOrderListSearchParams } from '../../lib/generate-search-params';
-import { BusinessLogicError } from '@/shared';
-
-export const adminOrderListQueryKey = (page: number, orderStatus: OrderStatus | 'all') => {
-  return ['order-list', page, orderStatus];
-};
+import { adminOrderListQueryKey } from '../../lib/query-keys';
 
 const useOrderListQuery = (searchParam: AdminOrderListSearchParams) => {
   const { data: result } = useQuery({

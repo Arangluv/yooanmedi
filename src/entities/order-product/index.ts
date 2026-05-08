@@ -2,16 +2,13 @@ export { createOrderProductFixture } from './__test__/order-product.fixture';
 
 export { OrderProductFindOption } from './lib/find-options';
 
-export { type OrderProduct } from './model/types';
+export { type OrderProduct } from './model/schemas/order-product.schema';
 export {
   cancelOrderProductSchema,
   cancelResponseSchema,
   type CancelOrderProduct,
 } from './model/schemas/cancel-order-product-schema';
-export {
-  OrderProductService,
-  type IOrderProductService,
-} from './model/services/order-product.service';
+export { orderProductSchema } from './model/schemas/order-product.schema';
 
 export {
   ORDER_PRODUCT_STATUS,

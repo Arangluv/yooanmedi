@@ -1,7 +1,6 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { EndPointResult } from '@/shared';
-import { type OrderListResult } from '../schemas/order.schema';
-import { OrderStatus } from '../../constants/order-status';
+import { OrderStatus, type OrderListResult } from '@/entities/order';
 import { adminOrderListQueryKey } from '../../lib/query-keys';
 
 interface Props {

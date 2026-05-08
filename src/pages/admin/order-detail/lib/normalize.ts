@@ -1,3 +1,5 @@
+// todo :: will deprecated
+
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product/constants/order-product-status';
 import { OrderStatus } from '@/entities/order/constants/order-status';
 import type { Order } from '@/entities/order/model/type';

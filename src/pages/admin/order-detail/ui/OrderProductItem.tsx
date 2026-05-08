@@ -9,8 +9,7 @@ import {
   ItemDescription,
   ItemActions,
 } from '@/shared/ui/shadcn/item';
-import { OrderProduct } from '../model/order-detail-schema';
-import { isPayloadImageRenderable } from '@/shared/lib/validation';
+import { type OrderProduct } from '@/entities/order-product';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import { Button } from '@/shared/ui/shadcn/button';
 
@@ -32,7 +31,8 @@ const OrderProductItem = ({
   return (
     <Item variant={idx % 2 === 0 ? 'default' : 'muted'}>
       <ItemMedia variant="image">
-        {isPayloadImageRenderable(orderProduct.product.image) ? (
+        {/* TODO :: 해당부분 리팩토링 필요 */}
+        {/* {orderProduct.product.image ? (
           <Image
             src={orderProduct.product.image.url}
             alt="주문 상품 이미지"
@@ -42,7 +42,7 @@ const OrderProductItem = ({
           />
         ) : (
           <ImageIcon className="text-muted-foreground h-6 w-6" strokeWidth={1.5} />
-        )}
+        )} */}
       </ItemMedia>
       <ItemContent>
         <div className="flex items-center gap-[80px]">
@@ -50,14 +50,15 @@ const OrderProductItem = ({
             <ItemTitle className="text-base">{orderProduct.productNameSnapshot}</ItemTitle>
           </div>
           <div className="flex items-center gap-16">
-            {orderProduct.product.specification && (
+            {/* TODO :: 해당부분 리팩토링 필요 */}
+            {/* {orderProduct.product.specification && (
               <div className="min-w-[80px]">
                 <ItemTitle className="text-base">규격</ItemTitle>
                 <ItemDescription className="text-base">
                   {orderProduct.product.specification}
                 </ItemDescription>
               </div>
-            )}
+            )} */}
             <div className="min-w-[80px]">
               <ItemTitle className="text-base">가격</ItemTitle>
               <ItemDescription className="text-base">

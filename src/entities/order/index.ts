@@ -3,6 +3,8 @@ export { createOrderSchema } from './model/schemas/create-order.schema';
 export { toOrderSchema, type OrderListResult } from './model/schemas/order.schema';
 export { type IOrderService } from './model/services/order.service';
 
+export { OrderFindOption } from './lib/find-options';
+
 export { PAYMENT_STATUS } from './constants/payment-status';
 export { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './constants/payments-method';
 export { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from './constants/order-status';

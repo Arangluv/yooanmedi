@@ -18,4 +18,14 @@ export const OrderProductFindOption = {
       };
     },
   },
+  adminOrderDetail: {
+    build(orderId: number): FindOption {
+      return {
+        pagination: false,
+        where: {
+          order: { equals: orderId },
+        },
+      };
+    },
+  },
 } as const;

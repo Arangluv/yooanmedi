@@ -8,7 +8,7 @@ import {
 import { OrderRepository } from '../../api/repository';
 
 export interface IOrderService {
-  getOrder: (option: FindOption) => Promise<Order>;
+  getOrder: (orderId: number) => Promise<Order>;
   getOrderList: (option: FindOption) => Promise<OrderListResult>;
   updateOrder: (order: Order, data: UpdateOrderDto) => Promise<void>;
 }
@@ -19,8 +19,8 @@ export class OrderService implements IOrderService {
     await OrderRepository.update(order.id, dto);
   }
 
-  public async getOrder(option: FindOption) {
-    const order = await OrderRepository.findOne(option);
+  public async getOrder(orderId: number) {
+    const order = await OrderRepository.findOne(orderId);
     return order;
   }
 
