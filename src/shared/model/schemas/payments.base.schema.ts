@@ -150,6 +150,11 @@ export const mallId = string({
   length: 8,
 });
 
+export const paymentType = z.literal(
+  EASYPAY_CONFIG.paymentType,
+  '올바르지 않은 키인 비인증 코드입니다',
+);
+
 export const paymentSuccessCode = z.literal(
   EASYPAY_CONFIG.successResponseCode,
   '잘못된 이지페이 성공코드입니다',
