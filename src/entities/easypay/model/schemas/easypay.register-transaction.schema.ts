@@ -43,6 +43,11 @@ export const registerTransactionServiceSchema = z.object({
     value5: PaymentsBaseSchema.paymentsMethodUsedCard,
     value6: PaymentsBaseSchema.minOrderPrice,
   }),
+  payMethodInfo: z.object({
+    cardMethodInfo: z.object({
+      paymentType: PaymentsBaseSchema.paymentType,
+    }),
+  }),
 });
 export type RegisterTransactionServiceDto = z.infer<typeof registerTransactionServiceSchema>;
 export const toRegisterTransactionServiceDto = (data: RegisterTransactionRequestDto) => {
@@ -62,6 +67,11 @@ export const toRegisterTransactionServiceDto = (data: RegisterTransactionRequest
       value4: data.shopValueInfo.userId,
       value5: PAYMENTS_METHOD.credit_card,
       value6: data.shopValueInfo.minOrderPrice,
+    },
+    payMethodInfo: {
+      cardMethodInfo: {
+        paymentType: EASYPAY_CONFIG.paymentType,
+      },
     },
   });
 };

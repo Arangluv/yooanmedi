@@ -34,6 +34,7 @@ const AdminHeader = () => {
 };
 
 const CustomHeader = () => {
+  // TODO :: 개선
   const searchParams = useSearchParams();
 
   return (
@@ -47,12 +48,12 @@ const CustomHeader = () => {
               대시보드
             </BreadcrumbLink>
           </BreadcrumbItem>
-          {searchParams.get('breadcrumbs') && (
+          {(searchParams as any).get('breadcrumbs') && (
             <>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbPage className="text-lg">
-                  {searchParams.get('breadcrumbs')}
+                  {(searchParams as any).get('breadcrumbs')}
                 </BreadcrumbPage>
               </BreadcrumbItem>
             </>
