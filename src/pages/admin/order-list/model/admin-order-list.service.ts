@@ -15,7 +15,6 @@ export class AdminOrderListService {
     const option = OrderFindOption.adminOrderList.build(dto);
     const { orders, totalCount } = await orderService.getOrderList(option);
 
-    // 필요한 데이터 mapping
     const userService = new UserService();
     const userIds = orders.map((order) => order.user);
     const userMap = await userService.getUserMap(userIds);

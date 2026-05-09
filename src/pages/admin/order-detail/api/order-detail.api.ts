@@ -1,26 +1,15 @@
 'use server';
 
-import { EndPointResult, okWithData, failure, normalizeError, zodSafeParse } from '@/shared';
-import { OrderService } from '@/entities/order/infrastructure';
-import { OrderProductFindOption } from '@/entities/order-product';
-import { OrderProductService } from '@/entities/order-product/infrastructure';
-import { type AdminOrderDetail, adminOrderDetailSchema } from '../model/order-detail.schema';
+import { EndPointResult, okWithData, failure, normalizeError } from '@/shared';
+import { type AdminOrderDetail } from '../model/order-detail.schema';
+import { AdminOrderDetailService } from '../model/admin-order-detail.service';
 
 export const getOrderDetail = async (
   orderId: number,
 ): Promise<EndPointResult<AdminOrderDetail>> => {
   try {
-    const orderService = new OrderService();
-    const order = await orderService.getOrder(orderId);
-
-    const orderProductService = new OrderProductService();
-    const orderProductFindOption = OrderProductFindOption.adminOrderDetail.build(orderId);
-    const orderProducts = await orderProductService.getOrderProducts(orderProductFindOption);
-
-    const orderDetail = zodSafeParse(adminOrderDetailSchema, {
-      ...order,
-      orderProducts,
-    });
+    const orderDetailService = new AdminOrderDetailService();
+    const orderDetail = await orderDetailService.getOrderDetail(orderId);
     return okWithData({
       data: orderDetail,
     });

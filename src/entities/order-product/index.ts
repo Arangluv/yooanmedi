@@ -9,6 +9,8 @@ export {
   type CancelOrderProduct,
 } from './model/schemas/cancel-order-product-schema';
 export { orderProductSchema } from './model/schemas/order-product.schema';
+export * as OrderProductComposer from './model/order-product-composer';
+export { type OrderProductWithProduct } from './model/order-product-composer';
 
 export {
   ORDER_PRODUCT_STATUS,

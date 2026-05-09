@@ -3,7 +3,6 @@
 import { Fragment } from 'react';
 import moment from 'moment';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
-import { useOrderCollection } from '../model/order-provider';
 import { ORDER_STATUS } from '@/entities/order';
 import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 import { OrderStatus } from '@/entities/order/constants/order-status';
