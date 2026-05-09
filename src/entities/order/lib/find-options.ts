@@ -4,7 +4,7 @@ import { Where } from 'payload';
 
 export const OrderFindOption = {
   adminOrderList: {
-    build(page: number, orderStatus: OrderStatus | 'all'): FindOption {
+    build({ page, orderStatus }: { page: number; orderStatus: OrderStatus | 'all' }): FindOption {
       const where: Where = {};
       if (orderStatus !== 'all') {
         where.orderStatus = {

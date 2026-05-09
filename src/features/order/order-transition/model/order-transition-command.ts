@@ -1,6 +1,7 @@
 import { runWithTransaction, TransactionalCommand } from '@/shared/infrastructure';
 import { OrderTransitionContext } from './schemas/transition-context.schema';
-import { OrderProductService, OrderProductFindOption } from '@/entities/order-product';
+import { OrderProductFindOption } from '@/entities/order-product';
+import { OrderProductService } from '@/entities/order-product/infrastructure';
 import { OrderService } from '@/entities/order/model/services/order.service';
 
 export interface IOrderTransitionCommand extends TransactionalCommand<void> {

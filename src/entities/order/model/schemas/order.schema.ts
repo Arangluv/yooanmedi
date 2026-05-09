@@ -5,7 +5,7 @@ import { ORDER_STATUS } from '../../constants/order-status';
 import { FLG_STATUS } from '../../constants/flg-status';
 import { PAYMENT_STATUS } from '../../constants/payment-status';
 
-const orderCommonSchema = z.object({
+export const orderCommonSchema = z.object({
   id: BaseSchema.collectionId({
     required_message: '주문 아이디는 필수 항목입니다',
     invalid_message: '잘못된 주문 아이디 타입입니다',
@@ -65,12 +65,15 @@ export const toOrderSchema = (entity: OrderEntity): Order => {
   });
 };
 
-export const orderEntityListSchema = z.array(orderEntitySchema);
+export const orderEntitiesSchema = z.array(orderEntitySchema);
 export const orderListResultSchema = z.object({
   totalCount: BaseSchema.number({ min: 0 }),
   orders: z.array(orderSchema),
 });
-export type OrderListResult = z.infer<typeof orderListResultSchema>;
+export type OrderListResult = {
+  totalCount: number;
+  orders: Order[];
+};
 
 export const toOrderListResultSchema = (
   entities: OrderEntity[],

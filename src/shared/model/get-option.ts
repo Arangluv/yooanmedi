@@ -3,6 +3,8 @@ import { Where, Sort } from 'payload';
 interface BaseFindOption {
   where?: Where;
   sort?: Sort;
+  depth?: number;
+  populate?: Record<any, any>;
 }
 
 interface PaginationTrueFindOption extends BaseFindOption {

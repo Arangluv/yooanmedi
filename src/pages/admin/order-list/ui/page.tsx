@@ -4,16 +4,15 @@ import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
 import { OrderAction } from '@/pages/admin/order-detail/model/order-action-dialog-provider';
 import { SearchParams } from 'nuqs';
-import { getOrderList } from '@/entities/order/api/order.api';
+import { getOrderList } from '../api/order-list.api';
 import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
 
 const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
   const safeSearchParam = await generateSearchParams(searchParams);
-  const findOption = OrderFindOption.adminOrderList.build(
-    safeSearchParam.page,
-    safeSearchParam.orderStatus,
-  );
-  const orderList = await getOrderList(findOption);
+  const orderList = await getOrderList({
+    page: safeSearchParam.page,
+    orderStatus: safeSearchParam.orderStatus,
+  });
 
   return (
     <OrderListHydrationProvider

@@ -10,7 +10,6 @@ import {
   TableRow,
   TableHead,
   TableCell,
-  TableFooter,
 } from '@/shared/ui/shadcn/table';
 import {
   Empty,

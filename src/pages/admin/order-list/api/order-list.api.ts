@@ -2,26 +2,23 @@
 
 import { okWithData, failure, normalizeError, type EndPointResult } from '@/shared';
 import { Logger } from '@/shared/infrastructure';
-import { type OrderStatus } from '@/entities/order';
-import { OrderService } from '@/entities/order/infrastructure';
-import { OrderFindOption } from '@/entities/order/lib/find-options';
-import { type OrderListResult } from '@/entities/order/model/schemas/order.schema';
+import { OrderStatus } from '@/entities/order';
+import { AdminOrderListResult, AdminOrderListService } from '@/pages/admin/order-list';
 
-interface AdminOrderListRequestDto {
+export interface AdminOrderListRequestDto {
   page: number;
   orderStatus: OrderStatus | 'all';
 }
 
 export const getOrderList = async (
   dto: AdminOrderListRequestDto,
-): Promise<EndPointResult<OrderListResult>> => {
+): Promise<EndPointResult<AdminOrderListResult>> => {
   try {
-    const service = new OrderService();
-    const option = OrderFindOption.adminOrderList.build(dto.page, dto.orderStatus);
-    const orderList = await service.getOrderList(option);
+    const adminOrderListService = new AdminOrderListService();
+    const result = await adminOrderListService.getOrderList(dto);
 
     return okWithData({
-      data: orderList,
+      data: result,
     });
   } catch (error) {
     const { message } = normalizeError(error);

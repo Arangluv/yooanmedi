@@ -1,7 +1,7 @@
 import { FindOption, zodSafeParse } from '@/shared';
 import {
-  OrderListResult,
   updateOrderSchema,
+  type OrderListResult,
   type Order,
   type UpdateOrderDto,
 } from '../schemas/order.schema';
@@ -24,8 +24,7 @@ export class OrderService implements IOrderService {
     return order;
   }
 
-  public async getOrderList(option: FindOption) {
-    const orderList = await OrderRepository.findMany(option);
-    return orderList;
+  public async getOrderList(option: FindOption): Promise<OrderListResult> {
+    return await OrderRepository.findMany(option);
   }
 }

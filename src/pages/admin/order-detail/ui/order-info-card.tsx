@@ -57,7 +57,7 @@ const OrderInfoCard = ({
       </CardHeader>
       <CardContent>
         {isEmpty ? (
-          <EmptyOrderInfo title="주문 정보가 없습니다." />
+          <EmptyOrderInfo title={uiConfig.emptyContent} />
         ) : (
           <ItemGroup>
             {orderProducts.map((orderProduct, idx) => {
@@ -84,10 +84,6 @@ const OrderInfoCard = ({
 export const OrderProgressInfoCard = ({ orderId }: { orderId: number }) => {
   const { orderDetail, getProgressdOrderProductContext } = useOrderDetail(orderId);
   const { orderProducts, status } = getProgressdOrderProductContext();
-
-  if (orderProducts.length === 0) {
-    return null;
-  }
 
   return (
     <OrderInfoCard
@@ -118,10 +114,6 @@ export const OrderCancelRequestInfoCard = ({ orderId }: { orderId: number }) => 
   const { orderDetail, getCancelRequestOrderProductContext } = useOrderDetail(orderId);
   const { orderProducts, status } = getCancelRequestOrderProductContext();
 
-  if (orderProducts.length === 0) {
-    return null;
-  }
-
   return (
     <OrderInfoCard
       type="cancelRequest"
@@ -149,10 +141,6 @@ export const OrderCancelRequestInfoCard = ({ orderId }: { orderId: number }) => 
 export const OrderCancelledInfoCard = ({ orderId }: { orderId: number }) => {
   const { orderDetail, getCancelRequestOrderProductContext } = useOrderDetail(orderId);
   const { orderProducts, status } = getCancelRequestOrderProductContext();
-
-  if (orderProducts.length === 0) {
-    return null;
-  }
 
   return (
     <OrderInfoCard

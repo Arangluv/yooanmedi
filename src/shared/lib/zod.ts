@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ZodParseError } from '../model/errors/domain.error';
 
-export const zodSafeParse = <T>(schema: z.ZodSchema<T>, dto: unknown): T => {
+export const zodSafeParse = <T>(schema: z.ZodType<T>, dto: unknown): T => {
   const result = schema.safeParse(dto);
   if (result.success) return result.data;
 

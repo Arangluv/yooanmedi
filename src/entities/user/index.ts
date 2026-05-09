@@ -2,7 +2,7 @@
 export { getUserByHeader } from './api/get-user-by-header';
 
 // models
-export type { User } from './model/schemas/user.schema';
+export { userSchema, type User } from './model/schemas/user.schema';
 
 export { default as useAuthStore } from './model/useAuthStore';
 export { default as AuthGuard } from './model/auth-gruard';

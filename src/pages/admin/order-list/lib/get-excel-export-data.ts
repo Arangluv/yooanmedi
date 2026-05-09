@@ -1,6 +1,6 @@
 'use server';
 
-import { OrderProduct } from '@/entities/order-product/model/types';
+import { OrderProduct } from '@/entities/order-product';
 import { User } from '@/entities/user';
 import { getPayload } from '@/shared/infrastructure';
 import { PaymentsMethod } from '@/entities/order/constants/payments-method';
@@ -110,61 +110,3 @@ const normalizeData = (data: ExcelExportRowData[]) => {
 
   return exportData;
 };
-// {
-//   "id": 279,
-//   "user": {
-//       "id": 3,
-//       "hospitalName": "인천병원"
-//   },
-//   "orderProducts": {
-//       "docs": [
-//           {
-//               "id": 98,
-//               "product": {
-//                   "id": 1685,
-//                   "image": null,
-//                   "insurance_code": "074200080",
-//                   "manufacturer": "오펠라헬스케어코리아주식회사"
-//               },
-//               "orderProductStatus": "cancelled",
-//               "productNameSnapshot": "둘코락스좌약",
-//               "priceSnapshot": 1000,
-//               "productDeliveryFee": 0,
-//               "quantity": 1
-//           },
-//           {
-//               "id": 97,
-//               "product": {
-//                   "id": 1684,
-//                   "image": null,
-//                   "insurance_code": "641100270",
-//                   "manufacturer": "바이엘코리아"
-//               },
-//               "orderProductStatus": "cancelled",
-//               "productNameSnapshot": "아스피린프로텍트정100mg",
-//               "priceSnapshot": 2000,
-//               "productDeliveryFee": 0,
-//               "quantity": 1
-//           },
-//           {
-//               "id": 96,
-//               "product": {
-//                   "id": 1683,
-//                   "image": null,
-//                   "insurance_code": "649801890",
-//                   "manufacturer": "(사용X)명문제약"
-//               },
-//               "orderProductStatus": "cancelled",
-//               "productNameSnapshot": "부로멜라장용정",
-//               "priceSnapshot": 5000,
-//               "productDeliveryFee": 0,
-//               "quantity": 1
-//           }
-//       ],
-//       "hasNextPage": false
-//   },
-//   "paymentsMethod": "bankTransfer",
-//   "orderNo": "202602261809013",
-//   "finalPrice": 8000,
-//   "createdAt": "2026-02-26T12:25:48.990Z"
-// }

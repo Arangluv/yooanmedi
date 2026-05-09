@@ -3,13 +3,12 @@ import {
   type CreateOrderResponseDto,
 } from '../model/schemas/create-order.schema';
 import {
-  orderEntityListSchema,
+  orderEntitiesSchema,
   orderEntitySchema,
   toOrderListResultSchema,
   toOrderSchema,
   type Order,
   type UpdateOrderDto,
-  type OrderListResult,
 } from '../model/schemas/order.schema';
 import { getOrderList, getOrder, updateOrder, createOrder } from './order';
 import { FindOption, zodSafeParse } from '@/shared';
@@ -30,9 +29,9 @@ export class OrderRepository {
     return toOrderSchema(orderEntity);
   }
 
-  public static async findMany(option: FindOption): Promise<OrderListResult> {
+  public static async findMany(option: FindOption) {
     const { docs, totalDocs } = await getOrderList(option);
-    const orderListEntity = zodSafeParse(orderEntityListSchema, docs);
-    return toOrderListResultSchema(orderListEntity, totalDocs);
+    const orderEntities = zodSafeParse(orderEntitiesSchema, docs);
+    return toOrderListResultSchema(orderEntities, totalDocs);
   }
 }

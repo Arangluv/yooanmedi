@@ -21,10 +21,10 @@ export const getOrderList = async (option: FindOption) => {
   }
 };
 
-export const getOrder = async (option: FindOption) => {
+export const getOrder = async (orderId: number) => {
   try {
     const service = new OrderService();
-    const order = await service.getOrder(option);
+    const order = await service.getOrder(orderId);
 
     return okWithData({
       data: order,
