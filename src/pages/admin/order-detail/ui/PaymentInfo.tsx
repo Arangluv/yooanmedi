@@ -1,14 +1,10 @@
 'use client';
 
-import { PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
-import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-method';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/shared/ui/shadcn/card';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
+import useOrderDetail from '../model/hooks/useOrderDetail';
 
-import { useOrderCollection } from '../model/order-provider';
-
-const PaymentInfo = () => {
-  const { paymentInfo } = useOrderCollection();
+const PaymentInfo = ({ orderId }: { orderId: number }) => {
+  const { paymentsInfo } = useOrderDetail(orderId);
 
   return (
     <Card>
@@ -19,30 +15,22 @@ const PaymentInfo = () => {
         <div className="flex flex-col gap-2 text-lg">
           <div className="flex items-center justify-between">
             <span>결제 방법</span>
-            {paymentInfo?.paymentMethod && (
-              <span className="font-medium">{PAYMENTS_METHOD_NAME[paymentInfo.paymentMethod]}</span>
-            )}
+            <span className="font-medium">{paymentsInfo.paymentMethod}</span>
           </div>
           <div className="flex items-center justify-between">
             <span>결제 상태</span>
-            {paymentInfo?.paymentStatus && (
-              <span className="font-medium">{PAYMENT_STATUS_NAME[paymentInfo.paymentStatus]}</span>
-            )}
+            <span className="font-medium">{paymentsInfo.paymentStatus}</span>
           </div>
           <div className="flex items-center justify-between">
             <span>사용 포인트</span>
-            <span className="font-medium">
-              {formatNumberWithCommas(paymentInfo?.usedPoint ?? 0)}원
-            </span>
+            <span className="font-medium">{paymentsInfo.usedPoint}원</span>
           </div>
         </div>
       </CardContent>
       <CardFooter className="border-t">
         <div className="flex w-full items-center justify-between text-lg">
           <span className="font-bold">총 결제 금액</span>
-          <span className="font-bold">
-            {formatNumberWithCommas(paymentInfo?.finalPrice ?? 0)}원
-          </span>
+          <span className="font-bold">{paymentsInfo.finalPrice}</span>
         </div>
       </CardFooter>
     </Card>

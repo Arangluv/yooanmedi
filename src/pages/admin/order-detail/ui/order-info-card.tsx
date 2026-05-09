@@ -19,7 +19,7 @@ import OrderProductItem from './OrderProductItem';
 import { OrderAction } from '../model/order-action-dialog-provider';
 import { ORDER_DETAIL_UI_CONFIG, OrderInfomationCardType } from '../config/order-detail-ui-config';
 import useOrderDetail from '../model/hooks/useOrderDetail';
-import { OrderProduct } from '@/entities/order-product';
+import { type OrderProduct } from '../model/order-detail.schema';
 
 interface OrderInfoCardProps {
   type: OrderInfomationCardType;

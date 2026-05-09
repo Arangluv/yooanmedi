@@ -1,7 +1,9 @@
 'use client';
 
-import useOrderDetailQuery from './useOrderDetailQuery';
+import { formatNumberWithCommas } from '@/shared';
+import { PAYMENT_STATUS_NAME, PAYMENTS_METHOD_NAME } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
+import useOrderDetailQuery from './useOrderDetailQuery';
 
 const useOrderDetail = (orderId: number) => {
   const { data } = useOrderDetailQuery(orderId);
@@ -46,6 +48,17 @@ const useOrderDetail = (orderId: number) => {
     getProgressdOrderProductContext,
     getCancelRequestOrderProductContext,
     getCancelledProductContext,
+    deliveryInfo: {
+      address: data.user.address,
+      orderRequest: data.orderRequest || '요청사항 없음',
+    },
+    paymentsInfo: {
+      paymentMethod: PAYMENTS_METHOD_NAME[data.paymentsMethod],
+      paymentStatus: PAYMENT_STATUS_NAME[data.paymentStatus],
+      usedPoint: formatNumberWithCommas(data.usedPoint),
+      finalPrice: data.finalPrice,
+    },
+    user: data.user,
   };
 };
 

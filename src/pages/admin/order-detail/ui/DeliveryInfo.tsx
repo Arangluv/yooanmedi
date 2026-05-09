@@ -1,11 +1,10 @@
 'use client';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/shadcn/card';
-import { useOrderCollection } from '../model/order-provider';
+import useOrderDetail from '../model/hooks/useOrderDetail';
 
-const DeliveryInfo = () => {
-  const { deliveryInfo } = useOrderCollection();
-
+const DeliveryInfo = ({ orderId }: { orderId: number }) => {
+  const { deliveryInfo } = useOrderDetail(orderId);
   return (
     <Card>
       <CardHeader>
@@ -15,13 +14,11 @@ const DeliveryInfo = () => {
         <div className="flex flex-col gap-2 text-lg">
           <div className="flex items-center justify-between">
             <span>배송지</span>
-            <span className="font-medium">{deliveryInfo?.address}</span>
+            <span className="font-medium">{deliveryInfo.address}</span>
           </div>
           <div className="flex items-center justify-between">
             <span>배송 요청사항</span>
-            <span className="font-medium">
-              {deliveryInfo?.orderRequest ? deliveryInfo.orderRequest : '없음'}
-            </span>
+            <span className="font-medium">{deliveryInfo.orderRequest}</span>
           </div>
         </div>
       </CardContent>

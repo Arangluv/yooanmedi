@@ -6,7 +6,6 @@ import {
   OrderCancelRequestInfoCard,
   OrderProgressInfoCard,
 } from './order-info-card';
-import { OrderCollectionProvider } from '../model/order-provider';
 import { OrderAction } from '../model/order-action-dialog-provider';
 import { OrderDetailHydrationProvider } from '../model/providers/OrderDetailHydrationProvider';
 import { getOrderDetail } from '../api/order-detail.api';
@@ -26,33 +25,31 @@ const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
   }
 
   return (
-    <OrderCollectionProvider orderId={doc.id}>
-      <OrderDetailHydrationProvider orderId={doc.id} initialData={result}>
-        <OrderAction>
-          {/*  */}
-          <div className="bg-muted dark:bg-background h-full w-full px-[60px] py-[30px]">
-            <div className="flex gap-12">
-              {/* segment 1 */}
-              <section className="flex w-[70%] flex-col gap-6">
-                {/* 주문 정보 */}
-                <OrderProgressInfoCard orderId={result.data.id} />
-                <OrderCancelRequestInfoCard orderId={result.data.id} />
-                <OrderCancelledInfoCard orderId={result.data.id} />
-              </section>
-              {/* segment 2 */}
-              <section className="flex w-[30%] flex-col gap-6">
-                {/* 결제 정보 */}
-                <PaymentInfo />
-                {/* 주문자 */}
-                <OrderUserInfo />
-                {/* 배송지 정보 */}
-                <DeliveryInfo />
-              </section>
-            </div>
+    <OrderDetailHydrationProvider orderId={doc.id} initialData={result}>
+      <OrderAction>
+        {/*  */}
+        <div className="bg-muted dark:bg-background h-full w-full px-[60px] py-[30px]">
+          <div className="flex gap-12">
+            {/* segment 1 */}
+            <section className="flex w-[70%] flex-col gap-6">
+              {/* 주문 정보 */}
+              <OrderProgressInfoCard orderId={result.data.id} />
+              <OrderCancelRequestInfoCard orderId={result.data.id} />
+              <OrderCancelledInfoCard orderId={result.data.id} />
+            </section>
+            {/* segment 2 */}
+            <section className="flex w-[30%] flex-col gap-6">
+              {/* 결제 정보 */}
+              <PaymentInfo orderId={result.data.id} />
+              {/* 주문자 */}
+              <OrderUserInfo orderId={result.data.id} />
+              {/* 배송지 정보 */}
+              <DeliveryInfo orderId={result.data.id} />
+            </section>
           </div>
-        </OrderAction>
-      </OrderDetailHydrationProvider>
-    </OrderCollectionProvider>
+        </div>
+      </OrderAction>
+    </OrderDetailHydrationProvider>
   );
 };
 

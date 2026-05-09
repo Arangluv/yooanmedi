@@ -1,12 +1,10 @@
 import Image from 'next/image';
 import { ImageIcon, PackageX } from 'lucide-react';
-
 import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription } from '@/shared/ui/shadcn/item';
-import { type OrderProduct } from '@/entities/order-product';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
 import { Button } from '@/shared/ui/shadcn/button';
-
 import { OrderAction } from '../model/order-action-dialog-provider';
+import { type OrderProduct } from '../model/order-detail.schema';
 
 interface OrderProductItemProps {
   orderProduct: OrderProduct;
