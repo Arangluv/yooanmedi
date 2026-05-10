@@ -30,7 +30,7 @@ const PaymentInfo = ({ orderId }: { orderId: number }) => {
       <CardFooter className="border-t">
         <div className="flex w-full items-center justify-between text-lg">
           <span className="font-bold">총 결제 금액</span>
-          <span className="font-bold">{paymentsInfo.finalPrice}</span>
+          <span className="font-bold">{paymentsInfo.finalPrice}원</span>
         </div>
       </CardFooter>
     </Card>

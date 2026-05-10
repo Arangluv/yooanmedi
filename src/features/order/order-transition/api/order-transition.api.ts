@@ -23,7 +23,6 @@ export const transitionOrder = async (
     const totalCount = orders.length;
     const updatedCount = result.filter((r) => r.status === 'fulfilled').length;
     const failedCount = totalCount - updatedCount;
-
     return okWithData({
       data: {
         totalCount: orders.length,

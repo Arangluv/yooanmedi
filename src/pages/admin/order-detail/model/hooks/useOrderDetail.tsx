@@ -1,7 +1,7 @@
 'use client';
 
 import { formatNumberWithCommas } from '@/shared';
-import { PAYMENT_STATUS_NAME, PAYMENTS_METHOD_NAME } from '@/entities/order';
+import { OrderStatus, PAYMENT_STATUS_NAME, PAYMENTS_METHOD_NAME } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
 import useOrderDetailQuery from './useOrderDetailQuery';
 
@@ -22,7 +22,7 @@ const useOrderDetail = (orderId: number) => {
     if (statusSet.size > 1) {
       throw new Error('orderProduct 상태는 중복될 수 없습니다');
     }
-    const currentStatus = statusSet.values().next().value;
+    const currentStatus = statusSet.values().next().value as OrderStatus;
 
     return { orderProducts, status: currentStatus };
   };
@@ -56,7 +56,7 @@ const useOrderDetail = (orderId: number) => {
       paymentMethod: PAYMENTS_METHOD_NAME[data.paymentsMethod],
       paymentStatus: PAYMENT_STATUS_NAME[data.paymentStatus],
       usedPoint: formatNumberWithCommas(data.usedPoint),
-      finalPrice: data.finalPrice,
+      finalPrice: formatNumberWithCommas(data.finalPrice),
     },
     user: data.user,
   };

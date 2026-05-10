@@ -3,7 +3,6 @@
 import { Fragment } from 'react';
 import moment from 'moment';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
-import { ORDER_STATUS } from '@/entities/order';
 import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 import { OrderStatus } from '@/entities/order/constants/order-status';
 import {
@@ -16,10 +15,10 @@ import {
 } from '@/shared/ui/shadcn/card';
 import { ItemGroup, ItemSeparator } from '@/shared/ui/shadcn/item';
 import OrderProductItem from './OrderProductItem';
-import { OrderAction } from '../model/order-action-dialog-provider';
 import { ORDER_DETAIL_UI_CONFIG, OrderInfomationCardType } from '../config/order-detail-ui-config';
 import useOrderDetail from '../model/hooks/useOrderDetail';
 import { type OrderProduct } from '../model/order-detail.schema';
+import { TransitionDialogTrigger, CancelDialogTrigger } from './dialogs';
 
 interface OrderInfoCardProps {
   type: OrderInfomationCardType;
@@ -94,17 +93,8 @@ export const OrderProgressInfoCard = ({ orderId }: { orderId: number }) => {
       orderProducts={orderProducts}
     >
       <CardFooter className="justify-end">
-        <OrderAction.ProceedTrigger
-          display={{
-            count: orderProducts.length,
-            viewType: 'order-detail',
-          }}
-          targetOrderIds={[orderId]}
-          currentStatus={status as any}
-        />
+        <TransitionDialogTrigger order={orderDetail} />
       </CardFooter>
-      <OrderAction.ProceedContent />
-      <OrderAction.CancelContent />
     </OrderInfoCard>
   );
 };
@@ -123,16 +113,8 @@ export const OrderCancelRequestInfoCard = ({ orderId }: { orderId: number }) => 
       orderProducts={orderProducts}
     >
       <CardFooter className="justify-end">
-        <OrderAction.CancelTrigger
-          display={{
-            count: orderProducts.length,
-            viewType: 'order-detail',
-          }}
-          targetOrderIds={[orderId]}
-          currentStatus={ORDER_STATUS.cancel_request}
-        />
+        <CancelDialogTrigger />
       </CardFooter>
-      <OrderAction.CancelContent />
     </OrderInfoCard>
   );
 };
