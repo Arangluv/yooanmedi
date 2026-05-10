@@ -6,8 +6,8 @@ export const openPaymentsPopup = (authPageUrl: string) => {
     return;
   }
 
-  const width = 600;
-  const height = 680;
+  const width = 720;
+  const height = 800;
   const left = window.screen.width / 2 - width / 2;
   const top = window.screen.height / 2 - height / 2;
 
