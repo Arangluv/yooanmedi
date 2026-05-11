@@ -4,8 +4,6 @@ import Image from 'next/image';
 import { Divider } from '@heroui/react';
 import { ImageIcon, Info } from 'lucide-react';
 import moment from 'moment';
-
-import { OrderAction } from '@/features/admin/order-detail/model/order-action-dialog-provider';
 import { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/entities/order';
 import { ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
@@ -18,22 +16,22 @@ import ExcelExportButton from './ExcelExportButton';
 
 const OrderList = ({ orderList }: { orderList: OrderListItem[] }) => {
   return (
-    <OrderAction>
-      <div className="flex w-full flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <span className="text-xl font-bold">주문목록</span>
-          <ExcelExportButton data={orderList} />
-        </div>
-        <div className="flex w-full flex-col gap-4">
-          {orderList.length > 0 ? (
-            orderList.map((order) => <OrderItem key={order.id} order={order} />)
-          ) : (
-            <OrderListEmpty />
-          )}
-        </div>
+    <div className="flex w-full flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <span className="text-xl font-bold">주문목록</span>
+        <ExcelExportButton data={orderList} />
       </div>
-      <OrderAction.CancelContent />
-    </OrderAction>
+      <div className="flex w-full flex-col gap-4">
+        {orderList.length > 0 ? (
+          orderList.map((order) => <OrderItem key={order.id} order={order} />)
+        ) : (
+          <OrderListEmpty />
+        )}
+      </div>
+    </div>
+    // <OrderAction>
+    //   <OrderAction.CancelContent />
+    // </OrderAction>
   );
 };
 
@@ -164,7 +162,7 @@ const OrderProductItem = ({ orderProduct, orderId }: OrderProductItemProps) => {
         </div>
         {/* 주문 액션 */}
         <div className="flex w-full items-center justify-end">
-          {canCancelOrderProduct && (
+          {/* {canCancelOrderProduct && (
             <OrderAction.CancelTrigger
               display={{
                 count: 1,
@@ -179,7 +177,7 @@ const OrderProductItem = ({ orderProduct, orderId }: OrderProductItemProps) => {
                 주문취소
               </Button>
             </OrderAction.CancelTrigger>
-          )}
+          )} */}
         </div>
       </div>
     </div>

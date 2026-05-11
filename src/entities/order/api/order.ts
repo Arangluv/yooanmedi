@@ -1,4 +1,5 @@
-import 'server-only';
+'use server';
+
 import { getPayload, getTransactionContext } from '@/shared/infrastructure';
 import { UpdateOrderDto } from '../model/schemas/order.schema';
 import { FindOption } from '@/shared';

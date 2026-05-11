@@ -26,28 +26,20 @@ export const transitionOrder = async (
 
 export interface TransitionOrderListResult {
   totalCount: number;
-  updatedCount: number;
-  failedCount: number;
 }
 
 export const transitionOrderList = async (
   orders: Order[],
 ): Promise<EndPointResult<TransitionOrderListResult>> => {
   try {
-    const result = await Promise.allSettled(
-      orders.map(async (order) => {
-        const command = OrderTransitionCommandFactory.createCommand(order);
-        await command.execute();
-      }),
-    );
-    const totalCount = orders.length;
-    const updatedCount = result.filter((r) => r.status === 'fulfilled').length;
-    const failedCount = totalCount - updatedCount;
+    for (const order of orders) {
+      const command = OrderTransitionCommandFactory.createCommand(order);
+      await command.execute();
+    }
+
     return okWithData({
       data: {
         totalCount: orders.length,
-        updatedCount,
-        failedCount,
       },
     });
   } catch (error) {

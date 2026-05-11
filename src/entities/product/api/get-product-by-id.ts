@@ -1,4 +1,4 @@
-import 'server-only';
+'use server';
 import { getPayload } from '@/shared/infrastructure';
 
 export const getProductById = async (id: number) => {
