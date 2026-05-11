@@ -19,8 +19,7 @@ const useOrderDetailTransition = () => {
 
   const transitionOrder = (orderDetail: AdminOrderDetail) => {
     const order = toOrder(orderDetail);
-    // todo :: order-list, order update 분리
-    mutate([order]);
+    mutate(order);
   };
 
   return { transitionOrder };

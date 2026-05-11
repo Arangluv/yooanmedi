@@ -5,14 +5,34 @@ import { Order } from '@/entities/order';
 import { OrderTransitionCommandFactory } from '../model/order-transition-command-factory';
 
 export interface TransitionOrderResult {
+  orderId: number;
+}
+
+export const transitionOrder = async (
+  order: Order,
+): Promise<EndPointResult<TransitionOrderResult>> => {
+  try {
+    const command = OrderTransitionCommandFactory.createCommand(order);
+    await command.execute();
+
+    return okWithData({
+      data: { orderId: order.id },
+    });
+  } catch (error) {
+    const { message } = normalizeError(error);
+    return failure(message);
+  }
+};
+
+export interface TransitionOrderListResult {
   totalCount: number;
   updatedCount: number;
   failedCount: number;
 }
 
-export const transitionOrder = async (
+export const transitionOrderList = async (
   orders: Order[],
-): Promise<EndPointResult<TransitionOrderResult>> => {
+): Promise<EndPointResult<TransitionOrderListResult>> => {
   try {
     const result = await Promise.allSettled(
       orders.map(async (order) => {

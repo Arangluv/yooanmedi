@@ -31,7 +31,7 @@ const createContextToPreParing = (order: Order): OrderTransitionContext => {
     toOrderProductStatus: ORDER_PRODUCT_STATUS.preparing,
     successMessage: '주문이 상품준비 상태로 변경되었습니다',
     errorMessage: '주문을 상품준비 상태로 변경하는데 문제가 발생했습니다',
-    afterTransition: async (orderService: IOrderService, orderProducts: OrderProduct[]) => {
+    afterTransition: async (orderProducts: OrderProduct[]) => {
       const earnPointTransaction = new EarnPointTransaction();
       let earnedPoint = 0;
 
@@ -42,6 +42,7 @@ const createContextToPreParing = (order: Order): OrderTransitionContext => {
           const willEarnPoint = Math.floor(
             orderProduct.priceSnapshot * (orderProduct.cashback_rate_for_bank / 100),
           );
+          earnedPoint += willEarnPoint;
           await earnPointTransaction.createHistory({
             user: order.user,
             orderProduct: orderProduct.id,
@@ -52,8 +53,6 @@ const createContextToPreParing = (order: Order): OrderTransitionContext => {
 
       // 유저 포인트 업데이트
       await earnPointTransaction.updateUserPoint(order.user, earnedPoint);
-      // 결제상태 업데이트
-      await orderService.updateOrder(order, { paymentStatus: PAYMENT_STATUS.complete });
     },
   };
 };

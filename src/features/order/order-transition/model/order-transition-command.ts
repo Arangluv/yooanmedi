@@ -23,7 +23,7 @@ export class OrderTransitionCommand implements IOrderTransitionCommand {
     const orderProductService = new OrderProductService();
     const findOption = OrderProductFindOption.orderTransition.build({
       orderId: this.context.order.id,
-      currentStatus: this.context.toOrderStatus,
+      currentStatus: this.context.fromOrderProductStatus,
     });
     const orderProducts = await orderProductService.getOrderProducts(findOption);
     await orderProductService.updateOrderProducts(orderProducts, {
@@ -36,7 +36,7 @@ export class OrderTransitionCommand implements IOrderTransitionCommand {
     });
 
     if (this.context.afterTransition) {
-      await this.context.afterTransition(orderService, orderProducts);
+      await this.context.afterTransition(orderProducts);
     }
   }
 }
