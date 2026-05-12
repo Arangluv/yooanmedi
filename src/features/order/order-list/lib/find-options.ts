@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { type Where } from 'payload';
 import { type User } from '@/entities/user';
 import { type FindOption } from '@/shared';
@@ -13,10 +14,10 @@ export const OrderListFindOption = {
       searchParams: ClientOrderListSearchParams;
     }): FindOption {
       const where: Where = {
-        // createdAt: {
-        //   greater_than_equal: searchParams.from,
-        //   less_than_equal: searchParams.to,
-        // },
+        createdAt: {
+          greater_than_equal: moment(searchParams.from).hour(0).minute(0).second(0).toDate(),
+          less_than_equal: moment(searchParams.to).hour(23).minute(59).second(59).toDate(),
+        },
         user: {
           equals: user.id,
         },
@@ -31,7 +32,7 @@ export const OrderListFindOption = {
       return {
         pagination: false,
         where,
-        depth: 3,
+        depth: 4,
         populate: {
           'order-product': {
             productNameSnapshot: true,

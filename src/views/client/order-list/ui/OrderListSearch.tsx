@@ -18,7 +18,7 @@ import { Button } from '@/shared/ui/shadcn/button';
 import DateRangePicker from '@/shared/ui/shadcn/date-range-picker';
 import { ORDER_STATUS_NAME } from '@/entities/order';
 import { cn } from '@/shared';
-import useOrderListSearchFilter from '../model/useOrderListSearchFilter';
+import useOrderListSearchFilter from '../model/hooks/useOrderListSearchFilter';
 
 const OrderListSearch = () => {
   const [openDetailOptions, setOpenDetailOptions] = useState(false);

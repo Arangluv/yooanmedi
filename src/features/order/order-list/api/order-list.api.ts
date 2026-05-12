@@ -1,3 +1,5 @@
+'use server';
+
 import { okWithData, failure, type EndPointResult, normalizeError } from '@/shared';
 import { ClientOrderListSearchParams } from '../lib/generate-search-param';
 import { OrderListService } from '../model/order-list.service';

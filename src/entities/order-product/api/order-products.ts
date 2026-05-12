@@ -13,13 +13,47 @@ export const getOrderProducts = async (options: FindOption) => {
   return docs;
 };
 
-export const updateOrderProducts = async (orderProductId: number[], dto: UpdateOrderProductDto) => {
+// todo :: 트랜젝션을 위한 get을 따로 만들어두었으나 추후 수정이 필요합니다.
+export const getOrderProductsWithTransaction = async (options: FindOption) => {
+  const { payload, transactionID } = getTransactionContext();
+  const { docs } = await payload.find({
+    collection: 'order-product',
+    depth: 0,
+    ...options,
+    req: {
+      transactionID,
+    },
+  });
+
+  return docs;
+};
+
+export const updateOrderProducts = async (
+  orderProductIds: number[],
+  dto: UpdateOrderProductDto,
+) => {
   const { payload, transactionID } = getTransactionContext();
   await payload.update({
     collection: 'order-product',
     where: {
       id: {
-        in: orderProductId,
+        in: orderProductIds,
+      },
+    },
+    data: dto,
+    req: {
+      transactionID,
+    },
+  });
+};
+
+export const updateOrderProduct = async (orderProductId: number, dto: UpdateOrderProductDto) => {
+  const { payload, transactionID } = getTransactionContext();
+  await payload.update({
+    collection: 'order-product',
+    where: {
+      id: {
+        equals: orderProductId,
       },
     },
     data: dto,

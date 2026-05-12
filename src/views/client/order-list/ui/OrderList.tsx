@@ -10,11 +10,14 @@ import { ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
 import OrderListEmpty from './OrderListEmpty';
 import ExcelExportButton from './ExcelExportButton';
-import { type ClientOrder } from '@/features/order/order-list';
+import { ClientOrderListSearchParams, type ClientOrder } from '@/features/order/order-list';
 import { AlertDialogProvider } from '@/shared';
 import { OrderPartialCancelTrigger } from './dialogs';
+import useOrderListQuery from '../model/hooks/useOrderListQuery';
 
-const OrderList = ({ orderList }: { orderList: ClientOrder[] }) => {
+const OrderList = ({ searchParams }: { searchParams: ClientOrderListSearchParams }) => {
+  const orderList = useOrderListQuery({ searchParams });
+
   return (
     <AlertDialogProvider>
       <div className="flex w-full flex-col gap-4">

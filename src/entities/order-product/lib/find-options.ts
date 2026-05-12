@@ -18,6 +18,16 @@ export const OrderProductFindOption = {
       };
     },
   },
+  partialCancelOrder: {
+    build(orderId: number): FindOption {
+      return {
+        pagination: false,
+        where: {
+          order: { equals: orderId },
+        },
+      };
+    },
+  },
   adminOrderDetail: {
     build(orderId: number): FindOption {
       return {
