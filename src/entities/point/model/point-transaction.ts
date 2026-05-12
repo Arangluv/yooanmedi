@@ -16,6 +16,8 @@ import type {
   CancelEarnPointHistoryDto,
 } from './schema/history.schema';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { FindOption } from '@/shared';
+import { POINT_ACTION } from '../constants/point-action';
 
 abstract class PointTransaction {
   protected historyIds: number[];
@@ -67,7 +69,9 @@ export class CancelUsePointTransaction
   implements IPointTransaction<CancelUsePointHistoryDto>
 {
   public async createHistory(dto: CancelUsePointHistoryDto): Promise<void> {
-    const history = toCancelUsePointEntity(dto);
+    const rollbackTargetHistory = await this.findUsePointTransaction(dto.orderProduct);
+
+    const history = toCancelUsePointEntity({ ...dto, amount: rollbackTargetHistory.amount });
     const result = await PointTransactionRepository.save(history);
     this.addHistory(result.id);
   }
@@ -86,6 +90,22 @@ export class CancelUsePointTransaction
     }
 
     await PointTransactionRepository.increaseUserPoint(userId, amount);
+  }
+
+  private async findUsePointTransaction(orderProductId: number) {
+    const option: FindOption = {
+      pagination: false,
+      where: {
+        orderProduct: {
+          equals: orderProductId,
+        },
+        type: {
+          equals: POINT_ACTION.USE,
+        },
+      },
+    };
+    const history = await PointTransactionRepository.findOne(option);
+    return history;
   }
 }
 
@@ -125,7 +145,9 @@ export class CancelEarnPointTransaction
   implements IPointTransaction<CancelEarnPointHistoryDto>
 {
   public async createHistory(dto: CancelEarnPointHistoryDto): Promise<void> {
-    const history = toCancelEarnPointEntity(dto);
+    const rollbackTargetHistory = await this.findUsePointTransaction(dto.orderProduct);
+
+    const history = toCancelEarnPointEntity({ ...dto, amount: rollbackTargetHistory.amount });
     const result = await PointTransactionRepository.save(history);
     this.addHistory(result.id);
   }
@@ -144,5 +166,21 @@ export class CancelEarnPointTransaction
     }
 
     await PointTransactionRepository.decreaseUserPoint(userId, amount);
+  }
+
+  private async findUsePointTransaction(orderProductId: number) {
+    const option: FindOption = {
+      pagination: false,
+      where: {
+        orderProduct: {
+          equals: orderProductId,
+        },
+        type: {
+          equals: POINT_ACTION.CANCEL_EARN,
+        },
+      },
+    };
+    const history = await PointTransactionRepository.findOne(option);
+    return history;
   }
 }

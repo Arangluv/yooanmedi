@@ -32,7 +32,7 @@ const cancelUsePointHistoryEntity = baseHistorySchema.extend({
   amount: baseSchema.amount,
   type: z.literal(POINT_ACTION.CANCEL_USE),
 });
-export const toCancelUsePointEntity = (data: CancelUsePointHistoryDto) => {
+export const toCancelUsePointEntity = (data: CancelUsePointHistoryDto & { amount: number }) => {
   return zodSafeParse(cancelUsePointHistoryEntity, {
     ...data,
     type: POINT_ACTION.CANCEL_USE,
@@ -64,7 +64,7 @@ const cancelEarnPointHistoryEntity = baseHistorySchema.extend({
   type: z.literal(POINT_ACTION.CANCEL_EARN),
   amount: baseSchema.amount,
 });
-export const toCancelEarnPointEntity = (data: CancelUsePointHistoryDto) => {
+export const toCancelEarnPointEntity = (data: CancelUsePointHistoryDto & { amount: number }) => {
   return zodSafeParse(cancelUsePointHistoryEntity, {
     ...data,
     type: POINT_ACTION.CANCEL_EARN,

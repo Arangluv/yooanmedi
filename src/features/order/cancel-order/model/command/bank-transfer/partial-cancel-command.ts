@@ -2,13 +2,8 @@ import { runWithTransaction } from '@/shared/infrastructure';
 import { type IPartialCancelCommand } from '../cancel-command';
 import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
 import { IOrderProductService, OrderProductService } from '@/entities/order-product/infrastructure';
-import {
-  ORDER_PRODUCT_STATUS,
-  OrderProductFindOption,
-  OrderProductStatus,
-} from '@/entities/order-product';
+import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
 import { OrderService } from '@/entities/order/infrastructure';
-import { BusinessLogicError } from '@/shared';
 import { getUpdateOrderStatus } from '../../../lib/order-status-resolver';
 
 export class BankTransferPartialCancelImmediateCommand implements IPartialCancelCommand {
@@ -77,7 +72,7 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
     // client에서는 -> peding상태에서 사용, admin에서는 모든 상태에서 사용
     // peding이라면 포인트 적립 내역이 아직 없는 상태 그외라면 있다.
     if (this.order.orderStatus !== ORDER_STATUS.pending) {
-      // pointTransaction 만든 후 작성
+      // 찾고ㅓ
     }
   }
 
