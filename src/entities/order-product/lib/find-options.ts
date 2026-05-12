@@ -28,4 +28,14 @@ export const OrderProductFindOption = {
       };
     },
   },
+  clientOrderList: {
+    build(orderId: number): FindOption {
+      return {
+        pagination: false,
+        where: {
+          order: { equals: orderId },
+        },
+      };
+    },
+  },
 } as const;

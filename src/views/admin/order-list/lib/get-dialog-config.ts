@@ -1,10 +1,10 @@
+import { type AlertDialogConfig } from '@/shared';
 import { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from '@/entities/order';
-import { type DialogConfig } from '@/views/admin/order-detail/config/dialog.config';
 
 export const getTransitionDialogConfig = (
   currentStatus: OrderStatus,
   count: number,
-): DialogConfig => {
+): AlertDialogConfig => {
   const templateTriggerText = (status: string) => `${status} 처리`;
   const templateHeaderTitleText = (statusWithPrefix: string) =>
     `${count}개 주문을 ${statusWithPrefix} 변경하시겠습니까?`;

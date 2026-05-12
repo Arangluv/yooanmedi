@@ -1,12 +1,11 @@
 'use client';
 
 import { type Row } from '@tanstack/react-table';
-import { Button } from '@/shared';
+import { Button, useAlertDialog } from '@/shared';
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { ORDER_STATUS, OrderStatus } from '@/entities/order';
 import useOrderListSearch from '../model/useOrderListSearch';
 import { getTransitionDialogConfig } from '../lib/get-dialog-config';
-import { useAlertDialog } from '@/views/admin/order-detail/model/providers/AlertDialogProvider'; // todo :: AlertDialog 공통화 진행 시 참조방식 수정
 import useOrderListTransition from '../model/hooks/useOrderListTransition';
 import { AdminOrderListItem } from '../model/admin-order-list.schema';
 

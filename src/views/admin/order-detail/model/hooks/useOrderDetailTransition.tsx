@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { OrderTransitionApi } from '@/features/order/order-transition';
 import { AdminOrderDetail, toOrder } from '../order-detail.schema';
 import { toast } from 'sonner';
-import { useAlertDialog } from '../providers/AlertDialogProvider';
+import { useAlertDialog } from '@/shared';
 import { adminOrderDetailQueryKey } from '../../lib/query-keys';
 import { ADMIN_ORDER_LIST_ROOT_QUERY_KEY } from '@/views/admin/order-list/lib/query-keys';
 

@@ -1,30 +1,12 @@
 import type { SearchParams } from 'nuqs/server';
-
-import { OrderListView, loadSearchParams } from '@/features/order';
-import { getOrderList } from '@/features/order';
-import { Navbar } from '@/entities/order';
-import { UserRepository } from '@/entities/user/infrastructure';
+import ClientOrderListPage from '@/views/client/order-list/ui/page';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
 };
 
 const OrderListPage = async ({ searchParams }: PageProps) => {
-  const user = await UserRepository.findByHeader();
-  const orderListSearchParams = await loadSearchParams(searchParams);
-  const orderList = await getOrderList({ user, searchParams: orderListSearchParams });
-
-  // TODO :: 보일러플레이트 코드 -> 제거하기
-  if (!orderList.success) {
-    return <div>Error: {orderList.message}</div>;
-  }
-
-  return (
-    <div className="flex w-full flex-col">
-      <Navbar />
-      <OrderListView orderList={orderList.data} />
-    </div>
-  );
+  return <ClientOrderListPage searchParams={searchParams} />;
 };
 
 export default OrderListPage;

@@ -1,6 +1,6 @@
 import { type FindOption } from '@/shared';
-import { OrderStatus } from '../constants/order-status';
 import { Where } from 'payload';
+import { OrderStatus } from '../constants/order-status';
 
 export const OrderFindOption = {
   adminOrderList: {

@@ -1,7 +1,7 @@
 import { generateSearchParams } from '../lib/generate-search-params';
 import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
-import { AlertDialog } from '@/views/admin/order-detail/model/providers/AlertDialogProvider';
+import { AlertDialogProvider } from '@/shared';
 import { SearchParams } from 'nuqs';
 import { getOrderList } from '../api/order-list.api';
 import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
@@ -19,7 +19,7 @@ const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<Sear
       page={safeSearchParam.page}
       orderStatus={safeSearchParam.orderStatus}
     >
-      <AlertDialog>
+      <AlertDialogProvider>
         <div className="bg-muted flex h-[calc(100vh-var(--app-header-height))] flex-col gap-8 overflow-hidden px-[60px] py-[30px]">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold">주문 내역</h1>
@@ -28,7 +28,7 @@ const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<Sear
           <OrderStatusTab />
           <OrderListTableSection searchParams={safeSearchParam} />
         </div>
-      </AlertDialog>
+      </AlertDialogProvider>
     </OrderListHydrationProvider>
   );
 };

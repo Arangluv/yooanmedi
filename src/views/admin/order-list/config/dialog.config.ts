@@ -1,7 +1,7 @@
+import type { AlertDialogConfig } from '@/shared';
 import { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from '@/entities/order';
-import type { DialogConfig } from '@/views/admin/order-detail/config/dialog.config';
 
-export const TRANSITION_DIALOG_CONFIG: Record<OrderStatus, DialogConfig | null> = {
+export const TRANSITION_DIALOG_CONFIG: Record<OrderStatus, AlertDialogConfig | null> = {
   [ORDER_STATUS.pending]: {
     triggerText: `${getNextOrderStatusText(ORDER_STATUS.pending)} 처리`,
     headerTitle: `주문을 ${getNextOrderStatusText(ORDER_STATUS.pending)}로 변경하시겠습니까?`,

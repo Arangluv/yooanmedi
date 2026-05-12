@@ -1,24 +1,8 @@
+import { type AlertDialogConfig } from '@/shared';
 import { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from '@/entities/order';
 
-/**
- * TODO:: 공통으로 사용가능한 layer로 추후 이동시켜야합니다.
- * action, cancel은 shadcn alert dialog의
- * AlertDialogAction과 AlertDialogCancel을 구현한 컴포넌트를 작성해야합니다.
- */
-export interface DialogConfig {
-  triggerText: string;
-  headerTitle: string;
-  description: string;
-  action: DialogActionConfig;
-}
-
-export interface DialogActionConfig {
-  text: string;
-  onClick: () => void;
-}
-
 /** #ref3 - 리팩토링 진행 시 feature단으로 이동시켜야 합니다 */
-export const TRANSITION_DIALOG_CONFIG: Record<OrderStatus, DialogConfig | null> = {
+export const TRANSITION_DIALOG_CONFIG: Record<OrderStatus, AlertDialogConfig | null> = {
   [ORDER_STATUS.pending]: {
     triggerText: `${getNextOrderStatusText(ORDER_STATUS.pending)} 처리`,
     headerTitle: `주문을 ${getNextOrderStatusText(ORDER_STATUS.pending)}로 변경하시겠습니까?`,

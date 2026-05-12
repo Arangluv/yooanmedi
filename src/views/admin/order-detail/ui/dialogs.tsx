@@ -1,9 +1,8 @@
 'use client';
 
-import { Button } from '@/shared';
+import { Button, useAlertDialog } from '@/shared';
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { TRANSITION_DIALOG_CONFIG } from '../config/dialog.config';
-import { useAlertDialog } from '../model/providers/AlertDialogProvider';
 import useOrderDetailTransition from '../model/hooks/useOrderDetailTransition';
 import { type AdminOrderDetail } from '../model/order-detail.schema';
 

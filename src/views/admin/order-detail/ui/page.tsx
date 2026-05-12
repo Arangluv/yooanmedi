@@ -1,3 +1,4 @@
+import { AlertDialogProvider } from '@/shared';
 import PaymentInfo from './PaymentInfo';
 import OrderUserInfo from './OrderUserInfo';
 import DeliveryInfo from './DeliveryInfo';
@@ -8,7 +9,6 @@ import {
 } from './order-info-card';
 import { OrderDetailHydrationProvider } from '../model/providers/OrderDetailHydrationProvider';
 import { getOrderDetail } from '../api/order-detail.api';
-import { AlertDialog } from '../model/providers/AlertDialogProvider';
 
 interface AdminOrderDetailPageProps {
   doc: {
@@ -26,8 +26,7 @@ const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
 
   return (
     <OrderDetailHydrationProvider orderId={doc.id} initialData={result}>
-      <AlertDialog>
-        {/*  */}
+      <AlertDialogProvider>
         <div className="bg-muted dark:bg-background h-full w-full px-[60px] py-[30px]">
           <div className="flex gap-12">
             {/* segment 1 */}
@@ -48,7 +47,7 @@ const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
             </section>
           </div>
         </div>
-      </AlertDialog>
+      </AlertDialogProvider>
     </OrderDetailHydrationProvider>
   );
 };

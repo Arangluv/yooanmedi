@@ -6,6 +6,19 @@ export type OrderWithUser = Omit<Order, 'user'> & {
   user: User;
 };
 
+function withUserDetail<T extends Order>(order: T, userMap: Map<number, User>): T;
+
+function withUserDetail<T extends Order>(order: T, user: User): T;
+
+function withUserDetail<T extends Order>(order: T, userOrMap: User | Map<number, User>): T {
+  const user = userOrMap instanceof Map ? userOrMap.get(order.user) : userOrMap;
+
+  return {
+    ...order,
+    user,
+  };
+}
+
 export const detail = {
   withUser: <T extends Order>(order: T, userMap: Map<number, User>): T => {
     return { ...order, user: userMap.get(order.user) };
@@ -26,8 +39,14 @@ export const detail = {
   },
 };
 
+function withUserList<T extends Order>(orders: T[], userMap: Map<number, User>): T[];
+
+function withUserList<T extends Order>(orders: T[], user: User): T[];
+
+function withUserList<T extends Order>(orders: T[], userOrMap: User | Map<number, User>): T[] {
+  return orders.map((order) => detail.withUser(order, userOrMap as any));
+}
+
 export const list = {
-  withUser: <T extends Order>(orders: T[], userMap: Map<number, User>): T[] => {
-    return orders.map((order) => detail.withUser(order, userMap));
-  },
+  withUser: withUserList,
 };

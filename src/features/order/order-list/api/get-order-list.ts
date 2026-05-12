@@ -10,7 +10,7 @@ import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 import { getPayload } from '@/shared/infrastructure';
 
 import type { OrderListSearchParamsType } from '../model/sever-search-params';
-import { orderListSchema } from '../model/order-list-schema';
+import { orderListSchema } from '../model/order-list-search.schema';
 import { normalizeOrder, OrderListItem } from '../lib/normalization';
 
 type GetOrdersDto = {
@@ -68,6 +68,7 @@ export const getOrderList = async (
   try {
     const payload = await getPayload();
 
+    // find-options로 이동
     const searchCondition = orderListSchema.parse(dto.searchParams);
     const where: Where = {
       createdAt: {
