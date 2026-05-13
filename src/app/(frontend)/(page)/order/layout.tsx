@@ -5,8 +5,8 @@ import LayoutTopNavbar from '@/entities/order/ui/LayoutTopNavbar';
 import { getFavoritesList } from '@/features/favorites-product/api/favorites-list';
 import FavoritesProductInitProvider from '@/features/favorites-product/model/favorites-Init-provider';
 import { UserRepository } from '@/entities/user/infrastructure'; // todo refactor
-import { getCart, CartModal } from '@/entities/cart';
 import { CartHydrationProvider } from '@/entities/cart';
+import { getCart } from '@/entities/cart/infrastructure';
 
 export default async function OrderLayout({ children }: { children: React.ReactNode }) {
   const user = await UserRepository.findByHeader();

@@ -5,6 +5,8 @@ import {
   usePointHistoryEntitySchema,
   EarnPointHistoryEntity,
   earnPointHistoryEntitySchema,
+  toCancelUsePointEntity,
+  toCancelEarnPointEntity,
 } from './schema/history.schema';
 import type {
   UsePointHistoryDto,
@@ -14,18 +16,25 @@ import type {
   CancelEarnPointHistoryDto,
 } from './schema/history.schema';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { FindOption } from '@/shared';
+import { POINT_ACTION } from '../constants/point-action';
+
+interface CreatedHistory {
+  id: number;
+  amount: number;
+}
 
 abstract class PointTransaction {
-  protected historyIds: number[];
+  protected histories: CreatedHistory[];
 
   constructor() {
-    this.historyIds = [];
+    this.histories = [];
   }
 
   public abstract updateUserPoint(userId: number, amount: number): Promise<void>;
 
-  protected async addHistory(id: number): Promise<void> {
-    this.historyIds.push(id);
+  protected async addHistory(history: CreatedHistory): Promise<void> {
+    this.histories.push(history);
   }
 }
 
@@ -36,11 +45,12 @@ export class UsePointTransaction
   public async createHistory(dto: UsePointHistoryDto): Promise<void> {
     const history = this.createHistoryEntity(dto);
     const result = await PointTransactionRepository.save(history);
-    this.addHistory(result.id);
+    this.addHistory(result);
   }
 
   public async updateUserPoint(userId: number, amount: number): Promise<void> {
-    const histories = await PointTransactionRepository.getHistories(this.historyIds);
+    const ids = this.histories.map((item) => item.id);
+    const histories = await PointTransactionRepository.getHistories(ids);
     const amountCalculatedFromHistories = histories.reduce(
       (acc, history) => acc + history.amount,
       0,
@@ -64,11 +74,40 @@ export class CancelUsePointTransaction
   extends PointTransaction
   implements IPointTransaction<CancelUsePointHistoryDto>
 {
-  createHistory(dto: CancelUsePointHistoryDto): Promise<void> {
-    throw new Error('Method not implemented.');
+  public async createHistory(dto: CancelUsePointHistoryDto): Promise<void> {
+    const rollbackTargetHistory = await this.findUsePointTransaction(dto.orderProduct);
+
+    const history = toCancelUsePointEntity({ ...dto, amount: rollbackTargetHistory.amount });
+    const result = await PointTransactionRepository.save(history);
+    this.addHistory(result);
   }
 
-  public async updateUserPoint(userId: number, amount: number): Promise<void> {}
+  public async updateUserPoint(userId: number): Promise<void> {
+    const ids = this.histories.map((item) => item.id);
+    const histories = await PointTransactionRepository.getHistories(ids);
+    const amountCalculatedFromHistories = histories.reduce(
+      (acc, history) => acc + history.amount,
+      0,
+    );
+
+    await PointTransactionRepository.increaseUserPoint(userId, amountCalculatedFromHistories);
+  }
+
+  private async findUsePointTransaction(orderProductId: number) {
+    const option: FindOption = {
+      pagination: false,
+      where: {
+        orderProduct: {
+          equals: orderProductId,
+        },
+        type: {
+          equals: POINT_ACTION.USE,
+        },
+      },
+    };
+    const history = await PointTransactionRepository.findOne(option);
+    return history;
+  }
 }
 
 export class EarnPointTransaction
@@ -78,7 +117,7 @@ export class EarnPointTransaction
   public async createHistory(dto: EarnPointHistoryDto): Promise<void> {
     const history = this.createEntity(dto);
     const result = await PointTransactionRepository.save(history);
-    this.addHistory(result.id);
+    this.addHistory(result);
   }
 
   private createEntity(dto: EarnPointHistoryDto): EarnPointHistoryEntity {
@@ -86,7 +125,8 @@ export class EarnPointTransaction
   }
 
   public async updateUserPoint(userId: number, amount: number): Promise<void> {
-    const histories = await PointTransactionRepository.getHistories(this.historyIds);
+    const ids = this.histories.map((item) => item.id);
+    const histories = await PointTransactionRepository.getHistories(ids);
     const amountCalculatedFromHistories = histories.reduce(
       (acc, history) => acc + history.amount,
       0,
@@ -107,8 +147,38 @@ export class CancelEarnPointTransaction
   implements IPointTransaction<CancelEarnPointHistoryDto>
 {
   public async createHistory(dto: CancelEarnPointHistoryDto): Promise<void> {
-    throw new Error('Method not implemented.');
+    const rollbackTargetHistory = await this.findUsePointTransaction(dto.orderProduct);
+
+    const history = toCancelEarnPointEntity({ ...dto, amount: rollbackTargetHistory.amount });
+    const result = await PointTransactionRepository.save(history);
+    this.addHistory(result);
   }
 
-  public async updateUserPoint(userId: number, amount: number): Promise<void> {}
+  public async updateUserPoint(userId: number): Promise<void> {
+    const ids = this.histories.map((item) => item.id);
+    const histories = await PointTransactionRepository.getHistories(ids);
+    const amountCalculatedFromHistories = histories.reduce(
+      (acc, history) => acc + history.amount,
+      0,
+    );
+
+    await PointTransactionRepository.decreaseUserPoint(userId, amountCalculatedFromHistories);
+  }
+
+  private async findUsePointTransaction(orderProductId: number) {
+    const option: FindOption = {
+      pagination: false,
+      where: {
+        orderProduct: {
+          equals: orderProductId,
+        },
+        type: {
+          equals: POINT_ACTION.EARN,
+        },
+      },
+    };
+
+    const history = await PointTransactionRepository.findOne(option);
+    return history;
+  }
 }

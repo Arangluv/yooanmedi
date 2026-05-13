@@ -1,5 +1,3 @@
-export * from './api/carts.api';
-
 export { CartHydrationProvider } from './model/providers/CartHydrationProvider';
 export { cartQueryKey, useCartQuery } from './model/hooks/useCartQuery';
 export { cartItemSchema } from './model/cart.schema';

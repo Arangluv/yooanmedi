@@ -7,11 +7,11 @@ import { ProceedToDeliveredCommand } from './command/proceed-to-delivered';
 export class ProceedCommandFactory {
   static createCommand(fromStatus: OrderStatus): OrderCommand {
     switch (fromStatus) {
-      case ORDER_STATUS.PENDING:
+      case ORDER_STATUS.pending:
         return new ProceedToPreparingCommand();
-      case ORDER_STATUS.PREPARING:
+      case ORDER_STATUS.preparing:
         return new ProceedToShippingCommand();
-      case ORDER_STATUS.SHIPPING:
+      case ORDER_STATUS.shipping:
         return new ProceedToDeliveredCommand();
     }
 

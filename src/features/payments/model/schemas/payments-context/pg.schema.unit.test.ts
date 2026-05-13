@@ -15,7 +15,7 @@ describe('PGPaymentsContextSchema', () => {
   const baseCtx = {
     ...basePaymentContextFixture,
     authorizationId: authorizationIdFixture,
-    paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+    paymentsMethod: PAYMENTS_METHOD.credit_card,
     orderList: enrichedOrderListFixture,
   };
 

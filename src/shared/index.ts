@@ -24,6 +24,11 @@ export * as BaseSchema from './model/schemas/base.schema';
 export { type PayloadImage } from './model/schemas/base.schema';
 export * as PaymentsBaseSchema from './model/schemas/payments.base.schema';
 export { type FindOption } from './model/get-option';
+export { default as AlertDialogProvider } from './model/providers/alert-dialog-provider';
+export { type AlertDialogConfig } from './model/alert-dialog';
+// hooks
+export { default as useAlertDialog } from './hooks/useAlertDialog';
+
 // api
 export { getSiteMetadata } from './api/get-site-metadata';
 

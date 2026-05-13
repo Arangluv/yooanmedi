@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { url, number, string, collectionId, email } from './base.schema';
+import { url, number, string, collectionId, email, isoString } from './base.schema';
 
 describe('BaseSchema', () => {
   describe('url', () => {
@@ -185,6 +185,23 @@ describe('BaseSchema', () => {
 
     it('값이 빈 경우 파싱에 실패한다', () => {
       const result = email.safeParse(undefined);
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('isoString', () => {
+    it('date 스키마가 정상적으로 파싱된다', () => {
+      const result = isoString.safeParse('2026-05-04T04:49:04.448Z');
+      expect(result.success).toBe(true);
+    });
+
+    it('iso string이 아닌 경우 파싱에 실패한다', () => {
+      const result = isoString.safeParse('invalid_string_date');
+      expect(result.success).toBe(false);
+    });
+
+    it('빈 값은 파싱에 실패한다', () => {
+      const result = isoString.safeParse(null);
       expect(result.success).toBe(false);
     });
   });

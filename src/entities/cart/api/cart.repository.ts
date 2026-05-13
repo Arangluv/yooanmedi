@@ -1,4 +1,3 @@
-import 'server-only';
 import { zodSafeParse } from '@/shared';
 import { getCart, createCart } from './carts';
 import { cartEntitySchema, CartEntity } from '../model/cart.schema';

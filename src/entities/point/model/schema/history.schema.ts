@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { POINT_ACTION } from '../../constants/point-action';
 import { baseSchema } from './base.schema';
+import { zodSafeParse } from '@/shared';
 
 const baseHistorySchema = z.object({
   user: baseSchema.user,
@@ -31,6 +32,12 @@ const cancelUsePointHistoryEntity = baseHistorySchema.extend({
   amount: baseSchema.amount,
   type: z.literal(POINT_ACTION.CANCEL_USE),
 });
+export const toCancelUsePointEntity = (data: CancelUsePointHistoryDto & { amount: number }) => {
+  return zodSafeParse(cancelUsePointHistoryEntity, {
+    ...data,
+    type: POINT_ACTION.CANCEL_USE,
+  });
+};
 export type CancelUsePointHistoryDto = z.infer<typeof cancelUsePointHistoryDto>;
 export type CancelUsePointHistoryEntity = z.infer<typeof cancelUsePointHistoryEntity>;
 
@@ -57,6 +64,12 @@ const cancelEarnPointHistoryEntity = baseHistorySchema.extend({
   type: z.literal(POINT_ACTION.CANCEL_EARN),
   amount: baseSchema.amount,
 });
+export const toCancelEarnPointEntity = (data: CancelUsePointHistoryDto & { amount: number }) => {
+  return zodSafeParse(cancelEarnPointHistoryEntity, {
+    ...data,
+    type: POINT_ACTION.CANCEL_EARN,
+  });
+};
 export type CancelEarnPointHistoryDto = z.infer<typeof cancelEarnPointHistoryDto>;
 export type CancelEarnPointHistoryEntity = z.infer<typeof cancelEarnPointHistoryEntity>;
 
@@ -68,6 +81,7 @@ export type CreatePointHistoryEntity =
 
 export const createPointHistoryResultSchema = z.object({
   id: z.number(),
+  amount: z.number(),
 });
 export type CreatePointHistoryResult = z.infer<typeof createPointHistoryResultSchema>;
 

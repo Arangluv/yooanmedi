@@ -1,4 +1,3 @@
-import 'server-only';
 import { zodSafeParse, FindOption } from '@/shared';
 import { productsSchema, productSchema, type Product } from '../model/schemas/product.schema';
 import { productCategoriesSchema, type ProductCategory } from '../model/schemas/product-category';

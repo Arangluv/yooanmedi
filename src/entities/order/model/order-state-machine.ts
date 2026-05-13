@@ -7,26 +7,26 @@ interface StateTransition {
 }
 
 const ORDER_STATE_MACHINE: Record<OrderStatus, StateTransition> = {
-  [ORDER_STATUS.PENDING]: {
+  [ORDER_STATUS.pending]: {
     allowedActions: [ORDER_ACTION.PROCEED, ORDER_ACTION.CANCEL_BEFORE_PAYMENT],
   },
-  [ORDER_STATUS.PREPARING]: {
+  [ORDER_STATUS.preparing]: {
     allowedActions: [
       ORDER_ACTION.PROCEED,
       ORDER_ACTION.CANCEL_AFTER_PAYMENT,
       ORDER_ACTION.CREATE_CANCEL_REQUEST,
     ],
   },
-  [ORDER_STATUS.SHIPPING]: {
+  [ORDER_STATUS.shipping]: {
     allowedActions: [ORDER_ACTION.PROCEED, ORDER_ACTION.CANCEL_AFTER_PAYMENT],
   },
-  [ORDER_STATUS.DELIVERED]: {
+  [ORDER_STATUS.delivered]: {
     allowedActions: [ORDER_ACTION.CANCEL_AFTER_PAYMENT],
   },
-  [ORDER_STATUS.CANCEL_REQUEST]: {
+  [ORDER_STATUS.cancel_request]: {
     allowedActions: [ORDER_ACTION.APPROVE_CANCEL_REQUEST],
   },
-  [ORDER_STATUS.CANCELLED]: {
+  [ORDER_STATUS.cancelled]: {
     allowedActions: [],
   },
 };

@@ -26,88 +26,88 @@ const getDialogTitle = (
 };
 
 export const PROCEED_ACTION_UI_CONFIG: Record<OrderStatus, ActionUiConfig | null> = {
-  [ORDER_STATUS.PENDING]: {
+  [ORDER_STATUS.pending]: {
     action: ORDER_ACTION.PROCEED,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.PREPARING]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.PREPARING),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.preparing]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.preparing),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.PREPARING]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.preparing]} 처리`,
   },
-  [ORDER_STATUS.PREPARING]: {
+  [ORDER_STATUS.preparing]: {
     action: ORDER_ACTION.PROCEED,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.SHIPPING]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.SHIPPING),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.shipping]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.shipping),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.SHIPPING]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.shipping]} 처리`,
   },
-  [ORDER_STATUS.SHIPPING]: {
+  [ORDER_STATUS.shipping]: {
     action: ORDER_ACTION.PROCEED,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.DELIVERED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.DELIVERED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.delivered]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.delivered),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.DELIVERED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.delivered]} 처리`,
   },
-  [ORDER_STATUS.DELIVERED]: null,
-  [ORDER_STATUS.CANCEL_REQUEST]: null,
-  [ORDER_STATUS.CANCELLED]: null,
+  [ORDER_STATUS.delivered]: null,
+  [ORDER_STATUS.cancel_request]: null,
+  [ORDER_STATUS.cancelled]: null,
 };
 
 export const CANCEL_ACTION_UI_CONFIG_FOR_ADMIN: Record<OrderStatus, ActionUiConfig | null> = {
-  [ORDER_STATUS.PENDING]: {
+  [ORDER_STATUS.pending]: {
     action: ORDER_ACTION.CANCEL_BEFORE_PAYMENT,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.cancelled),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
   },
-  [ORDER_STATUS.PREPARING]: {
+  [ORDER_STATUS.preparing]: {
     action: ORDER_ACTION.CANCEL_AFTER_PAYMENT,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.cancelled),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
   },
-  [ORDER_STATUS.SHIPPING]: {
+  [ORDER_STATUS.shipping]: {
     action: ORDER_ACTION.CANCEL_AFTER_PAYMENT,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.cancelled),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
   },
-  [ORDER_STATUS.DELIVERED]: {
+  [ORDER_STATUS.delivered]: {
     action: ORDER_ACTION.CANCEL_AFTER_PAYMENT,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.cancelled),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
   },
-  [ORDER_STATUS.CANCEL_REQUEST]: {
+  [ORDER_STATUS.cancel_request]: {
     action: ORDER_ACTION.APPROVE_CANCEL_REQUEST,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.cancelled),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
   },
-  [ORDER_STATUS.CANCELLED]: null,
+  [ORDER_STATUS.cancelled]: null,
 };
 
 export const CANCEL_ACTION_UI_CONFIG_FOR_CLIENT: Record<OrderStatus, ActionUiConfig | null> = {
-  [ORDER_STATUS.PENDING]: {
+  [ORDER_STATUS.pending]: {
     action: ORDER_ACTION.CANCEL_BEFORE_PAYMENT,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.cancelled),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
   },
-  [ORDER_STATUS.PREPARING]: {
+  [ORDER_STATUS.preparing]: {
     action: ORDER_ACTION.CREATE_CANCEL_REQUEST,
-    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
-    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.CANCELLED),
+    buttonText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
+    dialogTitle: (display) => getDialogTitle(display, ORDER_STATUS.cancelled),
     dialogDescription: '선택한 주문의 상태가 일괄 변경됩니다',
-    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.CANCELLED]} 처리`,
+    dialogConfirmText: `${ORDER_STATUS_NAME[ORDER_STATUS.cancelled]} 처리`,
   },
-  [ORDER_STATUS.SHIPPING]: null,
-  [ORDER_STATUS.DELIVERED]: null,
-  [ORDER_STATUS.CANCEL_REQUEST]: null,
-  [ORDER_STATUS.CANCELLED]: null,
+  [ORDER_STATUS.shipping]: null,
+  [ORDER_STATUS.delivered]: null,
+  [ORDER_STATUS.cancel_request]: null,
+  [ORDER_STATUS.cancelled]: null,
 };

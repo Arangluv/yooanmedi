@@ -2,6 +2,8 @@ import type { Product } from '@/entities/product/model/schemas/product.schema';
 import type { CartItem } from '@/entities/cart/@x/point';
 /**
  * @description 카드 결제 시 적립되는 적립금
+ * TODO :: ref#1
+ * 해당 부분은 entity의 정보를 몰라야합니다. price와 rate만 받도록 수정해야합니다
  */
 export const getPointWhenUsingCard = (product: Product) => {
   return Math.floor(product.price * (product.cashback_rate / 100));

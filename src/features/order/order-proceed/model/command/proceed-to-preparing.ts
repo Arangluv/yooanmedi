@@ -14,7 +14,7 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
 
   protected getAdditionalOrderUpdateData() {
     return {
-      paymentStatus: PAYMENT_STATUS.COMPLETE,
+      paymentStatus: PAYMENT_STATUS.complete,
     };
   }
 
@@ -26,7 +26,7 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
 
       const orderProductIds = await findOrderProductIdsByStatus(
         targetOrderId,
-        ORDER_STATUS.PENDING,
+        ORDER_STATUS.pending,
       );
       const orderUserId = await findOrderUserId(targetOrderId);
       for (const orderProductId of orderProductIds) {
@@ -35,7 +35,7 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
           collection: 'order-product',
           id: orderProductId,
           data: {
-            orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
+            orderProductStatus: ORDER_PRODUCT_STATUS.preparing,
           },
         });
 
@@ -53,7 +53,7 @@ export class ProceedToPreparingCommand extends BaseProceedCommand {
       }
 
       // step 3. update order status to preparing
-      await this.updateOrderStatus(targetOrderId, ORDER_STATUS.PREPARING);
+      await this.updateOrderStatus(targetOrderId, ORDER_STATUS.preparing);
 
       return {
         success: true,

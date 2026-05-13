@@ -13,6 +13,12 @@ import {
   toPaymentApprovalServiceDto,
 } from './schemas/easypay.payment-approval.schema';
 import { BusinessLogicError } from '@/shared/model/errors/domain.error';
+import {
+  EasypayCancelRequestDto,
+  toEasypayPartialCancelEntity,
+  toEasypayTotalCancelEntity,
+} from './schemas/easypay.cancel.schema';
+import { EASYPAY_CONFIG, zodSafeParse } from '@/shared';
 
 export class EasyPayService implements IEasyPay {
   public async registerTransaction(requestDto: RegisterTransactionRequestDto) {
@@ -53,5 +59,35 @@ export class EasyPayService implements IEasyPay {
     }
 
     return approvalResult;
+  }
+
+  public async partialCancelRequest(dto: EasypayCancelRequestDto) {
+    try {
+      const requestEntity = toEasypayPartialCancelEntity(dto);
+      const result = await EasyPayRepository.paymentCancel(requestEntity);
+
+      if (result.resCd !== EASYPAY_CONFIG.successResponseCode) {
+        const error = new BusinessLogicError('주문을 취소하는데 문제가 발생했습니다');
+        error.setDevMessage(`이지페이 결제취소 요청이 반려되었습니다 - ${result.resMsg}`);
+        throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async totalCancelRequest(dto: EasypayCancelRequestDto) {
+    try {
+      const requestEntity = toEasypayTotalCancelEntity(dto);
+      const result = await EasyPayRepository.paymentCancel(requestEntity);
+
+      if (result.resCd !== EASYPAY_CONFIG.successResponseCode) {
+        const error = new BusinessLogicError('주문을 취소하는데 문제가 발생했습니다');
+        error.setDevMessage(`이지페이 결제취소 요청이 반려되었습니다 - ${result.resMsg}`);
+        throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }

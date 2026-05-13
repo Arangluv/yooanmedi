@@ -1,4 +1,5 @@
-import 'server-only';
+'use server';
+
 import { getPayload } from '@/shared/infrastructure';
 import type { CartItem, CreateCartItemEntity } from '../model/cart.schema';
 

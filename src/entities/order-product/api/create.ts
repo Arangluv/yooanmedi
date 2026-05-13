@@ -1,3 +1,5 @@
+/** TODO :: refactoring -> order-product.service.ts로 로직 이동 */
+
 'use server';
 
 import { getTransactionContext } from '@/shared/lib/transaction-context';

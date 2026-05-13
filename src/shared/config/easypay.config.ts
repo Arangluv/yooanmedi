@@ -6,4 +6,8 @@ export const EASYPAY_CONFIG = {
   paymentType: '1', // 고정
   returnUrl: process.env.SITE_URL + '/api/payments', // 고정
   successResponseCode: '0000',
+  cancelReviseType: {
+    partial: '32',
+    total: '40',
+  },
 } as const;

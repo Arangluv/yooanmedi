@@ -11,6 +11,7 @@ import {
   type PaymentApprovalSuccessResult,
   type paymentApprovalFailureResult,
 } from './schemas/easypay.payment-approval.schema';
+import { EasypayCancelRequestDto } from './schemas/easypay.cancel.schema';
 
 export interface IEasyPay {
   registerTransaction: (
@@ -22,4 +23,6 @@ export interface IEasyPay {
   approvePayment: (
     dto: PaymentApprovalRequestDto,
   ) => Promise<PaymentApprovalSuccessResult | paymentApprovalFailureResult>;
+  partialCancelRequest: (dto: EasypayCancelRequestDto) => Promise<void>;
+  totalCancelRequest: (dto: EasypayCancelRequestDto) => Promise<void>;
 }

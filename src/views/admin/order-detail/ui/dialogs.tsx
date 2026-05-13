@@ -1,0 +1,135 @@
+'use client';
+
+import { Button, useAlertDialog } from '@/shared';
+import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
+import { PackageX } from 'lucide-react';
+import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';
+import useOrderDetailTransition from '../model/hooks/useOrderDetailTransition';
+import { type AdminOrderDetail } from '../model/order-detail.schema';
+import useOrderCancel from '../model/hooks/useOrderCancel';
+import { AdminPartialOrderCancelRequestDto } from '../api/order-detail.api';
+import { OrderStatus } from '@/entities/order';
+
+interface TransitionTriggerProps {
+  order: AdminOrderDetail;
+  status: OrderStatus | null;
+}
+
+export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProps) => {
+  const { transitionOrder } = useOrderDetailTransition();
+  const { setDialogConfig, onOpen } = useAlertDialog();
+
+  if (status === null) {
+    return null;
+  }
+
+  return (
+    <AlertDialogTrigger asChild>
+      <Button
+        onClick={() => {
+          setDialogConfig(() => {
+            const baseConfig = TRANSITION_DIALOG_CONFIG[status];
+            if (!baseConfig) return null;
+            return {
+              ...baseConfig,
+              action: {
+                ...baseConfig.action,
+                onClick: () => transitionOrder(order),
+              },
+            };
+          });
+          onOpen();
+        }}
+      >
+        {TRANSITION_DIALOG_CONFIG[status]?.triggerText}
+      </Button>
+    </AlertDialogTrigger>
+  );
+};
+
+export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelRequestDto) => {
+  const { partialCancelOrder } = useOrderCancel();
+  const { setDialogConfig, onOpen } = useAlertDialog();
+
+  return (
+    <AlertDialogTrigger asChild>
+      <PackageX
+        strokeWidth={1.5}
+        className="text-muted-foreground size-6 cursor-pointer"
+        onClick={() => {
+          setDialogConfig(() => {
+            const dialogConfig = CANCEL_DIALOG_CONFIG;
+            return {
+              ...dialogConfig,
+              action: {
+                ...dialogConfig.action,
+                onClick: () => partialCancelOrder(dto),
+              },
+            };
+          });
+          onOpen();
+        }}
+      >
+        취소처리
+      </PackageX>
+    </AlertDialogTrigger>
+  );
+};
+
+// export const PartialCancelDialogTrigger = (dto: AdminPartialOrderCancelRequestDto) => {
+//   const { partialCancelOrder } = useOrderCancel();
+//   const { setDialogConfig, onOpen } = useAlertDialog();
+
+//   return (
+//     <AlertDialogTrigger asChild>
+//       <Button
+//         variant="destructive"
+//         onClick={() => {
+//           setDialogConfig(() => {
+//             const config = CANCEL_DIALOG_CONFIG.partial;
+
+//             return {
+//               ...config,
+//               action: {
+//                 ...config.action,
+//                 onClick: () => partialCancelOrder(dto),
+//               },
+//             };
+//           });
+//           onOpen();
+//         }}
+//       >
+//         취소처리
+//       </Button>
+//     </AlertDialogTrigger>
+//   );
+// };
+
+// export const TotalCancelDialogTrigger = ({ order }: { order: AdminOrderDetail }) => {
+//   const { totalCancelOrder } = useOrderCancel();
+//   const { setDialogConfig, onOpen } = useAlertDialog();
+
+//   return (
+//     <AlertDialogTrigger asChild>
+//       <Button
+//         variant="destructive"
+//         onClick={() => {
+//           setDialogConfig(() => {
+//             const config = CANCEL_DIALOG_CONFIG.total;
+
+//             return {
+//               ...config,
+//               action: {
+//                 ...config.action,
+//                 onClick: () => totalCancelOrder(order),
+//               },
+//             };
+//           });
+//           onOpen();
+//         }}
+//       >
+//         취소처리
+//       </Button>
+//     </AlertDialogTrigger>
+//   );
+// };

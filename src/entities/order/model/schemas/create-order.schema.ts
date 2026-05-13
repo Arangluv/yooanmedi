@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { PAYMENTS_METHOD } from '../../constants/payments-options';
+import { PAYMENTS_METHOD } from '../../constants/payments-method';
 import { ORDER_STATUS } from '../../constants/order-status';
 import { FLG_STATUS } from '../../constants/flg-status';
 import { PAYMENT_STATUS } from '../../constants/payment-status';
@@ -20,39 +20,39 @@ const createBaseOrderSchema = z.object({
 });
 
 const createPGOrderPipe = createBaseOrderSchema.extend({
-  paymentsMethod: z.literal(PAYMENTS_METHOD.CREDIT_CARD),
-  orderStatus: z.literal(ORDER_STATUS.PREPARING),
-  flgStatus: z.literal(FLG_STATUS.INIT_NORMAL),
-  paymentStatus: z.literal(PAYMENT_STATUS.COMPLETE),
+  paymentsMethod: z.literal(PAYMENTS_METHOD.credit_card),
+  orderStatus: z.literal(ORDER_STATUS.preparing),
+  flgStatus: z.literal(FLG_STATUS.init_normal),
+  paymentStatus: z.literal(PAYMENT_STATUS.complete),
 });
 
 export const createPGOrderSchema = createBaseOrderSchema
   .transform((data) => {
     return {
       ...data,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
-      orderStatus: ORDER_STATUS.PREPARING,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.COMPLETE,
+      paymentsMethod: PAYMENTS_METHOD.credit_card,
+      orderStatus: ORDER_STATUS.preparing,
+      flgStatus: FLG_STATUS.init_normal,
+      paymentStatus: PAYMENT_STATUS.complete,
     };
   })
   .pipe(createPGOrderPipe);
 
 const createBankTransferOrderPipe = createBaseOrderSchema.extend({
-  paymentsMethod: z.literal(PAYMENTS_METHOD.BANK_TRANSFER),
-  orderStatus: z.literal(ORDER_STATUS.PENDING),
-  flgStatus: z.literal(FLG_STATUS.INIT_NORMAL),
-  paymentStatus: z.literal(PAYMENT_STATUS.PENDING),
+  paymentsMethod: z.literal(PAYMENTS_METHOD.bank_transfer),
+  orderStatus: z.literal(ORDER_STATUS.pending),
+  flgStatus: z.literal(FLG_STATUS.init_normal),
+  paymentStatus: z.literal(PAYMENT_STATUS.pending),
 });
 
 export const createBankTransferOrderSchema = createBaseOrderSchema
   .transform((data) => {
     return {
       ...data,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
-      orderStatus: ORDER_STATUS.PENDING,
-      flgStatus: FLG_STATUS.INIT_NORMAL,
-      paymentStatus: PAYMENT_STATUS.PENDING,
+      paymentsMethod: PAYMENTS_METHOD.bank_transfer,
+      orderStatus: ORDER_STATUS.pending,
+      flgStatus: FLG_STATUS.init_normal,
+      paymentStatus: PAYMENT_STATUS.pending,
     };
   })
   .pipe(createBankTransferOrderPipe);

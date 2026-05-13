@@ -50,7 +50,7 @@ export abstract class BaseProceedCommand implements OrderCommand {
 
     const allProducts = await findAllOrderProduct(orderId);
     const hasCancelRequest = allProducts.some(
-      (product) => product.orderProductStatus === ORDER_PRODUCT_STATUS.CANCEL_REQUEST,
+      (product) => product.orderProductStatus === ORDER_PRODUCT_STATUS.cancel_request,
     );
 
     const data = {
@@ -59,7 +59,7 @@ export abstract class BaseProceedCommand implements OrderCommand {
 
     // cancel request가 하나라도 존재할 시
     if (hasCancelRequest) {
-      data.paymentStatus = PAYMENT_STATUS.PARTIAL_CANCEL;
+      data.paymentStatus = PAYMENT_STATUS.partial_cancel;
       return;
     }
 

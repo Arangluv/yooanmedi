@@ -382,7 +382,7 @@ describe('PaymentsBaseSchema', () => {
 
   describe('paymentsMethodUsedCard', () => {
     it('파싱에 성공한다', () => {
-      const result = paymentsMethodUsedCard.safeParse(PAYMENTS_METHOD.CREDIT_CARD);
+      const result = paymentsMethodUsedCard.safeParse(PAYMENTS_METHOD.credit_card);
       expect(result.success).toBe(true);
     });
 
@@ -394,7 +394,7 @@ describe('PaymentsBaseSchema', () => {
 
   describe('paymentsMethodUsedBankTransfer', () => {
     it('파싱에 성공한다', () => {
-      const result = paymentsMethodUsedBankTransfer.safeParse(PAYMENTS_METHOD.BANK_TRANSFER);
+      const result = paymentsMethodUsedBankTransfer.safeParse(PAYMENTS_METHOD.bank_transfer);
       expect(result.success).toBe(true);
     });
 

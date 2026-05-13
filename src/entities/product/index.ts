@@ -2,6 +2,8 @@ export { createProductFixture } from './__test__/product.fixture';
 
 export { getProductCategories } from './api/product.api';
 
+export { ProductFindOption } from './lib/find-options';
+
 export { productSchema, type Product } from './model/schemas/product.schema';
 export type { ProductCategory } from './model/schemas/product-category';
 

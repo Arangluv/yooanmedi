@@ -14,7 +14,7 @@ describe('BankTransferContextSchema', () => {
   it('bankTransferPaymentInitContextSchema로 파싱된다', () => {
     const result = bankTransferPaymentInitContextSchema.safeParse({
       ...bankTransferRequestDtoFixture,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
+      paymentsMethod: PAYMENTS_METHOD.bank_transfer,
       shopOrderNo: shopOrderNoFixture,
       orderList: enrichedOrderListFixture,
     });
@@ -24,7 +24,7 @@ describe('BankTransferContextSchema', () => {
   it('bankTransferPaymentContextAfterOrderSchema로 파싱된다', () => {
     const result = bankTransferPaymentContextAfterOrderSchema.safeParse({
       ...bankTransferRequestDtoFixture,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
+      paymentsMethod: PAYMENTS_METHOD.bank_transfer,
       shopOrderNo: shopOrderNoFixture,
       orderList: enrichedOrderListFixture,
       orderId: 1,

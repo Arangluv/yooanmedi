@@ -22,26 +22,26 @@ const createBaseOrderProductSchema = z.object({
 });
 
 const createBankTransferOrderProductPipe = createBaseOrderProductSchema.extend({
-  orderProductStatus: z.literal(ORDER_PRODUCT_STATUS.PENDING),
+  orderProductStatus: z.literal(ORDER_PRODUCT_STATUS.pending),
 });
 export const createBankTransferOrderProductSchema = createBaseOrderProductSchema
   .transform((data) => {
     return {
       ...data,
-      orderProductStatus: ORDER_PRODUCT_STATUS.PENDING,
+      orderProductStatus: ORDER_PRODUCT_STATUS.pending,
     };
   })
   .pipe(createBankTransferOrderProductPipe);
 
 const createCreditCardOrderProductPipe = createBaseOrderProductSchema.extend({
-  orderProductStatus: z.literal(ORDER_PRODUCT_STATUS.PREPARING),
+  orderProductStatus: z.literal(ORDER_PRODUCT_STATUS.preparing),
 });
 
 export const createCreditCardOrderProductSchema = createBaseOrderProductSchema
   .transform((data) => {
     return {
       ...data,
-      orderProductStatus: ORDER_PRODUCT_STATUS.PREPARING,
+      orderProductStatus: ORDER_PRODUCT_STATUS.preparing,
     };
   })
   .pipe(createCreditCardOrderProductPipe);

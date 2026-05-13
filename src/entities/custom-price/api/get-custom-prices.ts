@@ -1,4 +1,4 @@
-import 'server-only';
+'use server';
 import { FindOption } from '@/shared';
 import { getPayload } from '@/shared/infrastructure';
 

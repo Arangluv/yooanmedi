@@ -25,7 +25,7 @@ export class BankTransferContextFactory implements PaymentContextFactory {
   initialize(ctx: BasePaymentContext & { orderList: EnrichedOrderList; amount: number }) {
     return zodSafeParse(bankTransferPaymentInitContextSchema, {
       ...ctx,
-      paymentsMethod: PAYMENTS_METHOD.BANK_TRANSFER,
+      paymentsMethod: PAYMENTS_METHOD.bank_transfer,
     });
   }
 }
@@ -56,7 +56,7 @@ export class PGContextFactory implements PaymentContextFactory {
   initialize(ctx: BasePaymentContext & { orderList: EnrichedOrderList; authorizationId: string }) {
     return zodSafeParse(paymentInitContextSchema, {
       ...ctx,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      paymentsMethod: PAYMENTS_METHOD.credit_card,
     });
   }
 }

@@ -1,4 +1,4 @@
-import 'server-only';
+'use server';
 import { PaymentApprovalServiceDto } from '../model/schemas/easypay.payment-approval.schema';
 
 export const approvePayment = async (dto: PaymentApprovalServiceDto) => {

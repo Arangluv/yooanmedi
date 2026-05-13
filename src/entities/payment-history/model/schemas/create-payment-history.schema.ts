@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-options';
+import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 import { PaymentsBaseSchema, BaseSchema } from '@/shared';
 
 const createPaymentBaseSchema = z.object({
@@ -16,14 +16,14 @@ const createPaymentBaseSchema = z.object({
 });
 
 export const createPaymentHistoryPipe = createPaymentBaseSchema.extend({
-  paymentsMethod: z.literal(PAYMENTS_METHOD.CREDIT_CARD),
+  paymentsMethod: z.literal(PAYMENTS_METHOD.credit_card),
 });
 
 export const createPaymentHistoryRequestSchema = createPaymentBaseSchema
   .transform((data) => {
     return {
       ...data,
-      paymentsMethod: PAYMENTS_METHOD.CREDIT_CARD,
+      paymentsMethod: PAYMENTS_METHOD.credit_card,
     };
   })
   .pipe(createPaymentHistoryPipe);
