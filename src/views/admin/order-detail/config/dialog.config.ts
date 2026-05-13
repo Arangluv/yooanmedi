@@ -47,3 +47,15 @@ function getNextOrderStatusText(currentStatus: OrderStatus): string {
       throw new Error('해당 주문상태에서는 변경할 수 없습니다');
   }
 }
+
+export type CancelAction = 'partial' | 'total';
+
+export const CANCEL_DIALOG_CONFIG: AlertDialogConfig = {
+  triggerText: '',
+  headerTitle: `주문을 취소상태로 변경하시겠습니까?`,
+  description: `주문상품의 상태가 취소상태로 변경됩니다 `,
+  action: {
+    text: '취소처리',
+    onClick: () => {},
+  },
+};

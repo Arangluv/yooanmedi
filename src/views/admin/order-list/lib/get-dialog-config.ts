@@ -1,5 +1,6 @@
 import { type AlertDialogConfig } from '@/shared';
 import { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from '@/entities/order';
+import { DialogActionConfig } from '@/shared/model/alert-dialog';
 
 export const getTransitionDialogConfig = (
   currentStatus: OrderStatus,
@@ -71,3 +72,15 @@ function getNextOrderStatusText(currentStatus: OrderStatus): string {
       throw new Error('해당 주문상태에서는 변경할 수 없습니다');
   }
 }
+
+export const getCancelDialogConfig = (count: number): AlertDialogConfig => {
+  return {
+    triggerText: '주문취소 처리',
+    headerTitle: `${count}개 주문을 주문취소 상태로 변경하시겠습니까?`,
+    description: `주문취소 상태로 일괄 변경됩니다 `,
+    action: {
+      text: '주문취소 처리',
+      onClick: () => {},
+    },
+  };
+};

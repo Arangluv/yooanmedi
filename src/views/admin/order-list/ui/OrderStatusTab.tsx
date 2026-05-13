@@ -6,6 +6,14 @@ import useOrderListSearch from '../model/useOrderListSearch';
 
 const OrderStatusTab = () => {
   const { filters, updateOrderStatus } = useOrderListSearch();
+  const searchAllowedStatus = [
+    ORDER_STATUS.pending,
+    ORDER_STATUS.preparing,
+    ORDER_STATUS.shipping,
+    ORDER_STATUS.delivered,
+    ORDER_STATUS.cancelled,
+  ];
+
   return (
     <div className="bg-background flex w-full items-center justify-between rounded-lg p-4">
       <Tabs value={filters.orderStatus ?? 'all'}>
@@ -13,7 +21,7 @@ const OrderStatusTab = () => {
           <TabsTrigger value="all" className="text-base" onClick={() => updateOrderStatus('all')}>
             전체
           </TabsTrigger>
-          {Object.values(ORDER_STATUS).map((status) => (
+          {searchAllowedStatus.map((status) => (
             <TabsTrigger
               key={status}
               value={status}

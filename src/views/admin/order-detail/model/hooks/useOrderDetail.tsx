@@ -1,7 +1,12 @@
 'use client';
 
 import { formatNumberWithCommas } from '@/shared';
-import { OrderStatus, PAYMENT_STATUS_NAME, PAYMENTS_METHOD_NAME } from '@/entities/order';
+import {
+  OrderStatus,
+  PAYMENT_STATUS_NAME,
+  PAYMENTS_METHOD_NAME,
+  getPaymentStatus,
+} from '@/entities/order';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
 import useOrderDetailQuery from './useOrderDetailQuery';
 
@@ -19,6 +24,11 @@ const useOrderDetail = (orderId: number) => {
     orderProducts.forEach((orderProducts) => {
       statusSet.add(orderProducts.orderProductStatus);
     });
+
+    if (statusSet.size === 0) {
+      return { orderProducts, status: null };
+    }
+
     if (statusSet.size > 1) {
       throw new Error('orderProduct 상태는 중복될 수 없습니다');
     }
@@ -43,6 +53,12 @@ const useOrderDetail = (orderId: number) => {
     return { orderProducts, status: ORDER_PRODUCT_STATUS.cancelled };
   };
 
+  const getPaymentViewStatus = () => {
+    const orderProductStatus = data.orderProducts.map((item) => item.orderProductStatus);
+    const paymentStatus = getPaymentStatus(data.orderStatus, orderProductStatus);
+    return paymentStatus;
+  };
+
   return {
     orderDetail: data,
     getProgressdOrderProductContext,
@@ -54,7 +70,7 @@ const useOrderDetail = (orderId: number) => {
     },
     paymentsInfo: {
       paymentMethod: PAYMENTS_METHOD_NAME[data.paymentsMethod],
-      paymentStatus: PAYMENT_STATUS_NAME[data.paymentStatus],
+      paymentStatus: PAYMENT_STATUS_NAME[getPaymentViewStatus()],
       usedPoint: formatNumberWithCommas(data.usedPoint),
       finalPrice: formatNumberWithCommas(data.finalPrice),
     },

@@ -5,8 +5,12 @@ import { ORDER_STATUS, ORDER_STATUS_NAME } from '../../constants/order-status';
 const OrderStatusBadge = ({
   orderStatus,
 }: {
-  orderStatus: (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
+  orderStatus: (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS] | null;
 }) => {
+  if (!orderStatus) {
+    return null;
+  }
+
   const colorMapper = {
     [ORDER_STATUS.pending]: 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300',
     [ORDER_STATUS.preparing]:

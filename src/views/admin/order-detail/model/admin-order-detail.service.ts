@@ -2,12 +2,14 @@ import { zodSafeParse } from '@/shared';
 import { OrderService } from '@/entities/order/infrastructure';
 import { OrderProductFindOption, OrderProductComposer } from '@/entities/order-product';
 import { OrderProductService } from '@/entities/order-product/infrastructure';
-import { adminOrderDetailSchema } from './order-detail.schema';
+import { adminOrderDetailSchema, toOrder } from './order-detail.schema';
 import { ProductFindOption } from '@/entities/product';
 import { ProductService } from '@/entities/product/infrastructure';
 import { type OrderProductWithProduct } from '@/entities/order-product/model/order-product-composer';
 import { OrderComposer } from '@/entities/order';
 import { UserService } from '@/entities/user/infrastructure';
+import { AdminPartialOrderCancelRequestDto } from '../api/order-detail.api';
+import { AdminOrderPartialCancelCommandFactory } from '@/features/order/order-cancel/model/command/partial-cancel-command-factory';
 
 export class AdminOrderDetailService {
   public async getOrderDetail(orderId: number) {
@@ -42,5 +44,21 @@ export class AdminOrderDetailService {
     );
 
     return zodSafeParse(adminOrderDetailSchema, orderWithOrderProduct);
+  }
+
+  public async partialCancelOrder(dto: AdminPartialOrderCancelRequestDto) {
+    try {
+      const orderEntity = toOrder(dto.order);
+      const strategy = AdminOrderPartialCancelCommandFactory.getCancelStrategy(orderEntity);
+      const cancelCommand = AdminOrderPartialCancelCommandFactory.createCommand({
+        strategy,
+        order: orderEntity,
+        orderProductId: dto.targetOrderProductId,
+      });
+
+      await cancelCommand.execute();
+    } catch (error) {
+      throw error;
+    }
   }
 }

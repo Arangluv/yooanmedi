@@ -1,8 +1,9 @@
-import { zodSafeParse } from '@/shared';
-import { OrderFindOption, type OrderStatus, OrderComposer } from '@/entities/order';
-import { OrderService } from '@/entities/order/infrastructure';
-import { UserService } from '@/entities/user/model/user.service';
-import { AdminOrderListResult, adminOrderListResultSchema } from '@/views/admin/order-list';
+import { type OrderStatus } from '@/entities/order';
+import { AdminOrderListItem, AdminOrderListResult } from '@/views/admin/order-list';
+import { entityToOrderListItem, toOrders } from './admin-order-list.schema';
+import { AdminOrderTotalCancelCommandFactory } from '@/features/order/order-cancel/model/command/total-cancel-command-factory';
+import { OrderListFindOption } from '../lib/find-options';
+import { AdminOrderListRepository } from '../api/repository';
 
 interface AdminOrderListRequestDto {
   page: number;
@@ -11,18 +12,26 @@ interface AdminOrderListRequestDto {
 
 export class AdminOrderListService {
   public async getOrderList(dto: AdminOrderListRequestDto): Promise<AdminOrderListResult> {
-    const orderService = new OrderService();
-    const option = OrderFindOption.adminOrderList.build(dto);
-    const { orders, totalCount } = await orderService.getOrderList(option);
+    try {
+      const option = OrderListFindOption.build(dto);
+      const result = await AdminOrderListRepository.findMany(option);
 
-    const userService = new UserService();
-    const userIds = orders.map((order) => order.user);
-    const userMap = await userService.getUserMap(userIds);
+      return entityToOrderListItem(result.orders, result.totalCount);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 
-    const ordersWithUser = OrderComposer.list.withUser(orders, userMap);
-    return zodSafeParse(adminOrderListResultSchema, {
-      orders: ordersWithUser,
-      totalCount,
-    });
+  public async totalCancelOrders(orders: AdminOrderListItem[]) {
+    try {
+      const orderEntities = toOrders(orders);
+      for (const order of orderEntities) {
+        const cancelCommand = AdminOrderTotalCancelCommandFactory.createCommand(order);
+        await cancelCommand.execute();
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }

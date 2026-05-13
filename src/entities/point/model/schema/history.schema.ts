@@ -65,7 +65,7 @@ const cancelEarnPointHistoryEntity = baseHistorySchema.extend({
   amount: baseSchema.amount,
 });
 export const toCancelEarnPointEntity = (data: CancelUsePointHistoryDto & { amount: number }) => {
-  return zodSafeParse(cancelUsePointHistoryEntity, {
+  return zodSafeParse(cancelEarnPointHistoryEntity, {
     ...data,
     type: POINT_ACTION.CANCEL_EARN,
   });
@@ -81,6 +81,7 @@ export type CreatePointHistoryEntity =
 
 export const createPointHistoryResultSchema = z.object({
   id: z.number(),
+  amount: z.number(),
 });
 export type CreatePointHistoryResult = z.infer<typeof createPointHistoryResultSchema>;
 

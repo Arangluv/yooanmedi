@@ -8,17 +8,39 @@ type OrderTransitionParams = {
 
 export const OrderProductFindOption = {
   orderTransition: {
-    build({ orderId, currentStatus }: OrderTransitionParams): FindOption {
+    list: {
+      build({ orderId, currentStatus }: OrderTransitionParams): FindOption {
+        return {
+          pagination: false,
+          where: {
+            order: { equals: orderId },
+            orderProductStatus: { equals: currentStatus },
+          },
+        };
+      },
+    },
+    detail: {
+      build(orderId: number): FindOption {
+        return {
+          pagination: false,
+          where: {
+            order: { equals: orderId },
+          },
+        };
+      },
+    },
+  },
+  partialCancelOrder: {
+    build(orderId: number): FindOption {
       return {
         pagination: false,
         where: {
           order: { equals: orderId },
-          orderProductStatus: { equals: currentStatus },
         },
       };
     },
   },
-  partialCancelOrder: {
+  totalCancelOrder: {
     build(orderId: number): FindOption {
       return {
         pagination: false,

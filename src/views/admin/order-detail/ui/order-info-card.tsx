@@ -17,14 +17,13 @@ import { ItemGroup, ItemSeparator } from '@/shared/ui/shadcn/item';
 import OrderProductItem from './OrderProductItem';
 import { ORDER_DETAIL_UI_CONFIG, OrderInfomationCardType } from '../config/order-detail-ui-config';
 import useOrderDetail from '../model/hooks/useOrderDetail';
-import { type OrderProduct } from '../model/order-detail.schema';
-import { TransitionDialogTrigger, CancelDialogTrigger } from './dialogs';
+import { AdminOrderDetail, type OrderProduct } from '../model/order-detail.schema';
+import { TransitionDialogTrigger } from './dialogs';
 
 interface OrderInfoCardProps {
   type: OrderInfomationCardType;
-  orderId: number;
-  orderStatus: OrderStatus;
-  orderNo: string;
+  order: AdminOrderDetail;
+  status: OrderStatus | null;
   date: string;
   orderProducts: OrderProduct[];
   children?: React.ReactNode;
@@ -32,11 +31,10 @@ interface OrderInfoCardProps {
 
 const OrderInfoCard = ({
   type,
-  orderStatus,
-  orderNo,
-  date,
+  order,
   orderProducts,
-  orderId,
+  status,
+  date,
   children,
 }: OrderInfoCardProps) => {
   const uiConfig = ORDER_DETAIL_UI_CONFIG[type];
@@ -47,10 +45,11 @@ const OrderInfoCard = ({
       <CardHeader>
         <CardTitle className="flex items-center justify-between text-xl">
           <span>{uiConfig.title}</span>
-          <OrderStatusBadge orderStatus={orderStatus} />
+          <OrderStatusBadge orderStatus={status} />
         </CardTitle>
         <CardDescription className="flex flex-row gap-2 text-lg">
-          <span>#{orderNo}</span>•<span>{moment(date).format('YYYY-MM-DD HH:mm:ss')} 생성</span>
+          <span>#{order.orderNo}</span>•
+          <span>{moment(date).format('YYYY-MM-DD HH:mm:ss')} 생성</span>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -61,12 +60,7 @@ const OrderInfoCard = ({
             {orderProducts.map((orderProduct, idx) => {
               return (
                 <Fragment key={orderProduct.id}>
-                  <OrderProductItem
-                    orderId={orderId}
-                    idx={idx}
-                    orderProduct={orderProduct}
-                    isCancelAction={uiConfig.canItemCancel}
-                  />
+                  <OrderProductItem order={order} idx={idx} orderProduct={orderProduct} />
                   <ItemSeparator className="last:hidden" />
                 </Fragment>
               );
@@ -83,18 +77,23 @@ export const OrderProgressInfoCard = ({ orderId }: { orderId: number }) => {
   const { orderDetail, getProgressdOrderProductContext } = useOrderDetail(orderId);
   const { orderProducts, status } = getProgressdOrderProductContext();
 
+  const isNotVisible =
+    status === ORDER_STATUS.delivered ||
+    status === ORDER_STATUS.cancelled ||
+    orderProducts.length === 0 ||
+    status === null;
+
   return (
     <OrderInfoCard
       type="progress"
-      orderId={orderId}
-      orderStatus={status as any}
-      orderNo={orderDetail.orderNo}
-      date={orderDetail.createdAt}
+      order={orderDetail}
       orderProducts={orderProducts}
+      status={status}
+      date={orderDetail.createdAt}
     >
-      {orderDetail.orderStatus === ORDER_STATUS.delivered ? null : (
+      {isNotVisible ? null : (
         <CardFooter className="justify-end">
-          <TransitionDialogTrigger order={orderDetail} />
+          <TransitionDialogTrigger order={orderDetail} status={status} />
         </CardFooter>
       )}
     </OrderInfoCard>
@@ -103,36 +102,30 @@ export const OrderProgressInfoCard = ({ orderId }: { orderId: number }) => {
 
 export const OrderCancelRequestInfoCard = ({ orderId }: { orderId: number }) => {
   const { orderDetail, getCancelRequestOrderProductContext } = useOrderDetail(orderId);
-  const { orderProducts, status } = getCancelRequestOrderProductContext();
+  const { orderProducts } = getCancelRequestOrderProductContext();
 
   return (
     <OrderInfoCard
       type="cancelRequest"
-      orderId={orderDetail.id}
-      orderStatus={status}
-      date={orderDetail.updatedAt}
-      orderNo={orderDetail.orderNo}
+      order={orderDetail}
       orderProducts={orderProducts}
-    >
-      <CardFooter className="justify-end">
-        <CancelDialogTrigger />
-      </CardFooter>
-    </OrderInfoCard>
+      status={ORDER_STATUS.cancel_request}
+      date={orderDetail.createdAt}
+    />
   );
 };
 
 export const OrderCancelledInfoCard = ({ orderId }: { orderId: number }) => {
-  const { orderDetail, getCancelRequestOrderProductContext } = useOrderDetail(orderId);
-  const { orderProducts, status } = getCancelRequestOrderProductContext();
+  const { orderDetail, getCancelledProductContext } = useOrderDetail(orderId);
+  const { orderProducts } = getCancelledProductContext();
 
   return (
     <OrderInfoCard
       type="cancelled"
-      orderId={orderDetail.id}
-      orderStatus={status}
-      date={orderDetail.updatedAt}
-      orderNo={orderDetail.orderNo}
+      order={orderDetail}
       orderProducts={orderProducts}
+      status={ORDER_STATUS.cancelled}
+      date={orderDetail.createdAt}
     />
   );
 };

@@ -28,7 +28,6 @@ export const OrderListFindOption = {
           equals: searchParams['order_status'],
         };
       }
-
       return {
         pagination: false,
         where,

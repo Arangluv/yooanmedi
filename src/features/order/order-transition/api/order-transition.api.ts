@@ -3,6 +3,7 @@
 import { EndPointResult, okWithData, failure, normalizeError } from '@/shared';
 import { Order } from '@/entities/order';
 import { OrderTransitionCommandFactory } from '../model/order-transition-command-factory';
+import { Logger } from '@/shared/infrastructure';
 
 export interface TransitionOrderResult {
   orderId: number;
@@ -20,6 +21,8 @@ export const transitionOrder = async (
     });
   } catch (error) {
     const { message } = normalizeError(error);
+    Logger.error(error);
+
     return failure(message);
   }
 };
@@ -44,6 +47,8 @@ export const transitionOrderList = async (
     });
   } catch (error) {
     const { message } = normalizeError(error);
+    Logger.error(error);
+
     return failure(message);
   }
 };

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAlertDialog } from '@/shared';
 import { OrderTransitionApi } from '@/features/order/order-transition';
-import { AdminOrderListItem, toOrder } from '../admin-order-list.schema';
+import { AdminOrderListItem, toOrders } from '../admin-order-list.schema';
 import { ADMIN_ORDER_LIST_ROOT_QUERY_KEY } from '../../lib/query-keys';
 import { ADMIN_ORDER_DETAIL_ROOT_QUERY_KEY } from '@/views/admin/order-detail/lib/query-keys'; // todo :: 잘못된 참조방식
 
@@ -33,7 +33,7 @@ const useOrderListTransition = () => {
   });
 
   const transitionOrder = (orderList: AdminOrderListItem[]) => {
-    const order = toOrder(orderList);
+    const order = toOrders(orderList);
     setActionDiabled(true);
     mutate(order);
   };

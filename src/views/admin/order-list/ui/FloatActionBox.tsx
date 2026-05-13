@@ -10,7 +10,11 @@ const FloatActionBox = ({ selectedRows }: { selectedRows: Row<AdminOrderListItem
   const { filters } = useOrderListSearch();
 
   // 체크박스가 없는 상태에서는 플로팅 액션 박스를 보여주지 않음
-  if (filters.orderStatus === 'all' || filters.orderStatus === ORDER_STATUS.cancelled) {
+  if (
+    filters.orderStatus === 'all' ||
+    filters.orderStatus === ORDER_STATUS.cancelled ||
+    filters.orderStatus === ORDER_STATUS.cancel_request
+  ) {
     return null;
   }
 
@@ -22,7 +26,7 @@ const FloatActionBox = ({ selectedRows }: { selectedRows: Row<AdminOrderListItem
   return (
     <div className="fixed right-1/2 bottom-12 z-50 translate-x-1/2">
       <div className="bg-foreground dark:bg-background flex items-center gap-4 rounded-xl p-4">
-        <CancelDialogTrigger />
+        <CancelDialogTrigger selectedRows={selectedRows} />
         <TransitionDialogTrigger selectedRows={selectedRows} />
       </div>
     </div>

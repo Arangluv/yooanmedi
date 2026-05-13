@@ -1,23 +1,18 @@
 import Image from 'next/image';
-import { ImageIcon, PackageX } from 'lucide-react';
+import { ImageIcon } from 'lucide-react';
 import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription } from '@/shared/ui/shadcn/item';
 import { formatNumberWithCommas } from '@/shared/lib/fomatters';
-import { Button } from '@/shared/ui/shadcn/button';
-import { type OrderProduct } from '../model/order-detail.schema';
+import { AdminOrderDetail, type OrderProduct } from '../model/order-detail.schema';
+import { PartialCancelDialogIconTrigger } from './dialogs';
+import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
 
 interface OrderProductItemProps {
+  order: AdminOrderDetail;
   orderProduct: OrderProduct;
-  orderId: number;
   idx: number;
-  isCancelAction: boolean;
 }
 
-const OrderProductItem = ({
-  orderId,
-  orderProduct,
-  idx,
-  isCancelAction,
-}: OrderProductItemProps) => {
+const OrderProductItem = ({ order, orderProduct, idx }: OrderProductItemProps) => {
   return (
     <Item variant={idx % 2 === 0 ? 'default' : 'muted'}>
       <ItemMedia variant="image">
@@ -74,22 +69,9 @@ const OrderProductItem = ({
           </div>
         </div>
       </ItemContent>
-      {/* TODO :: 개별취소 구현 */}
-      {/* {isCancelAction && (
-        <OrderAction.CancelTrigger
-          targetOrderIds={[orderId]}
-          targetOrderProductId={orderProduct.id}
-          currentStatus={orderProduct.orderProductStatus}
-          display={{
-            count: 1,
-            viewType: 'order-detail',
-          }}
-        >
-          <Button variant="ghost" size="icon">
-            <PackageX className="size-6" strokeWidth={1.5} />
-          </Button>
-        </OrderAction.CancelTrigger>
-      )} */}
+      {orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.cancelled && (
+        <PartialCancelDialogIconTrigger order={order} targetOrderProductId={orderProduct.id} />
+      )}
     </Item>
   );
 };

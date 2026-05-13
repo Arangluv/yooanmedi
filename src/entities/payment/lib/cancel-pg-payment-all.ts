@@ -33,7 +33,6 @@ export const cancelPgPaymentAll = async (amount: number, pgCno: string) => {
 
   if (!response.ok) {
     const errorData = await response.json();
-    console.log(errorData);
     throw new Error('주문취소에 실패했습니다. 관련부서에 문의해주세요.');
   }
 

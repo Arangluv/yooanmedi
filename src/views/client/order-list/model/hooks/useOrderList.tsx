@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { partialCancelOrder } from '../../api/order-list.api';
+import { ClientPartialOrderCancelRequestDto, partialCancelOrder } from '../../api/order-list.api';
 import { useAlertDialog } from '@/shared';
 import { toast } from 'sonner';
 import { CLIENT_ORDER_LIST_ROOT_QUERY_KEY } from '../../lib/query-keys';
@@ -10,7 +10,7 @@ const useOrderCancel = () => {
   const queryClient = useQueryClient();
   const { setActionDiabled, onClose } = useAlertDialog();
   const { mutate } = useMutation({
-    mutationFn: () => partialCancelOrder(),
+    mutationFn: (dto: ClientPartialOrderCancelRequestDto) => partialCancelOrder(dto),
     onSuccess: (result) => {
       if (result.isSuccess) {
         toast.success(result.message);
@@ -26,9 +26,9 @@ const useOrderCancel = () => {
     },
   });
 
-  const cancelOrder = () => {
+  const cancelOrder = (dto: ClientPartialOrderCancelRequestDto) => {
     setActionDiabled(true);
-    mutate();
+    mutate(dto);
   };
 
   return { cancelOrder };

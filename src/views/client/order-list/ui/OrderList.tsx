@@ -70,8 +70,8 @@ const OrderItem = ({ order }: { order: ClientOrder }) => {
         order.orderStatus === ORDER_STATUS.pending && <BankTransferPendingAlert />}
       {/* 구매 상품 리스트 영역 */}
       <div className="flex flex-col gap-6">
-        {order.orderProducts.map((orderProduct) => (
-          <OrderProductItem key={orderProduct.id} orderProduct={orderProduct} order={order} />
+        {order.orderProducts.map((orderProduct, idx) => (
+          <OrderProductItem key={idx} orderProduct={orderProduct} order={order} />
         ))}
       </div>
     </div>
@@ -164,10 +164,7 @@ const OrderProductItem = ({ orderProduct, order }: OrderProductItemProps) => {
         {/* 주문 액션 */}
         <div className="flex w-full items-center justify-end">
           {canPartialCancel && (
-            <OrderPartialCancelTrigger
-              orderProduct={orderProduct}
-              paymentsMethod={order.paymentsMethod}
-            />
+            <OrderPartialCancelTrigger order={order} orderProduct={orderProduct} />
           )}
         </div>
       </div>

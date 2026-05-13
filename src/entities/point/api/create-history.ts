@@ -9,7 +9,9 @@ export const createPointHistory = async (
   const result = await payload.create({
     collection: 'point-transaction',
     data: history,
-    select: {},
+    select: {
+      amount: true,
+    },
     req: {
       transactionID,
     },

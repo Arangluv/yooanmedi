@@ -1,7 +1,7 @@
 import { runWithTransaction, TransactionalCommand } from '@/shared/infrastructure';
 import { OrderTransitionContext } from './schemas/transition-context.schema';
 import { OrderProductFindOption } from '@/entities/order-product';
-import { OrderProductService } from '@/entities/order-product/infrastructure';
+import { IOrderProductService, OrderProductService } from '@/entities/order-product/infrastructure';
 import { OrderService } from '@/entities/order/model/services/order.service';
 
 export interface IOrderTransitionCommand extends TransactionalCommand<void> {
@@ -10,9 +10,10 @@ export interface IOrderTransitionCommand extends TransactionalCommand<void> {
 
 export class OrderTransitionCommand implements IOrderTransitionCommand {
   public readonly context: OrderTransitionContext;
-
+  private readonly orderProductService: IOrderProductService;
   constructor(context: OrderTransitionContext) {
     this.context = context;
+    this.orderProductService = new OrderProductService();
   }
 
   public async execute() {
@@ -21,7 +22,7 @@ export class OrderTransitionCommand implements IOrderTransitionCommand {
 
   public async run() {
     const orderProductService = new OrderProductService();
-    const findOption = OrderProductFindOption.orderTransition.build({
+    const findOption = OrderProductFindOption.orderTransition.list.build({
       orderId: this.context.order.id,
       currentStatus: this.context.fromOrderProductStatus,
     });

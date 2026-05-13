@@ -7,7 +7,9 @@ import {
 import { OrderProductRepository } from '../../api/repository';
 
 export interface IOrderProductService {
+  getOrderProductWithTransaction: (id: number) => Promise<OrderProduct>;
   getOrderProducts: (option: FindOption) => Promise<OrderProduct[]>;
+  getOrderProductsWithTransaction: (option: FindOption) => Promise<OrderProduct[]>;
   updateOrderProducts: (
     targetOrderProducts: OrderProduct[],
     data: Partial<OrderProduct>,
@@ -16,6 +18,17 @@ export interface IOrderProductService {
 }
 
 export class OrderProductService implements IOrderProductService {
+  // todo :: 트랜젝션을 위한 get을 따로 만들어두었으나 추후 수정이 필요합니다.
+  public async getOrderProductWithTransaction(id: number) {
+    try {
+      const orderProduct = await OrderProductRepository.findOne(id);
+      return orderProduct;
+    } catch (error) {
+      const nomalizedError = normalizeError(error);
+      throw new Error(nomalizedError.message);
+    }
+  }
+
   public async getOrderProducts(option: FindOption) {
     try {
       const orderProducts = await OrderProductRepository.findMany(option);
@@ -33,7 +46,7 @@ export class OrderProductService implements IOrderProductService {
   // todo :: 트랜젝션을 위한 get을 따로 만들어두었으나 추후 수정이 필요합니다.
   public async getOrderProductsWithTransaction(option: FindOption) {
     try {
-      const orderProducts = await OrderProductRepository.findMany(option);
+      const orderProducts = await OrderProductRepository.findManyWithTransaction(option);
       if (orderProducts.length === 0) {
         throw new Error('주문상품 목록이 비어있습니다');
       }

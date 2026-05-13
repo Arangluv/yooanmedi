@@ -1,19 +1,19 @@
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
-import { Button, PaymentsMethod, useAlertDialog } from '@/shared';
+import { Button, useAlertDialog } from '@/shared';
 import { getDialogConfig } from '../lib/generate-dialog-config';
 import { type ClientOrder } from '@/features/order/order-list';
 import useOrderCancel from '../model/hooks/useOrderList';
 
 export const OrderPartialCancelTrigger = ({
+  order,
   orderProduct,
-  paymentsMethod,
 }: {
+  order: ClientOrder;
   orderProduct: ClientOrder['orderProducts'][number];
-  paymentsMethod: PaymentsMethod;
 }) => {
   const { cancelOrder } = useOrderCancel();
   const { onOpen, setDialogConfig } = useAlertDialog();
-  const dialogConfig = getDialogConfig(orderProduct.orderProductStatus, paymentsMethod);
+  const dialogConfig = getDialogConfig(orderProduct.orderProductStatus, order.paymentsMethod);
 
   return (
     <AlertDialogTrigger asChild>
@@ -26,7 +26,7 @@ export const OrderPartialCancelTrigger = ({
               ...dialogConfig,
               action: {
                 ...dialogConfig.action,
-                onClick: () => cancelOrder(),
+                onClick: () => cancelOrder({ order, targetOrderProductId: orderProduct.id }),
               },
             };
           });
