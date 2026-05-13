@@ -113,10 +113,13 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
     const isExistAlreadyCancelledItem = orderProducts.some(
       (orderProduct) => orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled,
     );
-    const cancelAmount = orderProducts.reduce(
-      (sum, orderProduct) => sum + orderProduct.totalAmount,
-      0,
-    );
+
+    let cancelAmount = 0;
+    orderProducts.forEach((orderProduct) => {
+      if (orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.cancelled) {
+        cancelAmount += orderProduct.totalAmount;
+      }
+    });
 
     if (isExistAlreadyCancelledItem) {
       return { strategy: 'partial', amount: cancelAmount };

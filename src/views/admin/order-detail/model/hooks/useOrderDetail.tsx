@@ -59,6 +59,20 @@ const useOrderDetail = (orderId: number) => {
     return paymentStatus;
   };
 
+  const getTotalPrice = () => {
+    let totalPrice = data.finalPrice;
+    data.orderProducts.forEach((orderProduct) => {
+      if (
+        orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancel_request ||
+        orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled
+      ) {
+        totalPrice -= orderProduct.totalAmount;
+      }
+    });
+
+    return totalPrice;
+  };
+
   return {
     orderDetail: data,
     getProgressdOrderProductContext,
@@ -72,7 +86,7 @@ const useOrderDetail = (orderId: number) => {
       paymentMethod: PAYMENTS_METHOD_NAME[data.paymentsMethod],
       paymentStatus: PAYMENT_STATUS_NAME[getPaymentViewStatus()],
       usedPoint: formatNumberWithCommas(data.usedPoint),
-      finalPrice: formatNumberWithCommas(data.finalPrice),
+      finalPrice: formatNumberWithCommas(getTotalPrice()),
     },
     user: data.user,
   };
