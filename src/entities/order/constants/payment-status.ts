@@ -13,4 +13,3 @@ export const PAYMENT_STATUS_NAME = {
 } as const;
 
 export type PaymentStatus = (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS];
-export type PaymentStatusKey = keyof typeof PAYMENT_STATUS;

@@ -9,4 +9,3 @@ export const PAYMENTS_METHOD_NAME = {
 } as const;
 
 export type PaymentsMethod = (typeof PAYMENTS_METHOD)[keyof typeof PAYMENTS_METHOD];
-export type PaymentsMethodKey = keyof typeof PAYMENTS_METHOD;

@@ -2,7 +2,7 @@
 
 'use server';
 
-import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { getTransactionContext } from '@/shared/infrastructure';
 import { CreateOrderProductEntity } from '../model/schemas/create-order-product.schema';
 
 export const createOrderProduct = async (entity: CreateOrderProductEntity) => {

@@ -1,4 +1,4 @@
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { NuqsProvider } from '@/shared';
 import { AuthGuard } from '@/entities/user';
 import { getSiteMetadata, SiteMetadataSetter } from '@/shared';
 import LayoutTopNavbar from '@/entities/order/ui/LayoutTopNavbar';
@@ -18,12 +18,12 @@ export default async function OrderLayout({ children }: { children: React.ReactN
     <AuthGuard user={user}>
       {/* TODO :: Refactor -> Provider의 Depth가 깊어지는 문제 (전역상태관리 모범사례 참고) */}
       <SiteMetadataSetter matadata={siteMetadata}>
-        <NuqsAdapter>
+        <NuqsProvider>
           <LayoutTopNavbar />
           <FavoritesProductInitProvider initValue={favoritesList}>
             <CartHydrationProvider initialData={cart}>{children}</CartHydrationProvider>
           </FavoritesProductInitProvider>
-        </NuqsAdapter>
+        </NuqsProvider>
       </SiteMetadataSetter>
     </AuthGuard>
   );

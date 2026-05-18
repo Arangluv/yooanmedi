@@ -5,7 +5,7 @@ import {
   type CreateOrderRequestDto,
 } from '../schemas/create-order.schema';
 import { OrderRepository } from '../../api/repository';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse } from '@/shared';
 
 export class PGOrderPaymentsService implements IOrderPaymentsService {
   public async createOrder(data: CreateOrderRequestDto): Promise<CreateOrderResponseDto> {

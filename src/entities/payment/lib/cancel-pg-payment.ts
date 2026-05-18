@@ -2,8 +2,7 @@
 
 import crypto from 'crypto';
 import moment from 'moment-timezone';
-
-import { generateUUID32digits } from '@/shared/lib/identifier';
+import { generateUUID32digits } from '@/shared';
 import { getPaymentPgCno } from '../api/get-pg-cno';
 import { cancelPaymentSchema } from '../model/cancel-schema';
 import { CANCEL_REVISE_TYPE } from '../constant/cancel-revise-type';

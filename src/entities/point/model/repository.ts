@@ -1,6 +1,6 @@
 import { createPointHistory } from '../api/create-history';
 import { getHistories, getHistory } from '../api/histories';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse } from '@/shared';
 import {
   CreatePointHistoryEntity,
   createPointHistoryResultSchema,

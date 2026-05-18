@@ -1,8 +1,11 @@
 import moment from 'moment';
-import { type Where } from 'payload';
-import { type User } from '@/entities/user';
-import { type FindOption } from '@/shared';
-import { ClientOrderListSearchParams } from './generate-search-param';
+import { Where } from 'payload';
+import { User } from '@/entities/user';
+import { FindOption } from '@/shared';
+import {
+  ClientOrderListSearchParams,
+  AdminOrderListSearchParams,
+} from './search/search-params-parser';
 
 export const OrderListFindOption = {
   clientOrderList: {
@@ -23,15 +26,16 @@ export const OrderListFindOption = {
         },
       };
 
-      if (searchParams['order_status']) {
+      if (searchParams.orderStatus) {
         where.orderStatus = {
-          equals: searchParams['order_status'],
+          equals: searchParams.orderStatus,
         };
       }
+
       return {
         pagination: false,
         where,
-        depth: 4,
+        depth: 3,
         populate: {
           'order-product': {
             productNameSnapshot: true,
@@ -45,6 +49,30 @@ export const OrderListFindOption = {
             manufacturer: true,
             insurance_code: true,
             image: true,
+          },
+        },
+      };
+    },
+  },
+  adminOrderList: {
+    // todo :: searchParams를 받는 것으로 변경
+    build(searchParams: AdminOrderListSearchParams): FindOption {
+      const where: Where = {};
+      if (searchParams.orderStatus) {
+        where.orderStatus = {
+          equals: searchParams.orderStatus,
+        };
+      }
+
+      return {
+        pagination: true,
+        limit: 25,
+        page: searchParams.page,
+        depth: 1,
+        where,
+        populate: {
+          'order-product': {
+            orderProductStatus: true,
           },
         },
       };

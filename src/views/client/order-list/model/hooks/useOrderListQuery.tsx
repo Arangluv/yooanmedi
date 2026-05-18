@@ -2,14 +2,14 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { clientOrderListQueryKey } from '../../lib/query-keys';
-import { type ClientOrderListSearchParams } from '@/features/order/order-list';
-import { getClientOrderList } from '@/features/order/order-list/infrastructure';
+import { ClientOrderListSearchParams } from '@/features/order/order-list';
 import { BusinessLogicError } from '@/shared';
+import { getOrderList } from '../../api';
 
 const useOrderListQuery = ({ searchParams }: { searchParams: ClientOrderListSearchParams }) => {
   const { data: result } = useQuery({
     queryKey: clientOrderListQueryKey(searchParams),
-    queryFn: () => getClientOrderList(searchParams),
+    queryFn: () => getOrderList(searchParams),
   });
 
   if (!result) {

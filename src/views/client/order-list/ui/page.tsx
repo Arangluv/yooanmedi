@@ -1,7 +1,9 @@
-import type { SearchParams } from 'nuqs/server';
-import { generateSearchParam } from '@/features/order/order-list/infrastructure';
+import { type SearchParams } from 'nuqs/server';
 import { Navbar } from '@/entities/order';
-import { getClientOrderList } from '@/features/order/order-list/infrastructure';
+// import { generateSearchParam } from '@/features/order/order-list/infrastructure';
+// import { getClientOrderList } from '@/features/order/order-list/infrastructure';
+import { clientOrderListService } from '@/features/order/order-list';
+import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
 import { Divider } from '@heroui/react';
 import OrderListTitle from './OrderListTitle';
 import OrderListSearch from './OrderListSearch';
@@ -13,9 +15,10 @@ type PageProps = {
 };
 
 const ClientOrderListPage = async ({ searchParams }: PageProps) => {
-  const safeSearchParmas = await generateSearchParam(searchParams);
-  const result = await getClientOrderList(safeSearchParmas);
-
+  const safeSearchParmas =
+    await OrderListSearchParamsGenerator.getClientSafeSearchParams(searchParams);
+  const result = await clientOrderListService.getOrderList(safeSearchParmas);
+  
   // TODO :: 보일러 플레이트 제거하기 -> Error 경계에서 해당 코드책임을 위임
   if (!result.isSuccess) {
     return <div>Error: {result.message}</div>;

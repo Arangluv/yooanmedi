@@ -1,4 +1,4 @@
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse } from '@/shared';
 import { IPointTransaction } from './interfaces';
 import { PointTransactionRepository } from './repository';
 import {

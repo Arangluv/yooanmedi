@@ -1,4 +1,4 @@
-import { generateUUID32digits } from '@/shared/lib/identifier';
+import { generateUUID32digits } from '@/shared';
 import crypto from 'crypto';
 import moment from 'moment-timezone';
 import { CANCEL_REVISE_TYPE } from '../constant/cancel-revise-type';

@@ -1,4 +1,3 @@
-import 'server-only';
 import { parseAsInteger, parseAsStringLiteral, createLoader } from 'nuqs/server';
 import { ORDER_STATUS, type OrderStatus } from '@/entities/order';
 

@@ -1,7 +1,7 @@
 'use server';
 
-import { EndPointResult, failure, okWithData } from '@/shared/lib/end-point-result';
-import { normalizeError } from '@/shared/model/errors/normalize-error';
+import { EndPointResult, failure, okWithData } from '@/shared';
+import { normalizeError } from '@/shared';
 import { Logger } from '@/shared/model/logger/logger';
 import { EasyPayService } from '../model/easypay.service';
 import { type RegisterTransactionRequestDto } from '../model/schemas/easypay.register-transaction.schema';

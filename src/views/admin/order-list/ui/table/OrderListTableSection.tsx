@@ -4,7 +4,7 @@ import TableHeader from './TableHeader';
 import OrderListDataTable from './OrderListDataTable';
 import { columns } from '../../model/table-columns';
 import useOrderListQuery from '../../model/hooks/useOrderListQuery';
-import { type AdminOrderListSearchParams } from '../../lib/generate-search-params';
+import { AdminOrderListSearchParams } from '@/features/order/order-list';
 
 const OrderListTableSection = ({ searchParams }: { searchParams: AdminOrderListSearchParams }) => {
   const { orders, totalCount } = useOrderListQuery(searchParams);

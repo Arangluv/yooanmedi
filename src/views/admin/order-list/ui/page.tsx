@@ -5,20 +5,16 @@ import { AlertDialogProvider } from '@/shared';
 import { SearchParams } from 'nuqs';
 import { getOrderList } from '../api/order-list.api';
 import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
+import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
+import { adminOrderListService } from '@/features/order/order-list';
 
 const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
-  const safeSearchParam = await generateSearchParams(searchParams);
-  const orderList = await getOrderList({
-    page: safeSearchParam.page,
-    orderStatus: safeSearchParam.orderStatus,
-  });
+  const safeSearchParam =
+    await OrderListSearchParamsGenerator.getAdminSafeSearchParams(searchParams);
+  const orderList = await adminOrderListService.getOrderList(safeSearchParam);
 
   return (
-    <OrderListHydrationProvider
-      initialData={orderList}
-      page={safeSearchParam.page}
-      orderStatus={safeSearchParam.orderStatus}
-    >
+    <OrderListHydrationProvider initialData={orderList} searchParams={safeSearchParam}>
       <AlertDialogProvider>
         <div className="bg-muted flex h-[calc(100vh-var(--app-header-height))] flex-col gap-8 overflow-hidden px-[60px] py-[30px]">
           <div className="flex flex-col gap-2">

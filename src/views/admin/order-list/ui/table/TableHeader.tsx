@@ -3,7 +3,7 @@
 import { Sheet } from 'lucide-react';
 import { ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
 import { Button } from '@/shared/ui/shadcn/button';
-import { Collapsible, CollapsibleContent } from '@/shared/ui/shadcn/collapsible';
+import { Collapsible } from '@/shared/ui/shadcn/collapsible';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/shared/ui/shadcn/tooltip';
 import useOrderListSearch from '../../model/useOrderListSearch';
 import { ExportExcel } from '../../lib/excel-export';
@@ -15,7 +15,6 @@ const TableHeader = ({ totalCount }: { totalCount: number }) => {
         <TabTitle totalCount={totalCount} />
         <TableAction />
       </div>
-      {/* <CollapsibleFilterContent /> */}
     </Collapsible>
   );
 };
@@ -39,30 +38,9 @@ const TabTitle = ({ totalCount }: { totalCount: number }) => {
 const TableAction = () => {
   return (
     <div className="flex items-center gap-3">
-      {/* <FilterButton /> */}
       <ExcelExportButton />
     </div>
   );
-};
-
-// 추후 확장 및 요청 시 추가
-// const FilterButton = () => {
-//   return (
-//     <Tooltip>
-//       <TooltipTrigger asChild>
-//         <CollapsibleTrigger asChild>
-//           <Button variant="ghost" size="icon-lg">
-//             <SlidersHorizontal className="text-muted-foreground !h-5 !w-5" />
-//           </Button>
-//         </CollapsibleTrigger>
-//       </TooltipTrigger>
-//       <TooltipContent className="text-base">필터</TooltipContent>
-//     </Tooltip>
-//   );
-// };
-
-const CollapsibleFilterContent = () => {
-  return <CollapsibleContent>접혀</CollapsibleContent>;
 };
 
 const ExcelExportButton = () => {

@@ -1,5 +1,5 @@
 import { CreatePointHistoryEntity, CreatePointHistoryResult } from '../model/schema/history.schema';
-import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { getTransactionContext } from '@/shared/infrastructure';
 
 export const createPointHistory = async (
   history: CreatePointHistoryEntity,

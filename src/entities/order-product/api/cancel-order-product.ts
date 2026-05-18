@@ -12,7 +12,7 @@ import {
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { PAYMENTS_METHOD } from '@/entities/order/constants/payments-method';
 import { getPayload } from '@/shared/infrastructure';
-import { generateUUID32digits } from '@/shared/lib/identifier';
+import { generateUUID32digits } from '@/shared';
 
 import {
   cancelOrderProductSchema,

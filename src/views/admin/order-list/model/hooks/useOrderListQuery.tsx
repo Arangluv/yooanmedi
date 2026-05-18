@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { BusinessLogicError } from '@/shared';
 import { getOrderList } from '../../api/order-list.api';
-import { type AdminOrderListSearchParams } from '../../lib/generate-search-params';
+import { AdminOrderListSearchParams } from '@/features/order/order-list';
 import { adminOrderListQueryKey } from '../../lib/query-keys';
 
 const useOrderListQuery = (searchParam: AdminOrderListSearchParams) => {

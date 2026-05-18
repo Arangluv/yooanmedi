@@ -1,4 +1,4 @@
-import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { getTransactionContext } from '@/shared/infrastructure';
 import { PaymentHistoryEntity } from '../model/schemas/create-payment-history.schema';
 
 export const createPaymentHistory = async (entity: PaymentHistoryEntity) => {

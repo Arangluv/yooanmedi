@@ -1,4 +1,3 @@
-import 'server-only';
 import { parseAsString, parseAsInteger, parseAsStringLiteral, createLoader } from 'nuqs/server';
 import { SEARCH_FIELD_KEY } from '../constant/search-field';
 

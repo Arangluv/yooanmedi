@@ -22,7 +22,7 @@ import {
   paymentsMethodUsedBankTransfer,
 } from './payments.base.schema';
 import { pgCnoFixture } from '../../__mock__/base.fixture';
-import { generate15digitsNumberBasedOnDate, generateUUID32digits } from '@/shared/lib/identifier';
+import { generate15digitsNumberBasedOnDate, generateUUID32digits } from '@/shared';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 

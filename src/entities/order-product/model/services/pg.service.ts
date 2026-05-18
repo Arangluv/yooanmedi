@@ -1,6 +1,6 @@
 /** TODO :: refactoring -> order-product.service.ts로 로직 이동 */
 import { IOrderProductPaymentService } from '../interfaces';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse } from '@/shared';
 import {
   createCreditCardOrderProductSchema,
   CreateOrderProductRequestDto,

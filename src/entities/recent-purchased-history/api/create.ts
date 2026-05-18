@@ -1,7 +1,7 @@
 'use server';
 
 import { CreateRecentPurchasedHistoryEntity } from '../model/schemas/create-history.schema';
-import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { getTransactionContext } from '@/shared/infrastructure';
 
 export const createRecentPurchasedHistory = async (entity: CreateRecentPurchasedHistoryEntity) => {
   const { payload, transactionID } = getTransactionContext();

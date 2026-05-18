@@ -3,7 +3,7 @@ import {
   CreatePaymentHistoryRequestDto,
   createPaymentHistoryRequestSchema,
 } from './schemas/create-payment-history.schema';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse } from '@/shared';
 import { PaymentHistoryRepository } from '../api/payment-history.repository';
 
 export class PaymentHistoryService implements IPaymentHistoryService {

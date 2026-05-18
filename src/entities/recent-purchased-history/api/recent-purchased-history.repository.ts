@@ -7,7 +7,7 @@ import { CreateRecentPurchasedHistoryEntity } from '../model/schemas/create-hist
 import { getRecentPurchasedHistoryList } from './list';
 import { deleteRecentPurchasedHistory } from './delete';
 import { createRecentPurchasedHistory } from './create';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse } from '@/shared';
 
 export class RecentPurchasedHistoryRepository {
   public static async create(entity: CreateRecentPurchasedHistoryEntity) {

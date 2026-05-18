@@ -10,7 +10,7 @@ import {
   RecentPurchasedHistoryList,
   recentPurchasedHistoryListRequestSchema,
 } from './schemas/history-list.schema';
-import { zodSafeParse } from '@/shared/lib/zod';
+import { zodSafeParse } from '@/shared';
 
 export class RecentPurchasedHistoryService implements IRecentPurchasedHistoryService {
   public async createHistory(dto: CreateRecentPurchasedHistoryRequestDto): Promise<void> {

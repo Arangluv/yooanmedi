@@ -1,10 +1,10 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { EndPointResult } from '@/shared';
 import { clientOrderListQueryKey } from '../../lib/query-keys';
-import { type ClientOrder, type ClientOrderListSearchParams } from '@/features/order/order-list';
+import { ClientOrderResult, ClientOrderListSearchParams } from '@/features/order/order-list';
 
 interface Props {
-  initialData: EndPointResult<ClientOrder[]>;
+  initialData: EndPointResult<ClientOrderResult>;
   searchParams: ClientOrderListSearchParams;
   children: React.ReactNode;
 }

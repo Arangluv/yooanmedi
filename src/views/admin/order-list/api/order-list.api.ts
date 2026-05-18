@@ -1,32 +1,13 @@
 'use server';
 
-import { okWithData, failure, normalizeError, ok, type EndPointResult } from '@/shared';
+import { failure, normalizeError, ok, type EndPointResult } from '@/shared';
 import { Logger } from '@/shared/infrastructure';
-import { OrderStatus } from '@/entities/order';
-import { AdminOrderListItem, AdminOrderListResult } from '@/views/admin/order-list';
+import { AdminOrderListItem } from '@/views/admin/order-list';
 import { AdminOrderListService } from '@/views/admin/order-list/infrastructures';
+import { adminOrderListService, AdminOrderListSearchParams } from '@/features/order/order-list';
 
-export interface AdminOrderListRequestDto {
-  page: number;
-  orderStatus: OrderStatus | 'all';
-}
-
-export const getOrderList = async (
-  dto: AdminOrderListRequestDto,
-): Promise<EndPointResult<AdminOrderListResult>> => {
-  try {
-    const adminOrderListService = new AdminOrderListService();
-    const result = await adminOrderListService.getOrderList(dto);
-
-    return okWithData({
-      data: result,
-    });
-  } catch (error) {
-    const { message } = normalizeError(error);
-    Logger.error(message);
-
-    return failure(message);
-  }
+export const getOrderList = async (searchParams: AdminOrderListSearchParams) => {
+  return adminOrderListService.getOrderList(searchParams);
 };
 
 export const totalCancelOrder = async (order: AdminOrderListItem[]): Promise<EndPointResult> => {

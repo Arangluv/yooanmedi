@@ -55,3 +55,6 @@ supabase/
 
 # Dev
 dev/
+
+# pinboard
+.pinboard.json

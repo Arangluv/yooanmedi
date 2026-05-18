@@ -1,4 +1,4 @@
-import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { getTransactionContext } from '@/shared/infrastructure';
 import { PointHistory } from '../model/schema/history.schema';
 import { type FindOption } from '@/shared';
 

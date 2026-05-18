@@ -41,7 +41,7 @@ import { HomeIcon as HomeIcon_c4ed48037aede40cf46fe21deda1067f } from '@/shared/
 import { BrandLogoSmall as BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
 import { default as default_0cb5b8c223db30118049548a6d9feb72 } from '@/shared/ui/admin/sidebar/sidebar-provider'
 import { default as default_67cd43dc2ce7b608e28b2da50527c106 } from '@/shared/ui/admin/toast/toast-provider'
-import { default as default_eef19a8d1ea2713d577d6c096fc25519 } from '@/shared/model/admin/nuqs-provider'
+import { default as default_c4cbc9437b39702cbf622a7a90ee73fd } from '@/shared/model/providers/nuqs-provider'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { default as default_e6814a5f635b63fec039d334c0b6b274 } from '@/shared/ui/admin/DashBoard'
 
@@ -89,7 +89,7 @@ export const importMap = {
   "@/shared/ui/logos#BrandLogoSmall": BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f,
   "@/shared/ui/admin/sidebar/sidebar-provider#default": default_0cb5b8c223db30118049548a6d9feb72,
   "@/shared/ui/admin/toast/toast-provider#default": default_67cd43dc2ce7b608e28b2da50527c106,
-  "@/shared/model/admin/nuqs-provider#default": default_eef19a8d1ea2713d577d6c096fc25519,
+  "@/shared/model/providers/nuqs-provider#default": default_c4cbc9437b39702cbf622a7a90ee73fd,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@/shared/ui/admin/DashBoard#default": default_e6814a5f635b63fec039d334c0b6b274
 }

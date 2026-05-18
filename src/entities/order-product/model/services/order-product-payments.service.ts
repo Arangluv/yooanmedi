@@ -2,7 +2,7 @@
 import { PAYMENTS_METHOD, PaymentsMethod } from '@/entities/order/constants/payments-method';
 import { PGOrderProductPaymentService } from './pg.service';
 import { BankTransferOrderProductPaymentService } from './bank-transfer.service';
-import { BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { BusinessLogicError } from '@/shared';
 
 export class OrderProductPaymentService {
   public static for(paymentsMethod: PaymentsMethod) {

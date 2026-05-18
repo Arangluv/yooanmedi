@@ -1,6 +1,6 @@
 'use server';
 
-import { getPayload } from '../lib/get-payload';
+import { getPayload } from '@/shared/infrastructure';
 
 export type SiteMetadata = {
   minOrderPrice: number;

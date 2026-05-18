@@ -1,4 +1,4 @@
-import { getPayload } from '@/shared/lib/get-payload';
+import { getPayload } from '@/shared/infrastructure';
 import { RecentPurchasedHistoryListRequestDto } from '../model/schemas/history-list.schema';
 
 export const getRecentPurchasedHistoryList = async (dto: RecentPurchasedHistoryListRequestDto) => {

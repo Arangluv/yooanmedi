@@ -4,6 +4,7 @@ import { ok, failure, normalizeError, EndPointResult } from '@/shared';
 import { ClientOrderListService } from '../model/client-order-list.service';
 import { ClientOrder } from '@/features/order/order-list';
 import { Logger } from '@/shared/infrastructure';
+import { clientOrderListService, ClientOrderListSearchParams } from '@/features/order/order-list';
 
 export interface ClientPartialOrderCancelRequestDto {
   order: ClientOrder;
@@ -24,4 +25,8 @@ export const partialCancelOrder = async (
 
     return failure(message);
   }
+};
+
+export const getOrderList = async (searchParams: ClientOrderListSearchParams) => {
+  return clientOrderListService.getOrderList(searchParams);
 };

@@ -4,7 +4,7 @@ import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import type { Product } from '@/entities/product';
 import { getMaxPointOnPurchase } from '@/entities/point';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
+import { formatNumberWithCommas } from '@/shared';
 import useProductDetailStore from '../model/useProductDetailStore';
 import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
 import { AddToCartButton } from '@/entities/cart';

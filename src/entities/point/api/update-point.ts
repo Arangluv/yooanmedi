@@ -1,4 +1,4 @@
-import { getTransactionContext } from '@/shared/lib/transaction-context';
+import { getTransactionContext } from '@/shared/infrastructure';
 
 export const updateUserPoint = async (userId: number, amount: number) => {
   const { payload, transactionID } = getTransactionContext();

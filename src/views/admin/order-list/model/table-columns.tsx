@@ -6,12 +6,12 @@ import moment from 'moment';
 import { PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
 import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-method';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
+import { formatNumberWithCommas } from '@/shared';
 import { Checkbox } from '@/shared/ui/shadcn/checkbox';
 import FlgStatusBadge from '../ui/badge/FlgStatusBadge';
-import { type AdminOrderListItem } from '@/views/admin/order-list';
+import { type AdminOrderListItemDto } from '@/features/order/order-list';
 
-export const columns: ColumnDef<AdminOrderListItem>[] = [
+export const columns: ColumnDef<AdminOrderListItemDto>[] = [
   {
     id: 'select',
     header: ({ table }) => (

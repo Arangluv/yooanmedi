@@ -6,7 +6,6 @@ import { productSchema } from '@/entities/product';
 import { zodSafeParse } from '@/shared';
 import { type Order as PayloadOrder } from '@/payload-types';
 
-// TODO :: suffix 제거하기
 const clientOrderProductSchema = orderProductSchema
   .extend({
     product: productSchema.pick({
