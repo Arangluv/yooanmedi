@@ -4,7 +4,7 @@ import { PartialCancelOrderRequestDto, TotalCancelOrderRequestDto } from '../../
 import { AdminOrderPartialCancelCommandFactory } from '../command/partial-cancel-command-factory';
 import { AdminOrderTotalCancelCommandFactory } from '../command/total-cancel-command-factory';
 
-export const AdminCancelOrderService = (): AdminCancelOrderUseCase => ({
+export const adminCancelOrderUseCase = (): AdminCancelOrderUseCase => ({
   partialCancel: async (dto: PartialCancelOrderRequestDto) => {
     try {
       const strategy = AdminOrderPartialCancelCommandFactory.getCancelStrategy(dto.order);

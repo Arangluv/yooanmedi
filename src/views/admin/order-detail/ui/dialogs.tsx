@@ -6,9 +6,10 @@ import { PackageX } from 'lucide-react';
 import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';
 import useOrderDetailTransition from '../model/hooks/useOrderDetailTransition';
 import { type AdminOrderDetail } from '../model/order-detail.schema';
-import useOrderCancel from '../model/hooks/useOrderCancel';
 import { AdminPartialOrderCancelRequestDto } from '../api/order-detail.api';
 import { OrderStatus } from '@/entities/order';
+import { useAdminCancelOrder } from '@/features/order/order-cancel';
+import { AdminOrderDetailMapper } from '../mapper';
 
 interface TransitionTriggerProps {
   order: AdminOrderDetail;
@@ -48,7 +49,7 @@ export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProp
 };
 
 export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelRequestDto) => {
-  const { partialCancelOrder } = useOrderCancel();
+  const { partialCancelOrder } = useAdminCancelOrder();
   const { setDialogConfig, onOpen } = useAlertDialog();
 
   return (
@@ -63,7 +64,13 @@ export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelReque
               ...dialogConfig,
               action: {
                 ...dialogConfig.action,
-                onClick: () => partialCancelOrder(dto),
+                onClick: () =>
+                  partialCancelOrder(
+                    AdminOrderDetailMapper.toPartialCancelOrderDto(
+                      dto.order,
+                      dto.targetOrderProductId,
+                    ),
+                  ),
               },
             };
           });
@@ -75,61 +82,3 @@ export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelReque
     </AlertDialogTrigger>
   );
 };
-
-// export const PartialCancelDialogTrigger = (dto: AdminPartialOrderCancelRequestDto) => {
-//   const { partialCancelOrder } = useOrderCancel();
-//   const { setDialogConfig, onOpen } = useAlertDialog();
-
-//   return (
-//     <AlertDialogTrigger asChild>
-//       <Button
-//         variant="destructive"
-//         onClick={() => {
-//           setDialogConfig(() => {
-//             const config = CANCEL_DIALOG_CONFIG.partial;
-
-//             return {
-//               ...config,
-//               action: {
-//                 ...config.action,
-//                 onClick: () => partialCancelOrder(dto),
-//               },
-//             };
-//           });
-//           onOpen();
-//         }}
-//       >
-//         취소처리
-//       </Button>
-//     </AlertDialogTrigger>
-//   );
-// };
-
-// export const TotalCancelDialogTrigger = ({ order }: { order: AdminOrderDetail }) => {
-//   const { totalCancelOrder } = useOrderCancel();
-//   const { setDialogConfig, onOpen } = useAlertDialog();
-
-//   return (
-//     <AlertDialogTrigger asChild>
-//       <Button
-//         variant="destructive"
-//         onClick={() => {
-//           setDialogConfig(() => {
-//             const config = CANCEL_DIALOG_CONFIG.total;
-
-//             return {
-//               ...config,
-//               action: {
-//                 ...config.action,
-//                 onClick: () => totalCancelOrder(order),
-//               },
-//             };
-//           });
-//           onOpen();
-//         }}
-//       >
-//         취소처리
-//       </Button>
-//     </AlertDialogTrigger>
-//   );
-// };

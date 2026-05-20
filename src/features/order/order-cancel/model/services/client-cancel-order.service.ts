@@ -3,7 +3,7 @@ import { ClientCancelOrderUseCase } from './order-cancel.usecase';
 import { PartialCancelOrderRequestDto } from '../../dto';
 import { ClientPartialOrderCancelCommandFactory } from '../command/partial-cancel-command-factory';
 
-export const ClientCancelOrderService = (): ClientCancelOrderUseCase => ({
+export const clientCancelOrderUseCase = (): ClientCancelOrderUseCase => ({
   partialCancel: async (dto: PartialCancelOrderRequestDto) => {
     try {
       const strategy = ClientPartialOrderCancelCommandFactory.getCancelStrategy(dto.order);

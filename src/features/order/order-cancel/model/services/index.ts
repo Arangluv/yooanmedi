@@ -1,9 +1,9 @@
 import {
-  createAdminCancelOrderService,
-  createClientCancelOrderService,
+  createAdminCancelOrderUseCase,
+  createClientCancelOrderUseCase,
 } from './cancel-order.service.factory';
 
-export const adminCancelOrderService = createAdminCancelOrderService();
-export const clientCancelOrderService = createClientCancelOrderService();
+export const adminCancelOrderUseCase = createAdminCancelOrderUseCase();
+export const clientCancelOrderUseCase = createClientCancelOrderUseCase();
 
 export type { AdminCancelOrderUseCase, ClientCancelOrderUseCase } from './order-cancel.usecase';

@@ -1,10 +1,10 @@
-import { AdminCancelOrderService } from './admin.cancel-order.service';
-import { ClientCancelOrderService } from './client-cancel-order.service';
+import { adminCancelOrderUseCase } from './admin.cancel-order.service';
+import { clientCancelOrderUseCase } from './client-cancel-order.service';
 
-export const createAdminCancelOrderService = () => {
-  return AdminCancelOrderService();
+export const createAdminCancelOrderUseCase = () => {
+  return adminCancelOrderUseCase();
 };
 
-export const createClientCancelOrderService = () => {
-  return ClientCancelOrderService();
+export const createClientCancelOrderUseCase = () => {
+  return clientCancelOrderUseCase();
 };

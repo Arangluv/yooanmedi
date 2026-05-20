@@ -1,9 +1,7 @@
-import { generateSearchParams } from '../lib/generate-search-params';
 import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
 import { AlertDialogProvider } from '@/shared';
 import { SearchParams } from 'nuqs';
-import { getOrderList } from '../api/order-list.api';
 import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
 import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
 import { adminOrderListService } from '@/features/order/order-list';

@@ -8,7 +8,8 @@ import useOrderListSearch from '../model/useOrderListSearch';
 import { getCancelDialogConfig, getTransitionDialogConfig } from '../lib/get-dialog-config';
 import useOrderListTransition from '../model/hooks/useOrderListTransition';
 import { AdminOrderListItem } from '../model/admin-order-list.schema';
-import useOrderCancel from '../model/hooks/useOrderCancel';
+import { useAdminCancelOrder } from '@/features/order/order-cancel';
+import { AdminOrderListMapper } from '../mapper';
 
 interface TransitionTriggerProps {
   selectedRows: Row<AdminOrderListItem>[];
@@ -57,7 +58,7 @@ export const TransitionDialogTrigger = ({ selectedRows }: TransitionTriggerProps
 export const CancelDialogTrigger = ({ selectedRows }: TransitionTriggerProps) => {
   const { setDialogConfig, onOpen } = useAlertDialog();
   const { filters } = useOrderListSearch();
-  const { totalCancelOrder } = useOrderCancel();
+  const { totalCancelOrder } = useAdminCancelOrder();
 
   if (filters.orderStatus === ORDER_STATUS.cancel_request) {
     return null;
@@ -78,7 +79,8 @@ export const CancelDialogTrigger = ({ selectedRows }: TransitionTriggerProps) =>
               ...dialogConfig,
               action: {
                 ...dialogConfig.action,
-                onClick: () => totalCancelOrder(orders),
+                onClick: () =>
+                  totalCancelOrder(AdminOrderListMapper.toTotalCancelRequestDto(orders)),
               },
             };
           });
