@@ -7,8 +7,9 @@ import {
   OrderCancelRequestInfoCard,
   OrderProgressInfoCard,
 } from './order-info-card';
-import { OrderDetailHydrationProvider } from '../model/providers/OrderDetailHydrationProvider';
 import { getOrderDetail } from '../api/order-detail.api';
+import { QueryHydrationProvider } from '@/shared';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
 
 interface AdminOrderDetailPageProps {
   doc: {
@@ -25,7 +26,7 @@ const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
   }
 
   return (
-    <OrderDetailHydrationProvider orderId={doc.id} initialData={result}>
+    <QueryHydrationProvider queryKey={ORDER_QUERY_KEYS.detail(result.data.id)} initialData={result}>
       <AlertDialogProvider>
         <div className="bg-muted dark:bg-background h-full w-full px-[60px] py-[30px]">
           <div className="flex gap-12">
@@ -48,7 +49,7 @@ const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
           </div>
         </div>
       </AlertDialogProvider>
-    </OrderDetailHydrationProvider>
+    </QueryHydrationProvider>
   );
 };
 

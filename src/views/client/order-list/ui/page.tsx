@@ -5,8 +5,9 @@ import { Divider } from '@heroui/react';
 import OrderListTitle from './OrderListTitle';
 import OrderListSearch from './OrderListSearch';
 import OrderList from './OrderList';
-import { ClientOrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
 import { getOrderList } from '../api';
+import { QueryHydrationProvider } from '@/shared';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -23,7 +24,7 @@ const ClientOrderListPage = async ({ searchParams }: PageProps) => {
   }
 
   return (
-    <ClientOrderListHydrationProvider initialData={result} searchParams={safeSearchParmas}>
+    <QueryHydrationProvider initialData={result} queryKey={ORDER_QUERY_KEYS.list(safeSearchParmas)}>
       <div className="flex w-full flex-col">
         <Navbar />
         <div className="flex min-h-[calc(100vh-415px)] w-full justify-center">
@@ -35,7 +36,7 @@ const ClientOrderListPage = async ({ searchParams }: PageProps) => {
           </div>
         </div>
       </div>
-    </ClientOrderListHydrationProvider>
+    </QueryHydrationProvider>
   );
 };
 

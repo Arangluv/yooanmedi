@@ -33,6 +33,9 @@ export { default as useAlertDialog } from './hooks/useAlertDialog';
 // api
 export { getSiteMetadata } from './api/get-site-metadata';
 
+// provider
+export { QueryHydrationProvider } from './model';
+
 // config
 export { EASYPAY_CONFIG } from './config/easypay.config';
 export { siteConfig, PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './config/site.config';

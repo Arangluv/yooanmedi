@@ -5,6 +5,8 @@ import { SearchParams } from 'nuqs';
 import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
 import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
 import { adminOrderListService } from '@/features/order/order-list';
+import { QueryHydrationProvider } from '@/shared';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
 
 const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
   const safeSearchParam =
@@ -12,7 +14,10 @@ const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<Sear
   const orderList = await adminOrderListService.getOrderList(safeSearchParam);
 
   return (
-    <OrderListHydrationProvider initialData={orderList} searchParams={safeSearchParam}>
+    <QueryHydrationProvider
+      initialData={orderList}
+      queryKey={ORDER_QUERY_KEYS.list(safeSearchParam)}
+    >
       <AlertDialogProvider>
         <div className="bg-muted flex h-[calc(100vh-var(--app-header-height))] flex-col gap-8 overflow-hidden px-[60px] py-[30px]">
           <div className="flex flex-col gap-2">
@@ -23,7 +28,7 @@ const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<Sear
           <OrderListTableSection searchParams={safeSearchParam} />
         </div>
       </AlertDialogProvider>
-    </OrderListHydrationProvider>
+    </QueryHydrationProvider>
   );
 };
 
