@@ -11,7 +11,7 @@ export const adminCancelOrderUseCase = (): AdminCancelOrderUseCase => ({
       const cancelCommand = AdminOrderPartialCancelCommandFactory.createCommand({
         strategy,
         order: dto.order,
-        orderProductId: dto.orderProductIds,
+        orderProductId: dto.orderProductId,
       });
       await cancelCommand.execute();
 

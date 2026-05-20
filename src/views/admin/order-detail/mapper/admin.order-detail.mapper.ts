@@ -1,9 +1,9 @@
 import { PartialCancelOrderRequestDto } from '@/features/order/order-cancel';
-import { ClientOrderDto } from '@/features/order/order-list';
+import { OrderDetailDto } from '@/features/order/order-detail';
 
 export class AdminOrderDetailMapper {
   public static toPartialCancelOrderDto(
-    orderDto: ClientOrderDto,
+    orderDto: OrderDetailDto,
     orderProductId: number,
   ): PartialCancelOrderRequestDto {
     const order = {

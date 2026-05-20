@@ -5,14 +5,13 @@ import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { PackageX } from 'lucide-react';
 import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';
 import useOrderDetailTransition from '../model/hooks/useOrderDetailTransition';
-import { type AdminOrderDetail } from '../model/order-detail.schema';
-import { AdminPartialOrderCancelRequestDto } from '../api/order-detail.api';
 import { OrderStatus } from '@/entities/order';
 import { useAdminCancelOrder } from '@/features/order/order-cancel';
 import { AdminOrderDetailMapper } from '../mapper';
+import { OrderDetailDto } from '@/features/order/order-detail';
 
 interface TransitionTriggerProps {
-  order: AdminOrderDetail;
+  order: OrderDetailDto;
   status: OrderStatus | null;
 }
 

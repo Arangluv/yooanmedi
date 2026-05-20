@@ -10,7 +10,7 @@ export const clientCancelOrderUseCase = (): ClientCancelOrderUseCase => ({
       const cancelCommand = ClientPartialOrderCancelCommandFactory.createCommand({
         strategy,
         order: dto.order,
-        orderProductId: dto.orderProductIds,
+        orderProductId: dto.orderProductId,
       });
       await cancelCommand.execute();
 

@@ -7,9 +7,9 @@ import {
   OrderCancelRequestInfoCard,
   OrderProgressInfoCard,
 } from './order-info-card';
-import { getOrderDetail } from '../api/order-detail.api';
 import { QueryHydrationProvider } from '@/shared';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { orderDetailUseCase } from '@/features/order/order-detail';
 
 interface AdminOrderDetailPageProps {
   doc: {
@@ -18,7 +18,7 @@ interface AdminOrderDetailPageProps {
 }
 
 const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
-  const result = await getOrderDetail(doc.id);
+  const result = await orderDetailUseCase.getOrderDetail(doc.id);
 
   // todo :: 에러경계를 활용하여 분리해야합니다
   if (!result.isSuccess) {
