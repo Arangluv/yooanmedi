@@ -5,8 +5,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAlertDialog } from '@/shared';
 import { OrderTransitionApi } from '@/features/order/order-transition';
 import { AdminOrderListItem, toOrders } from '../admin-order-list.schema';
-import { ADMIN_ORDER_LIST_ROOT_QUERY_KEY } from '../../lib/query-keys';
 import { ADMIN_ORDER_DETAIL_ROOT_QUERY_KEY } from '@/views/admin/order-detail/lib/query-keys'; // todo :: 잘못된 참조방식
+import { ORDER_LIST_QUERY_KEYS } from '@/features/order/order-list';
 
 const useOrderListTransition = () => {
   const queryClient = useQueryClient();
@@ -18,7 +18,7 @@ const useOrderListTransition = () => {
         const { totalCount } = result.data;
         toast.success(`${totalCount}개의 주문을 업데이트 했습니다.`);
         queryClient.invalidateQueries({
-          queryKey: [ADMIN_ORDER_LIST_ROOT_QUERY_KEY],
+          queryKey: [ORDER_LIST_QUERY_KEYS.adminAllList],
         });
         queryClient.invalidateQueries({
           queryKey: [ADMIN_ORDER_DETAIL_ROOT_QUERY_KEY],

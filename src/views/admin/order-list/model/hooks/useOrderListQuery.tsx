@@ -4,16 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 import { BusinessLogicError } from '@/shared';
 import { getOrderList } from '../../api/order-list.api';
 import { AdminOrderListSearchParams } from '@/features/order/order-list';
-import { adminOrderListQueryKey } from '../../lib/query-keys';
+import { ORDER_LIST_QUERY_KEYS } from '@/features/order/order-list';
 
 const useOrderListQuery = (searchParam: AdminOrderListSearchParams) => {
   const { data: result } = useQuery({
-    queryKey: adminOrderListQueryKey(searchParam.page, searchParam.orderStatus),
-    queryFn: () =>
-      getOrderList({
-        page: searchParam.page,
-        orderStatus: searchParam.orderStatus,
-      }),
+    queryKey: ORDER_LIST_QUERY_KEYS.admin(searchParam),
+    queryFn: () => getOrderList(searchParam),
   });
 
   if (!result) {

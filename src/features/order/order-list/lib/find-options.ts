@@ -55,7 +55,6 @@ export const OrderListFindOption = {
     },
   },
   adminOrderList: {
-    // todo :: searchParams를 받는 것으로 변경
     build(searchParams: AdminOrderListSearchParams): FindOption {
       const where: Where = {};
       if (searchParams.orderStatus) {
@@ -63,7 +62,6 @@ export const OrderListFindOption = {
           equals: searchParams.orderStatus,
         };
       }
-
       return {
         pagination: true,
         limit: 25,

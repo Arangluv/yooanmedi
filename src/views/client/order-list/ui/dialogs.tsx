@@ -2,7 +2,7 @@ import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { Button, useAlertDialog } from '@/shared';
 import { getDialogConfig } from '../lib/generate-dialog-config';
 import { type ClientOrder } from '@/features/order/order-list';
-import useOrderCancel from '../model/hooks/useOrderList';
+import useOrderCancel from '../model/hooks/useOrderCancel';
 
 export const OrderPartialCancelTrigger = ({
   order,
@@ -26,7 +26,7 @@ export const OrderPartialCancelTrigger = ({
               ...dialogConfig,
               action: {
                 ...dialogConfig.action,
-                onClick: () => cancelOrder({ order, targetOrderProductId: orderProduct.id }),
+                onClick: () => cancelOrder(order, orderProduct.id),
               },
             };
           });

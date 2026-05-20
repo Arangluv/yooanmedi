@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { EndPointResult } from '@/shared';
-import { clientOrderListQueryKey } from '../../lib/query-keys';
 import { ClientOrderResult, ClientOrderListSearchParams } from '@/features/order/order-list';
+import { ORDER_LIST_QUERY_KEYS } from '@/features/order/order-list';
 
 interface Props {
   initialData: EndPointResult<ClientOrderResult>;
@@ -11,7 +11,7 @@ interface Props {
 
 export function ClientOrderListHydrationProvider({ initialData, searchParams, children }: Props) {
   const queryClient = new QueryClient();
-  const queryKey = clientOrderListQueryKey(searchParams);
+  const queryKey = ORDER_LIST_QUERY_KEYS.client(searchParams);
   queryClient.setQueryData(queryKey, initialData);
 
   return <HydrationBoundary state={dehydrate(queryClient)}>{children}</HydrationBoundary>;

@@ -7,7 +7,6 @@ import {
 import { PGPartialCancelCommand } from './pg/partial-cancel-command';
 import { BusinessLogicError, PAYMENTS_METHOD } from '@/shared';
 import { IPartialCancelCommand } from './cancel-command';
-import { OrderProduct } from '@/entities/order-product';
 
 const partialCancelStrategy = {
   pg: 'pg',
@@ -42,10 +41,7 @@ export class ClientPartialOrderCancelCommandFactory {
     }
   }
 
-  public static getCancelStrategy(
-    order: Order,
-    orderProducts: OrderProduct[],
-  ): ClientPartialOrderCancelStrategy {
+  public static getCancelStrategy(order: Order): ClientPartialOrderCancelStrategy {
     if (order.paymentsMethod === PAYMENTS_METHOD.credit_card && ORDER_STATUS.preparing) {
       return partialCancelStrategy.pg;
     }

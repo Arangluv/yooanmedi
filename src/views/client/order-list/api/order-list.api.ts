@@ -1,32 +1,15 @@
 'use server';
 
-import { ok, failure, normalizeError, EndPointResult } from '@/shared';
-import { ClientOrderListService } from '../model/client-order-list.service';
-import { ClientOrder } from '@/features/order/order-list';
-import { Logger } from '@/shared/infrastructure';
 import { clientOrderListService, ClientOrderListSearchParams } from '@/features/order/order-list';
+import {
+  clientCancelOrderService,
+  PartialCancelOrderRequestDto,
+} from '@/features/order/order-cancel';
 
-export interface ClientPartialOrderCancelRequestDto {
-  order: ClientOrder;
-  targetOrderProductId: number;
-}
-
-export const partialCancelOrder = async (
-  dto: ClientPartialOrderCancelRequestDto,
-): Promise<EndPointResult> => {
-  try {
-    const orderListService = new ClientOrderListService();
-    await orderListService.cancelOrder(dto);
-
-    return ok('상품 주문을 취소했습니다');
-  } catch (error) {
-    const { message } = normalizeError(error);
-    Logger.error(error);
-
-    return failure(message);
-  }
+export const partialCancelOrder = async (dto: PartialCancelOrderRequestDto) => {
+  return await clientCancelOrderService.partialCancel(dto);
 };
 
 export const getOrderList = async (searchParams: ClientOrderListSearchParams) => {
-  return clientOrderListService.getOrderList(searchParams);
+  return await clientOrderListService.getOrderList(searchParams);
 };
