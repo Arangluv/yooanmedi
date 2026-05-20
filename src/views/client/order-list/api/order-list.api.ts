@@ -1,6 +1,6 @@
 'use server';
 
-import { clientOrderListService, ClientOrderListSearchParams } from '@/features/order/order-list';
+import { clientOrderListUseCase, ClientOrderListSearchParams } from '@/features/order/order-list';
 import {
   clientCancelOrderUseCase,
   PartialCancelOrderRequestDto,
@@ -11,5 +11,5 @@ export const partialCancelOrder = async (dto: PartialCancelOrderRequestDto) => {
 };
 
 export const getOrderList = async (searchParams: ClientOrderListSearchParams) => {
-  return await clientOrderListService.getOrderList(searchParams);
+  return await clientOrderListUseCase.getOrderList(searchParams);
 };

@@ -1,17 +1,15 @@
+import { SearchParams } from 'nuqs';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
+import { adminOrderListUseCase } from '@/features/order/order-list';
+import { QueryHydrationProvider, AlertDialogProvider } from '@/shared';
 import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
-import { AlertDialogProvider } from '@/shared';
-import { SearchParams } from 'nuqs';
-import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
-import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
-import { adminOrderListService } from '@/features/order/order-list';
-import { QueryHydrationProvider } from '@/shared';
-import { ORDER_QUERY_KEYS } from '@/entities/order';
 
 const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
   const safeSearchParam =
     await OrderListSearchParamsGenerator.getAdminSafeSearchParams(searchParams);
-  const orderList = await adminOrderListService.getOrderList(safeSearchParam);
+  const orderList = await adminOrderListUseCase.getOrderList(safeSearchParam);
 
   return (
     <QueryHydrationProvider

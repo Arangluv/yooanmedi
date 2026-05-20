@@ -4,9 +4,9 @@ import { Row } from '@tanstack/react-table';
 import useOrderListSearch from '../model/useOrderListSearch';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { TransitionDialogTrigger, CancelDialogTrigger } from './dialogs';
-import { AdminOrderListItem } from '../model/admin-order-list.schema';
+import { AdminOrderListItemDto } from '@/features/order/order-list';
 
-const FloatActionBox = ({ selectedRows }: { selectedRows: Row<AdminOrderListItem>[] }) => {
+const FloatActionBox = ({ selectedRows }: { selectedRows: Row<AdminOrderListItemDto>[] }) => {
   const { filters } = useOrderListSearch();
 
   // 체크박스가 없는 상태에서는 플로팅 액션 박스를 보여주지 않음

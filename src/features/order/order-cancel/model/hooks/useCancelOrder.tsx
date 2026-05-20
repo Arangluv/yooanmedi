@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EndPointResult, useAlertDialog } from '@/shared';
 import { AdminCancelOrderUseCase, ClientCancelOrderUseCase } from '../services';
 import { toast } from 'sonner';
-import { ORDER_LIST_QUERY_KEYS } from '@/features/order/order-list';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
 
 export const createUseAdminCancelOrder = (cancelOrderUseCase: AdminCancelOrderUseCase) => {
   const useAdminCancelOrder = () => {
@@ -14,11 +14,8 @@ export const createUseAdminCancelOrder = (cancelOrderUseCase: AdminCancelOrderUs
     const onMutationSuccess = (result: EndPointResult) => {
       if (result.isSuccess) {
         toast.success(result.message);
-        // queryClient.invalidateQueries({
-        //   queryKey: [ADMIN_ORDER_DETAIL_ROOT_QUERY_KEY],
-        // });
         queryClient.invalidateQueries({
-          queryKey: ORDER_LIST_QUERY_KEYS.adminAllList(),
+          queryKey: ORDER_QUERY_KEYS.all(),
         });
       } else {
         toast.error(result.message);
@@ -58,11 +55,8 @@ export const createUseClientCancelOrder = (cancelOrderUseCase: ClientCancelOrder
     const onMutationSuccess = (result: EndPointResult) => {
       if (result.isSuccess) {
         toast.success(result.message);
-        // queryClient.invalidateQueries({
-        //   queryKey: [ADMIN_ORDER_DETAIL_ROOT_QUERY_KEY],
-        // });
         queryClient.invalidateQueries({
-          queryKey: ORDER_LIST_QUERY_KEYS.clientAllList(),
+          queryKey: ORDER_QUERY_KEYS.all(),
         });
       } else {
         toast.error(result.message);

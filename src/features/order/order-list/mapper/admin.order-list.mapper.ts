@@ -4,7 +4,7 @@ import {
   adminOrderListResponseSchema,
   AdminOrderListResult,
   GetAdminOrderListResponse,
-} from '../model/schemas';
+} from '../schemas';
 import { getPaymentStatus, getFlgStatus, getOrderStatusForList } from '@/entities/order';
 
 export class AdminOrderListMapper {

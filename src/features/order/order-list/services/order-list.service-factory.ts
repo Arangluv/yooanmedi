@@ -1,4 +1,4 @@
-import { AdminOrderListApiRepository, ClientOrderListApiRepository } from '../../repository/index';
+import { AdminOrderListApiRepository, ClientOrderListApiRepository } from '../repository/index';
 import { AdminOrderListService } from './admin.order-list.service';
 import { ClientOrderListService } from './client.order-list.service';
 

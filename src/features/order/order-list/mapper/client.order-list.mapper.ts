@@ -4,7 +4,7 @@ import {
   clientOrderListSchema,
   GetClientOrderListResponse,
   ClientOrderDto,
-} from '../model/schemas';
+} from '../schemas';
 
 export class ClientOrderListMapper {
   public static toResponse(data: any): GetClientOrderListResponse {

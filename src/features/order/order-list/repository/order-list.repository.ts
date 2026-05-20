@@ -1,5 +1,5 @@
 import { FindOption } from '@/shared';
-import { GetAdminOrderListResponse, GetClientOrderListResponse } from '../model/schemas';
+import { GetAdminOrderListResponse, GetClientOrderListResponse } from '../schemas';
 
 export interface AdminOrderListRepository {
   getOrderList: (option: FindOption) => Promise<GetAdminOrderListResponse>;

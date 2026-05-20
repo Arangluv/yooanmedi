@@ -1,6 +1,6 @@
 import { EndPointResult } from '@/shared';
 import { ClientOrderListSearchParams, AdminOrderListSearchParams } from '../lib';
-import { AdminOrderListResult, ClientOrderResult } from './schemas';
+import { AdminOrderListResult, ClientOrderResult } from '../schemas';
 
 export interface AdminOrderListUseCase {
   getOrderList: (

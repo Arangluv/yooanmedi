@@ -7,12 +7,12 @@ import { ORDER_STATUS, OrderStatus } from '@/entities/order';
 import useOrderListSearch from '../model/useOrderListSearch';
 import { getCancelDialogConfig, getTransitionDialogConfig } from '../lib/get-dialog-config';
 import useOrderListTransition from '../model/hooks/useOrderListTransition';
-import { AdminOrderListItem } from '../model/admin-order-list.schema';
 import { useAdminCancelOrder } from '@/features/order/order-cancel';
 import { AdminOrderListMapper } from '../mapper';
+import { AdminOrderListItemDto } from '@/features/order/order-list';
 
 interface TransitionTriggerProps {
-  selectedRows: Row<AdminOrderListItem>[];
+  selectedRows: Row<AdminOrderListItemDto>[];
 }
 
 export const TransitionDialogTrigger = ({ selectedRows }: TransitionTriggerProps) => {

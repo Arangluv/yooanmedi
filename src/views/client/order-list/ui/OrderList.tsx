@@ -10,13 +10,16 @@ import { ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
 import OrderListEmpty from './OrderListEmpty';
 import ExcelExportButton from './ExcelExportButton';
-import { ClientOrderListSearchParams, type ClientOrder } from '@/features/order/order-list';
 import { AlertDialogProvider } from '@/shared';
 import { OrderPartialCancelTrigger } from './dialogs';
-import useOrderListQuery from '../model/hooks/useOrderListQuery';
+import {
+  ClientOrderListSearchParams,
+  type ClientOrderDto,
+  useClientOrderList,
+} from '@/features/order/order-list';
 
 const OrderList = ({ searchParams }: { searchParams: ClientOrderListSearchParams }) => {
-  const orderList = useOrderListQuery({ searchParams });
+  const orderList = useClientOrderList(searchParams);
 
   return (
     <AlertDialogProvider>
@@ -37,7 +40,7 @@ const OrderList = ({ searchParams }: { searchParams: ClientOrderListSearchParams
   );
 };
 
-const OrderItem = ({ order }: { order: ClientOrder }) => {
+const OrderItem = ({ order }: { order: ClientOrderDto }) => {
   return (
     <div className="border-foreground-200 flex w-full flex-col gap-6 rounded-md border p-6">
       {/* 주문 overview */}
@@ -104,8 +107,8 @@ const BankTransferPendingAlert = () => {
 };
 
 interface OrderProductItemProps {
-  orderProduct: ClientOrder['orderProducts'][number];
-  order: ClientOrder;
+  orderProduct: ClientOrderDto['orderProducts'][number];
+  order: ClientOrderDto;
 }
 
 const OrderProductItem = ({ orderProduct, order }: OrderProductItemProps) => {
