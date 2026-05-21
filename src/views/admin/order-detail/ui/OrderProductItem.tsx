@@ -70,7 +70,7 @@ const OrderProductItem = ({ order, orderProduct, idx }: OrderProductItemProps) =
         </div>
       </ItemContent>
       {orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.cancelled && (
-        <PartialCancelDialogIconTrigger order={order} targetOrderProductId={orderProduct.id} />
+        <PartialCancelDialogIconTrigger order={order} orderProductId={orderProduct.id} />
       )}
     </Item>
   );

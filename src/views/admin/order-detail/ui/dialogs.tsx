@@ -1,14 +1,14 @@
 'use client';
 
 import { Button, useAlertDialog } from '@/shared';
-import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { PackageX } from 'lucide-react';
-import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';
-import useOrderDetailTransition from '../model/hooks/useOrderDetailTransition';
+import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { OrderStatus } from '@/entities/order';
 import { useAdminCancelOrder } from '@/features/order/order-cancel';
-import { AdminOrderDetailMapper } from '../mapper';
 import { OrderDetailDto } from '@/features/order/order-detail';
+import { useTransitionOrder } from '@/features/order/order-transition';
+import { AdminOrderDetailMapper } from '../mapper';
+import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';
 
 interface TransitionTriggerProps {
   order: OrderDetailDto;
@@ -16,7 +16,7 @@ interface TransitionTriggerProps {
 }
 
 export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProps) => {
-  const { transitionOrder } = useOrderDetailTransition();
+  const { transitionOrderMutate } = useTransitionOrder();
   const { setDialogConfig, onOpen } = useAlertDialog();
 
   if (status === null) {
@@ -34,7 +34,8 @@ export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProp
               ...baseConfig,
               action: {
                 ...baseConfig.action,
-                onClick: () => transitionOrder(order),
+                onClick: () =>
+                  transitionOrderMutate(AdminOrderDetailMapper.toTransitionOrderDto(order)),
               },
             };
           });
@@ -47,7 +48,13 @@ export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProp
   );
 };
 
-export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelRequestDto) => {
+export const PartialCancelDialogIconTrigger = ({
+  order,
+  orderProductId,
+}: {
+  order: OrderDetailDto;
+  orderProductId: number;
+}) => {
   const { partialCancelOrder } = useAdminCancelOrder();
   const { setDialogConfig, onOpen } = useAlertDialog();
 
@@ -65,10 +72,7 @@ export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelReque
                 ...dialogConfig.action,
                 onClick: () =>
                   partialCancelOrder(
-                    AdminOrderDetailMapper.toPartialCancelOrderDto(
-                      dto.order,
-                      dto.targetOrderProductId,
-                    ),
+                    AdminOrderDetailMapper.toPartialCancelOrderDto(order, orderProductId),
                   ),
               },
             };
