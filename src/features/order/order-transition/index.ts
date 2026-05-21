@@ -1,1 +1,4 @@
-export * as OrderTransitionApi from './api/order-transition.api';
+export { type OrderTransitionUseCase } from './usecase';
+export { orderTransitionUseCase } from './services';
+export * from './dto';
+export * from './hooks';

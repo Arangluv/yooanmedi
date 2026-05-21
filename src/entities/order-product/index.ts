@@ -12,6 +12,8 @@ export { orderProductSchema } from './model/schemas/order-product.schema';
 export * as OrderProductComposer from './model/order-product-composer';
 export { type OrderProductWithProduct } from './model/order-product-composer';
 
+export { type IOrderProductService } from './model/services/order-product.service';
+
 export {
   ORDER_PRODUCT_STATUS,
   ORDER_PRODUCT_STATUS_NAME,
