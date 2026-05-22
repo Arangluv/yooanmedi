@@ -1,5 +1,5 @@
-import { adminOrderListUseCase, clientOrderListUseCase } from '../services';
 import { createUseAdminOrderList, createUseClientOrderList } from './useOrderList';
 
-export const useAdminOrderList = createUseAdminOrderList(adminOrderListUseCase);
-export const useClientOrderList = createUseClientOrderList(clientOrderListUseCase);
+export { useOrderListSearchFilter } from './useOrderListSearchFilter';
+export const useAdminOrderList = createUseAdminOrderList();
+export const useClientOrderList = createUseClientOrderList();

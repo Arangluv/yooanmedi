@@ -1,19 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { BasePayload } from 'payload';
 import { PGPaymentCommand } from '../model/command/pg-payment-command';
-import {
-  getPayload,
-  runWithTransaction,
-  transactionContext,
-  type TransactionalCommand,
-} from '@/shared/infrastructure';
+import { getPayload, runWithTransaction, transactionContext } from '@/shared/infrastructure';
 import {
   TEST_USER_ID,
   PGCases,
   createEasypayApprovalResponse,
 } from '../__test__/integration.fixture';
 import { EasyPayService } from '@/entities/easypay';
-import { SystemError } from '@/shared';
+import { SystemError, TransactionalCommand } from '@/shared';
 
 vi.mock('@/shared/lib/run-with-transaction', () => ({
   runWithTransaction: vi.fn(),

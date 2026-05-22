@@ -1,4 +1,4 @@
 export { type OrderTransitionUseCase } from './usecase';
-export { orderTransitionUseCase } from './services';
+export { orderTransitionUseCase } from './core';
 export * from './dto';
 export * from './hooks';

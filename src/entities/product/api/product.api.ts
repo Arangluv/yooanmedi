@@ -2,7 +2,7 @@
 
 import { ProductRepository } from './repository';
 import { okWithData, failure, normalizeError, EndPointResult } from '@/shared';
-import { Logger } from '@/shared/infrastructure';
+import { Logger } from '@/shared';
 import { ProductCategory } from '../model/schemas/product-category';
 
 export const getProductCategories = async (): Promise<EndPointResult<ProductCategory[]>> => {

@@ -10,7 +10,8 @@ import { OrderProductPaymentService } from '@/entities/order-product/model/servi
 import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
-import { runWithTransaction, TransactionalCommand } from '@/shared/infrastructure';
+import { runWithTransaction } from '@/shared/infrastructure';
+import { TransactionalCommand } from '@/shared';
 import { PaymentDto } from '../schemas/payments.dto';
 import { EnrichedOrderListItem } from '../schemas/payment-order-list.schema';
 import { enrichOrderList } from '../enrich-order-list';

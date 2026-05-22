@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
 
     const clientInfo = await generateClientInfo(usageCode as keyof typeof USAGE_CODE);
 
-    // return NextResponse.json(clientInfo);
     return new NextResponse(JSON.stringify(clientInfo), {
       status: 200,
       headers: {

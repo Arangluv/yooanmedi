@@ -1,7 +1,7 @@
 'use server';
 
 import { EndPointResult, okWithData, failure, normalizeError, ok } from '@/shared';
-import { Logger } from '@/shared/infrastructure';
+import { Logger } from '@/shared';
 import { CartService } from '../infrastructure';
 import type { Cart, CartItem, CreateCartItemRequestDto } from '../model/cart.schema';
 

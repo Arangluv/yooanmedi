@@ -1,7 +1,7 @@
 'use server';
 
 import { EndPointResult, failure, ok, normalizeError } from '@/shared';
-import { Logger } from '@/shared/infrastructure';
+import { Logger } from '@/shared';
 import { BankTransferPaymentCommand } from '../model/command/bank-transfer-payment-command';
 import { BankTransferRequestDto } from '../model/schemas/bank-transfer-request.schema';
 

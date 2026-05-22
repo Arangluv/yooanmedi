@@ -1,12 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { BasePayload } from 'payload';
-import { SystemError } from '@/shared';
-import {
-  getPayload,
-  transactionContext,
-  runWithTransaction,
-  TransactionalCommand,
-} from '@/shared/infrastructure';
+import { SystemError, TransactionalCommand } from '@/shared';
+import { getPayload, transactionContext, runWithTransaction } from '@/shared/infrastructure';
 import { successCases, requestDto, TEST_USER_ID } from '../__test__/integration.fixture';
 import { paymentBybankTransfer } from './payments.api';
 import { BankTransferPaymentCommand } from '../model/command/bank-transfer-payment-command';

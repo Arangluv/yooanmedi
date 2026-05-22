@@ -6,7 +6,7 @@ import moment from 'moment';
 import { parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order';
 
-const useOrderListSearchFilter = () => {
+export const useOrderListSearchFilter = () => {
   const [filters, setFilters] = useQueryStates(
     {
       from: parseAsString,
@@ -126,5 +126,3 @@ const useOrderListSearchFilter = () => {
     orderStatus,
   };
 };
-
-export default useOrderListSearchFilter;

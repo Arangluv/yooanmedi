@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '../lib/utils';
 import { Button } from '@/shared/ui/shadcn/button';
 
 const ExcelExportButton = ({ onClick, className }: { onClick: () => void; className?: string }) => {

@@ -1,0 +1,1 @@
+export { zodSafeParse } from './zod';

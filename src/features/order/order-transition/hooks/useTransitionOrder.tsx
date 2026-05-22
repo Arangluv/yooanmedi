@@ -1,10 +1,9 @@
-'use client';
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { OrderTransitionUseCase } from '../usecase';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
 import { EndPointResult, useAlertDialog } from '@/shared';
+
 
 export const createUseTransitionOrder = (useCase: OrderTransitionUseCase) => {
   const useTransitionOrder = () => {

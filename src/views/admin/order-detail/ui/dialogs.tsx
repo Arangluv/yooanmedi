@@ -1,5 +1,3 @@
-'use client';
-
 import { Button, useAlertDialog } from '@/shared';
 import { PackageX } from 'lucide-react';
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';

@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { BusinessLogicError } from '@/shared';
-import { AdminOrderListUseCase, ClientOrderListUseCase } from '../usecase';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
 import { AdminOrderListSearchParams, ClientOrderListSearchParams } from '../lib';
+import { getAdminOrderList, getClientOrderList } from '../core';
 
-export const createUseAdminOrderList = (useCase: AdminOrderListUseCase) => {
+export const createUseAdminOrderList = () => {
   const useAdminOrderList = (searchParam: AdminOrderListSearchParams) => {
     const { data: result } = useQuery({
       queryKey: ORDER_QUERY_KEYS.list(searchParam),
-      queryFn: () => useCase.getOrderList(searchParam),
+      queryFn: () => getAdminOrderList(searchParam),
     });
 
     if (!result) {
@@ -27,11 +27,11 @@ export const createUseAdminOrderList = (useCase: AdminOrderListUseCase) => {
   return useAdminOrderList;
 };
 
-export const createUseClientOrderList = (useCase: ClientOrderListUseCase) => {
+export const createUseClientOrderList = () => {
   const useClientOrderList = (searchParam: ClientOrderListSearchParams) => {
     const { data: result } = useQuery({
       queryKey: ORDER_QUERY_KEYS.list(searchParam),
-      queryFn: () => useCase.getOrderList(searchParam),
+      queryFn: () => getClientOrderList(searchParam),
     });
 
     if (!result) {

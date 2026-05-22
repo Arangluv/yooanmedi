@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { shopOrderNoFixture } from '@/shared/__mock__/base.fixture';
-import { PAYMENTS_METHOD } from '@/shared';
+import { PAYMENTS_METHOD } from '@/entities/order';
 import {
   bankTransferPaymentInitContextSchema,
   bankTransferPaymentContextAfterOrderSchema,

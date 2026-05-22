@@ -2,7 +2,7 @@
 
 import { SearchParams } from 'nuqs';
 import { EndPointResult, normalizeError, okWithData, failure } from '@/shared';
-import { Logger } from '@/shared/infrastructure';
+import { Logger } from '@/shared';
 import { Product } from '@/entities/product';
 import { ProductListService } from '../infrastructure';
 import { type ProductList } from '../model/product-list.schema';

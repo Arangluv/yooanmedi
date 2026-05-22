@@ -3,7 +3,7 @@
 import { type FindOption } from '@/shared';
 import { OrderService } from '../model/services/order.service';
 import { okWithData, failure, normalizeError } from '@/shared';
-import { Logger } from '@/shared/infrastructure';
+import { Logger } from '@/shared';
 
 export const getOrderList = async (option: FindOption) => {
   try {

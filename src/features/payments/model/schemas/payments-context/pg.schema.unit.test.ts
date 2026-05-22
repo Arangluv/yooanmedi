@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PAYMENTS_METHOD } from '@/shared';
+import { PAYMENTS_METHOD } from '@/entities/order';
 import { pgCnoFixture, authorizationIdFixture } from '@/shared/__mock__/base.fixture';
 import {
   paymentInitContextSchema,

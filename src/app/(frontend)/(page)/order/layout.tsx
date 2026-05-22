@@ -1,6 +1,7 @@
 import { NuqsProvider } from '@/shared';
 import { AuthGuard } from '@/entities/user';
-import { getSiteMetadata, SiteMetadataSetter } from '@/shared';
+import { SiteMetadataSetter } from '@/shared';
+import { getSiteMetadata } from '@/shared/infrastructure';
 import LayoutTopNavbar from '@/entities/order/ui/LayoutTopNavbar';
 import { getFavoritesList } from '@/features/favorites-product/api/favorites-list';
 import FavoritesProductInitProvider from '@/features/favorites-product/model/favorites-Init-provider';

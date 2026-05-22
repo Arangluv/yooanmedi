@@ -13,7 +13,7 @@ import { Check, Info } from 'lucide-react';
 import Popup from './_components/Popup';
 import QueryProvider from './query-provider';
 import { TooltipProvider } from '@/shared/ui/shadcn/tooltip';
-import { siteConfig } from '@/shared/config/site.config';
+import { siteConfig } from '@/shared';
 
 const { title, description, naverSiteVerification } = siteConfig;
 

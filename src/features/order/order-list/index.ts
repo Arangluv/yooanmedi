@@ -1,12 +1,9 @@
-export { adminOrderListUseCase, clientOrderListUseCase } from './services';
-
 export {
   type AdminOrderListResult,
   type ClientOrderDto,
   type ClientOrderResult,
   type AdminOrderListItemDto,
 } from './schemas';
-
-export type { ClientOrderListSearchParams, AdminOrderListSearchParams } from './lib/search';
-
+export { getAdminOrderList, getClientOrderList } from './core';
+export { type ClientOrderListSearchParams, type AdminOrderListSearchParams } from './lib';
 export { useAdminOrderList, useClientOrderList } from './hooks';

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Logger } from '@/shared/infrastructure';
+import { Logger } from '@/shared';
 import { PGPaymentCommand } from '@/features/payments/model/command/pg-payment-command';
 
 export async function POST(request: NextRequest) {
