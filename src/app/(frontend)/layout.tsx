@@ -4,8 +4,7 @@ import '../globals.css';
 import { Providers } from './providers';
 import { Metadata, Viewport } from 'next';
 import clsx from 'clsx';
-import { getPayload } from 'payload';
-import configPromise from '@/payload.config';
+import { PayloadCms } from '@/shared/server';
 import localFont from 'next/font/local';
 import Footer from './_components/Footer';
 import { Toaster } from 'sonner';
@@ -48,7 +47,7 @@ const pretendard = localFont({
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
-  const payload = await getPayload({ config: configPromise });
+  const payload = await PayloadCms.getInstance();
 
   const [popup] = await Promise.all([payload.findGlobal({ slug: 'popup' })]);
 

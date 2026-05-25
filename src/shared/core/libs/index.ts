@@ -2,7 +2,6 @@ export type { TransactionalCommand, TransactionContext } from './db-transaction'
 export { getNowYYYYMMDD, getNowISOString } from './date';
 export { formatNumberWithCommas } from './fomatters';
 export { generateUUID32digits, generate15digitsNumberBasedOnDate } from './identifier';
-export { cn } from './tailwind-util';
 export {
   normalizeError,
   ValidationError,

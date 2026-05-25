@@ -1,12 +1,12 @@
 'use server';
 
-import config from '@/payload.config';
-import { APIError, getPayload } from 'payload';
+import { PayloadCms } from '@/shared/server';
+import { APIError } from 'payload';
 import { CartService } from '@/entities/cart/infrastructure';
 
 // 해당 코드는 현재 FSD 아키텍쳐를 따르고 있지 않으며 반드시 리팩토링이 필요합니다
 export async function join(formData: FormData) {
-  const payload = await getPayload({ config: config });
+  const payload = await PayloadCms.getInstance();
   const cartService = new CartService();
 
   try {

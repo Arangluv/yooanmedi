@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Product } from '@collections/components/common/Columns';
+import type { Product } from '@/shared/server/configs/payload-cms/components/common/Columns';
 
 // Columns에서 사용하는 Product type에 custom_price 필드를 추가한 타입
 export type SelectedProduct = Product & {

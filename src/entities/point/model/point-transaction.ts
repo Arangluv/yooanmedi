@@ -1,4 +1,4 @@
-import { zodSafeParse } from '@/shared';
+import { zodSafeParse, BusinessLogicError, FindOption } from '@/shared';
 import { IPointTransaction } from './interfaces';
 import { PointTransactionRepository } from './repository';
 import {
@@ -15,8 +15,6 @@ import type {
   EarnPointHistoryDto,
   CancelEarnPointHistoryDto,
 } from './schema/history.schema';
-import { BusinessLogicError } from '@/shared/model/errors/domain.error';
-import { FindOption } from '@/shared';
 import { POINT_ACTION } from '../constants/point-action';
 
 interface CreatedHistory {

@@ -1,4 +1,3 @@
-import { User } from '@/payload-types';
 import { SidebarInset, SidebarProvider } from '../../shadcn/sidebar';
 import AdminSidebar from './sidebar';
 

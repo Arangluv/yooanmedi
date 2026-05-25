@@ -12,7 +12,7 @@ import {
   type PaymentApprovalRequestDto,
   toPaymentApprovalServiceDto,
 } from './schemas/easypay.payment-approval.schema';
-import { BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { BusinessLogicError } from '@/shared';
 import {
   EasypayCancelRequestDto,
   toEasypayPartialCancelEntity,

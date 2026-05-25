@@ -1,6 +1,6 @@
-import { FramerCarousel } from '@/components/ui/framer-carousel';
-import { getMainBanners } from '../api/get-main-banner';
-import { bannerSchema } from '../model/banner-schema';
+import { FramerCarousel } from './framer-carousel';
+import { getMainBanners } from '../server';
+import { bannerSchema } from '../core';
 
 const CarouselBanner = async () => {
   const banners = await getMainBanners();

@@ -1,5 +1,4 @@
 // models
-export type { Payment } from './model/types';
 export type { CreatePaymentDto } from './model/create-schema';
 export type { CancelPaymentDto } from './model/cancel-schema';
 

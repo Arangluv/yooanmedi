@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { alertDialogContext } from '../model/providers/alert-dialog-provider';
+import { alertDialogContext } from '../providers/alert-dialog-provider';
 
 export const useAlertDialog = () => {
   const alertContext = React.useContext(alertDialogContext);

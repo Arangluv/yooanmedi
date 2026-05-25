@@ -1,12 +1,12 @@
 'use client';
 
 import clsx from 'clsx';
-import { PopupFramerCarousel } from '@/components/ui/popup-framer-carousel';
+import { PopupFramerCarousel } from '@/shared';
 import { useEffect, useState } from 'react';
 
 export default function Popup({ popup }: { popup: any }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false); // 로딩 상태 추가
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // 오늘 날짜 확인

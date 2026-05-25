@@ -1,0 +1,19 @@
+import type { CollectionConfig } from 'payload';
+
+export const file: CollectionConfig = {
+  slug: 'files',
+  access: {
+    read: () => true,
+    create: () => true,
+  },
+  lockDocuments: false,
+  admin: {
+    group: '파일 & 이미지',
+  },
+  labels: {
+    singular: '파일',
+    plural: '파일',
+  },
+  upload: {},
+  fields: [],
+};

@@ -1,17 +1,16 @@
-'use server'
+'use server';
 
-import config from '@/payload.config'
-import { getPayload } from 'payload'
+import { PayloadCms } from '@/shared/server';
 
 export async function findId(dto: {
-  hospitalName: string
-  businessNumber: string
-  nursingNumber: string
-  phoneNumber: string
+  hospitalName: string;
+  businessNumber: string;
+  nursingNumber: string;
+  phoneNumber: string;
 }) {
   try {
-    const payload = await getPayload({ config: config })
-    const { hospitalName, businessNumber, nursingNumber, phoneNumber } = dto
+    const payload = await PayloadCms.getInstance();
+    const { hospitalName, businessNumber, nursingNumber, phoneNumber } = dto;
     const user = await payload.find({
       collection: 'users',
       select: {
@@ -31,29 +30,29 @@ export async function findId(dto: {
           equals: phoneNumber,
         },
       },
-    })
-    const userData = user.docs
+    });
+    const userData = user.docs;
     if (userData.length === 0) {
-      return { success: false, message: '가입 이력이 없는 아이디입니다' }
+      return { success: false, message: '가입 이력이 없는 아이디입니다' };
     }
 
-    return { success: true, message: '', username: userData[0].username }
+    return { success: true, message: '', username: userData[0].username };
   } catch (error) {
     return {
       success: false,
       message: '아이디 찾기 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    }
+    };
   }
 }
 
 export async function findIdToResetPassword(dto: {
-  username: string
-  hospitalName: string
-  nursingNumber: string
+  username: string;
+  hospitalName: string;
+  nursingNumber: string;
 }) {
   try {
-    const payload = await getPayload({ config: config })
-    const { username, hospitalName, nursingNumber } = dto
+    const payload = await PayloadCms.getInstance();
+    const { username, hospitalName, nursingNumber } = dto;
     const user = await payload.find({
       collection: 'users',
       select: {
@@ -71,25 +70,25 @@ export async function findIdToResetPassword(dto: {
           equals: nursingNumber,
         },
       },
-    })
-    const userData = user.docs
+    });
+    const userData = user.docs;
     if (userData.length === 0) {
-      return { success: false, message: '아이디가 존재하지 않거나, 일치하지 않은 정보입니다.' }
+      return { success: false, message: '아이디가 존재하지 않거나, 일치하지 않은 정보입니다.' };
     }
 
-    return { success: true, message: '', username: userData[0].username }
+    return { success: true, message: '', username: userData[0].username };
   } catch (error) {
     return {
       success: false,
       message: '아이디 찾기 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    }
+    };
   }
 }
 
 export async function resetPassword(dto: { username: string; password: string }) {
   try {
-    const payload = await getPayload({ config: config })
-    const { username, password } = dto
+    const payload = await PayloadCms.getInstance();
+    const { username, password } = dto;
     const user = await payload.update({
       collection: 'users',
       data: {
@@ -100,13 +99,13 @@ export async function resetPassword(dto: { username: string; password: string })
           equals: username,
         },
       },
-    })
+    });
 
-    return { success: true, message: '', username: user.docs[0].username }
+    return { success: true, message: '', username: user.docs[0].username };
   } catch (error) {
     return {
       success: false,
       message: '비밀번호 재설정 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    }
+    };
   }
 }

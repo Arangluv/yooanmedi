@@ -20,8 +20,6 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@ui/*": ["./src/components/ui/*"],
       "@components/*": ["./src/components/*"],
       "@payload-config": ["./src/payload.config.ts"],
       "@public/*": ["./public/*"],

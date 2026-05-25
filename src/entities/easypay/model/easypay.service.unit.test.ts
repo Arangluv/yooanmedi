@@ -8,7 +8,7 @@ import {
 } from '../__test__/easypay.fixture';
 import { easypayRegisterTransactionSuccessResultSchema } from './schemas/easypay.register-transaction.schema';
 import { paymentApprovalSuccessResultSchema } from './schemas/easypay.payment-approval.schema';
-import { ZodParseError, BusinessLogicError } from '@/shared/model/errors/domain.error';
+import { ZodParseError, BusinessLogicError } from '@/shared';
 import { registerTransactionSuccessResultSchema } from './schemas/easypay.register-transaction-result.schema';
 
 vi.mock('../api/easypay.repository', () => ({

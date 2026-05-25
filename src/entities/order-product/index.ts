@@ -19,5 +19,3 @@ export {
   ORDER_PRODUCT_STATUS_NAME,
   type OrderProductStatus,
 } from './constants/order-product-status';
-
-export { cancelOrderProduct } from './api/cancel-order-product';

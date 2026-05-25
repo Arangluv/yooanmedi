@@ -2,7 +2,7 @@
 
 import { EndPointResult, failure, okWithData } from '@/shared';
 import { normalizeError } from '@/shared';
-import { Logger } from '@/shared/model/logger/logger';
+import { Logger } from '@/shared';
 import { EasyPayService } from '../model/easypay.service';
 import { type RegisterTransactionRequestDto } from '../model/schemas/easypay.register-transaction.schema';
 

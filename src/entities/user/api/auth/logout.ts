@@ -1,11 +1,11 @@
 'use server';
 
 import { logout as payloadLogout } from '@payloadcms/next/auth';
-import config from '@/payload.config';
+import { payloadConfig } from '@/shared/server';
 
 export const logout = async () => {
   try {
-    const res = await payloadLogout({ config });
+    const res = await payloadLogout({ config: payloadConfig });
 
     if (res.success) {
       return { success: true };

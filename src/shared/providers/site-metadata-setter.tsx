@@ -3,7 +3,10 @@
 import { useEffect } from 'react';
 
 import { useSiteMetaStore } from './useSiteMetaStore';
-import type { SiteMetadata } from '../api/get-site-metadata';
+
+type SiteMetadata = {
+  minOrderPrice: number;
+};
 
 export const SiteMetadataSetter = ({
   matadata,

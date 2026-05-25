@@ -1,3 +1,5 @@
+// will deprecated
+
 import { OrderProduct } from './schemas/order-product.schema';
 import { type Product } from '@/entities/product/@x/order-product';
 
