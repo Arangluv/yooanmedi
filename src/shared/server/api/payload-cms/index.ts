@@ -8,10 +8,4 @@ export class PayloadCms {
     });
     return payload;
   }
-
-  public static async getInstanceAndTransactionId() {
-    await payload.init({ config: payloadConfig });
-    const transactionID = await payload.db.beginTransaction();
-    return { payload, transactionID };
-  }
 }
