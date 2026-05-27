@@ -7,6 +7,6 @@ export type TransactionContext = {
 
 export const transactionStorage = new AsyncLocalStorage<TransactionContext>();
 
-export const getTransactionContext = (): TransactionContext['req'] | undefined => {
+export const getTransactionContextFromStore = (): TransactionContext['req'] | undefined => {
   return transactionStorage.getStore()?.req;
 };

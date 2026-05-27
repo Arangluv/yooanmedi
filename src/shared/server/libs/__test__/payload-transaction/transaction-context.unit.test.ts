@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TransactionalCommand } from '@/shared/core';
 import { PayloadCms } from '@/shared/server/api';
-import { getTransactionContext, runInTransaction } from '../../payload-transaction';
+import { getTransactionContextFromStore, runInTransaction } from '../../payload-transaction';
 
 describe('transactionContext', async () => {
   const payload = await PayloadCms.getInstance();
@@ -9,7 +9,7 @@ describe('transactionContext', async () => {
   it('getTransactionContext는 TransactionalCommand 내부에서 transactionId가 포함된 req를 반환한다.', async () => {
     const command: TransactionalCommand<void> = {
       run: async () => {
-        const req = getTransactionContext();
+        const req = getTransactionContextFromStore();
         expect(req).toBeDefined();
         expect(req?.transactionID).toBeDefined();
       },
@@ -19,7 +19,7 @@ describe('transactionContext', async () => {
   });
 
   it('getTransactionContext는 TransactionalCommand 외부에서 undefined를 반환한다', async () => {
-    const req = getTransactionContext();
+    const req = getTransactionContextFromStore();
     expect(req).not.toBeDefined();
     expect(req?.transactionID).not.toBeDefined();
   });

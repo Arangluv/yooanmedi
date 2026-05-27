@@ -6,9 +6,9 @@ export const baseSchema = {
   orderProduct: z.number('orderProduct가 누락되었습니다.'),
   amount: z.number('amount는 0 이상이어야 합니다.').min(0, 'amount는 0 이상이어야 합니다.'),
   type: z.enum([
-    POINT_ACTION.USE,
-    POINT_ACTION.EARN,
-    POINT_ACTION.CANCEL_USE,
-    POINT_ACTION.CANCEL_EARN,
+    POINT_ACTION.use,
+    POINT_ACTION.earn,
+    POINT_ACTION.cancel_use,
+    POINT_ACTION.cancel_earn,
   ]),
 };

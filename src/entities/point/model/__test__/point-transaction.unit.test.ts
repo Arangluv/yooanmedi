@@ -23,7 +23,7 @@ describe('UsePointTransaction', () => {
 
     expect(PointTransactionRepository.save).toHaveBeenCalledWith({
       ...createHistoryDto,
-      type: POINT_ACTION.USE,
+      type: POINT_ACTION.use,
     });
   });
 

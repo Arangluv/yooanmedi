@@ -1,9 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import type { User } from '@/entities/user/@x/point';
 
-const useUsedPoint = ({ user }: { user: User }) => {
+export const useUsedPoint = ({ user }: { user: User }) => {
   const [pointStatus, setPointStatus] = useState({
     usedPoint: 0,
     maxUseablePoint: user.point,
@@ -70,5 +68,3 @@ const useUsedPoint = ({ user }: { user: User }) => {
 
   return { pointStatus, updatePoint, updateFieldToMaxUseablePoint };
 };
-
-export default useUsedPoint;

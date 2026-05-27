@@ -99,7 +99,7 @@ export class CancelUsePointTransaction
           equals: orderProductId,
         },
         type: {
-          equals: POINT_ACTION.USE,
+          equals: POINT_ACTION.use,
         },
       },
     };
@@ -171,7 +171,7 @@ export class CancelEarnPointTransaction
           equals: orderProductId,
         },
         type: {
-          equals: POINT_ACTION.EARN,
+          equals: POINT_ACTION.earn,
         },
       },
     };

@@ -14,12 +14,12 @@ const usePointHistoryDto = baseHistorySchema.extend({
 });
 const usePointHistoryEntityPipe = baseHistorySchema.extend({
   amount: baseSchema.amount,
-  type: z.literal(POINT_ACTION.USE),
+  type: z.literal(POINT_ACTION.use),
 });
 export const usePointHistoryEntitySchema = usePointHistoryDto
   .transform((data) => ({
     ...data,
-    type: POINT_ACTION.USE,
+    type: POINT_ACTION.use,
   }))
   .pipe(usePointHistoryEntityPipe);
 
@@ -30,12 +30,12 @@ export type UsePointHistoryEntity = z.infer<typeof usePointHistoryEntitySchema>;
 const cancelUsePointHistoryDto = baseHistorySchema;
 const cancelUsePointHistoryEntity = baseHistorySchema.extend({
   amount: baseSchema.amount,
-  type: z.literal(POINT_ACTION.CANCEL_USE),
+  type: z.literal(POINT_ACTION.cancel_use),
 });
 export const toCancelUsePointEntity = (data: CancelUsePointHistoryDto & { amount: number }) => {
   return zodSafeParse(cancelUsePointHistoryEntity, {
     ...data,
-    type: POINT_ACTION.CANCEL_USE,
+    type: POINT_ACTION.cancel_use,
   });
 };
 export type CancelUsePointHistoryDto = z.infer<typeof cancelUsePointHistoryDto>;
@@ -47,12 +47,12 @@ const earnPointHistoryDto = baseHistorySchema.extend({
 });
 const earnPointHistoryEntityPipe = baseHistorySchema.extend({
   amount: baseSchema.amount,
-  type: z.literal(POINT_ACTION.EARN),
+  type: z.literal(POINT_ACTION.earn),
 });
 export const earnPointHistoryEntitySchema = earnPointHistoryDto
   .transform((data) => ({
     ...data,
-    type: POINT_ACTION.EARN,
+    type: POINT_ACTION.earn,
   }))
   .pipe(earnPointHistoryEntityPipe);
 export type EarnPointHistoryDto = z.infer<typeof earnPointHistoryDto>;
@@ -61,13 +61,13 @@ export type EarnPointHistoryEntity = z.infer<typeof earnPointHistoryEntitySchema
 /** 포인트 적립 취소*/
 const cancelEarnPointHistoryDto = baseHistorySchema;
 const cancelEarnPointHistoryEntity = baseHistorySchema.extend({
-  type: z.literal(POINT_ACTION.CANCEL_EARN),
+  type: z.literal(POINT_ACTION.cancel_earn),
   amount: baseSchema.amount,
 });
 export const toCancelEarnPointEntity = (data: CancelUsePointHistoryDto & { amount: number }) => {
   return zodSafeParse(cancelEarnPointHistoryEntity, {
     ...data,
-    type: POINT_ACTION.CANCEL_EARN,
+    type: POINT_ACTION.cancel_earn,
   });
 };
 export type CancelEarnPointHistoryDto = z.infer<typeof cancelEarnPointHistoryDto>;
