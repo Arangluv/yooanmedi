@@ -1,4 +1,3 @@
-import { getPointWhenUsingCard } from '@/entities/point/lib/calculator';
 import {
   UsePointTransaction,
   EarnPointTransaction,
@@ -22,6 +21,8 @@ import {
   PGPaymentAfterOrderContext,
   PGPaymentInitContext,
 } from '../schemas/payments-context/pg.schema';
+import { PointCalculator } from '@/entities/point';
+import { PaymentsMapper } from '../../mapper';
 
 export interface PGPaymentCommandResult {
   approvalDate: string;
@@ -147,8 +148,9 @@ export class PGPaymentCommand
           amount: orderListItem.calculatedUsedPoint,
         });
         // step 4. 구매 포인트 적립 히스토리 생성
-        const willEarnPoint = getPointWhenUsingCard(orderListItem.product) * orderListItem.quantity;
-        earnedPoint += willEarnPoint;
+        const pointItem = PaymentsMapper.orderListItemToPointItem(orderListItem);
+        const willEarnPoint = PointCalculator.forCardWithQuantity(pointItem);
+        earnedPoint += willEarnPoint; // will remove
         await earnPointTransaction.createHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,

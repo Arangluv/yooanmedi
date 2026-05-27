@@ -1,17 +1,21 @@
-import { zodSafeParse } from '@/shared';
+import { PAYMENTS_METHOD, zodSafeParse } from '@/shared';
 import {
   CreateUsePointHistoryRequestDto,
   CreateEarnPointHistoryRequestDto,
   CreateCancelEarnPointHistoryRequestDto,
   CreateCancelUsePointHistoryRequestDto,
 } from '../dto';
-import { PointHistoryEntity, PointTransaction, UserReference } from '../types';
+import { PointHistoryEntity, PointItem, PointTransaction, UserReference } from '../types';
 import {
   createPointHistoryEntitySchema,
+  pointItemListSchema,
+  pointItemSchema,
   pointTransactionSchema,
   userReferenceSchema,
 } from '../schemas';
 import { POINT_ACTION } from '../constants';
+import { Product } from '@/entities/product/@x/point';
+import { CartItem } from '@/entities/cart';
 
 export class PointTransactionMapper {
   static toDomain(data: unknown): PointTransaction {
@@ -50,5 +54,31 @@ export class PointTransactionMapper {
 
   static toUserReference(data: unknown): UserReference {
     return zodSafeParse(userReferenceSchema, data);
+  }
+
+  static productToPointItem(product: Product, quantity: number): PointItem {
+    return zodSafeParse(pointItemSchema, {
+      rates: {
+        [PAYMENTS_METHOD.bank_transfer]: product.cashback_rate_for_bank,
+        [PAYMENTS_METHOD.credit_card]: product.cashback_rate,
+      },
+      price: product.price,
+      quantity,
+    });
+  }
+
+  static cartItemListToPointItemList(cartItemList: CartItem[]): PointItem[] {
+    const dto = cartItemList.map((item) => {
+      return {
+        rates: {
+          [PAYMENTS_METHOD.bank_transfer]: item.product.cashback_rate_for_bank,
+          [PAYMENTS_METHOD.credit_card]: item.product.cashback_rate,
+        },
+        quantity: item.quantity,
+        price: item.product.price,
+      };
+    });
+
+    return zodSafeParse(pointItemListSchema, dto);
   }
 }

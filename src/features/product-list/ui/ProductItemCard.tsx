@@ -3,14 +3,17 @@
 import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import type { Product } from '@/entities/product';
-import { getMaxPointOnPurchase } from '@/entities/point';
 import { formatNumberWithCommas } from '@/shared';
 import useProductDetailStore from '../model/useProductDetailStore';
 import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
 import { AddToCartButton } from '@/entities/cart';
+import { PointCalculator, PointTransactionMapper } from '@/entities/point';
 
 const ProductItemCard = ({ product }: { product: Product }) => {
   const { setClieckedProduct } = useProductDetailStore();
+  const maxPoint = PointCalculator.maxForItem(
+    PointTransactionMapper.productToPointItem(product, 1),
+  );
 
   return (
     <div className="flex w-full flex-col">
@@ -48,7 +51,7 @@ const ProductItemCard = ({ product }: { product: Product }) => {
         </span>
         {(product.cashback_rate > 0 || product.cashback_rate_for_bank > 0) && (
           <span className="text-brandWeek text-sm">
-            구매 시 최대 적립금 {formatNumberWithCommas(getMaxPointOnPurchase(product))}원
+            구매 시 최대 적립금 {formatNumberWithCommas(maxPoint)}원
           </span>
         )}
       </div>

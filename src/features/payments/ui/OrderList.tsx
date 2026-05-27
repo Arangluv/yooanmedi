@@ -4,10 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ImageIcon } from 'lucide-react';
 import type { CartItem } from '@/entities/cart';
-import { getMaxPointOnPurchase } from '@/entities/point';
+import { PointCalculator } from '@/entities/point';
 import { usePrice } from '@/entities/price';
 import { formatNumberWithCommas, useSiteMetaStore } from '@/shared';
 import { useCartQuery } from '@/entities/cart';
+import { PaymentsMapper } from '../mapper';
 
 const OrderList = () => {
   const {
@@ -45,6 +46,10 @@ const EmptyOrderList = () => {
 };
 
 const OrderListItem = ({ cartItem, discountFlg }: { cartItem: CartItem; discountFlg: boolean }) => {
+  const maxPoint = PointCalculator.maxForItemWithQuantity(
+    PaymentsMapper.cartItemToPointItem(cartItem),
+  );
+
   return (
     <div className="flex items-center gap-4">
       {/* 상품 이미지 */}
@@ -73,9 +78,7 @@ const OrderListItem = ({ cartItem, discountFlg }: { cartItem: CartItem; discount
           <span>|</span>
           <span>{cartItem.product.returnable ? '반품가능' : '반품불가'}</span>
         </div>
-        <span className="text-brand text-[13px]">
-          구매 시 최대 적립금 {getMaxPointOnPurchase(cartItem.product)}원
-        </span>
+        <span className="text-brand text-[13px]">구매 시 최대 적립금 {maxPoint}원</span>
       </div>
     </div>
   );

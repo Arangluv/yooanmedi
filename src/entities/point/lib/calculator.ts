@@ -1,54 +1,54 @@
-import type { Product } from '@/entities/product/model/schemas/product.schema';
-import type { CartItem } from '@/entities/cart/@x/point';
-/**
- * @description 카드 결제 시 적립되는 적립금
- * TODO :: ref#1
- * 해당 부분은 entity의 정보를 몰라야합니다. price와 rate만 받도록 수정해야합니다
- */
-export const getPointWhenUsingCard = (product: Product) => {
-  return Math.floor(product.price * (product.cashback_rate / 100));
-};
+import { PointItem } from '../types';
+import { PAYMENTS_METHOD, PaymentsMethod } from '@/shared';
 
-/**
- * @description 무통장 입금 시 적립되는 적립금
- */
-export const getPointWhenUsingBankTransfer = (product: Product) => {
-  return Math.floor(product.price * (product.cashback_rate_for_bank / 100));
-};
+export class PointCalculator {
+  // 단일 상품 적립금
+  static forItem(item: PointItem, rate: number): number {
+    return Math.floor(item.price * (rate / 100));
+  }
 
-/**
- * @description 상품을 구매 할 시 카드 결제와 무통장 입금 최대 적립금을 반환하는 함수
- */
+  static forBank(item: PointItem) {
+    const rate = item.rates[PAYMENTS_METHOD.bank_transfer];
+    return PointCalculator.forItem(item, rate);
+  }
 
-export const getMaxPointOnPurchase = (product: Product) => {
-  const cardPoint = getPointWhenUsingCard(product);
-  const bankPoint = getPointWhenUsingBankTransfer(product);
+  static forCard(item: PointItem) {
+    const rate = item.rates[PAYMENTS_METHOD.credit_card];
+    return PointCalculator.forItem(item, rate);
+  }
 
-  return Math.max(cardPoint, bankPoint);
-};
+  static forBankWithQuantity(item: PointItem) {
+    const rate = item.rates[PAYMENTS_METHOD.bank_transfer];
+    return PointCalculator.forItem(item, rate) * item.quantity;
+  }
 
-/**
- * @description 카드 결제 시 적립되는 적립금
- */
-export const getTotalPointWhenUsingCardPayments = (cartItems: CartItem[]) => {
-  let totalPoint = 0;
+  static forCardWithQuantity(item: PointItem) {
+    const rate = item.rates[PAYMENTS_METHOD.credit_card];
+    return PointCalculator.forItem(item, rate) * item.quantity;
+  }
 
-  cartItems.forEach(({ product, quantity }) => {
-    totalPoint += getPointWhenUsingCard(product) * quantity;
-  });
+  // 결제 수단별 단일 상품 적립금
+  static forPayment(item: PointItem, method: PaymentsMethod): number {
+    return PointCalculator.forItem(item, item.rates[method]);
+  }
 
-  return totalPoint;
-};
+  // 단일 상품 최대 적립금
+  static maxForItem(item: PointItem): number {
+    return Math.max(PointCalculator.forBank(item), PointCalculator.forCard(item));
+  }
 
-/**
- * @description 무통장 입금 시 적립되는 적립금
- */
-export const getTotalPointWhenUsingBankTransfer = (cartItems: CartItem[]) => {
-  let totalPoint = 0;
+  // 단일 상품 최대 적립금
+  static maxForItemWithQuantity(item: PointItem): number {
+    const priceForCard = PointCalculator.forCardWithQuantity(item);
+    const priceForBank = PointCalculator.forBankWithQuantity(item);
 
-  cartItems.forEach(({ product, quantity }) => {
-    totalPoint += getPointWhenUsingBankTransfer(product) * quantity;
-  });
+    return Math.max(priceForCard, priceForBank);
+  }
 
-  return totalPoint;
-};
+  // 장바구니 전체 적립금
+  static totalForCart(items: PointItem[], method: PaymentsMethod): number {
+    return items.reduce((sum, item) => {
+      return sum + PointCalculator.forPayment(item, method) * item.quantity;
+    }, 0);
+  }
+}

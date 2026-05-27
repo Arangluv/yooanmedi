@@ -1,4 +1,10 @@
-export { EASYPAY_CONFIG, siteConfig, PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from './config';
+export {
+  EASYPAY_CONFIG,
+  siteConfig,
+  PAYMENTS_METHOD,
+  PAYMENTS_METHOD_NAME,
+  type PaymentsMethod,
+} from './config';
 export * from './core';
 export * from './providers';
 export * from './hooks';
