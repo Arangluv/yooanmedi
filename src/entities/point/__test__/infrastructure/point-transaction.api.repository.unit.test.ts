@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PointTransactionApiRepository, PointTransactionAdapter } from '../../infrastructure';
 import { MockPointTransactionAdapter } from '../mocks';
-import { CreatePointHistoryEntity } from '../../model/schema/history.schema';
 import { pointTransactionSchema } from '../../schemas';
+import { CreatePointTransactionEntity } from '../../types';
 
 describe('Point Transaction API Repository', () => {
   let pointTransactionApiRepository: PointTransactionApiRepository;
@@ -21,7 +21,7 @@ describe('Point Transaction API Repository', () => {
         orderProduct: 1869,
         amount: 156,
         type: 'USE',
-      } as CreatePointHistoryEntity;
+      } as CreatePointTransactionEntity;
 
       vi.mocked(mockPointTransactionAdapter.create).mockResolvedValue({
         id: 3416,

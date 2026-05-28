@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type { User } from '@/entities/user/@x/point';
 

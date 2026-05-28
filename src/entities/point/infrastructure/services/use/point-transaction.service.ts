@@ -1,9 +1,9 @@
 import { BaseError, Logger } from '@/shared';
-import { BasePointTransaction } from '../../core';
-import { CreateUsePointHistoryRequestDto } from '../../dto';
-import { PointTransaction } from '../../types';
-import { PointTransactionMapper } from '../../mapper';
-import { PointCalculator, PointTransactionError } from '../../libs';
+import { BasePointTransaction } from '../../../core';
+import { CreateUsePointHistoryRequestDto } from '../../../dto';
+import { PointTransaction } from '../../../types';
+import { PointTransactionMapper } from '../../../mapper';
+import { PointCalculator, PointTransactionError } from '../../../libs';
 
 export class UsePointTransactionService extends BasePointTransaction {
   public async createHistory(dto: CreateUsePointHistoryRequestDto): Promise<PointTransaction> {
@@ -20,6 +20,6 @@ export class UsePointTransactionService extends BasePointTransaction {
   }
 
   protected calculateUpdatedPoint(current: number, delta: number): number {
-    return PointCalculator.use(current, delta);
+    return PointCalculator.pointUse(current, delta);
   }
 }

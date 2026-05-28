@@ -1,11 +1,10 @@
 import { BaseError, Logger } from '@/shared';
 import { PointTransactionRepository } from './point-transaction.repository';
 import { PointTransaction } from '../types';
-import { CreateUsePointHistoryRequestDto } from '../dto';
 import { PointTransactionError } from '../libs';
 
 export interface IPointTransactionService {
-  createHistory: (dto: CreateUsePointHistoryRequestDto) => Promise<PointTransaction>;
+  createHistory: (dto: any) => Promise<PointTransaction>;
   updateUserPoint: (userId: number, history: PointTransaction[]) => Promise<void>;
 }
 
@@ -16,7 +15,7 @@ export abstract class BasePointTransaction implements IPointTransactionService {
     this.pointTransactionRepository = repository;
   }
 
-  public abstract createHistory(dto: CreateUsePointHistoryRequestDto): Promise<PointTransaction>;
+  public abstract createHistory(dto: any): Promise<PointTransaction>;
 
   protected abstract calculateUpdatedPoint(current: number, delta: number): number;
 

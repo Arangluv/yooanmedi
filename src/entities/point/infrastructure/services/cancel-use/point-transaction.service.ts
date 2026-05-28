@@ -1,8 +1,8 @@
-import { BasePointTransaction } from '../../core';
-import { CreateCancelUsePointHistoryRequestDto } from '../../dto';
-import { PointTransaction } from '../../types';
-import { PointTransactionMapper } from '../../mapper';
-import { PointTransactionFindOption, PointCalculator, PointTransactionError } from '../../libs';
+import { BasePointTransaction } from '../../../core';
+import { CreateCancelUsePointHistoryRequestDto } from '../../../dto';
+import { PointTransaction } from '../../../types';
+import { PointTransactionMapper } from '../../../mapper';
+import { PointTransactionFindOption, PointCalculator, PointTransactionError } from '../../../libs';
 import { BaseError, Logger } from '@/shared';
 
 export class CancelUsePointTransactionService extends BasePointTransaction {
@@ -27,6 +27,6 @@ export class CancelUsePointTransactionService extends BasePointTransaction {
   }
 
   protected calculateUpdatedPoint(current: number, delta: number): number {
-    return PointCalculator.cancelUse(current, delta);
+    return PointCalculator.cancelUsePoint(current, delta);
   }
 }

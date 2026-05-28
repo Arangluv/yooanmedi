@@ -2,9 +2,11 @@ import { Order } from '@/entities/order';
 import { OrderService } from '@/entities/order/infrastructure';
 import { OrderProductService } from '@/entities/order-product/infrastructure';
 import { OrderProduct } from '@/entities/order-product';
-import { EarnPointTransaction } from '@/entities/point/model/point-transaction';
+import { PointCalculator } from '@/entities/point';
+import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { TransitionOrderCommand } from './transition-order-command';
 import { createTransitionOrderContext } from '../../lib/transition-order-context';
+import { TransitionOrderMapper } from '../../mapper';
 
 export class TransitionOrderCommandFactory {
   public static createCommand(order: Order) {
@@ -14,27 +16,24 @@ export class TransitionOrderCommandFactory {
 
     if (context.shouldTriggerEarnPointAction) {
       const earnPoint = async (orderProducts: OrderProduct[]) => {
-        const earnPointTransaction = new EarnPointTransaction();
-        let earnedPoint = 0;
+        const earnPointTransactionService = PointTransactionServiceFactory.forEarn();
 
         // 유저 포인트 적립 히스토리 생성
         await Promise.all(
           orderProducts.map(async (orderProduct) => {
-            // TODO :: ref#1
-            const willEarnPoint = Math.floor(
-              orderProduct.priceSnapshot * (orderProduct.cashback_rate_for_bank / 100),
-            );
-            earnedPoint += willEarnPoint;
-            await earnPointTransaction.createHistory({
+            const pointItem = TransitionOrderMapper.orderProductToPointItem(orderProduct);
+            const willEarnPoint = PointCalculator.forBank(pointItem);
+            const history = await earnPointTransactionService.createHistory({
               user: order.user,
               orderProduct: orderProduct.id,
               amount: willEarnPoint,
             });
+            await earnPointTransactionService.updateUserPoint(order.user, [history]);
           }),
         );
 
         // 유저 포인트 업데이트
-        await earnPointTransaction.updateUserPoint(order.user, earnedPoint);
+        // await earnPointTransaction.updateUserPoint(order.user, earnedPoint);
       };
 
       return new TransitionOrderCommand(context, orderService, orderProductService, earnPoint);

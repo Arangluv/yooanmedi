@@ -174,7 +174,7 @@ describe('PointCalculator', () => {
       const delta = 8;
 
       // When
-      const result = PointCalculator.earn(currentPoint, delta);
+      const result = PointCalculator.pointEarn(currentPoint, delta);
 
       // Then
       expect(result).toBe(108);
@@ -185,7 +185,7 @@ describe('PointCalculator', () => {
       const delta = 8;
 
       // When
-      const result = PointCalculator.use(currentPoint, delta);
+      const result = PointCalculator.pointUse(currentPoint, delta);
 
       // Then
       expect(result).toBe(92);
@@ -197,7 +197,7 @@ describe('PointCalculator', () => {
       const delta = 8;
 
       // When
-      const result = PointCalculator.cancelEarn(currentPoint, delta);
+      const result = PointCalculator.cancelEarnPoint(currentPoint, delta);
 
       // Then
       expect(result).toBe(92);
@@ -209,7 +209,7 @@ describe('PointCalculator', () => {
       const delta = 8;
 
       // When
-      const result = PointCalculator.cancelUse(currentPoint, delta);
+      const result = PointCalculator.cancelUsePoint(currentPoint, delta);
 
       // Then
       expect(result).toBe(108);

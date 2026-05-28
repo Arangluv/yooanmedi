@@ -1,16 +1,7 @@
-export { PointTransactionServiceFactory } from './services';
-
 export { PointCalculator } from './libs';
-
 export { PointTransactionMapper } from './mapper';
-
 export { pointItemSchema, pointTransactionSchema } from './schemas';
-
 export * from './types';
-
-// models
-export { default as useEarnPoint } from './model/useEarnPoint';
-export { default as useUsedPoint } from './model/useUsedPoint';
-
-// ui
+export { useEarnPoint, useUsedPoint } from './hooks';
+export { type IPointTransactionService } from './core';
 export { default as DetailPointBenefitRow } from './ui/DetailPointBenefitRow';

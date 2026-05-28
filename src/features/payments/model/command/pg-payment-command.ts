@@ -1,7 +1,4 @@
-import {
-  UsePointTransaction,
-  EarnPointTransaction,
-} from '@/entities/point/model/point-transaction';
+import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
 import { OrderPaymentsService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
@@ -131,9 +128,8 @@ export class PGPaymentCommand
    * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
    */
   private async processOrderList(ctx: PGPaymentAfterOrderContext) {
-    let earnedPoint = 0;
-    const usePointTransaction = new UsePointTransaction();
-    const earnPointTransaction = new EarnPointTransaction();
+    const usePointTransactionService = PointTransactionServiceFactory.forUse();
+    const earnPointTransactionService = PointTransactionServiceFactory.forEarn();
 
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {
@@ -141,28 +137,31 @@ export class PGPaymentCommand
         const orderProduct = await this.createOrderProduct(ctx, orderListItem);
         // step 2. 구매 히스토리 생성
         await this.createRecentPurchasedHistory(ctx, orderListItem);
-        // step 3. 사용 포인트 차감 히스토리 생성
-        await usePointTransaction.createHistory({
+        // step 3-1. 사용 포인트 차감 히스토리 생성
+        const usePointHistory = await usePointTransactionService.createHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
         });
-        // step 4. 구매 포인트 적립 히스토리 생성
+        // step 3-2. 사용 포인트 차감
+        await usePointTransactionService.updateUserPoint(ctx.userId, [usePointHistory]);
+        // step 4-1. 구매 포인트 적립 히스토리 생성
         const pointItem = PaymentsMapper.orderListItemToPointItem(orderListItem);
         const willEarnPoint = PointCalculator.forCardWithQuantity(pointItem);
-        earnedPoint += willEarnPoint; // will remove
-        await earnPointTransaction.createHistory({
+        const earnPointHistory = await earnPointTransactionService.createHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: willEarnPoint,
         });
+        // step 4-2. 구매 포인트 적립
+        await earnPointTransactionService.updateUserPoint(ctx.userId, [earnPointHistory]);
       }),
     );
 
     // step 5. 구매 포인트 적립
-    await earnPointTransaction.updateUserPoint(ctx.userId, earnedPoint);
+    // await earnPointTransaction.updateUserPoint(ctx.userId, earnedPoint);
     // step 6. 사용 포인트 차감
-    await usePointTransaction.updateUserPoint(ctx.userId, ctx.usedPoint);
+    // await usePointTransaction.updateUserPoint(ctx.userId, ctx.usedPoint);
   }
 
   private async createOrderProduct(

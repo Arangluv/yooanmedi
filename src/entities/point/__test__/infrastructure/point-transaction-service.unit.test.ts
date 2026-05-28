@@ -1,9 +1,9 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { MockPointTransactionAdapter } from '../mocks';
-import { UsePointTransactionService } from '../../services/use';
-import { EarnPointTransactionService } from '../../services/earn';
-import { CancelUsePointTransactionService } from '../../services/cancel-use';
-import { CancelEarnPointTransactionService } from '../../services/cancel-earn';
+import { UsePointTransactionService } from '../../infrastructure/services/use';
+import { EarnPointTransactionService } from '../../infrastructure/services/earn';
+import { CancelUsePointTransactionService } from '../../infrastructure/services/cancel-use';
+import { CancelEarnPointTransactionService } from '../../infrastructure/services/cancel-earn';
 import {
   CreateCancelEarnPointHistoryRequestDto,
   CreateCancelUsePointHistoryRequestDto,

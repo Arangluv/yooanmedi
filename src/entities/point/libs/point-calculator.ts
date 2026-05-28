@@ -50,19 +50,19 @@ export class PointCalculator {
     }, 0);
   }
 
-  static earn(current: number, delta: number): number {
+  static pointEarn(current: number, delta: number): number {
     return current + delta;
   }
 
-  static use(current: number, delta: number): number {
+  static pointUse(current: number, delta: number): number {
     return current - delta;
   }
 
-  static cancelEarn(current: number, delta: number): number {
+  static cancelEarnPoint(current: number, delta: number): number {
     return current - delta;
   }
 
-  static cancelUse(current: number, delta: number): number {
+  static cancelUsePoint(current: number, delta: number): number {
     return current + delta;
   }
 }

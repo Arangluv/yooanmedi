@@ -3,10 +3,7 @@ import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
 import { IOrderProductService, OrderProductService } from '@/entities/order-product/infrastructure';
 import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
 import { OrderService } from '@/entities/order/infrastructure';
-import {
-  CancelEarnPointTransaction,
-  CancelUsePointTransaction,
-} from '@/entities/point/model/point-transaction';
+import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { EasyPayService, IEasyPay } from '@/entities/easypay';
 import { PaymentHistoryService } from '@/entities/payment/infrastructure';
 import { isFullyCancelled } from '../../../lib/status-helper';
@@ -73,23 +70,23 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   }
 
   private async rollbackEarnPoint() {
-    const cancelEarnPointService = new CancelEarnPointTransaction();
-    await cancelEarnPointService.createHistory({
+    const cancelEarnPointService = PointTransactionServiceFactory.forCancelEarn();
+    const history = await cancelEarnPointService.createHistory({
       user: this.order.user,
       orderProduct: this.targetOrderProductId,
     });
 
-    await cancelEarnPointService.updateUserPoint(this.order.user);
+    await cancelEarnPointService.updateUserPoint(this.order.user, [history]);
   }
 
   private async rollbackUsePoint() {
-    const cancelUsePointService = new CancelUsePointTransaction();
-    await cancelUsePointService.createHistory({
+    const cancelUsePointService = PointTransactionServiceFactory.forCancelUse();
+    const history = await cancelUsePointService.createHistory({
       user: this.order.user,
       orderProduct: this.targetOrderProductId,
     });
 
-    await cancelUsePointService.updateUserPoint(this.order.user);
+    await cancelUsePointService.updateUserPoint(this.order.user, [history]);
   }
 
   private async partialCancelRequestToEasypay() {

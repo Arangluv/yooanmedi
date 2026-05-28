@@ -1,10 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-
 import { Image as ImageIcon } from 'lucide-react';
 import { Divider } from '@heroui/react';
-
 import { EmptyProductDetail, DetailDefaultRow, DetailDeliveryFeeRow } from '@/entities/product';
 import { DetailPointBenefitRow } from '@/entities/point';
 import { useAuthStore } from '@/entities/user';

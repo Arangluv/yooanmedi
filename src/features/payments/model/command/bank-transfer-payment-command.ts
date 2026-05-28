@@ -1,4 +1,4 @@
-import { UsePointTransaction } from '@/entities/point/model/point-transaction';
+import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { OrderPaymentsService } from '@/entities/order/model/services/service';
 import { OrderProductPaymentService } from '@/entities/order-product/model/services/order-product-payments.service';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
@@ -59,7 +59,7 @@ export class BankTransferPaymentCommand
   }
 
   private async processOrderList(ctx: BankTransferPaymentAfterOrderContext) {
-    const usePointTransaction = new UsePointTransaction();
+    const usePointTransaction = PointTransactionServiceFactory.forUse();
 
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {
@@ -68,16 +68,17 @@ export class BankTransferPaymentCommand
         // step 2-2. 구매 히스토리 생성
         await this.createRecentPurchasedHistory(ctx, orderListItem);
         // step 2-3. 사용 포인트 차감 히스토리 생성
-        await usePointTransaction.createHistory({
+        const history = await usePointTransaction.createHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
         });
+        await usePointTransaction.updateUserPoint(ctx.userId, [history]);
       }),
     );
 
-    // step 3. 사용 포인트 차감
-    await usePointTransaction.updateUserPoint(ctx.userId, ctx.usedPoint);
+    // step 3. 사용 포인트 차감 -> todo :: promise all이 history를 반환하도록
+    // await usePointTransaction.updateUserPoint(ctx.userId, ctx.usedPoint);
   }
 
   private async createRecentPurchasedHistory(

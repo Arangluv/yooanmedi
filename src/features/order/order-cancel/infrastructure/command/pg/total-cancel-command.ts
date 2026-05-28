@@ -7,10 +7,8 @@ import {
   OrderProductFindOption,
 } from '@/entities/order-product';
 import { OrderService } from '@/entities/order/infrastructure';
-import {
-  CancelEarnPointTransaction,
-  CancelUsePointTransaction,
-} from '@/entities/point/model/point-transaction';
+import { IPointTransactionService } from '@/entities/point';
+import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { EasyPayService, IEasyPay } from '@/entities/easypay';
 import { PaymentHistoryService } from '@/entities/payment/infrastructure';
 import { ITotalCancelCommand } from '../../../core';
@@ -38,8 +36,8 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
   public async run() {
     const option = OrderProductFindOption.totalCancelOrder.build(this.order.id);
     const orderProducts = await this.orderProductService.getOrderProductsWithTransaction(option);
-    const cancelEarnPointService = new CancelEarnPointTransaction();
-    const cancelUsePointService = new CancelUsePointTransaction();
+    const cancelEarnPointService = PointTransactionServiceFactory.forCancelEarn();
+    const cancelUsePointService = PointTransactionServiceFactory.forCancelUse();
     const cancelPlan = this.resolveCancelPlan(orderProducts);
 
     // orderProduct update, user point action rollback
@@ -52,8 +50,9 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
     );
 
     // user point update by created histories
-    await cancelEarnPointService.updateUserPoint(this.order.user);
-    await cancelUsePointService.updateUserPoint(this.order.user);
+    // todo :: promise.all이 histories를 반환하도록 refactor
+    // await cancelEarnPointService.updateUserPoint(this.order.user);
+    // await cancelUsePointService.updateUserPoint(this.order.user);
 
     // order update
     await this.updateOrderStatus();
@@ -75,26 +74,28 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
     await this.orderService.updateOrder(this.order, { orderStatus: ORDER_STATUS.cancelled });
   }
 
-  private async rollbackEarnPoint(service: CancelEarnPointTransaction, orderProduct: OrderProduct) {
+  private async rollbackEarnPoint(service: IPointTransactionService, orderProduct: OrderProduct) {
     const canRollback = orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.pending;
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (canRollback && !isAlreayRollback) {
-      await service.createHistory({
+      const history = await service.createHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
       });
+      await service.updateUserPoint(this.order.user, [history]);
     }
   }
 
-  private async rollbackUsePoint(service: CancelUsePointTransaction, orderProduct: OrderProduct) {
+  private async rollbackUsePoint(service: IPointTransactionService, orderProduct: OrderProduct) {
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (!isAlreayRollback) {
-      await service.createHistory({
+      const history = await service.createHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
       });
+      await service.updateUserPoint(this.order.user, [history]);
     }
   }
 

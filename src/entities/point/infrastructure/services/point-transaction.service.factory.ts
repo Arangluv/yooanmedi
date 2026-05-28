@@ -2,9 +2,9 @@ import { UsePointTransactionService } from './use';
 import { EarnPointTransactionService } from './earn';
 import { CancelEarnPointTransactionService } from './cancel-earn';
 import { CancelUsePointTransactionService } from './cancel-use';
-import { PointTransactionApiRepository } from '../infrastructure';
-import { IPointTransactionService } from '../core';
-import { PointTransactionAdapter } from '../infrastructure';
+import { PointTransactionApiRepository } from '..';
+import { PointTransactionAdapter } from '..';
+import { IPointTransactionService } from '../../core';
 
 export class PointTransactionServiceFactory {
   static forUse(): IPointTransactionService {

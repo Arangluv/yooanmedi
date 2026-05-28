@@ -1,9 +1,9 @@
 import { BaseError, Logger } from '@/shared';
-import { BasePointTransaction } from '../../core';
-import { CreateEarnPointHistoryRequestDto } from '../../dto';
-import { PointTransaction } from '../../types';
-import { PointTransactionMapper } from '../../mapper';
-import { PointCalculator, PointTransactionError } from '../../libs';
+import { BasePointTransaction } from '../../../core';
+import { CreateEarnPointHistoryRequestDto } from '../../../dto';
+import { PointTransaction } from '../../../types';
+import { PointTransactionMapper } from '../../../mapper';
+import { PointCalculator, PointTransactionError } from '../../../libs';
 
 export class EarnPointTransactionService extends BasePointTransaction {
   public async createHistory(dto: CreateEarnPointHistoryRequestDto): Promise<PointTransaction> {
@@ -20,6 +20,6 @@ export class EarnPointTransactionService extends BasePointTransaction {
   }
 
   protected calculateUpdatedPoint(current: number, delta: number): number {
-    return PointCalculator.earn(current, delta);
+    return PointCalculator.pointEarn(current, delta);
   }
 }
