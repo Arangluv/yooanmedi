@@ -1,3 +1,4 @@
+// TODO :: 해당 부분은 deprecated 될 예정입니다 -> base-error로 이동
 import {
   VALIDATION_ERROR_CODE,
   BUSINESS_LOGIC_ERROR_CODE,

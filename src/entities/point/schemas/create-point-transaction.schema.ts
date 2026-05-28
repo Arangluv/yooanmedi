@@ -48,7 +48,7 @@ const cancelEarnPointHistoryEntitySchema = createUsePointHistoryRequestSchema.ex
   type: z.literal(POINT_ACTION.cancel_earn),
 });
 
-export const createPointHistoryEntitySchema = z.discriminatedUnion('type', [
+export const createPointTransactionEntitySchema = z.discriminatedUnion('type', [
   usePointHistoryEntitySchema,
   earnPointHistoryEntitySchema,
   cancelUsePointHistoryEntitySchema,

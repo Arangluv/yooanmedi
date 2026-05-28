@@ -7,3 +7,5 @@ export {
   NotFoundError,
   ZodParseError,
 } from './domain.error';
+
+export { BaseError, type BaseErrorOptions } from './base-error';

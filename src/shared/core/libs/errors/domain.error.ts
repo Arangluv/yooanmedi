@@ -1,3 +1,5 @@
+// TODO :: 해당 부분은 deprecated 될 예정입니다 -> base-error로 이동
+
 import { ApplicationBaseError } from './base.error';
 import { type ZodError } from 'zod';
 

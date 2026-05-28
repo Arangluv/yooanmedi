@@ -2,7 +2,6 @@ import { PointItem } from '../types';
 import { PAYMENTS_METHOD, PaymentsMethod } from '@/shared';
 
 export class PointCalculator {
-  // 단일 상품 적립금
   static forItem(item: PointItem, rate: number): number {
     return Math.floor(item.price * (rate / 100));
   }
@@ -37,7 +36,6 @@ export class PointCalculator {
     return Math.max(PointCalculator.forBank(item), PointCalculator.forCard(item));
   }
 
-  // 단일 상품 최대 적립금
   static maxForItemWithQuantity(item: PointItem): number {
     const priceForCard = PointCalculator.forCardWithQuantity(item);
     const priceForBank = PointCalculator.forBankWithQuantity(item);
@@ -50,5 +48,21 @@ export class PointCalculator {
     return items.reduce((sum, item) => {
       return sum + PointCalculator.forPayment(item, method) * item.quantity;
     }, 0);
+  }
+
+  static earn(current: number, delta: number): number {
+    return current + delta;
+  }
+
+  static use(current: number, delta: number): number {
+    return current - delta;
+  }
+
+  static cancelEarn(current: number, delta: number): number {
+    return current - delta;
+  }
+
+  static cancelUse(current: number, delta: number): number {
+    return current + delta;
   }
 }

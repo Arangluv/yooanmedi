@@ -1,24 +1,25 @@
 import { FindOption } from '@/shared';
 import { PointTransactionAdapter } from '../api/point-transaction.adapter';
-import { PointHistoryEntity } from '../../types';
+import { CreatePointTransactionEntity } from '../../types';
 import { PointTransactionRepository } from '../../core';
 import { PointTransactionMapper } from '../../mapper';
 
 export class PointTransactionApiRepository implements PointTransactionRepository {
   private adapter: ReturnType<typeof PointTransactionAdapter>;
 
-  constructor() {
-    this.adapter = PointTransactionAdapter();
+  constructor(adapter: ReturnType<typeof PointTransactionAdapter>) {
+    this.adapter = adapter;
   }
 
-  public async create(entity: PointHistoryEntity) {
+  public async create(entity: CreatePointTransactionEntity) {
     const result = await this.adapter.create(entity);
-    return PointTransactionMapper.toDomain(result);
+    return PointTransactionMapper.responseToDomain(result);
   }
 
   public async findOne(option: FindOption) {
+    const UNIQUE_INDEX = 0;
     const result = await this.adapter.findOne(option);
-    return PointTransactionMapper.toDomain(result);
+    return PointTransactionMapper.responseToDomain(result[UNIQUE_INDEX]);
   }
 
   // todo :: move to user entity

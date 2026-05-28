@@ -9,6 +9,8 @@ export {
   SystemError,
   NotFoundError,
   ZodParseError,
+  BaseError,
+  type BaseErrorOptions,
 } from './errors';
 export { Logger } from './logger';
 export { ServerSearchParamsAdapter } from './search-params';

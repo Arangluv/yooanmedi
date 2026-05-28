@@ -1,1 +1,1 @@
-export { zodSafeParse } from './zod';
+export { zodSafeParse, ZodSchemaParser, type SchemaParserDto } from './zod';

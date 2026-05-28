@@ -1,76 +1,42 @@
-import { POINT_ACTION, PointAction } from '../constants';
-import { PointTransaction } from '../types';
+import { BaseError, Logger } from '@/shared';
 import { PointTransactionRepository } from './point-transaction.repository';
+import { PointTransaction } from '../types';
 import { CreateUsePointHistoryRequestDto } from '../dto';
+import { PointTransactionError } from '../libs';
 
 export interface IPointTransactionService {
   createHistory: (dto: CreateUsePointHistoryRequestDto) => Promise<PointTransaction>;
-  updateUserPointBySavedHistories: (userId: number) => Promise<void>;
-  addHistory: (data: PointTransaction) => Promise<void>;
+  updateUserPoint: (userId: number, history: PointTransaction[]) => Promise<void>;
 }
 
 export abstract class BasePointTransaction implements IPointTransactionService {
-  protected stack: PointTransaction[];
   protected readonly pointTransactionRepository: PointTransactionRepository;
-  private readonly mode: PointAction;
 
-  constructor(repository: PointTransactionRepository, mode: PointAction) {
-    this.stack = [];
+  constructor(repository: PointTransactionRepository) {
     this.pointTransactionRepository = repository;
-    this.mode = mode;
   }
 
   public abstract createHistory(dto: CreateUsePointHistoryRequestDto): Promise<PointTransaction>;
 
-  public async addHistory(data: PointTransaction): Promise<void> {
-    this.stack.push(data);
-  }
+  protected abstract calculateUpdatedPoint(current: number, delta: number): number;
 
-  public async updateUserPointBySavedHistories(userId: number): Promise<void> {
+  public async updateUserPoint(userId: number, histories: PointTransaction[]): Promise<void> {
     try {
       const user = await this.pointTransactionRepository.getUser(userId);
-      const amount = this.getPointAmountFromStack();
-      const pointCalculator = this.getUpdatePointCalculator(this.mode);
+      const delta = histories.reduce((sum, h) => sum + h.amount, 0);
+      const updated = this.calculateUpdatedPoint(user.point, delta);
 
-      const updatedAmount = pointCalculator({ currentPoint: user.point, deltaPoint: amount });
-      if (updatedAmount < 0) {
-        throw new Error('업데이트 포인트가 0보다 작을 수 없습니다.');
+      if (updated < 0) {
+        throw PointTransactionError.invalidUpdatePoint(updated);
       }
 
-      await this.pointTransactionRepository.updateUserPoint({ userId, amount: updatedAmount });
+      await this.pointTransactionRepository.updateUserPoint({ userId, amount: updated });
     } catch (error) {
-      throw error;
-    }
-  }
-
-  protected getPointAmountFromStack(): number {
-    return this.stack.reduce((acc, history) => acc + history.amount, 0);
-  }
-
-  protected getUpdatePointCalculator(mode: PointAction) {
-    const adder = ({ currentPoint, deltaPoint }: { currentPoint: number; deltaPoint: number }) => {
-      return currentPoint + deltaPoint;
-    };
-
-    const subtractor = ({
-      currentPoint,
-      deltaPoint,
-    }: {
-      currentPoint: number;
-      deltaPoint: number;
-    }) => {
-      return currentPoint - deltaPoint;
-    };
-
-    switch (mode) {
-      case POINT_ACTION.use:
-        return subtractor;
-      case POINT_ACTION.earn:
-        return adder;
-      case POINT_ACTION.cancel_earn:
-        return subtractor;
-      case POINT_ACTION.cancel_use:
-        return adder;
+      Logger.error(error);
+      if (error instanceof BaseError) {
+        throw error;
+      }
+      throw PointTransactionError.updateUserPointFailed();
     }
   }
 }

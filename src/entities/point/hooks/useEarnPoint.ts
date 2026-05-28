@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CartItem } from '@/entities/cart/@x/point';
-import { PointCalculator } from '../lib/calculator';
+import { PointCalculator } from '../libs/point-calculator';
 import { PAYMENTS_METHOD } from '@/shared';
 import { PointTransactionMapper } from '../mapper';
 

@@ -6,12 +6,8 @@ import {
   createCancelEarnPointHistoryRequestSchema,
 } from '../schemas';
 
-// will remove export keyword
-
 export type CreateUsePointHistoryRequestDto = z.infer<typeof createUsePointHistoryRequestSchema>;
-
 export type CreateEarnPointHistoryRequestDto = z.infer<typeof createEarnPointHistoryRequestSchema>;
-
 export type CreateCancelUsePointHistoryRequestDto = z.infer<
   typeof createCancelUsePointHistoryRequestSchema
 >;

@@ -1,11 +1,11 @@
 import { FindOption } from '@/shared';
 import { getTransactionContextFromStore, PayloadCms } from '@/shared/server';
-import { PointHistoryEntity } from '../../types';
+import { CreatePointTransactionEntity } from '../../types';
 
 const payload = await PayloadCms.getInstance();
 
 export const PointTransactionAdapter = () => ({
-  create: async (entity: PointHistoryEntity) => {
+  create: async (entity: CreatePointTransactionEntity) => {
     const req = getTransactionContextFromStore();
     const result = await payload.create({
       collection: 'point-transaction',
