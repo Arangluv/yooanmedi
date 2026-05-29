@@ -16,30 +16,30 @@ export class UserApiRepository implements UserRepository {
     if (!result.ok) {
       throw result.error;
     }
-    return UserMapper.toUser(result.data) as any;
+    return UserMapper.toUser(result.data);
   }
 
   public async findById(id: number) {
     const result = await this.adapter.getUserById(id);
     if (!result.ok) {
-      throw result.ok;
+      throw result.error;
     }
-    return UserMapper.toUser(result.data) as any;
+    return UserMapper.toUser(result.data);
   }
 
   public async findMany(option: FindOption) {
     const result = await this.adapter.getUserList(option);
     if (!result.ok) {
-      throw result.ok;
+      throw result.error;
     }
-    return UserMapper.toUserList(result.data) as any;
+    return UserMapper.toUserList(result.data);
   }
 
   public async update(dto: UpdateUserDto) {
     const result = await this.adapter.updateUser(dto);
     if (!result.ok) {
-      throw result.ok;
+      throw result.error;
     }
-    return UserMapper.toUser(result.data) as any;
+    return UserMapper.toUser(result.data);
   }
 }

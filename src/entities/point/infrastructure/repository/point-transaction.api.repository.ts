@@ -19,7 +19,7 @@ export class PointTransactionApiRepository implements PointTransactionRepository
       return PointTransactionMapper.responseToDomain(result);
     } catch (error) {
       const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.create;
-      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+      throw PayloadCmsErrorTranslator.toBaseError(error, clientMsg);
     }
   }
 
@@ -30,7 +30,7 @@ export class PointTransactionApiRepository implements PointTransactionRepository
       return PointTransactionMapper.responseToDomain(result[UNIQUE_INDEX]);
     } catch (error) {
       const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.findHistory;
-      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+      throw PayloadCmsErrorTranslator.toBaseError(error, clientMsg);
     }
   }
 
@@ -40,7 +40,7 @@ export class PointTransactionApiRepository implements PointTransactionRepository
       await this.adapter.updateUserPoint(userId, amount);
     } catch (error) {
       const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.updatePoint;
-      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+      throw PayloadCmsErrorTranslator.toBaseError(error, clientMsg);
     }
   }
 
@@ -50,7 +50,7 @@ export class PointTransactionApiRepository implements PointTransactionRepository
       return PointTransactionMapper.toUserReference(result);
     } catch (error) {
       const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.findUser;
-      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+      throw PayloadCmsErrorTranslator.toBaseError(error, clientMsg);
     }
   }
 }
