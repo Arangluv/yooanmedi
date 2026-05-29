@@ -1,13 +1,9 @@
-'use client';
-
-import { createContext, useState } from 'react';
-import { createStore } from 'zustand';
 import { redirect } from 'next/navigation';
 import { toast } from 'sonner';
-
-import type { User } from './type';
-import { logout } from '../api/auth/logout';
+import { createStore } from 'zustand';
+import { User } from '../types';
 import { getUserByHeader } from '../api/get-user-by-header';
+import { logout } from '../api/auth/logout';
 
 export interface AuthProps {
   user: User;
@@ -18,7 +14,7 @@ export interface AuthState extends AuthProps {
   refreshUser: () => Promise<void>;
 }
 
-const createUseAuthStore = (initProps: AuthProps) => {
+export const createUseAuthStore = (initProps: AuthProps) => {
   return createStore<AuthState>((set) => ({
     user: initProps.user,
     refreshUser: async () => {
@@ -41,17 +37,3 @@ const createUseAuthStore = (initProps: AuthProps) => {
 };
 
 export type AuthStore = ReturnType<typeof createUseAuthStore>;
-
-export const AuthStoreContext = createContext<AuthStore | null>(null);
-
-export const AuthStoreProvider = ({
-  children,
-  initProps,
-}: {
-  children: React.ReactNode;
-  initProps: AuthProps;
-}) => {
-  const [authStore] = useState(() => createUseAuthStore(initProps));
-
-  return <AuthStoreContext.Provider value={authStore}>{children}</AuthStoreContext.Provider>;
-};

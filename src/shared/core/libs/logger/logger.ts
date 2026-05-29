@@ -1,3 +1,5 @@
+// will deprecated
+
 import { ERROR_CODE, UNKNOWN_ERROR_CODE } from '../errors/base.error';
 import {
   BusinessLogicError,

@@ -1,15 +1,15 @@
 import Link from 'next/link';
 import { TriangleAlert } from 'lucide-react';
-import type { User } from './type';
-import { checkAuthValidate } from '../lib/validates';
 import { AuthStoreProvider } from './auth-store-provider';
+import type { User } from '../types';
+import { checkAuthValidate } from '../libs/validates';
 
 type AuthGuardProps = {
   children: React.ReactNode;
   user: User | null;
 };
 
-const AuthGuard = ({ children, user }: AuthGuardProps) => {
+export const AuthGuard = ({ children, user }: AuthGuardProps) => {
   const validateResult = checkAuthValidate(user);
 
   if (!validateResult.isValid) {
@@ -34,5 +34,3 @@ const AuthGuard = ({ children, user }: AuthGuardProps) => {
     <AuthStoreProvider initProps={{ user: validateResult.user }}>{children}</AuthStoreProvider>
   );
 };
-
-export default AuthGuard;

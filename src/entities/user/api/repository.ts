@@ -2,7 +2,7 @@ import { zodSafeParse } from '@/shared';
 import { getUserByHeader } from './get-user-by-header';
 import { getUserById } from './get-user-by-id';
 import { getUsers } from './get-users';
-import { userSchema, userListSchema } from '../model/schemas/user.schema';
+import { userSchema, userListSchema } from '../schemas';
 
 export class UserRepository {
   // TODO :: 주석부분 고민해보기

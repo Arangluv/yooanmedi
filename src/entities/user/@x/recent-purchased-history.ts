@@ -1,3 +1,3 @@
-import type { User as UserEntity } from '../model/type';
+import type { User as UserEntity } from '../types';
 
 export interface User extends Pick<UserEntity, 'id'> {}

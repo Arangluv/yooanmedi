@@ -12,7 +12,7 @@ export {
   BaseError,
   type BaseErrorOptions,
 } from './errors';
-export { Logger } from './logger';
+export { Logger, LoggerV2 } from './logger';
 export { ServerSearchParamsAdapter } from './search-params';
 export * from './alert-dialog';
 export * from './end-point-result';

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseSchema } from '@/shared';
-import { USER_ROLE } from '../../constants/role';
+import { USER_ROLE } from '../constants';
 
 export const userSchema = z.object({
   id: BaseSchema.collectionId({
@@ -25,5 +25,4 @@ export const userSchema = z.object({
   username: BaseSchema.string({}), // 도메인의 ID
 });
 
-export type User = z.infer<typeof userSchema>;
 export const userListSchema = z.array(userSchema);

@@ -1,12 +1,11 @@
 'use client';
 
 import { useContext } from 'react';
-
-import type { AuthState } from './auth-store-provider';
-import { AuthStoreContext } from './auth-store-provider';
 import { useStore } from 'zustand';
+import { AuthState } from '../stores';
+import { AuthStoreContext } from '../providers';
 
-function useAuthStore<T>(selector: (state: AuthState) => T): T {
+export function useAuthStore<T>(selector: (state: AuthState) => T): T {
   const store = useContext(AuthStoreContext);
 
   if (!store) {
@@ -15,5 +14,3 @@ function useAuthStore<T>(selector: (state: AuthState) => T): T {
 
   return useStore(store, selector);
 }
-
-export default useAuthStore;

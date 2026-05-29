@@ -1,13 +1,12 @@
-// apis
 export { getUserByHeader } from './api/get-user-by-header';
 
-// models
-export { userSchema, type User } from './model/schemas/user.schema';
+export { userSchema, userListSchema } from './schemas';
+export type { User } from './types';
 
-export { default as useAuthStore } from './model/useAuthStore';
-export { default as AuthGuard } from './model/auth-gruard';
+export { useAuthStore } from './hooks';
+export { AuthGuard } from './providers';
 
-export { checkAuthValidate } from './lib/validates';
+export { checkAuthValidate } from './libs/validates';
 
 // ui
 export { default as UserInfo } from './ui/UserInfo';

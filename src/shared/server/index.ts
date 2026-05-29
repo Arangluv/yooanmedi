@@ -8,6 +8,8 @@ export {
   TransactionCommand,
   getTransactionContextFromStore,
   PayloadCmsErrorTranslator,
+  PayloadAdapterResultManager,
+  type PayloadAdapterResult,
 } from './libs';
 
 export { payloadConfig } from './configs';

@@ -1,4 +1,4 @@
-import type { User } from '../model/type';
+import type { User } from '../types';
 
 type CheckAuthValidateSuccessResult = {
   isValid: true;
