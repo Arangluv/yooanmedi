@@ -7,6 +7,7 @@ export {
   ServerSearchParamsAdapter,
   TransactionCommand,
   getTransactionContextFromStore,
+  PayloadCmsErrorTranslator,
 } from './libs';
 
 export { payloadConfig } from './configs';

@@ -16,12 +16,13 @@ import {
 import { POINT_ACTION } from '../constants';
 import { Product } from '@/entities/product/@x/point';
 import { CartItem } from '@/entities/cart';
+import { POINT_TRANSACTION_ERROR_MESSAGE } from '../constants';
 
 export class PointTransactionMapper {
   static responseToDomain(data: unknown): PointTransaction {
     const schemaDto: SchemaParserDto = {
       data,
-      errorMsg: '포인트 적립/사용 내역을 생성하는데 문제가 발생했습니다',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.create,
     };
 
     return ZodSchemaParser.safeParseOrThrow(pointTransactionSchema, schemaDto);
@@ -35,7 +36,7 @@ export class PointTransactionMapper {
         ...dto,
         type: POINT_ACTION.use,
       },
-      errorMsg: '포인트 사용 내역을 생성하는데 문제가 발생했습니다',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createUseHistory,
     };
 
     return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
@@ -49,7 +50,7 @@ export class PointTransactionMapper {
         ...dto,
         type: POINT_ACTION.earn,
       },
-      errorMsg: '포인트 적립 내역을 생성하는데 문제가 발생했습니다',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createEarnHistory,
     };
 
     return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
@@ -65,7 +66,7 @@ export class PointTransactionMapper {
         amount,
         type: POINT_ACTION.cancel_use,
       },
-      errorMsg: '포인트 적립취소 내역을 생성하는데 문제가 발생했습니다',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createCancelUseHistory,
     };
 
     return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
@@ -81,7 +82,7 @@ export class PointTransactionMapper {
         amount,
         type: POINT_ACTION.cancel_earn,
       },
-      errorMsg: '포인트 적립취소 내역을 생성하는데 문제가 발생했습니다',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createCancelEarnHistory,
     };
 
     return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
@@ -91,7 +92,7 @@ export class PointTransactionMapper {
   static toUserReference(data: unknown): UserReference {
     const schemaDto: SchemaParserDto = {
       data,
-      errorMsg: '유저정보를 불러오는데 문제가 발생했습니다.',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.findUser,
     };
 
     return ZodSchemaParser.safeParseOrThrow(userReferenceSchema, schemaDto);
@@ -107,7 +108,7 @@ export class PointTransactionMapper {
         price: product.price,
         quantity,
       },
-      errorMsg: '상품을 적립포인트 아이템으로 바꾸는 과정에서 문제가 발생했습니다',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.mapper.productToPointItem,
     };
 
     return ZodSchemaParser.safeParseOrThrow(pointItemSchema, schemaDto);
@@ -125,7 +126,7 @@ export class PointTransactionMapper {
           price: item.product.price,
         };
       }),
-      errorMsg: '장바구니 리스트를 적립포인트 아이템으로 바꾸는 과정에서 문제가 발생했습니다',
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.mapper.cartItemListToPointItemList,
     };
 
     return ZodSchemaParser.safeParseOrThrow(pointItemListSchema, schemaDto);

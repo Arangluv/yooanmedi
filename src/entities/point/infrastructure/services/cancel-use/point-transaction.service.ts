@@ -1,9 +1,9 @@
+import { BaseError } from '@/shared';
 import { BasePointTransaction } from '../../../core';
 import { CreateCancelUsePointHistoryRequestDto } from '../../../dto';
 import { PointTransaction } from '../../../types';
 import { PointTransactionMapper } from '../../../mapper';
 import { PointTransactionFindOption, PointCalculator, PointTransactionError } from '../../../libs';
-import { BaseError, Logger } from '@/shared';
 
 export class CancelUsePointTransactionService extends BasePointTransaction {
   public async createHistory(
@@ -18,7 +18,6 @@ export class CancelUsePointTransactionService extends BasePointTransaction {
       );
       return await this.pointTransactionRepository.create(entity);
     } catch (error) {
-      Logger.error(error);
       if (error instanceof BaseError) {
         throw error;
       }

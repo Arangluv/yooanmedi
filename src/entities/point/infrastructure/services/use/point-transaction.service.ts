@@ -1,4 +1,4 @@
-import { BaseError, Logger } from '@/shared';
+import { BaseError } from '@/shared';
 import { BasePointTransaction } from '../../../core';
 import { CreateUsePointHistoryRequestDto } from '../../../dto';
 import { PointTransaction } from '../../../types';
@@ -11,7 +11,6 @@ export class UsePointTransactionService extends BasePointTransaction {
       const entity = PointTransactionMapper.toUsePointHistoryEntity(dto);
       return await this.pointTransactionRepository.create(entity);
     } catch (error) {
-      Logger.error(error);
       if (error instanceof BaseError) {
         throw error;
       }

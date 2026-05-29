@@ -13,6 +13,7 @@ export const PointTransactionAdapter = () => ({
       depth: 0,
       req,
     });
+
     return result;
   },
 

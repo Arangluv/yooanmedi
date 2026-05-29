@@ -1,4 +1,6 @@
 import { FindOption } from '@/shared';
+import { PayloadCmsErrorTranslator } from '@/shared/server';
+import { POINT_TRANSACTION_ERROR_MESSAGE } from '../../constants';
 import { PointTransactionAdapter } from '../api/point-transaction.adapter';
 import { CreatePointTransactionEntity } from '../../types';
 import { PointTransactionRepository } from '../../core';
@@ -12,23 +14,43 @@ export class PointTransactionApiRepository implements PointTransactionRepository
   }
 
   public async create(entity: CreatePointTransactionEntity) {
-    const result = await this.adapter.create(entity);
-    return PointTransactionMapper.responseToDomain(result);
+    try {
+      const result = await this.adapter.create(entity);
+      return PointTransactionMapper.responseToDomain(result);
+    } catch (error) {
+      const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.create;
+      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+    }
   }
 
   public async findOne(option: FindOption) {
-    const UNIQUE_INDEX = 0;
-    const result = await this.adapter.findOne(option);
-    return PointTransactionMapper.responseToDomain(result[UNIQUE_INDEX]);
+    try {
+      const UNIQUE_INDEX = 0;
+      const result = await this.adapter.findOne(option);
+      return PointTransactionMapper.responseToDomain(result[UNIQUE_INDEX]);
+    } catch (error) {
+      const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.findHistory;
+      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+    }
   }
 
   // todo :: move to user entity
   public async updateUserPoint({ userId, amount }: { userId: number; amount: number }) {
-    await this.adapter.updateUserPoint(userId, amount);
+    try {
+      await this.adapter.updateUserPoint(userId, amount);
+    } catch (error) {
+      const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.updatePoint;
+      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+    }
   }
 
   public async getUser(userId: number) {
-    const result = await this.adapter.getUser(userId);
-    return PointTransactionMapper.toUserReference(result);
+    try {
+      const result = await this.adapter.getUser(userId);
+      return PointTransactionMapper.toUserReference(result);
+    } catch (error) {
+      const clientMsg = POINT_TRANSACTION_ERROR_MESSAGE.findUser;
+      PayloadCmsErrorTranslator.throwBaseError(error, clientMsg);
+    }
   }
 }
