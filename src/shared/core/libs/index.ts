@@ -10,6 +10,7 @@ export {
   NotFoundError,
   ZodParseError,
   BaseError,
+  BaseErrorManager,
   type BaseErrorOptions,
 } from './errors';
 export { Logger, LoggerV2 } from './logger';

@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { UserApiRepository } from '../../infrastructure/repository';
-import { MockUserAdapter } from '../mocks';
 import { PayloadAdapterResult } from '@/shared/server';
 import { BaseError, FindOption } from '@/shared';
-import { userSchema } from '../../schemas';
+import { MockUserAdapter } from '../mocks';
 import { baseUserResponseFixture, createUserResponseFixture } from '../fixtures';
-import { UserAdapter } from '../../infrastructure/api';
+import { UserApiRepository } from '../../infrastructure/repository';
+import { userSchema } from '../../schemas';
 import { UpdateUserDto } from '../../dto';
 
 describe('User Api Repository', () => {

@@ -2,8 +2,7 @@ import { redirect } from 'next/navigation';
 import { toast } from 'sonner';
 import { createStore } from 'zustand';
 import { User } from '../types';
-import { getUserByHeader } from '../api/get-user-by-header';
-import { logout } from '../api/auth/logout';
+import { getUserByHeader, logout } from '../api';
 
 export interface AuthProps {
   user: User;
@@ -18,19 +17,19 @@ export const createUseAuthStore = (initProps: AuthProps) => {
   return createStore<AuthState>((set) => ({
     user: initProps.user,
     refreshUser: async () => {
-      const newUser = await getUserByHeader();
-      if (!newUser) {
+      const result = await getUserByHeader();
+      if (!result.isSuccess) {
         return set({ user: initProps.user });
       }
 
-      return set({ user: newUser as User }); // todo :: 해당 부분 타입단언 제거하기
+      return set({ user: result.data });
     },
     logout: async () => {
-      const res = await logout();
-      if (res.success) {
+      const result = await logout();
+      if (result.isSuccess) {
         return redirect('/');
       } else {
-        toast.error(res.message);
+        toast.error(result.message);
       }
     },
   }));

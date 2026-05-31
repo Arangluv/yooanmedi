@@ -1,9 +1,9 @@
 'use client';
 
-import useAuthStore from '../model/useAuthStore';
 import { formatNumberWithCommas } from '@/shared';
+import { useAuthStore } from '../hooks';
 
-const UserInfo = () => {
+export const UserInfo = () => {
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -23,5 +23,3 @@ const UserInfo = () => {
     </div>
   );
 };
-
-export default UserInfo;

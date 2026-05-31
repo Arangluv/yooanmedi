@@ -25,3 +25,13 @@ export class BaseError extends Error {
     return this.devMsg ?? '';
   }
 }
+
+export class BaseErrorManager {
+  static resolveClientMessage(error: unknown): string | null {
+    if (error instanceof BaseError) {
+      return error.getClientMessage();
+    }
+
+    return null;
+  }
+}

@@ -1,7 +1,7 @@
 import { BusinessLogicError, zodSafeParse } from '@/shared';
 import { toCreateCartItemEntity, CartItem, cartItemSchema } from './cart.schema';
 import type { Cart, CreateCartItemRequestDto, CartItemActionResult } from './cart.schema';
-import { UserRepository } from '@/entities/user/infrastructure';
+import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
 import { CartRepository } from '../api/cart.repository';
 import { CartItemRepository } from '../api/cart-items.repository';
 import { buildCustomPriceFindOption } from '../lib/build-find-option';
@@ -30,7 +30,8 @@ export class CartService {
   /* v8 ignore next */
   public async getCart(): Promise<Cart> {
     try {
-      const user = await UserRepository.findByHeader();
+      const userApiRepository = new UserApiRepository(UserAdapter());
+      const user = await userApiRepository.findByHeader();
       const cartEntity = await CartRepository.findOne(user.id);
       const cartItems = await this.getCartItems(cartEntity.id);
 

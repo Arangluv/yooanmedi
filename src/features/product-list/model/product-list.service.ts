@@ -1,5 +1,5 @@
 import type { SearchParams } from 'nuqs';
-import { UserRepository } from '@/entities/user/infrastructure';
+import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
 import { ProductRepository } from '@/entities/product/api/repository';
 import { IProductListService } from './interfaces';
 import { generateProductListQueries } from '../lib/generate-product-list-queries';
@@ -20,7 +20,8 @@ export class ProductListService implements IProductListService {
     );
 
     const customPriceService = new CustomPriceService();
-    const user = await UserRepository.findByHeader();
+    const userApiRepository = new UserApiRepository(UserAdapter());
+    const user = await userApiRepository.findByHeader();
 
     const customPriceList = await customPriceService.getCustomPrices(
       buildCustomPriceFindOption(user),
@@ -36,7 +37,8 @@ export class ProductListService implements IProductListService {
     const productList = await ProductRepository.findMany(buildRankingProductsFindOption());
 
     const customPriceService = new CustomPriceService();
-    const user = await UserRepository.findByHeader();
+    const userApiRepository = new UserApiRepository(UserAdapter());
+    const user = await userApiRepository.findByHeader();
     const customPriceList = await customPriceService.getCustomPrices(
       buildCustomPriceFindOption(user),
     );

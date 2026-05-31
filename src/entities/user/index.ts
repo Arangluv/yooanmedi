@@ -1,10 +1,29 @@
-export { getUserByHeader } from './api/get-user-by-header';
+// api - client server action
+export { getUserByHeader, logout } from './api';
 
+// constants
+export { USER_ROLE } from './constants';
+
+// core
+export { type UserRepository } from './core';
+
+// dto
+export { type UpdateUserDto } from './dto';
+
+// hooks
+export { useAuthStore } from './hooks';
+
+// mapper
+export { UserMapper } from './mapper';
+
+// schema
 export { userSchema, userListSchema } from './schemas';
+
+// types
 export type { User } from './types';
 
-export { useAuthStore } from './hooks';
+// providers
 export { AuthGuard } from './providers';
 
 // ui
-export { default as UserInfo } from './ui/UserInfo';
+export { UserInfo } from './ui/UserInfo';

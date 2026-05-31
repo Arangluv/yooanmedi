@@ -1,5 +1,5 @@
 import { okWithData, failure, normalizeError } from '@/shared';
-import { UserRepository } from '@/entities/user/infrastructure';
+import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
 import { ClientOrderListSearchParams, OrderListFindOption } from '../../lib';
 import { ClientOrderListRepository } from '../../core';
 import { ClientOrderListUseCase } from '../../usecase';
@@ -10,7 +10,8 @@ export const ClientOrderListService = (
 ): ClientOrderListUseCase => ({
   getOrderList: async (searchParams: ClientOrderListSearchParams) => {
     try {
-      const user = await UserRepository.findByHeader();
+      const userApiRepository = new UserApiRepository(UserAdapter());
+      const user = await userApiRepository.findByHeader();
       const findOption = OrderListFindOption.clientOrderList.build({ user, searchParams });
       const orders = await orderListRepository.getOrderList(findOption);
 

@@ -39,3 +39,5 @@ export const failure = (message: string): EndPointFailureResult => ({
   isSuccess: false,
   message,
 });
+
+

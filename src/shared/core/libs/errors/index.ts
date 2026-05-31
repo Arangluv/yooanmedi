@@ -8,4 +8,4 @@ export {
   ZodParseError,
 } from './domain.error';
 
-export { BaseError, type BaseErrorOptions } from './base-error';
+export { BaseError, BaseErrorManager, type BaseErrorOptions } from './base-error';

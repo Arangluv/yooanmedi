@@ -1,1 +1,1 @@
-export { UserRepository } from '../api/repository';
+export { type UserRepository } from '../core';

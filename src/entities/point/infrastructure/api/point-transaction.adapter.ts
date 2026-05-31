@@ -28,6 +28,7 @@ export const PointTransactionAdapter = () => ({
     return docs;
   },
 
+  // todo :: will remove -> user entity refact 후 service단에서 사용하는 것으로 변경
   updateUserPoint: async (userId: number, amount: number) => {
     const req = getTransactionContextFromStore();
 
