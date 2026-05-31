@@ -30,6 +30,31 @@ describe('User Api Repository', () => {
     };
   });
 
+  describe('getUserByHeader', () => {
+    it('유저 정보를 가져오는데 성공한다', async () => {
+      // Given
+      vi.mocked(mockUserAdapter.getUserByHeader).mockResolvedValue({
+        ...successAdapterUserResponse,
+        collectios: 'users',
+      });
+
+      // When
+      const result = await userApiRepository.findByHeader();
+
+      // Then
+      expect(result).toBeDefined();
+      expect(result).toEqual(expect.schemaMatching(userSchema));
+    });
+
+    it('유저 정보를 가져오는데 실패하면 BaseError를 throw한다', async () => {
+      // Given
+      vi.mocked(mockUserAdapter.getUserByHeader).mockResolvedValue(failAdapterUserResponse);
+
+      // When & Then
+      await expect(() => userApiRepository.findByHeader()).rejects.toThrow(BaseError);
+    });
+  });
+
   describe('findById', () => {
     it('유저 정보를 가져오는데 성공한다', async () => {
       // Given

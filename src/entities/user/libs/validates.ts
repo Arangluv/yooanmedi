@@ -1,3 +1,5 @@
+// todo :: auth slice 생성 후 이동
+
 import type { User } from '../types';
 
 type CheckAuthValidateSuccessResult = {

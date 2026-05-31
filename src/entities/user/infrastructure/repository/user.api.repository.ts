@@ -1,7 +1,7 @@
 import { FindOption } from '@/shared';
+import { UserAdapter } from '../api';
 import { UserRepository } from '../../core';
 import { UserMapper } from '../../mapper';
-import { UserAdapter } from '../api';
 import { UpdateUserDto } from '../../dto';
 
 export class UserApiRepository implements UserRepository {
