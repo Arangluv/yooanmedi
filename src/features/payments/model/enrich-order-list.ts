@@ -1,5 +1,5 @@
 import { CartItem, DeliveryFeeManager } from '@/entities/cart';
-import { PointAllocator } from '@/entities/point/libs/use/point-allocator';
+import { PointAllocator } from '@/entities/point';
 import { zodSafeParse, BusinessLogicError } from '@/shared';
 import {
   enrichedOrderListSchema,

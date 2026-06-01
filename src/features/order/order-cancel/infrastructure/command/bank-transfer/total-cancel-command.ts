@@ -70,7 +70,7 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
         orderProduct: orderProduct.id,
       });
 
-      await service.updateUserPoint(this.order.user, [history]);
+      await service.updateUserPointFromHistories(this.order.user, [history]);
     }
   }
 
@@ -83,7 +83,7 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
         orderProduct: orderProduct.id,
       });
 
-      await service.updateUserPoint(this.order.user, [history]);
+      await service.updateUserPointFromHistories(this.order.user, [history]);
     }
   }
 }

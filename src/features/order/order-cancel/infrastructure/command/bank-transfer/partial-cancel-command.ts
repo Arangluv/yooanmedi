@@ -56,7 +56,7 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
         orderProduct: this.targetOrderProductId,
       });
 
-      await cancelEarnPointService.updateUserPoint(this.order.user, [history]);
+      await cancelEarnPointService.updateUserPointFromHistories(this.order.user, [history]);
     }
   }
 
@@ -67,7 +67,7 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
       orderProduct: this.targetOrderProductId,
     });
 
-    await cancelUsePointService.updateUserPoint(this.order.user, [history]);
+    await cancelUsePointService.updateUserPointFromHistories(this.order.user, [history]);
   }
 
   private async getOrderOnGoingStatus() {
@@ -191,7 +191,7 @@ export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
         orderProduct: this.targetOrderProductId,
       });
 
-      await cancelEarnPointService.updateUserPoint(this.order.user, [history]);
+      await cancelEarnPointService.updateUserPointFromHistories(this.order.user, [history]);
     }
   }
 
@@ -202,7 +202,7 @@ export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
       orderProduct: this.targetOrderProductId,
     });
 
-    await cancelUsePointService.updateUserPoint(this.order.user, [history]);
+    await cancelUsePointService.updateUserPointFromHistories(this.order.user, [history]);
   }
 
   private async getOrderOnGoingStatus() {

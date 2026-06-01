@@ -1,4 +1,4 @@
-export { PointCalculator } from './libs';
+export { PointCalculator, PointAllocator } from './libs';
 export { PointTransactionMapper } from './mapper';
 export { pointItemSchema, pointTransactionSchema } from './schemas';
 export * from './types';

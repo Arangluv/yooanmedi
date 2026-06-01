@@ -18,7 +18,7 @@ import {
   PGPaymentAfterOrderContext,
   PGPaymentInitContext,
 } from '../schemas/payments-context/pg.schema';
-import { PointCalculator } from '@/entities/point';
+import { PointCalculator, PointTransaction } from '@/entities/point';
 import { PaymentsMapper } from '../../mapper';
 
 export interface PGPaymentCommandResult {
@@ -130,6 +130,8 @@ export class PGPaymentCommand
   private async processOrderList(ctx: PGPaymentAfterOrderContext) {
     const usePointTransactionService = PointTransactionServiceFactory.forUse();
     const earnPointTransactionService = PointTransactionServiceFactory.forEarn();
+    const usePointHistoryStack = [] as PointTransaction[];
+    const earnPointHistoryStack = [] as PointTransaction[];
 
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {
@@ -143,8 +145,9 @@ export class PGPaymentCommand
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
         });
-        // step 3-2. 사용 포인트 차감
-        await usePointTransactionService.updateUserPoint(ctx.userId, [usePointHistory]);
+        usePointHistoryStack.push(usePointHistory);
+        // step 3-2. 사용 포인트 차감 히스토리 push
+
         // step 4-1. 구매 포인트 적립 히스토리 생성
         const pointItem = PaymentsMapper.orderListItemToPointItem(orderListItem);
         const willEarnPoint = PointCalculator.forCardWithQuantity(pointItem);
@@ -153,15 +156,18 @@ export class PGPaymentCommand
           orderProduct: orderProduct.id,
           amount: willEarnPoint,
         });
-        // step 4-2. 구매 포인트 적립
-        await earnPointTransactionService.updateUserPoint(ctx.userId, [earnPointHistory]);
+        // step 4-2. 구매 포인트 적립 히스토리 push
+        earnPointHistoryStack.push(earnPointHistory);
       }),
     );
 
     // step 5. 구매 포인트 적립
-    // await earnPointTransaction.updateUserPoint(ctx.userId, earnedPoint);
+    await usePointTransactionService.updateUserPointFromHistories(ctx.userId, usePointHistoryStack);
     // step 6. 사용 포인트 차감
-    // await usePointTransaction.updateUserPoint(ctx.userId, ctx.usedPoint);
+    await earnPointTransactionService.updateUserPointFromHistories(
+      ctx.userId,
+      earnPointHistoryStack,
+    );
   }
 
   private async createOrderProduct(

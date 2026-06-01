@@ -83,7 +83,7 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
         user: this.order.user,
         orderProduct: orderProduct.id,
       });
-      await service.updateUserPoint(this.order.user, [history]);
+      await service.updateUserPointFromHistories(this.order.user, [history]);
     }
   }
 
@@ -95,7 +95,7 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
         user: this.order.user,
         orderProduct: orderProduct.id,
       });
-      await service.updateUserPoint(this.order.user, [history]);
+      await service.updateUserPointFromHistories(this.order.user, [history]);
     }
   }
 

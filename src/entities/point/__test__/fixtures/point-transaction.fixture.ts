@@ -82,3 +82,23 @@ export const createPointTransactionFixture = (
     ...override,
   };
 };
+
+export const basePointTransactionResponseFixture = {
+  id: 3416,
+  user: 3,
+  orderProduct: 1869,
+  type: 'USE',
+  reason: null,
+  amount: 156,
+  updatedAt: '2026-05-13T07:42:38.801Z',
+  createdAt: '2026-05-13T07:42:39.285Z',
+};
+
+export const createPointTransactionResponseFixture = (
+  override?: Partial<typeof basePointTransactionResponseFixture>,
+) => {
+  return {
+    ...basePointTransactionResponseFixture,
+    ...override,
+  };
+};

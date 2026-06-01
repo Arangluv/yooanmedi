@@ -76,7 +76,7 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
       orderProduct: this.targetOrderProductId,
     });
 
-    await cancelEarnPointService.updateUserPoint(this.order.user, [history]);
+    await cancelEarnPointService.updateUserPointFromHistories(this.order.user, [history]);
   }
 
   private async rollbackUsePoint() {
@@ -86,7 +86,7 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
       orderProduct: this.targetOrderProductId,
     });
 
-    await cancelUsePointService.updateUserPoint(this.order.user, [history]);
+    await cancelUsePointService.updateUserPointFromHistories(this.order.user, [history]);
   }
 
   private async partialCancelRequestToEasypay() {

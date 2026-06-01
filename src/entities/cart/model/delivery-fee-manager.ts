@@ -1,4 +1,4 @@
-import type { PointAllocator } from '@/entities/point/libs/use/point-allocator';
+import type { PointAllocator } from '@/entities/point';
 import { getDeliveryFeeFromCartItemCosiderFlg } from '@/entities/price';
 import type { CartItem } from '@/entities/cart';
 

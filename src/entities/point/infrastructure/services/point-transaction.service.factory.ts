@@ -1,29 +1,38 @@
+import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 import { UsePointTransactionService } from './use';
 import { EarnPointTransactionService } from './earn';
 import { CancelEarnPointTransactionService } from './cancel-earn';
 import { CancelUsePointTransactionService } from './cancel-use';
-import { PointTransactionApiRepository } from '..';
-import { PointTransactionAdapter } from '..';
+import { PointTransactionApiRepository } from '../repository';
+import { PointTransactionAdapter } from '../api';
 import { IPointTransactionService } from '../../core';
 
 export class PointTransactionServiceFactory {
   static forUse(): IPointTransactionService {
-    const repository = new PointTransactionApiRepository(PointTransactionAdapter());
-    return new UsePointTransactionService(repository);
+    const pointTransactionRepository = new PointTransactionApiRepository(PointTransactionAdapter());
+    const userApiRepository = new UserApiRepository(UserAdapter());
+
+    return new UsePointTransactionService(pointTransactionRepository, userApiRepository);
   }
 
   static forEarn(): IPointTransactionService {
-    const repository = new PointTransactionApiRepository(PointTransactionAdapter());
-    return new EarnPointTransactionService(repository);
+    const pointTransactionRepository = new PointTransactionApiRepository(PointTransactionAdapter());
+    const userApiRepository = new UserApiRepository(UserAdapter());
+
+    return new EarnPointTransactionService(pointTransactionRepository, userApiRepository);
   }
 
   static forCancelUse(): IPointTransactionService {
-    const repository = new PointTransactionApiRepository(PointTransactionAdapter());
-    return new CancelUsePointTransactionService(repository);
+    const pointTransactionRepository = new PointTransactionApiRepository(PointTransactionAdapter());
+    const userApiRepository = new UserApiRepository(UserAdapter());
+
+    return new CancelUsePointTransactionService(pointTransactionRepository, userApiRepository);
   }
 
   static forCancelEarn(): IPointTransactionService {
-    const repository = new PointTransactionApiRepository(PointTransactionAdapter());
-    return new CancelEarnPointTransactionService(repository);
+    const pointTransactionRepository = new PointTransactionApiRepository(PointTransactionAdapter());
+    const userApiRepository = new UserApiRepository(UserAdapter());
+
+    return new CancelEarnPointTransactionService(pointTransactionRepository, userApiRepository);
   }
 }

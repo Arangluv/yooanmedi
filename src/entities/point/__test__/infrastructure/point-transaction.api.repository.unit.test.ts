@@ -1,7 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PointTransactionApiRepository, PointTransactionAdapter } from '../../infrastructure';
+import { BaseError, FindOption, TestErrorHelper } from '@/shared';
+import { PayloadAdapterResultManager } from '@/shared/server';
 import { MockPointTransactionAdapter } from '../mocks';
+import {
+  basePointTransactionResponseFixture,
+  createPointTransactionResponseFixture,
+} from '../fixtures';
 import { pointTransactionSchema } from '../../schemas';
+import { PointTransactionApiRepository, PointTransactionAdapter } from '../../infrastructure';
 import { CreatePointTransactionEntity } from '../../types';
 
 describe('Point Transaction API Repository', () => {
@@ -14,25 +20,17 @@ describe('Point Transaction API Repository', () => {
   });
 
   describe('create', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
     it('point transaction이 생성된다', async () => {
       // Given
-      const createEntity = {
-        user: 3,
-        orderProduct: 1869,
-        amount: 156,
-        type: 'USE',
-      } as CreatePointTransactionEntity;
+      const createEntity = {} as CreatePointTransactionEntity;
 
-      vi.mocked(mockPointTransactionAdapter.create).mockResolvedValue({
-        id: 3416,
-        user: 3,
-        orderProduct: 1869,
-        type: 'USE',
-        reason: null,
-        amount: 156,
-        updatedAt: '2026-05-13T07:42:38.801Z',
-        createdAt: '2026-05-13T07:42:39.285Z',
-      });
+      vi.mocked(mockPointTransactionAdapter.create).mockResolvedValue(
+        PayloadAdapterResultManager.ok(basePointTransactionResponseFixture),
+      );
 
       // When
       const result = await pointTransactionApiRepository.create(createEntity);
@@ -41,25 +39,30 @@ describe('Point Transaction API Repository', () => {
       expect(result).toBeDefined();
       expect(result).toEqual(expect.schemaMatching(pointTransactionSchema));
     });
+
+    it('실패시 Error를 throw한다', async () => {
+      // Given
+      const createEntity = {} as CreatePointTransactionEntity;
+
+      vi.mocked(mockPointTransactionAdapter.create).mockResolvedValue(
+        PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+      );
+
+      // When & Then
+      await expect(() => pointTransactionApiRepository.create(createEntity)).rejects.toThrow(
+        BaseError,
+      );
+    });
   });
 
   describe('findOne', () => {
-    it('point transaction을 findOption에 맞게 조회한다', async () => {
+    it('조회에 성공한다.', async () => {
       // Given
-      const findOption = {} as any;
+      const findOption = {} as FindOption;
 
-      vi.mocked(mockPointTransactionAdapter.findOne).mockResolvedValue([
-        {
-          id: 3416,
-          user: 3,
-          orderProduct: 1869,
-          type: 'USE',
-          reason: null,
-          amount: 156,
-          updatedAt: '2026-05-13T07:42:38.801Z',
-          createdAt: '2026-05-13T07:42:39.285Z',
-        },
-      ]);
+      vi.mocked(mockPointTransactionAdapter.findOne).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createPointTransactionResponseFixture({ id: 1 })),
+      );
 
       // When
       const result = await pointTransactionApiRepository.findOne(findOption);
@@ -69,9 +72,19 @@ describe('Point Transaction API Repository', () => {
       expect(result).not.toBeInstanceOf(Array);
       expect(result).toEqual(expect.schemaMatching(pointTransactionSchema));
     });
-  });
 
-  it.todo(
-    'updateUserPoint, getUser는 테스트코드를 작성하지 않고, user Entity에 작성합니다 작성 후 해당코드는 지워주세요',
-  );
+    it('조회 실패시 Error를 throw한다', async () => {
+      // Given
+      const findOption = {} as FindOption;
+
+      vi.mocked(mockPointTransactionAdapter.findOne).mockResolvedValue(
+        PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+      );
+
+      // When & Then
+      await expect(() => pointTransactionApiRepository.findOne(findOption)).rejects.toThrow(
+        BaseError,
+      );
+    });
+  });
 });

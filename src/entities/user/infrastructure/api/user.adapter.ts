@@ -11,11 +11,10 @@ import { UpdateUserDto } from '../../dto';
 import { UserError } from '../../libs';
 import { USER_ERROR_MESSAGE } from '../../constants';
 
-const payload = await PayloadCms.getInstance();
-
 export const UserAdapter = () => ({
   getUserByHeader: async (): Promise<PayloadAdapterResult> => {
     try {
+      const payload = await PayloadCms.getInstance();
       const nextHeader = await nextHeaders();
       const { user } = await payload.auth({ headers: nextHeader, canSetHeaders: false });
 
@@ -32,6 +31,7 @@ export const UserAdapter = () => ({
 
   getUserById: async (id: number) => {
     try {
+      const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();
       const user = await payload.findByID({
         collection: 'users',
@@ -49,6 +49,7 @@ export const UserAdapter = () => ({
 
   updateUser: async (dto: UpdateUserDto) => {
     try {
+      const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();
       const user = await payload.update({
         collection: 'users',
@@ -66,6 +67,7 @@ export const UserAdapter = () => ({
 
   getUserList: async (option: FindOption) => {
     try {
+      const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();
       const { docs } = await payload.find({
         collection: 'users',

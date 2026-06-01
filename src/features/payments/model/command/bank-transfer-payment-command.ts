@@ -14,6 +14,7 @@ import {
   BankTransferPaymentAfterOrderContext,
   BankTransferPaymentInitContext,
 } from '../schemas/payments-context/bank-transfer.schema';
+import { PointTransaction } from '@/entities/point';
 
 export class BankTransferPaymentCommand
   implements IPaymentsCommand<void>, TransactionalCommand<void>
@@ -60,7 +61,7 @@ export class BankTransferPaymentCommand
 
   private async processOrderList(ctx: BankTransferPaymentAfterOrderContext) {
     const usePointTransaction = PointTransactionServiceFactory.forUse();
-
+    const histories = [] as PointTransaction[];
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {
         // step 2-1. 주문 상품 생성
@@ -73,12 +74,12 @@ export class BankTransferPaymentCommand
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
         });
-        await usePointTransaction.updateUserPoint(ctx.userId, [history]);
+        histories.push(history);
       }),
     );
 
-    // step 3. 사용 포인트 차감 -> todo :: promise all이 history를 반환하도록
-    // await usePointTransaction.updateUserPoint(ctx.userId, ctx.usedPoint);
+    // step 3. 사용 포인트 차감
+    await usePointTransaction.updateUserPointFromHistories(ctx.userId, histories);
   }
 
   private async createRecentPurchasedHistory(

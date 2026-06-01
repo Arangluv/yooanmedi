@@ -13,6 +13,7 @@ export {
   BaseErrorManager,
   type BaseErrorOptions,
 } from './errors';
+export { TestErrorHelper } from './__test__';
 export { Logger, LoggerV2 } from './logger';
 export { ServerSearchParamsAdapter } from './search-params';
 export * from './alert-dialog';

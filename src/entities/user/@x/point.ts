@@ -1,3 +1,3 @@
-import type { User as UserEntity } from '../types';
-
-export interface User extends Pick<UserEntity, 'id' | 'point'> {}
+export type { User } from '../types';
+export { type UserRepository } from '../core';
+export { MockUserAdapter, MockUserRepository } from '../__test__';
