@@ -1,1 +1,1 @@
-export { type Product } from '../model/schemas/product.schema';
+export { type Product } from '../types';

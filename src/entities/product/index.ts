@@ -1,6 +1,20 @@
-export { createProductFixture } from './__test__/product.fixture';
-
+// api
 export { getProductCategories } from './api/product.api';
+
+// core
+export { type ProductRepository } from './core';
+
+// test
+export {
+  ProductFixtures,
+  createProductFixture,
+  ProductEntityFixtures,
+  createProductEntityFixture,
+  baseProductListFixture,
+  createProductListFixture,
+  baseProductCategoryEntityFixture,
+  createProductCategoryEntityFixture,
+} from './__test__';
 
 // schema
 export {

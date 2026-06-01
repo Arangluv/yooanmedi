@@ -1,1 +1,1 @@
-export { createProductFixture } from '../__test__/product.fixture';
+export { createProductFixture } from '../__test__';

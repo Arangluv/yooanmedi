@@ -1,2 +1,3 @@
-export { productSchema, type Product } from '../model/schemas/product.schema';
-export { createProductFixture } from '../__test__/product.fixture';
+export { productSchema } from '../schemas';
+export { type Product } from '../types';
+export { createProductFixture } from '../__test__';

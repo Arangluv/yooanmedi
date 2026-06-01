@@ -8,7 +8,7 @@ import {
   type PopulatedOrderList,
 } from './schemas/payment-order-list.schema';
 import { type Product } from '@/entities/product/model/schemas/product.schema';
-import { ProductRepository } from '@/entities/product/api/repository';
+import { ProductAdapter, ProductApiRepository } from '@/entities/product/infrastructure';
 import { type BasePaymentContext } from './schemas/payments-context/base.schema';
 import { buildProductsFindOption } from '../lib/build-find-options';
 
@@ -48,8 +48,9 @@ export const enrichOrderList = async (
 const populateProductDetails = async (
   orderList: ClinentOrderList[],
 ): Promise<Omit<CartItem, 'id'>[]> => {
+  const productApiRepository = new ProductApiRepository(ProductAdapter());
   const productIds = orderList.map((item) => item.product.id);
-  const { products } = await ProductRepository.findMany(buildProductsFindOption(productIds));
+  const { products } = await productApiRepository.findMany(buildProductsFindOption(productIds));
 
   const populatedOrderList = orderList.map((item) => {
     const product = products.find((product) => product.id === item.product.id);

@@ -1,1 +1,1 @@
-export type { Product } from '@/entities/product';
+export type { Product } from '../types';

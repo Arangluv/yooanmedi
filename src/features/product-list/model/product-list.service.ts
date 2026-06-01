@@ -1,6 +1,6 @@
 import type { SearchParams } from 'nuqs';
 import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
-import { ProductRepository } from '@/entities/product/api/repository';
+import { ProductAdapter, ProductApiRepository } from '@/entities/product/infrastructure';
 import { IProductListService } from './interfaces';
 import { generateProductListQueries } from '../lib/generate-product-list-queries';
 import { generateSearchParams } from '../lib/generate-search-params';
@@ -15,7 +15,8 @@ export class ProductListService implements IProductListService {
   public async getProductListAppliedCustomPrice(rawSearchParams: Promise<SearchParams>) {
     const searchParams = await ProductListService.getSafeSearchParams(rawSearchParams);
     const queries = generateProductListQueries(searchParams);
-    const productList = await ProductRepository.findMany(
+    const productApiRepository = new ProductApiRepository(ProductAdapter());
+    const productList = await productApiRepository.findMany(
       buildProductsFindOption(queries, searchParams.page),
     );
 
@@ -34,7 +35,8 @@ export class ProductListService implements IProductListService {
   }
 
   public async getRankingProductList() {
-    const productList = await ProductRepository.findMany(buildRankingProductsFindOption());
+    const productApiRepository = new ProductApiRepository(ProductAdapter());
+    const productList = await productApiRepository.findMany(buildRankingProductsFindOption());
 
     const customPriceService = new CustomPriceService();
     const userApiRepository = new UserApiRepository(UserAdapter());

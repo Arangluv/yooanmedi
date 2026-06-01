@@ -1,20 +1,21 @@
 'use server';
 
-import { ProductRepository } from './repository';
-import { okWithData, failure, normalizeError, EndPointResult } from '@/shared';
-import { Logger } from '@/shared';
-import { ProductCategory } from '../model/schemas/product-category';
+import { okWithData, failure, normalizeError, EndPointResult, BaseErrorManager } from '@/shared';
+import { Logger, LoggerV2 } from '@/shared';
+import { ProductCategory } from '../types';
+import { ProductAdapter, ProductApiRepository } from '../infrastructure';
+import { PRODUCT_ERROR_MESSAGE } from '../constants';
 
 export const getProductCategories = async (): Promise<EndPointResult<ProductCategory[]>> => {
   try {
-    const categories = await ProductRepository.findAllCategories();
+    const productApiRepository = new ProductApiRepository(ProductAdapter());
+    const categories = await productApiRepository.getAllCategories();
     return okWithData({
       data: categories,
     });
   } catch (error) {
-    const nomalizedError = normalizeError(error);
-    Logger.error(error);
-
-    return failure(nomalizedError.message);
+    LoggerV2.error(error);
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return failure(message ?? PRODUCT_ERROR_MESSAGE.categoryFetchFail);
   }
 };
