@@ -16,7 +16,7 @@ export class UserApiRepository implements UserRepository {
     if (!result.ok) {
       throw result.error;
     }
-    return UserMapper.toUser(result.data);
+    return UserMapper.responseToUser(result.data);
   }
 
   public async findById(id: number) {
@@ -24,7 +24,7 @@ export class UserApiRepository implements UserRepository {
     if (!result.ok) {
       throw result.error;
     }
-    return UserMapper.toUser(result.data);
+    return UserMapper.responseToUser(result.data);
   }
 
   public async findMany(option: FindOption) {
@@ -32,7 +32,7 @@ export class UserApiRepository implements UserRepository {
     if (!result.ok) {
       throw result.error;
     }
-    return UserMapper.toUserList(result.data);
+    return UserMapper.responseToUserList(result.data);
   }
 
   public async update(dto: UpdateUserDto) {
@@ -40,6 +40,6 @@ export class UserApiRepository implements UserRepository {
     if (!result.ok) {
       throw result.error;
     }
-    return UserMapper.toUser(result.data);
+    return UserMapper.responseToUser(result.data);
   }
 }

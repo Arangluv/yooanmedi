@@ -6,12 +6,16 @@ import {
   PayloadAdapterResultManager,
   PayloadAdapterResult,
 } from '@/shared/server';
-import { CreatePointTransactionEntity } from '../../types';
+import {
+  CreatePointTransactionDto,
+  GetPointTransactionResponse,
+  CreatePointTransactionResponse,
+} from '../../types';
 import { LoggerV2 } from '@/shared';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../../constants';
 
 export const PointTransactionAdapter = () => ({
-  create: async (entity: CreatePointTransactionEntity): Promise<PayloadAdapterResult> => {
+  create: async (entity: CreatePointTransactionDto): Promise<CreatePointTransactionResponse> => {
     try {
       const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();
@@ -33,7 +37,7 @@ export const PointTransactionAdapter = () => ({
     }
   },
 
-  findOne: async (option: FindOption): Promise<PayloadAdapterResult> => {
+  findOne: async (option: FindOption): Promise<GetPointTransactionResponse> => {
     try {
       const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();

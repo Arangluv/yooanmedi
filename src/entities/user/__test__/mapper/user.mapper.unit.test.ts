@@ -5,13 +5,13 @@ import { createUserResponseFixture } from '../fixtures';
 import { userSchema, userListSchema } from '../../schemas';
 
 describe('User Mappter', () => {
-  describe('toUser', () => {
+  describe('responseToUser', () => {
     it('Adapter Response가 User로 파싱된다', () => {
       // Given
       const responseResult = createUserResponseFixture();
 
       // When
-      const result = UserMapper.toUser(responseResult);
+      const result = UserMapper.responseToUser(responseResult);
 
       // Then
       expect(result).toEqual(expect.schemaMatching(userSchema));
@@ -22,7 +22,7 @@ describe('User Mappter', () => {
       const responseResult = { ...createUserResponseFixture(), collections: 'users' };
 
       // When
-      const result = UserMapper.toUser(responseResult);
+      const result = UserMapper.responseToUser(responseResult);
 
       // Then
       expect(result).toEqual(expect.schemaMatching(userSchema));
@@ -30,14 +30,14 @@ describe('User Mappter', () => {
 
     it('파싱에 실패하는 경우 BaseError를 throw한다', () => {
       // Given
-      const invalidData = { name: 'test-name' };
+      const invalidData = { name: 'test-name' } as any;
 
       // When & Then
-      expect(() => UserMapper.toUser(invalidData)).toThrow(BaseError);
+      expect(() => UserMapper.responseToUser(invalidData)).toThrow(BaseError);
     });
   });
 
-  describe('toUserList', () => {
+  describe('responseToUserList', () => {
     it('Adapter Response가 User[]로 파싱된다', () => {
       // Given
       const responseResult = [
@@ -47,7 +47,7 @@ describe('User Mappter', () => {
       ];
 
       // When
-      const result = UserMapper.toUserList(responseResult);
+      const result = UserMapper.responseToUserList(responseResult);
 
       // Then
       expect(result).toEqual(expect.schemaMatching(userListSchema));
@@ -55,10 +55,10 @@ describe('User Mappter', () => {
 
     it('파싱에 실패하는 경우 BaseError를 throw한다', () => {
       // Given
-      const invalidData = { name: 'test-name' };
+      const invalidData = { name: 'test-name' } as any;
 
       // When & Then
-      expect(() => UserMapper.toUserList(invalidData)).toThrow(BaseError);
+      expect(() => UserMapper.responseToUserList(invalidData)).toThrow(BaseError);
     });
   });
 });

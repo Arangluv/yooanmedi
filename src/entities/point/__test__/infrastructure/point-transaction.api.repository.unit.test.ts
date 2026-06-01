@@ -8,7 +8,7 @@ import {
 } from '../fixtures';
 import { pointTransactionSchema } from '../../schemas';
 import { PointTransactionApiRepository, PointTransactionAdapter } from '../../infrastructure';
-import { CreatePointTransactionEntity } from '../../types';
+import { CreatePointTransactionDto } from '../../types';
 
 describe('Point Transaction API Repository', () => {
   let pointTransactionApiRepository: PointTransactionApiRepository;
@@ -26,7 +26,7 @@ describe('Point Transaction API Repository', () => {
 
     it('point transaction이 생성된다', async () => {
       // Given
-      const createEntity = {} as CreatePointTransactionEntity;
+      const createEntity = {} as CreatePointTransactionDto;
 
       vi.mocked(mockPointTransactionAdapter.create).mockResolvedValue(
         PayloadAdapterResultManager.ok(basePointTransactionResponseFixture),
@@ -42,7 +42,7 @@ describe('Point Transaction API Repository', () => {
 
     it('실패시 Error를 throw한다', async () => {
       // Given
-      const createEntity = {} as CreatePointTransactionEntity;
+      const createEntity = {} as CreatePointTransactionDto;
 
       vi.mocked(mockPointTransactionAdapter.create).mockResolvedValue(
         PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),

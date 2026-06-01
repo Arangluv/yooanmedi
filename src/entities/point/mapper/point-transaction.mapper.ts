@@ -5,7 +5,7 @@ import {
   CreateCancelEarnPointHistoryRequestDto,
   CreateCancelUsePointHistoryRequestDto,
 } from '../dto';
-import { CreatePointTransactionEntity, PointItem, PointTransaction, UserReference } from '../types';
+import { CreatePointTransactionDto, PointItem, PointTransaction, UserReference } from '../types';
 import {
   createPointTransactionEntitySchema,
   pointItemListSchema,
@@ -28,9 +28,7 @@ export class PointTransactionMapper {
     return ZodSchemaParser.safeParseOrThrow(pointTransactionSchema, schemaDto);
   }
 
-  static toUsePointHistoryEntity(
-    dto: CreateUsePointHistoryRequestDto,
-  ): CreatePointTransactionEntity {
+  static toUsePointHistoryEntity(dto: CreateUsePointHistoryRequestDto): CreatePointTransactionDto {
     const schemaDto: SchemaParserDto = {
       data: {
         ...dto,
@@ -44,7 +42,7 @@ export class PointTransactionMapper {
 
   static toEarnPointHistoryEntity(
     dto: CreateEarnPointHistoryRequestDto,
-  ): CreatePointTransactionEntity {
+  ): CreatePointTransactionDto {
     const schemaDto: SchemaParserDto = {
       data: {
         ...dto,
@@ -59,7 +57,7 @@ export class PointTransactionMapper {
   static toCancelUsePointHistoryEntity(
     dto: CreateCancelUsePointHistoryRequestDto,
     amount: number,
-  ): CreatePointTransactionEntity {
+  ): CreatePointTransactionDto {
     const schemaDto: SchemaParserDto = {
       data: {
         ...dto,
@@ -75,7 +73,7 @@ export class PointTransactionMapper {
   static toCancelEarnPointHistoryEntity(
     dto: CreateCancelEarnPointHistoryRequestDto,
     amount: number,
-  ): CreatePointTransactionEntity {
+  ): CreatePointTransactionDto {
     const schemaDto: SchemaParserDto = {
       data: {
         ...dto,

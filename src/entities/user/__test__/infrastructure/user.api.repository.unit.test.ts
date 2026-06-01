@@ -1,17 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PayloadAdapterResult } from '@/shared/server';
+import { PayloadAdapterFailureResult, PayloadAdapterSuccessResult } from '@/shared/server';
 import { BaseError, FindOption } from '@/shared';
 import { MockUserAdapter } from '../mocks';
 import { baseUserResponseFixture, createUserResponseFixture } from '../fixtures';
 import { UserApiRepository } from '../../infrastructure/repository';
 import { userSchema } from '../../schemas';
 import { UpdateUserDto } from '../../dto';
+import { UserEntity } from '../../types';
 
 describe('User Api Repository', () => {
   let userApiRepository: UserApiRepository;
   let mockUserAdapter: ReturnType<typeof MockUserAdapter>;
-  let successAdapterUserResponse: PayloadAdapterResult;
-  let failAdapterUserResponse: PayloadAdapterResult;
+  let successAdapterUserResponse: PayloadAdapterSuccessResult<UserEntity>;
+  let failAdapterUserResponse: PayloadAdapterFailureResult;
 
   beforeEach(() => {
     mockUserAdapter = MockUserAdapter();
@@ -89,7 +90,8 @@ describe('User Api Repository', () => {
           createUserResponseFixture(),
           createUserResponseFixture(),
         ],
-      } as PayloadAdapterResult;
+      } as PayloadAdapterSuccessResult<UserEntity[]>;
+
       vi.mocked(mockUserAdapter.getUserList.mockResolvedValue(mockSuccessResult));
       // When
       const result = await userApiRepository.findMany(option);
@@ -106,7 +108,7 @@ describe('User Api Repository', () => {
       const mockSuccessResult = {
         ok: true,
         data: [],
-      } as PayloadAdapterResult;
+      } as PayloadAdapterSuccessResult<UserEntity[]>;
       vi.mocked(mockUserAdapter.getUserList.mockResolvedValue(mockSuccessResult));
 
       // When

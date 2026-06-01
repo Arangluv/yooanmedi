@@ -1,4 +1,4 @@
-import { User } from '../../types';
+import { User, UserEntity } from '../../types';
 import { USER_ROLE } from '../../constants';
 
 export const UserFixtures = {
@@ -42,7 +42,7 @@ export const baseUserResponseFixture = {
   createdAt: '2025-12-31T05:22:06.431Z',
   email: 'test@gmail.com',
   username: 'testUserName',
-};
+} as UserEntity;
 
 export const createUserFixture = (override?: Partial<User>): User => {
   return {
@@ -51,7 +51,9 @@ export const createUserFixture = (override?: Partial<User>): User => {
   };
 };
 
-export const createUserResponseFixture = (override?: Partial<typeof baseUserResponseFixture>) => {
+export const createUserResponseFixture = (
+  override?: Partial<typeof baseUserResponseFixture>,
+): UserEntity => {
   return {
     ...baseUserResponseFixture,
     ...override,

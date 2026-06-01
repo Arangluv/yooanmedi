@@ -5,14 +5,19 @@ import {
   PayloadCms,
   PayloadCmsErrorTranslator,
   PayloadAdapterResultManager,
-  PayloadAdapterResult,
 } from '@/shared/server';
+import {
+  GetUserByHeaderResponse,
+  GetUserByIdResponse,
+  GetUserListResponse,
+  UpdateUserResponse,
+} from '../../types';
 import { UpdateUserDto } from '../../dto';
 import { UserError } from '../../libs';
 import { USER_ERROR_MESSAGE } from '../../constants';
 
 export const UserAdapter = () => ({
-  getUserByHeader: async (): Promise<PayloadAdapterResult> => {
+  getUserByHeader: async (): Promise<GetUserByHeaderResponse> => {
     try {
       const payload = await PayloadCms.getInstance();
       const nextHeader = await nextHeaders();
@@ -29,7 +34,7 @@ export const UserAdapter = () => ({
     }
   },
 
-  getUserById: async (id: number) => {
+  getUserById: async (id: number): Promise<GetUserByIdResponse> => {
     try {
       const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();
@@ -46,26 +51,7 @@ export const UserAdapter = () => ({
       return PayloadAdapterResultManager.fail(baseError);
     }
   },
-
-  updateUser: async (dto: UpdateUserDto) => {
-    try {
-      const payload = await PayloadCms.getInstance();
-      const req = getTransactionContextFromStore();
-      const user = await payload.update({
-        collection: 'users',
-        id: dto.user,
-        data: dto.data,
-        req,
-      });
-      return PayloadAdapterResultManager.ok(user);
-    } catch (error) {
-      LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(error, USER_ERROR_MESSAGE.updateFail);
-      return PayloadAdapterResultManager.fail(baseError);
-    }
-  },
-
-  getUserList: async (option: FindOption) => {
+  getUserList: async (option: FindOption): Promise<GetUserListResponse> => {
     try {
       const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();
@@ -79,6 +65,24 @@ export const UserAdapter = () => ({
     } catch (error) {
       LoggerV2.error(error);
       const baseError = PayloadCmsErrorTranslator.toBaseError(error, USER_ERROR_MESSAGE.fetchFail);
+      return PayloadAdapterResultManager.fail(baseError);
+    }
+  },
+
+  updateUser: async (dto: UpdateUserDto): Promise<UpdateUserResponse> => {
+    try {
+      const payload = await PayloadCms.getInstance();
+      const req = getTransactionContextFromStore();
+      const user = await payload.update({
+        collection: 'users',
+        id: dto.user,
+        data: dto.data,
+        req,
+      });
+      return PayloadAdapterResultManager.ok(user);
+    } catch (error) {
+      LoggerV2.error(error);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(error, USER_ERROR_MESSAGE.updateFail);
       return PayloadAdapterResultManager.fail(baseError);
     }
   },

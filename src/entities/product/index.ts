@@ -2,10 +2,16 @@ export { createProductFixture } from './__test__/product.fixture';
 
 export { getProductCategories } from './api/product.api';
 
-export { ProductFindOption } from './lib/find-options';
+// schema
+export {
+  productSchema,
+  productListSchema,
+  productCategorySchema,
+  productCategoriesSchema,
+} from './schemas';
 
-export { productSchema, type Product } from './model/schemas/product.schema';
-export type { ProductCategory } from './model/schemas/product-category';
+// types
+export type { Product, ProductList, ProductCategory } from './types';
 
 export { default as DetailDefaultRow } from './ui/DetailDefaultRow';
 export { default as DetailDeliveryFeeRow } from './ui/DetailDeliveryFeeRow';

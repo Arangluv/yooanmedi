@@ -1,6 +1,6 @@
 import { FindOption } from '@/shared';
 import { PointTransactionAdapter } from '../api/point-transaction.adapter';
-import { CreatePointTransactionEntity } from '../../types';
+import { CreatePointTransactionDto } from '../../types';
 import { PointTransactionRepository } from '../../core';
 import { PointTransactionMapper } from '../../mapper';
 
@@ -11,7 +11,7 @@ export class PointTransactionApiRepository implements PointTransactionRepository
     this.adapter = adapter;
   }
 
-  public async create(entity: CreatePointTransactionEntity) {
+  public async create(entity: CreatePointTransactionDto) {
     const result = await this.adapter.create(entity);
     if (!result.ok) {
       throw result.error;
