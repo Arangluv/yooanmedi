@@ -7,6 +7,6 @@ export type Product = z.infer<typeof productSchema>;
 export type ProductList = z.infer<typeof productListSchema>;
 export type ProductCategory = z.infer<typeof productCategorySchema>;
 
-export type ProductEntity = PayloadProduct;
+export type ProductEntity = Omit<PayloadProduct, 'createdAt' | 'updatedAt'>;
 export type ProductListEntity = PaginatedDocs<ProductEntity>;
-export type ProductCategoryEntity = PayloadProductCategory;
+export type ProductCategoryEntity = Omit<PayloadProductCategory, 'createdAt' | 'updatedAt'>;

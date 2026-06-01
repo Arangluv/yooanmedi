@@ -5,7 +5,6 @@ export const productSchema = z.object({
   id: z.number(),
   image: z.custom<PayloadImage>().nullable(),
   name: z.string(),
-  category: z.number().nullable(),
   insurance_code: z.string().nullable(),
   specification: z.string().nullable(),
   manufacturer: z.string(),
@@ -41,8 +40,6 @@ export const productSchema = z.object({
   }),
   is_cost_per_unit: z.boolean(),
   is_free_delivery: z.boolean(),
-  updatedAt: z.string(),
-  createdAt: z.string(),
 });
 
 export const productListSchema = z.object({
