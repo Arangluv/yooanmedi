@@ -124,7 +124,7 @@ export const OrderProductAdapter = () => ({
         depth: 0,
         where: {
           id: {
-            in: dto.orderProductId,
+            in: dto.orderProductIds,
           },
         },
         data: dto.data,

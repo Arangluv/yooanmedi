@@ -4,7 +4,7 @@ export const baseOrderProductEntityFixture = {
   id: 1874,
   product: 1675,
   order: 879,
-  orderProductStatus: 'cancelled',
+  orderProductStatus: 'pending',
   productNameSnapshot: '메디락에스산',
   priceSnapshot: 2000,
   totalAmount: 2000,

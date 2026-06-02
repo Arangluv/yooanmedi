@@ -1,15 +1,18 @@
-export { createOrderProductFixture } from './__test__/order-product.fixture';
+export { baseOrderProductEntityFixture, createOrderProductFixture, MockOrderProductAdapter } from './__test__';
 
-export { OrderProductFindOption } from './lib/find-options';
+export { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME, type OrderProductStatus } from './constants';
 
-export { orderProductSchema, orderProductsSchema } from './schemas';
+export { type OrderProductRepository } from './core';
+
+export {
+  type UpdateOrderProductRequestDto,
+  type BulkUpdateOrderProductRequestDto,
+  type CreateOrderProductRequestDto,
+  type OrderProductDto,
+} from './dto';
+
+export { OrderProductFindOption } from './lib';
 
 export { type OrderProduct } from './types';
 
-export { type IOrderProductService } from './model/services/order-product.service';
-
-export {
-  ORDER_PRODUCT_STATUS,
-  ORDER_PRODUCT_STATUS_NAME,
-  type OrderProductStatus,
-} from './constants/order-product-status';
+export { orderProductSchema, orderProductsSchema } from './schemas';
