@@ -14,6 +14,7 @@ export {
   type PayloadAdapterSuccessResult,
   type PayloadAdapterPaginatedSuccessResult,
   type PayloadAdapterFailureResult,
+  type PayloadBulkOperationResult,
 } from './libs';
 
 export { payloadConfig } from './configs';

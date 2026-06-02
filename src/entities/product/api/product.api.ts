@@ -1,7 +1,7 @@
 'use server';
 
-import { okWithData, failure, normalizeError, EndPointResult, BaseErrorManager } from '@/shared';
-import { Logger, LoggerV2 } from '@/shared';
+import { okWithData, failure, EndPointResult, BaseErrorManager } from '@/shared';
+import { LoggerV2 } from '@/shared';
 import { ProductCategory } from '../types';
 import { ProductAdapter, ProductApiRepository } from '../infrastructure';
 import { PRODUCT_ERROR_MESSAGE } from '../constants';

@@ -9,4 +9,5 @@ export {
   type PayloadAdapterSuccessResult,
   type PayloadAdapterPaginatedSuccessResult,
   type PayloadAdapterFailureResult,
+  type PayloadBulkOperationResult,
 } from './payload';
