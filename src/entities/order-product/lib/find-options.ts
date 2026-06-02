@@ -1,4 +1,3 @@
-import { OrderProductStatus } from '@/entities/order-product';
 import { FindOption } from '@/shared';
 
 export const OrderProductFindOption = {
