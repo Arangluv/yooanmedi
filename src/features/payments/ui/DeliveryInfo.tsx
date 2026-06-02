@@ -14,7 +14,7 @@ const DeliveryInfo = () => {
         </div>
         <span className="text-foreground-700">{user.address}</span>
         <span className="text-foreground-700">{user.phoneNumber}</span>
-        <span className="text-foreground-700">{user.email}</span>
+        <span className="text-foreground-700">{user.contactEmail}</span>
       </div>
     </div>
   );

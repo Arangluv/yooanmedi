@@ -5,6 +5,7 @@ import { APIError, getPayload } from 'payload';
 import { CartService } from '@/entities/cart/infrastructure';
 
 // 해당 코드는 현재 FSD 아키텍쳐를 따르고 있지 않으며 반드시 리팩토링이 필요합니다
+
 export async function join(formData: FormData) {
   const payload = await getPayload({ config: config });
   const cartService = new CartService();
@@ -79,15 +80,16 @@ export async function join(formData: FormData) {
         password,
         ceo,
         hospitalName,
-        email,
+        email: email,
         contactEmail: email,
+        role: 'client',
         address: userFullAddress,
         businessNumber,
         nursingNumber,
         phoneNumber,
-        faxNumber,
+        faxNumber: faxNumber,
         fileList: uploadedFileIds,
-        doctorLicenseNumber,
+        doctorLicenseNumber: doctorLicenseNumber,
       },
     });
 
@@ -100,8 +102,6 @@ export async function join(formData: FormData) {
       //   collection: 'users',
       //   errors: [ { message: '해당 이메일은 이미 등록되어 있습니다', path: 'email' } ]
       // }
-      console.log(error);
-
       if (error.data.errors[0].path === 'user_id') {
         return { success: false, message: '이미 사용중인 아이디입니다.' };
       }

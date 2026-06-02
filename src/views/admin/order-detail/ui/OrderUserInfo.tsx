@@ -27,7 +27,7 @@ const OrderUserInfo = ({ orderId }: { orderId: number }) => {
           </div>
           <div className="flex items-center justify-between">
             <span>이메일</span>
-            <span>{user.email}</span>
+            <span>{user.contactEmail}</span>
           </div>
         </div>
       </CardContent>
