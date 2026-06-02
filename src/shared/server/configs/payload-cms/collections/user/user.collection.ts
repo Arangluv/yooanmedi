@@ -60,6 +60,7 @@ export const user: CollectionConfig = {
           admin: {
             description: '유저 타입을 선택해주세요',
             width: '33.33%',
+            readOnly: true,
           },
           options: [
             {
@@ -71,7 +72,7 @@ export const user: CollectionConfig = {
               value: 'client',
             },
           ],
-          defaultValue: 'client',
+          defaultValue: 'admin',
         },
       ],
     },
@@ -222,6 +223,7 @@ export const user: CollectionConfig = {
               return siblingData.role === 'client';
             },
           },
+          defaultValue: '',
         },
         {
           type: 'text',
@@ -303,6 +305,7 @@ export const user: CollectionConfig = {
               return siblingData.role === 'client';
             },
           },
+          defaultValue: '',
         },
       ],
     },

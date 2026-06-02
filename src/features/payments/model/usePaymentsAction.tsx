@@ -31,7 +31,7 @@ const usePaymentsAction = ({
       customerInfo: {
         customerId: user.username,
         customerName: user.hospitalName,
-        customerMail: user.email,
+        customerMail: user.contactEmail,
         customerContactNo: user.phoneNumber,
         customerAddr: user.address,
       },
