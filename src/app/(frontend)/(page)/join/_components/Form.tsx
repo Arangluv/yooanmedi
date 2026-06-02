@@ -76,7 +76,14 @@ export default function JoinForm() {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const { mutate: joinMutation } = useMutation({
-    mutationFn: (formData: FormData) => join(formData),
+    mutationFn: async (formData: FormData) => {
+      const response = await fetch('/api/auth/join', {
+        method: 'POST',
+        body: formData,
+      });
+
+      return response.json();
+    },
     onSuccess: (data: { success: boolean; message: string }) => {
       setIsLoading(false);
       if (!data.success) {
