@@ -1,6 +1,6 @@
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { OrderPaymentsService } from '@/entities/order/model/services/service';
-import { OrderProductPaymentService } from '@/entities/order-product/model/services/order-product-payments.service';
+import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
 import { runWithTransaction } from '@/shared/infrastructure';
 import { PAYMENTS_METHOD, TransactionalCommand } from '@/shared';
@@ -16,9 +16,7 @@ import {
 } from '../schemas/payments-context/bank-transfer.schema';
 import { PointTransaction } from '@/entities/point';
 
-export class BankTransferPaymentCommand
-  implements IPaymentsCommand<void>, TransactionalCommand<void>
-{
+export class BankTransferPaymentCommand implements IPaymentsCommand<void>, TransactionalCommand<void> {
   private requestDto: BankTransferRequestDto;
 
   public constructor(requestDto: BankTransferRequestDto) {
@@ -37,18 +35,14 @@ export class BankTransferPaymentCommand
     return await runWithTransaction(this);
   }
 
-  private async initializeContext(
-    contextFactory: PaymentContextFactory,
-  ): Promise<BankTransferPaymentInitContext> {
+  private async initializeContext(contextFactory: PaymentContextFactory): Promise<BankTransferPaymentInitContext> {
     const baseContext = contextFactory.createBase(this.requestDto);
     const orderList = await enrichOrderList(baseContext);
 
     return contextFactory.initialize({ ...baseContext, orderList, amount: this.requestDto.amount });
   }
 
-  private async createOrder(
-    ctx: BankTransferPaymentInitContext,
-  ): Promise<BankTransferPaymentAfterOrderContext> {
+  private async createOrder(ctx: BankTransferPaymentInitContext): Promise<BankTransferPaymentAfterOrderContext> {
     const orderPaymentService = OrderPaymentsService.for(PAYMENTS_METHOD.bank_transfer);
     const dto = PaymentDto.createOrderForBankTransfer(ctx);
     const order = await orderPaymentService.createOrder(dto);
@@ -91,13 +85,10 @@ export class BankTransferPaymentCommand
     await recentPurchasedHistoryService.createHistory(dto);
   }
 
-  private async createOrderProduct(
-    ctx: BankTransferPaymentAfterOrderContext,
-    orderListItem: EnrichedOrderListItem,
-  ) {
-    const orderProductService = OrderProductPaymentService.for(PAYMENTS_METHOD.bank_transfer);
-    const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
-    const orderProduct = await orderProductService.createOrderProduct(requestDto);
+  private async createOrderProduct(ctx: BankTransferPaymentAfterOrderContext, orderListItem: EnrichedOrderListItem) {
+    const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
+    const requestDto = PaymentDto.createOrderProductForBank(ctx, orderListItem);
+    const orderProduct = await orderProductRepository.create(requestDto);
 
     return orderProduct;
   }

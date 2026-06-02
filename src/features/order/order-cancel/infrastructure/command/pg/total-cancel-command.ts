@@ -1,11 +1,8 @@
 import { runWithTransaction } from '@/shared/infrastructure';
 import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
-import { IOrderProductService, OrderProductService } from '@/entities/order-product/infrastructure';
-import {
-  ORDER_PRODUCT_STATUS,
-  OrderProduct,
-  OrderProductFindOption,
-} from '@/entities/order-product';
+import { OrderProductRepository } from '@/entities/order-product';
+import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
+import { ORDER_PRODUCT_STATUS, OrderProduct, OrderProductFindOption } from '@/entities/order-product';
 import { OrderService } from '@/entities/order/infrastructure';
 import { IPointTransactionService } from '@/entities/point';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
@@ -23,19 +20,19 @@ interface CancelPlan {
 export class PGTotalCancelCommand implements ITotalCancelCommand {
   private readonly order: Order;
   private readonly orderService: IOrderService;
-  private readonly orderProductService: IOrderProductService;
+  private readonly orderProductRepository: OrderProductRepository;
   private readonly easypayService: IEasyPay;
 
   constructor(order: Order) {
     this.order = order;
     this.orderService = new OrderService();
-    this.orderProductService = new OrderProductService();
+    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
     this.easypayService = new EasyPayService();
   }
 
   public async run() {
     const option = OrderProductFindOption.totalCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductService.getOrderProductsWithTransaction(option);
+    const orderProducts = await this.orderProductRepository.findMany(option);
     const cancelEarnPointService = PointTransactionServiceFactory.forCancelEarn();
     const cancelUsePointService = PointTransactionServiceFactory.forCancelUse();
     const cancelPlan = this.resolveCancelPlan(orderProducts);
@@ -65,8 +62,11 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
   }
 
   private async updateOrderProductToCancelled(orderProductId: number) {
-    await this.orderProductService.updateOrderProduct(orderProductId, {
-      orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+    await this.orderProductRepository.update({
+      orderProductId,
+      data: {
+        orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+      },
     });
   }
 

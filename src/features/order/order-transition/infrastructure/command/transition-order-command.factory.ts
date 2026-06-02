@@ -1,6 +1,6 @@
 import { Order } from '@/entities/order';
 import { OrderService } from '@/entities/order/infrastructure';
-import { OrderProductService } from '@/entities/order-product/infrastructure';
+import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
 import { OrderProduct } from '@/entities/order-product';
 import { PointCalculator, PointTransaction } from '@/entities/point';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
@@ -12,7 +12,7 @@ export class TransitionOrderCommandFactory {
   public static createCommand(order: Order) {
     const context = createTransitionOrderContext(order);
     const orderService = new OrderService();
-    const orderProductService = new OrderProductService();
+    const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
 
     if (context.shouldTriggerEarnPointAction) {
       const earnPoint = async (orderProducts: OrderProduct[]) => {
@@ -36,9 +36,9 @@ export class TransitionOrderCommandFactory {
         await earnPointTransactionService.updateUserPointFromHistories(order.user, histories);
       };
 
-      return new TransitionOrderCommand(context, orderService, orderProductService, earnPoint);
+      return new TransitionOrderCommand(context, orderService, orderProductRepository, earnPoint);
     }
 
-    return new TransitionOrderCommand(context, orderService, orderProductService);
+    return new TransitionOrderCommand(context, orderService, orderProductRepository);
   }
 }

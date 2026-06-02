@@ -10,6 +10,7 @@ import type {
 } from './payments-context/pg.schema';
 import { type EnrichedOrderListItem } from './payment-order-list.schema';
 import type { CartItem } from '@/entities/cart';
+import { CreateOrderProductRequestDto, ORDER_PRODUCT_STATUS } from '@/entities/order-product';
 
 export const PaymentDto = {
   createOrderForPG: (context: PGPaymentAfterApprovalContext) => {
@@ -44,7 +45,7 @@ export const PaymentDto = {
     return dto;
   },
 
-  createOrderProduct: (
+  createOrderProductForBank: (
     context: PGPaymentAfterOrderContext | BankTransferPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ) => {
@@ -56,9 +57,30 @@ export const PaymentDto = {
       priceSnapshot: orderListItem.product.price,
       productNameSnapshot: orderListItem.product.name,
       quantity: orderListItem.quantity,
+      orderProductStatus: ORDER_PRODUCT_STATUS.pending,
       cashback_rate: orderListItem.product.cashback_rate,
       cashback_rate_for_bank: orderListItem.product.cashback_rate_for_bank,
-    };
+    } as CreateOrderProductRequestDto;
+
+    return dto;
+  },
+
+  createOrderProductForPg: (
+    context: PGPaymentAfterOrderContext | BankTransferPaymentAfterOrderContext,
+    orderListItem: EnrichedOrderListItem,
+  ) => {
+    const dto = {
+      order: context.orderId,
+      totalAmount: orderListItem.totalAmount,
+      productDeliveryFee: orderListItem.orderProductDeliveryFee,
+      product: orderListItem.product.id,
+      priceSnapshot: orderListItem.product.price,
+      productNameSnapshot: orderListItem.product.name,
+      quantity: orderListItem.quantity,
+      orderProductStatus: ORDER_PRODUCT_STATUS.preparing,
+      cashback_rate: orderListItem.product.cashback_rate,
+      cashback_rate_for_bank: orderListItem.product.cashback_rate_for_bank,
+    } as CreateOrderProductRequestDto;
 
     return dto;
   },

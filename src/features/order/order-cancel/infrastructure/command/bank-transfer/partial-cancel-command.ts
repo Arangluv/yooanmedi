@@ -1,9 +1,10 @@
 import { runWithTransaction } from '@/shared/infrastructure';
 import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
-import { IOrderProductService, OrderProductService } from '@/entities/order-product/infrastructure';
 import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
 import { OrderService } from '@/entities/order/infrastructure';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
+import { OrderProductRepository } from '@/entities/order-product';
+import { OrderProductApiRepository, OrderProductAdapter } from '@/entities/order-product/infrastructure';
 import { isFullyCancelRequest, isFullyCancelled } from '../../../lib/status-helper';
 import { IPartialCancelCommand } from '../../../core';
 
@@ -11,13 +12,13 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
   private readonly order: Order;
   private readonly targetOrderProductId: number;
   private readonly orderService: IOrderService;
-  private readonly orderProductService: IOrderProductService;
+  private readonly orderProductRepository: OrderProductRepository;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
     this.orderService = new OrderService();
-    this.orderProductService = new OrderProductService();
+    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
   }
 
   public async run() {
@@ -38,8 +39,9 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
   }
 
   private async updateOrderProductToCancelled() {
-    await this.orderProductService.updateOrderProduct(this.targetOrderProductId, {
-      orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+    await this.orderProductRepository.update({
+      orderProductId: this.targetOrderProductId,
+      data: { orderProductStatus: ORDER_PRODUCT_STATUS.cancelled },
     });
   }
 
@@ -72,10 +74,8 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
 
   private async getOrderOnGoingStatus() {
     const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductService.getOrderProductsWithTransaction(option);
-    const orderProductStatuses = orderProducts.map(
-      (orderProduct) => orderProduct.orderProductStatus,
-    );
+    const orderProducts = await this.orderProductRepository.findMany(option);
+    const orderProductStatuses = orderProducts.map((orderProduct) => orderProduct.orderProductStatus);
 
     if (isFullyCancelRequest(orderProductStatuses)) {
       return ORDER_STATUS.cancel_request;
@@ -93,13 +93,13 @@ export class BankTransferPartialCancelRequestCommand implements IPartialCancelCo
   private readonly order: Order;
   private readonly targetOrderProductId: number;
   private readonly orderService: IOrderService;
-  private readonly orderProductService: IOrderProductService;
+  private readonly orderProductRepository: OrderProductRepository;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
     this.orderService = new OrderService();
-    this.orderProductService = new OrderProductService();
+    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
   }
 
   public async run() {
@@ -108,9 +108,11 @@ export class BankTransferPartialCancelRequestCommand implements IPartialCancelCo
   }
 
   private async updateOrderProductToCancelled() {
-    const orderProductService = new OrderProductService();
-    await orderProductService.updateOrderProduct(this.targetOrderProductId, {
-      orderProductStatus: ORDER_PRODUCT_STATUS.cancel_request,
+    await this.orderProductRepository.update({
+      orderProductId: this.targetOrderProductId,
+      data: {
+        orderProductStatus: ORDER_PRODUCT_STATUS.cancel_request,
+      },
     });
   }
 
@@ -121,10 +123,8 @@ export class BankTransferPartialCancelRequestCommand implements IPartialCancelCo
 
   private async getOrderOnGoingStatus() {
     const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductService.getOrderProductsWithTransaction(option);
-    const orderProductStatuses = orderProducts.map(
-      (orderProduct) => orderProduct.orderProductStatus,
-    );
+    const orderProducts = await this.orderProductRepository.findMany(option);
+    const orderProductStatuses = orderProducts.map((orderProduct) => orderProduct.orderProductStatus);
 
     if (isFullyCancelRequest(orderProductStatuses)) {
       return ORDER_STATUS.cancel_request;
@@ -146,13 +146,13 @@ export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
   private readonly order: Order;
   private readonly targetOrderProductId: number;
   private readonly orderService: IOrderService;
-  private readonly orderProductService: IOrderProductService;
+  private readonly orderProductRepository: OrderProductRepository;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
     this.orderService = new OrderService();
-    this.orderProductService = new OrderProductService();
+    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
   }
 
   public async run() {
@@ -173,8 +173,11 @@ export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
   }
 
   private async updateOrderProductToCancelled() {
-    await this.orderProductService.updateOrderProduct(this.targetOrderProductId, {
-      orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+    await this.orderProductRepository.update({
+      orderProductId: this.targetOrderProductId,
+      data: {
+        orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+      },
     });
   }
 
@@ -207,10 +210,8 @@ export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
 
   private async getOrderOnGoingStatus() {
     const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductService.getOrderProductsWithTransaction(option);
-    const orderProductStatuses = orderProducts.map(
-      (orderProduct) => orderProduct.orderProductStatus,
-    );
+    const orderProducts = await this.orderProductRepository.findMany(option);
+    const orderProductStatuses = orderProducts.map((orderProduct) => orderProduct.orderProductStatus);
 
     if (isFullyCancelRequest(orderProductStatuses)) {
       return ORDER_STATUS.cancel_request;

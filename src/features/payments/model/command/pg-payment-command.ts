@@ -2,7 +2,7 @@ import { PointTransactionServiceFactory } from '@/entities/point/infrastructure'
 import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
 import { OrderPaymentsService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
-import { OrderProductPaymentService } from '@/entities/order-product/model/services/order-product-payments.service';
+import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
 import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
 import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
@@ -31,11 +31,7 @@ export class PGPaymentCommand
   implements IPaymentsCommand<PGPaymentCommandResult>, TransactionalCommand<PGPaymentCommandResult>
 {
   private requestDto: FormData;
-  private context:
-    | null
-    | PGPaymentInitContext
-    | PGPaymentAfterApprovalContext
-    | PGPaymentAfterOrderContext;
+  private context: null | PGPaymentInitContext | PGPaymentAfterApprovalContext | PGPaymentAfterOrderContext;
   public constructor(requestDto: FormData) {
     this.requestDto = requestDto;
     this.context = null;
@@ -164,19 +160,13 @@ export class PGPaymentCommand
     // step 5. 구매 포인트 적립
     await usePointTransactionService.updateUserPointFromHistories(ctx.userId, usePointHistoryStack);
     // step 6. 사용 포인트 차감
-    await earnPointTransactionService.updateUserPointFromHistories(
-      ctx.userId,
-      earnPointHistoryStack,
-    );
+    await earnPointTransactionService.updateUserPointFromHistories(ctx.userId, earnPointHistoryStack);
   }
 
-  private async createOrderProduct(
-    ctx: PGPaymentAfterOrderContext,
-    orderListItem: EnrichedOrderListItem,
-  ) {
-    const orderProductPaymentService = OrderProductPaymentService.for(PAYMENTS_METHOD.credit_card);
-    const requestDto = PaymentDto.createOrderProduct(ctx, orderListItem);
-    const orderProduct = await orderProductPaymentService.createOrderProduct(requestDto);
+  private async createOrderProduct(ctx: PGPaymentAfterOrderContext, orderListItem: EnrichedOrderListItem) {
+    const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
+    const requestDto = PaymentDto.createOrderProductForPg(ctx, orderListItem);
+    const orderProduct = await orderProductRepository.create(requestDto);
 
     return orderProduct;
   }

@@ -1,6 +1,7 @@
 import { runWithTransaction } from '@/shared/infrastructure';
 import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
-import { IOrderProductService, OrderProductService } from '@/entities/order-product/infrastructure';
+import { OrderProductRepository } from '@/entities/order-product';
+import { OrderProductApiRepository, OrderProductAdapter } from '@/entities/order-product/infrastructure';
 import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
 import { OrderService } from '@/entities/order/infrastructure';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
@@ -13,14 +14,14 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   private readonly order: Order;
   private readonly targetOrderProductId: number;
   private readonly orderService: IOrderService;
-  private readonly orderProductService: IOrderProductService;
+  private readonly orderProductRepository: OrderProductRepository;
   private readonly easypayService: IEasyPay;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
     this.orderService = new OrderService();
-    this.orderProductService = new OrderProductService();
+    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
     this.easypayService = new EasyPayService();
   }
 
@@ -45,8 +46,11 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   }
 
   private async updateOrderProductToCancelled() {
-    await this.orderProductService.updateOrderProduct(this.targetOrderProductId, {
-      orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+    await this.orderProductRepository.update({
+      orderProductId: this.targetOrderProductId,
+      data: {
+        orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+      },
     });
   }
 
@@ -57,10 +61,8 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
 
   private async getOrderOnGoingStatus() {
     const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductService.getOrderProductsWithTransaction(option);
-    const orderProductStatuses = orderProducts.map(
-      (orderProduct) => orderProduct.orderProductStatus,
-    );
+    const orderProducts = await this.orderProductRepository.findMany(option);
+    const orderProductStatuses = orderProducts.map((orderProduct) => orderProduct.orderProductStatus);
 
     if (isFullyCancelled(orderProductStatuses)) {
       return ORDER_STATUS.cancelled;
@@ -90,9 +92,7 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   }
 
   private async partialCancelRequestToEasypay() {
-    const targetOrderProduct = await this.orderProductService.getOrderProductWithTransaction(
-      this.targetOrderProductId,
-    );
+    const targetOrderProduct = await this.orderProductRepository.findById(this.targetOrderProductId);
     const paymentHistoryService = new PaymentHistoryService();
     const { pgCno } = await paymentHistoryService.getPaymentsHistory(this.order.id);
 
