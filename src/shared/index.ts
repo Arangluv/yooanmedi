@@ -61,6 +61,7 @@ export type {
   RecentPurchasedHistory as PayloadPurchasedHistory,
   Payment as PayloadPaymentHistory,
   Order as PayloadOrder,
+  ProductPrice as PayloadCustomPrice,
 } from './types';
 
 // ui
