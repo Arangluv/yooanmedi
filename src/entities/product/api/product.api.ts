@@ -1,6 +1,6 @@
 'use server';
 
-import { okWithData, failure, EndPointResult, BaseErrorManager } from '@/shared';
+import { EndPointResultManager, EndPointResult, BaseErrorManager } from '@/shared';
 import { LoggerV2 } from '@/shared';
 import { ProductCategory } from '../types';
 import { ProductAdapter, ProductApiRepository } from '../infrastructure';
@@ -10,12 +10,12 @@ export const getProductCategories = async (): Promise<EndPointResult<ProductCate
   try {
     const productApiRepository = new ProductApiRepository(ProductAdapter());
     const categories = await productApiRepository.getAllCategories();
-    return okWithData({
+    return EndPointResultManager.okWithData({
       data: categories,
     });
   } catch (error) {
     LoggerV2.error(error);
     const message = BaseErrorManager.resolveClientMessage(error);
-    return failure(message ?? PRODUCT_ERROR_MESSAGE.categoryFetchFail);
+    return EndPointResultManager.fail(message ?? PRODUCT_ERROR_MESSAGE.categoryFetchFail);
   }
 };
