@@ -19,6 +19,8 @@ export const CustomPriceAdapter = () => ({
         depth: 0,
         req,
       });
+      console.log('customPrices');
+      console.log(customPrices);
       return PayloadAdapterResultManager.ok(customPrices);
     } catch (error) {
       LoggerV2.error(error);
