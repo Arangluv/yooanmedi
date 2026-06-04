@@ -11,6 +11,7 @@ import type {
 import { type EnrichedOrderListItem } from './payment-order-list.schema';
 import type { CartItem } from '@/entities/cart';
 import { CreateOrderProductRequestDto, ORDER_PRODUCT_STATUS } from '@/entities/order-product';
+import { CreatePurchasedHistoryRequestDto } from '@/entities/purchased-history';
 
 export const PaymentDto = {
   createOrderForPG: (context: PGPaymentAfterApprovalContext) => {
@@ -91,7 +92,7 @@ export const PaymentDto = {
       product: cartItem.product.id,
       quantity: cartItem.quantity,
       amount: cartItem.product.price,
-    };
+    } as CreatePurchasedHistoryRequestDto;
 
     return dto;
   },

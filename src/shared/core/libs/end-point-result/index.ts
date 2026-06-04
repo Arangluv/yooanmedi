@@ -1,1 +1,1 @@
-export { type EndPointResult, ok, okWithData, failure } from './end-point-result';
+export { type EndPointResult, ok, okWithData, failure, EndPointResultManager } from './end-point-result';

@@ -17,6 +17,6 @@ export { TestErrorHelper } from './__test__';
 export { Logger, LoggerV2 } from './logger';
 export { ServerSearchParamsAdapter } from './search-params';
 export { type AlertDialogConfig, type DialogActionConfig } from './alert-dialog';
-export { type EndPointResult, ok, okWithData, failure } from './end-point-result';
+export { type EndPointResult, ok, okWithData, failure, EndPointResultManager } from './end-point-result';
 export { type FindOption } from './find-option';
 export { zodSafeParse, ZodSchemaParser, type SchemaParserDto } from './zod';

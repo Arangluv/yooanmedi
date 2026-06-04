@@ -19,6 +19,7 @@ export {
   ok,
   okWithData,
   failure,
+  EndPointResultManager,
   zodSafeParse,
   ZodSchemaParser,
 } from './libs';

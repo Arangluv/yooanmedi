@@ -1,7 +1,7 @@
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { OrderPaymentsService } from '@/entities/order/model/services/service';
 import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
-import { RecentPurchasedHistoryService } from '@/entities/recent-purchased-history/model/recent-purchased-history.service';
+import { PurchasedHistoryApiRepository, PurchasedHistoryAdapter } from '@/entities/purchased-history/infrastructure';
 import { runWithTransaction } from '@/shared/infrastructure';
 import { PAYMENTS_METHOD, TransactionalCommand } from '@/shared';
 import { PaymentDto } from '../schemas/payments.dto';
@@ -80,9 +80,9 @@ export class BankTransferPaymentCommand implements IPaymentsCommand<void>, Trans
     ctx: BankTransferPaymentAfterOrderContext,
     orderListItem: EnrichedOrderListItem,
   ): Promise<void> {
-    const recentPurchasedHistoryService = new RecentPurchasedHistoryService();
+    const purchasedHistoryRepository = new PurchasedHistoryApiRepository(PurchasedHistoryAdapter());
     const dto = PaymentDto.createRecentPurchasedHistory(ctx, orderListItem);
-    await recentPurchasedHistoryService.createHistory(dto);
+    await purchasedHistoryRepository.create(dto);
   }
 
   private async createOrderProduct(ctx: BankTransferPaymentAfterOrderContext, orderListItem: EnrichedOrderListItem) {

@@ -2,20 +2,28 @@
 
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
-import type { User } from '@/entities/user/@x/recent-purchased-history';
-import type { Product } from '@/entities/product/@x/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
-import { recentPurchasedHistoryQueries } from '../model/recent-purchased-history.queries';
+import { getPurchasedHistories } from '../api';
 
 type RecentPurchasesTableProps = {
-  user: User;
-  product: Product;
+  user: number;
+  product: number;
 };
 
-const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {
-  const { data } = useQuery(recentPurchasedHistoryQueries.lists({ userId: user.id, productId: product.id }));
+/** todo :: features layer 리팩토링 시 해당 코드도 수정필요 */
 
-  if (!data || data.length === 0) {
+export const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {
+  /** todo :: custom hook으로 개선 */
+  const { data: result } = useQuery({
+    queryKey: ['recent-purchased-history', user, product],
+    queryFn: () => getPurchasedHistories({ user, product }),
+  });
+
+  if (!result || !result.isSuccess) {
+    return null;
+  }
+
+  if (result.data.length === 0) {
     return null;
   }
 
@@ -31,7 +39,7 @@ const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {
           </tr>
         </thead>
         <tbody>
-          {data?.map((item) => (
+          {result.data.map((item) => (
             <tr key={item.id} className="border-foreground-200 border-1 text-xs">
               <td className="border-foreground-200 border-r-1 py-1 text-center">
                 {moment(item.createdAt).format('YYYY-MM-DD')}
@@ -45,5 +53,3 @@ const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {
     </div>
   );
 };
-
-export default RecentPurchasesTable;

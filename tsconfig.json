@@ -35,7 +35,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/entities/recent-purchased-history",
+    "src/entities/purchased-history",
     "src/features/payments/model/schemas/payments-context/pg.schema.ts"
   ],
   "exclude": ["node_modules"]
