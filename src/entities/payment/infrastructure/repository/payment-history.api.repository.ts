@@ -1,4 +1,3 @@
-import { FindOption } from '@/shared';
 import { PaymentHistoryAdapter } from '../api';
 import { PaymentHistoryRepository } from '../../core';
 import { CreatePaymentHistorRequestyDto } from '../../dto';
@@ -20,8 +19,8 @@ export class PaymentHistoryApiRepository implements PaymentHistoryRepository {
     return PaymentHistoryMapper.entityToDomain(result.data);
   }
 
-  async findOne(option: FindOption) {
-    const result = await this.adapter.getPaymentHistory(option);
+  async findByOrderId(orderId: number) {
+    const result = await this.adapter.getPaymentHistoryByOrderId(orderId);
     if (!result.ok) {
       throw result.error;
     }

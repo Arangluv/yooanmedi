@@ -28,14 +28,18 @@ export const PaymentHistoryAdapter = () => ({
     }
   },
 
-  getPaymentHistory: async (option: FindOption) => {
+  getPaymentHistoryByOrderId: async (orderId: number) => {
     try {
       const payload = await PayloadCms.getInstance();
       const req = getTransactionContextFromStore();
       const { docs: history } = await payload.find({
         collection: 'payment',
         depth: 0,
-        ...option,
+        where: {
+          order: {
+            equals: orderId,
+          },
+        },
         req,
       });
 

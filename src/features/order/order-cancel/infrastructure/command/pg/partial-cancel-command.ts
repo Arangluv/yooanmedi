@@ -6,7 +6,7 @@ import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-p
 import { OrderService } from '@/entities/order/infrastructure';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { EasyPayService, IEasyPay } from '@/entities/easypay';
-import { PaymentHistoryService } from '@/entities/payment/infrastructure';
+import { PaymentHistoryApiRepository, PaymentHistoryAdapter } from '@/entities/payment/infrastructure';
 import { isFullyCancelled } from '../../../lib/status-helper';
 import { type IPartialCancelCommand } from '../../../core';
 
@@ -92,9 +92,10 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   }
 
   private async partialCancelRequestToEasypay() {
+    const paymentHistoryRepository = new PaymentHistoryApiRepository(PaymentHistoryAdapter());
     const targetOrderProduct = await this.orderProductRepository.findById(this.targetOrderProductId);
-    const paymentHistoryService = new PaymentHistoryService();
     const { pgCno } = await paymentHistoryService.getPaymentsHistory(this.order.id);
+    const { pgCno } = await paymentHistoryRepository.findOne(this.order.id);
 
     await this.easypayService.partialCancelRequest({
       amount: targetOrderProduct.totalAmount,

@@ -4,7 +4,7 @@ import { MockPaymentHistoryAdapter } from '../mocks';
 import { CreatePaymentHistorRequestyDto } from '../../dto';
 import { PayloadAdapterResultManager } from '@/shared/server';
 import { createPaymentHistoryEntityFixture } from '../fixtures';
-import { BaseError, FindOption, TestErrorHelper } from '@/shared';
+import { BaseError, TestErrorHelper } from '@/shared';
 
 describe('Payment History Api Repository', () => {
   let mockAdapter: ReturnType<typeof PaymentHistoryAdapter>;
@@ -55,31 +55,31 @@ describe('Payment History Api Repository', () => {
     });
   });
 
-  describe('findOne', () => {
+  describe('findByOrderId', () => {
     it('결제내역 조회에 성공한다', async () => {
       // Given
-      const option = { pagination: false, limit: 1 } as FindOption;
-      vi.mocked(mockAdapter.getPaymentHistory).mockResolvedValue(
+      const targetOrderId = 3;
+      vi.mocked(mockAdapter.getPaymentHistoryByOrderId).mockResolvedValue(
         PayloadAdapterResultManager.ok(createPaymentHistoryEntityFixture()),
       );
 
       // When
-      await repository.findOne(option);
+      await repository.findByOrderId(targetOrderId);
 
       // Then
-      expect(mockAdapter.getPaymentHistory).toHaveBeenCalledTimes(1);
-      expect(mockAdapter.getPaymentHistory).toHaveBeenCalledWith(option);
+      expect(mockAdapter.getPaymentHistoryByOrderId).toHaveBeenCalledTimes(1);
+      expect(mockAdapter.getPaymentHistoryByOrderId).toHaveBeenCalledWith(targetOrderId);
     });
 
     it('결제내역 조회에 실패시 BaseError를 throw한다', async () => {
       // Given
-      const option = { pagination: false, limit: 1 } as FindOption;
-      vi.mocked(mockAdapter.getPaymentHistory).mockResolvedValue(
+      const targetOrderId = 3;
+      vi.mocked(mockAdapter.getPaymentHistoryByOrderId).mockResolvedValue(
         PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
       );
 
       // When & Then
-      await expect(() => repository.findOne(option)).rejects.toThrow(BaseError);
+      await expect(() => repository.findByOrderId(targetOrderId)).rejects.toThrow(BaseError);
     });
   });
 });
