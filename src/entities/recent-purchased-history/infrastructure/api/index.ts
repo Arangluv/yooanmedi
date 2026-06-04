@@ -1,1 +1,1 @@
-export { PurchasedHistoryAdapter } from './purchased-histort.adapter';
+export { PurchasedHistoryAdapter } from './purchased-history.adapter';

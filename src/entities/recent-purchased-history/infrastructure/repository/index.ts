@@ -1,1 +1,1 @@
-export { PurchasedHistoryApiRepository } from './purchased-histort.api.repository';
+export { PurchasedHistoryApiRepository } from './purchased-history.api.repository';
