@@ -1,1 +1,1 @@
-export { type Order } from '../model/schemas/order.schema';
+export { type Order } from '../types';

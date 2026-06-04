@@ -14,26 +14,42 @@ import { CreateOrderProductRequestDto, ORDER_PRODUCT_STATUS } from '@/entities/o
 import { CreatePurchasedHistoryRequestDto } from '@/entities/purchased-history';
 import { CreatePaymentHistorRequestyDto } from '@/entities/payment';
 import { PAYMENTS_METHOD } from '@/shared';
+import {
+  CreateOrderRequestForBankTransferDto,
+  CreateOrderRequestForPgDto,
+  FLG_STATUS,
+  ORDER_STATUS,
+  PAYMENT_STATUS,
+} from '@/entities/order';
 
 export const PaymentDto = {
   createOrderForPG: (context: PGPaymentAfterApprovalContext) => {
-    const dto = {
+    const dto: CreateOrderRequestForPgDto = {
       user: context.userId,
       orderNo: context.shopOrderNo,
       orderRequest: context.deliveryRequest,
       finalPrice: context.amount,
       usedPoint: context.usedPoint,
+      paymentsMethod: PAYMENTS_METHOD.credit_card,
+      orderStatus: ORDER_STATUS.preparing,
+      paymentStatus: PAYMENT_STATUS.complete,
+      flgStatus: FLG_STATUS.init_normal,
     };
 
     return dto;
   },
+
   createOrderForBankTransfer: (context: BankTransferPaymentInitContext) => {
-    const dto = {
+    const dto: CreateOrderRequestForBankTransferDto = {
       user: context.userId,
       orderNo: context.shopOrderNo,
       orderRequest: context.deliveryRequest,
       finalPrice: context.amount,
       usedPoint: context.usedPoint,
+      paymentsMethod: PAYMENTS_METHOD.bank_transfer,
+      orderStatus: ORDER_STATUS.pending,
+      paymentStatus: PAYMENT_STATUS.pending,
+      flgStatus: FLG_STATUS.init_normal,
     };
 
     return dto;

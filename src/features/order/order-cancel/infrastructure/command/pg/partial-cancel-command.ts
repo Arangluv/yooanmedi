@@ -1,9 +1,9 @@
 import { runWithTransaction } from '@/shared/infrastructure';
-import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
+import { Order, ORDER_STATUS, OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
+import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { OrderProductRepository } from '@/entities/order-product';
 import { OrderProductApiRepository, OrderProductAdapter } from '@/entities/order-product/infrastructure';
 import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
-import { OrderService } from '@/entities/order/infrastructure';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { EasyPayService, IEasyPay } from '@/entities/easypay';
 import { PaymentHistoryApiRepository, PaymentHistoryAdapter } from '@/entities/payment/infrastructure';
@@ -13,14 +13,14 @@ import { type IPartialCancelCommand } from '../../../core';
 export class PGPartialCancelCommand implements IPartialCancelCommand {
   private readonly order: Order;
   private readonly targetOrderProductId: number;
-  private readonly orderService: IOrderService;
+  private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
   private readonly easypayService: IEasyPay;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
-    this.orderService = new OrderService();
+    this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
     this.easypayService = new EasyPayService();
   }
@@ -56,7 +56,13 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
 
   private async updateOrderStatus() {
     const orderOnGoingStatus = await this.getOrderOnGoingStatus();
-    await this.orderService.updateOrder(this.order, { orderStatus: orderOnGoingStatus });
+    const dto = {
+      order: this.order.id,
+      data: {
+        orderStatus: orderOnGoingStatus,
+      },
+    } as UpdateOrderRequestDto;
+    await this.orderRepository.update(dto);
   }
 
   private async getOrderOnGoingStatus() {

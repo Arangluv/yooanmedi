@@ -1,5 +1,5 @@
 import { Order } from '@/entities/order';
-import { OrderService } from '@/entities/order/infrastructure';
+import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
 import { OrderProduct } from '@/entities/order-product';
 import { PointCalculator, PointTransaction } from '@/entities/point';
@@ -11,7 +11,7 @@ import { TransitionOrderMapper } from '../../mapper';
 export class TransitionOrderCommandFactory {
   public static createCommand(order: Order) {
     const context = createTransitionOrderContext(order);
-    const orderService = new OrderService();
+    const orderRepository = new OrderApiRepository(OrderAdapter());
     const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
 
     if (context.shouldTriggerEarnPointAction) {
@@ -36,9 +36,9 @@ export class TransitionOrderCommandFactory {
         await earnPointTransactionService.updateUserPointFromHistories(order.user, histories);
       };
 
-      return new TransitionOrderCommand(context, orderService, orderProductRepository, earnPoint);
+      return new TransitionOrderCommand(context, orderRepository, orderProductRepository, earnPoint);
     }
 
-    return new TransitionOrderCommand(context, orderService, orderProductRepository);
+    return new TransitionOrderCommand(context, orderRepository, orderProductRepository);
   }
 }

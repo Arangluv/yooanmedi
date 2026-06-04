@@ -1,9 +1,9 @@
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
-import { OrderPaymentsService } from '@/entities/order/model/services/service';
+import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
 import { PurchasedHistoryApiRepository, PurchasedHistoryAdapter } from '@/entities/purchased-history/infrastructure';
 import { runWithTransaction } from '@/shared/infrastructure';
-import { PAYMENTS_METHOD, TransactionalCommand } from '@/shared';
+import { TransactionalCommand } from '@/shared';
 import { PaymentDto } from '../schemas/payments.dto';
 import { EnrichedOrderListItem } from '../schemas/payment-order-list.schema';
 import { enrichOrderList } from '../enrich-order-list';
@@ -43,9 +43,9 @@ export class BankTransferPaymentCommand implements IPaymentsCommand<void>, Trans
   }
 
   private async createOrder(ctx: BankTransferPaymentInitContext): Promise<BankTransferPaymentAfterOrderContext> {
-    const orderPaymentService = OrderPaymentsService.for(PAYMENTS_METHOD.bank_transfer);
+    const orderRepository = new OrderApiRepository(OrderAdapter());
     const dto = PaymentDto.createOrderForBankTransfer(ctx);
-    const order = await orderPaymentService.createOrder(dto);
+    const order = await orderRepository.create(dto);
 
     return {
       ...ctx,

@@ -1,7 +1,6 @@
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { cancelPgPaymentAll } from '@/entities/payment'; // todo :: remove
-import { OrderPaymentsService } from '@/entities/order/model/services/service';
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
 import { PaymentHistoryApiRepository, PaymentHistoryAdapter } from '@/entities/payment/infrastructure';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
@@ -108,9 +107,9 @@ export class PGPaymentCommand
   }
 
   private async createOrder(ctx: PGPaymentAfterApprovalContext) {
-    const orderPaymentsService = OrderPaymentsService.for(PAYMENTS_METHOD.credit_card);
+    const orderRepository = new OrderApiRepository(OrderAdapter());
     const dto = PaymentDto.createOrderForPG(ctx);
-    const order = await orderPaymentsService.createOrder(dto);
+    const order = await orderRepository.create(dto);
 
     const afterOrderCtx = {
       ...ctx,

@@ -1,7 +1,8 @@
 import { runWithTransaction } from '@/shared/infrastructure';
-import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
+import { Order, ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
-import { OrderService } from '@/entities/order/infrastructure';
+import { OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
+import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { OrderProductRepository } from '@/entities/order-product';
 import { OrderProductApiRepository, OrderProductAdapter } from '@/entities/order-product/infrastructure';
@@ -11,13 +12,13 @@ import { IPartialCancelCommand } from '../../../core';
 export class BankTransferPartialCancelImmediateCommand implements IPartialCancelCommand {
   private readonly order: Order;
   private readonly targetOrderProductId: number;
-  private readonly orderService: IOrderService;
+  private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
-    this.orderService = new OrderService();
+    this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
   }
 
@@ -47,7 +48,13 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
 
   private async updateOrderStatus() {
     const orderOnGoingStatus = await this.getOrderOnGoingStatus();
-    await this.orderService.updateOrder(this.order, { orderStatus: orderOnGoingStatus });
+    const dto = {
+      order: this.order.id,
+      data: {
+        orderStatus: orderOnGoingStatus,
+      },
+    } as UpdateOrderRequestDto;
+    await this.orderRepository.update(dto);
   }
 
   private async rollbackEarnPoint() {
@@ -92,13 +99,13 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
 export class BankTransferPartialCancelRequestCommand implements IPartialCancelCommand {
   private readonly order: Order;
   private readonly targetOrderProductId: number;
-  private readonly orderService: IOrderService;
+  private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
-    this.orderService = new OrderService();
+    this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
   }
 
@@ -118,7 +125,13 @@ export class BankTransferPartialCancelRequestCommand implements IPartialCancelCo
 
   private async updateOrderStatus() {
     const orderOnGoingStatus = await this.getOrderOnGoingStatus();
-    await this.orderService.updateOrder(this.order, { orderStatus: orderOnGoingStatus });
+    const dto = {
+      order: this.order.id,
+      data: {
+        orderStatus: orderOnGoingStatus,
+      },
+    } as UpdateOrderRequestDto;
+    await this.orderRepository.update(dto);
   }
 
   private async getOrderOnGoingStatus() {
@@ -145,13 +158,13 @@ export class BankTransferPartialCancelRequestCommand implements IPartialCancelCo
 export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
   private readonly order: Order;
   private readonly targetOrderProductId: number;
-  private readonly orderService: IOrderService;
+  private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
     this.targetOrderProductId = orderProductId;
-    this.orderService = new OrderService();
+    this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
   }
 
@@ -183,7 +196,13 @@ export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
 
   private async updateOrderStatus() {
     const orderOnGoingStatus = await this.getOrderOnGoingStatus();
-    await this.orderService.updateOrder(this.order, { orderStatus: orderOnGoingStatus });
+    const dto = {
+      order: this.order.id,
+      data: {
+        orderStatus: orderOnGoingStatus,
+      },
+    } as UpdateOrderRequestDto;
+    await this.orderRepository.update(dto);
   }
 
   private async rollbackEarnPoint() {

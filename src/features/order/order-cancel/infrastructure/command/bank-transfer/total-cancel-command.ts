@@ -1,8 +1,8 @@
 import { runWithTransaction } from '@/shared/infrastructure';
-import { IOrderService, Order, ORDER_STATUS } from '@/entities/order';
+import { Order, ORDER_STATUS, OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
+import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { OrderProductRepository } from '@/entities/order-product';
 import { OrderProductApiRepository, OrderProductAdapter } from '@/entities/order-product/infrastructure';
-import { OrderService } from '@/entities/order/infrastructure';
 import { ORDER_PRODUCT_STATUS, OrderProduct, OrderProductFindOption } from '@/entities/order-product';
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
 import { IPointTransactionService } from '@/entities/point';
@@ -10,12 +10,12 @@ import { ITotalCancelCommand } from '../../../core';
 
 export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
   private readonly order: Order;
-  private readonly orderService: IOrderService;
+  private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
 
   constructor(order: Order) {
     this.order = order;
-    this.orderService = new OrderService();
+    this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
   }
 
@@ -57,7 +57,13 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
   }
 
   private async updateOrderStatus() {
-    await this.orderService.updateOrder(this.order, { orderStatus: ORDER_STATUS.cancelled });
+    const dto = {
+      order: this.order.id,
+      data: {
+        orderStatus: ORDER_STATUS.cancelled,
+      },
+    } as UpdateOrderRequestDto;
+    await this.orderRepository.update(dto);
   }
 
   private async rollbackEarnPoint(service: IPointTransactionService, orderProduct: OrderProduct) {

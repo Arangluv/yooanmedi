@@ -1,6 +1,6 @@
 import { runWithTransaction } from '@/shared/infrastructure';
 import { OrderProductRepository, OrderProduct } from '@/entities/order-product';
-import { IOrderService } from '@/entities/order';
+import { OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
 import { TransitionOrderContext } from '../../schemas';
 import { OrderDetailFindOption } from '../../lib';
 import { ITransitionOrderCommand } from '../../core';
@@ -8,17 +8,17 @@ import { ITransitionOrderCommand } from '../../core';
 export class TransitionOrderCommand implements ITransitionOrderCommand {
   public readonly context: TransitionOrderContext;
   private orderProductRepository: OrderProductRepository;
-  private orderService: IOrderService;
+  private orderRepository: OrderRepository;
   private earnPoint?: (orderProduct: OrderProduct[]) => Promise<void>;
 
   constructor(
     context: TransitionOrderContext,
-    orderService: IOrderService,
+    orderRepository: OrderRepository,
     orderProductRepository: OrderProductRepository,
     earnPoint?: (orderProduct: OrderProduct[]) => Promise<void>,
   ) {
     this.context = context;
-    this.orderService = orderService;
+    this.orderRepository = orderRepository;
     this.orderProductRepository = orderProductRepository;
     this.earnPoint = earnPoint;
   }
@@ -38,9 +38,13 @@ export class TransitionOrderCommand implements ITransitionOrderCommand {
       },
     });
 
-    await this.orderService.updateOrder(this.context.order, {
-      orderStatus: this.context.transitionOrderStatus.to,
-    });
+    const updateDto = {
+      order: this.context.order.id,
+      data: {
+        orderStatus: this.context.transitionOrderProductStatus.to,
+      },
+    } as UpdateOrderRequestDto;
+    await this.orderRepository.update(updateDto);
 
     if (this.earnPoint) {
       await this.earnPoint(orderProducts);

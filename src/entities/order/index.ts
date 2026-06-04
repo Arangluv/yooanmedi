@@ -1,25 +1,29 @@
-export { type Order, type OrderEntity, orderSchema } from './model/schemas/order.schema';
-
-export { createOrderSchema } from './model/schemas/create-order.schema';
+export { type OrderRepository } from './core';
 
 export {
-  orderCommonSchema,
-  orderEntitySchema,
-  orderListResultSchema,
-  toOrderSchema,
-  type OrderListResult,
-} from './model/schemas/order.schema';
+  type UpdateOrderRequestDto,
+  type CreateOrderRequestForBankTransferDto,
+  type CreateOrderRequestForPgDto,
+} from './dto';
 
-export { type IOrderService } from './model/services/order.service';
+export { orderSchema } from './schemas';
 
-export * as OrderComposer from './model/order-composer';
+export { type Order } from './types';
 
 export { getPaymentStatus, getFlgStatus, getOrderStatusForList } from './libs';
 
-export * from './constants';
-
-export { default as Navbar } from './ui/Navbar';
-
-export { createOrderEntityFixture, createOrderFixture } from './__test__/order.fixture';
+export {
+  FLG_STATUS,
+  FLG_STATUS_NAME,
+  ORDER_STATUS,
+  ORDER_STATUS_NAME,
+  PAYMENT_STATUS,
+  PAYMENT_STATUS_NAME,
+  type FlgStatus,
+  type OrderStatus,
+  type PaymentStatus,
+} from './constants';
 
 export { ORDER_QUERY_KEYS } from './api';
+
+export { default as Navbar } from './ui/Navbar';
