@@ -2,13 +2,12 @@ import { CollectionConfig } from 'payload';
 import {
   ORDER_STATUS,
   ORDER_STATUS_NAME,
-  PAYMENTS_METHOD,
   FLG_STATUS,
   FLG_STATUS_NAME,
   PAYMENT_STATUS,
   PAYMENT_STATUS_NAME,
 } from '@/entities/order';
-
+import { PAYMENTS_METHOD } from '@/shared';
 export const order: CollectionConfig = {
   slug: 'order',
   labels: {

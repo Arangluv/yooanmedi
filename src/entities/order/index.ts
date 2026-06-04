@@ -14,9 +14,7 @@ export { type IOrderService } from './model/services/order.service';
 
 export * as OrderComposer from './model/order-composer';
 
-export { OrderFindOption } from './lib/find-options';
-
-export { getPaymentStatus, getFlgStatus, getOrderStatusForList } from './lib/status-resolver';
+export { getPaymentStatus, getFlgStatus, getOrderStatusForList } from './libs';
 
 export * from './constants';
 

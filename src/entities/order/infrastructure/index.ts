@@ -1,4 +1,4 @@
-export { OrderAdaper } from './api';
+export { OrderAdapter } from './api';
 export { OrderApiRepository } from './repository';
 
 /** 기존 참조 */

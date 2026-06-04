@@ -1,1 +1,1 @@
-export { OrderAdaper } from './order.adapter';
+export { OrderAdapter } from './order.adapter';

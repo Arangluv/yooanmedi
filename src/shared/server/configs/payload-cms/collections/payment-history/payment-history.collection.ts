@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload';
-import { PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/shared';
 
 export const paymentHistory: CollectionConfig = {
   slug: 'payment',

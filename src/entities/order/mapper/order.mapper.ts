@@ -6,7 +6,7 @@ import { ORDER_ERROR_MESSAGE } from '../constants';
 export class OrderMapper {
   static entityToDomain(data: OrderEntity) {
     const dto = {
-      data,
+      data: { ...data, orderProducts: data.orderProducts?.docs },
       errorMsg: ORDER_ERROR_MESSAGE.invalidData,
     } as SchemaParserDto;
 

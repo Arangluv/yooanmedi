@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { orderSchema } from './order.schema';
-import { ORDER_STATUS, PAYMENT_STATUS } from '../constants';
-import { BaseSchema } from '@/shared';
+import { FLG_STATUS, ORDER_STATUS, PAYMENT_STATUS } from '../constants';
+import { BaseSchema, PAYMENTS_METHOD } from '@/shared';
 
 /**
  * 현재는 orderDeliveryFee를 받고있지 않습니다. 배송비에 대한 로직이 변경되면 해당 스키마에 추가해주세요
@@ -19,13 +19,17 @@ const baseCreateOrderSchema = orderSchema.pick({
 });
 
 export const createOrderSchemaForPG = baseCreateOrderSchema.extend({
+  paymentsMethod: z.literal(PAYMENTS_METHOD.credit_card),
   orderStatus: z.literal(ORDER_STATUS.preparing),
   paymentStatus: z.literal(PAYMENT_STATUS.complete),
+  flgStatus: z.literal(FLG_STATUS.init_normal),
 });
 
 export const createOrderSchemaForBankTransfer = baseCreateOrderSchema.extend({
+  paymentsMethod: z.literal(PAYMENTS_METHOD.bank_transfer),
   orderStatus: z.literal(ORDER_STATUS.pending),
   paymentStatus: z.literal(PAYMENT_STATUS.pending),
+  flgStatus: z.literal(FLG_STATUS.init_normal),
 });
 
 export const updateOrderRequestSchema = z.object({

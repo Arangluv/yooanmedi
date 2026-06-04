@@ -9,7 +9,7 @@ import { ORDER_ERROR_MESSAGE } from '../../constants';
 import { CreateOrderRequestDto, UpdateOrderRequestDto } from '../../dto';
 import { GetOrderResponse, UpdateOrderResponse, CreateOrderResponse } from '../../types';
 
-export const OrderAdaper = () => ({
+export const OrderAdapter = () => ({
   createOrder: async (dto: CreateOrderRequestDto): Promise<CreateOrderResponse> => {
     try {
       const payload = await PayloadCms.getInstance();
@@ -38,6 +38,7 @@ export const OrderAdaper = () => ({
         depth: 0,
         req,
       });
+      console.log(order);
       return PayloadAdapterResultManager.ok(order);
     } catch (error) {
       LoggerV2.error(error);
