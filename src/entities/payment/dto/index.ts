@@ -1,1 +1,1 @@
-export type { CreatePaymentHistorRequestyDto, GetPaymentHistoryRequestDto } from './payment-history.dto';
+export type { CreatePaymentHistorRequestyDto, CancelPaymentRequestDto } from './payment-history.dto';

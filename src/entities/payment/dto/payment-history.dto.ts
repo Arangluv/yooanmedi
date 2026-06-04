@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { createPaymentHistorySchema, getPaymentHistorySchema } from '../schemas';
+import { createPaymentHistorySchema } from '../schemas';
 
 export type CreatePaymentHistorRequestyDto = z.infer<typeof createPaymentHistorySchema>;
-export type GetPaymentHistoryRequestDto = z.infer<typeof getPaymentHistorySchema>;
+// todo :: move to other entity or features
+export type CancelPaymentRequestDto = { amount: number; pgCno: string };

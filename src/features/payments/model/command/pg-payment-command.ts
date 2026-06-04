@@ -1,9 +1,9 @@
 import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
-import { cancelPgPaymentAll } from '@/entities/payment/lib/cancel-pg-payment-all';
+import { cancelPgPaymentAll } from '@/entities/payment'; // todo :: remove
 import { OrderPaymentsService } from '@/entities/order/model/services/service';
 import { PAYMENTS_METHOD } from '@/entities/order';
 import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
-import { PaymentHistoryService } from '@/entities/payment-history/model/payment-history.service';
+import { PaymentHistoryApiRepository, PaymentHistoryAdapter } from '@/entities/payment/infrastructure';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
 import { PurchasedHistoryApiRepository, PurchasedHistoryAdapter } from '@/entities/purchased-history/infrastructure';
 import { runWithTransaction } from '@/shared/infrastructure';
@@ -59,7 +59,7 @@ export class PGPaymentCommand
 
   public async onRollback(): Promise<void> {
     if (this.context && 'pgCno' in this.context) {
-      await cancelPgPaymentAll(this.context.amount, this.context.pgCno);
+      await cancelPgPaymentAll({ amount: this.context.amount, pgCno: this.context.pgCno });
     }
   }
 
@@ -181,8 +181,8 @@ export class PGPaymentCommand
   }
 
   private async createPaymentHistory(ctx: PGPaymentAfterOrderContext) {
-    const paymentHistoryService = new PaymentHistoryService();
+    const paymentHistoryRepository = new PaymentHistoryApiRepository(PaymentHistoryAdapter());
     const dto = PaymentDto.createPaymentHistory(ctx);
-    await paymentHistoryService.createHistory(dto);
+    await paymentHistoryRepository.create(dto);
   }
 }

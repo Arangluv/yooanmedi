@@ -93,13 +93,12 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
 
   private async partialCancelRequestToEasypay() {
     const paymentHistoryRepository = new PaymentHistoryApiRepository(PaymentHistoryAdapter());
-    const targetOrderProduct = await this.orderProductRepository.findById(this.targetOrderProductId);
-    const { pgCno } = await paymentHistoryService.getPaymentsHistory(this.order.id);
-    const { pgCno } = await paymentHistoryRepository.findOne(this.order.id);
+    const orderProduct = await this.orderProductRepository.findById(this.targetOrderProductId);
+    const paymentHistory = await paymentHistoryRepository.findByOrderId(this.order.id);
 
     await this.easypayService.partialCancelRequest({
-      amount: targetOrderProduct.totalAmount,
-      pgCno,
+      amount: orderProduct.totalAmount,
+      pgCno: paymentHistory.pgCno,
     });
   }
 }
