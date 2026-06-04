@@ -32,6 +32,14 @@ export type {
   EndPointResult,
   FindOption,
   SchemaParserDto,
+  PayloadAdapterSuccessResult,
+  PayloadAdapterPaginatedSuccessResult,
+  PayloadAdapterFailureResult,
+  PayloadAdapterResult,
+  PayloadAdapterPaginatedResult,
+  PayloadBulkOperationSuccessResult,
+  PayloadBulkOperationFailureResult,
+  PayloadBulkOperationResult,
 } from './libs';
 
 export { bannerSchema, BaseSchema, PaymentsBaseSchema } from './schemas';

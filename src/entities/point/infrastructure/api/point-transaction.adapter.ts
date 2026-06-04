@@ -4,13 +4,8 @@ import {
   PayloadCms,
   PayloadCmsErrorTranslator,
   PayloadAdapterResultManager,
-  PayloadAdapterResult,
 } from '@/shared/server';
-import {
-  CreatePointTransactionDto,
-  GetPointTransactionResponse,
-  CreatePointTransactionResponse,
-} from '../../types';
+import { CreatePointTransactionDto, GetPointTransactionResponse, CreatePointTransactionResponse } from '../../types';
 import { LoggerV2 } from '@/shared';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../../constants';
 
@@ -29,10 +24,7 @@ export const PointTransactionAdapter = () => ({
       return PayloadAdapterResultManager.ok(result);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(
-        error,
-        POINT_TRANSACTION_ERROR_MESSAGE.create,
-      );
+      const baseError = PayloadCmsErrorTranslator.toBaseError(error, POINT_TRANSACTION_ERROR_MESSAGE.create);
       return PayloadAdapterResultManager.fail(baseError);
     }
   },
@@ -51,10 +43,7 @@ export const PointTransactionAdapter = () => ({
       return PayloadAdapterResultManager.ok(docs[0]);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(
-        error,
-        POINT_TRANSACTION_ERROR_MESSAGE.findUser,
-      );
+      const baseError = PayloadCmsErrorTranslator.toBaseError(error, POINT_TRANSACTION_ERROR_MESSAGE.findUser);
       return PayloadAdapterResultManager.fail(baseError);
     }
   },

@@ -13,6 +13,16 @@ export {
   BaseErrorManager,
   type BaseErrorOptions,
 } from './errors';
+export type {
+  PayloadAdapterSuccessResult,
+  PayloadAdapterPaginatedSuccessResult,
+  PayloadAdapterFailureResult,
+  PayloadAdapterResult,
+  PayloadAdapterPaginatedResult,
+  PayloadBulkOperationSuccessResult,
+  PayloadBulkOperationFailureResult,
+  PayloadBulkOperationResult,
+} from './payload-adapter-result';
 export { TestErrorHelper } from './__test__';
 export { Logger, LoggerV2 } from './logger';
 export { ServerSearchParamsAdapter } from './search-params';

@@ -1,4 +1,4 @@
-import { PayloadAdapterResult } from '@/shared/server';
+import { PayloadAdapterResult } from '@/shared';
 import { PurchasedHistoryEntity } from './purchased-history.type';
 
 export type GetPurchasedHistoriesResponse = PayloadAdapterResult<PurchasedHistoryEntity[]>;

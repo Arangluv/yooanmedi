@@ -1,4 +1,4 @@
-import { PayloadAdapterResult, PayloadAdapterPaginatedResult } from '@/shared/server';
+import { PayloadAdapterResult, PayloadAdapterPaginatedResult } from '@/shared';
 import { ProductEntity, ProductCategoryEntity } from './product.type';
 
 export type GetProductResponse = PayloadAdapterResult<ProductEntity>;

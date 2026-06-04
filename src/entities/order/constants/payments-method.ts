@@ -1,3 +1,4 @@
+// todo :: will deprecated
 export const PAYMENTS_METHOD = {
   credit_card: 'creditCard',
   bank_transfer: 'bankTransfer',

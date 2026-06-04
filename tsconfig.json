@@ -37,6 +37,6 @@
     ".next/types/**/*.ts",
     "src/entities/purchased-history",
     "src/features/payments/model/schemas/payments-context/pg.schema.ts"
-  ],
+, "src/shared/core/libs/payload-adapter-result"  ],
   "exclude": ["node_modules"]
 }

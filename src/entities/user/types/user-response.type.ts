@@ -1,5 +1,5 @@
 import { PayloadUser } from '@/shared';
-import { PayloadAdapterResult } from '@/shared/server';
+import { PayloadAdapterResult } from '@/shared';
 
 export type GetUserByHeaderResponse = PayloadAdapterResult<PayloadUser & { collection: 'users' }>;
 export type GetUserByIdResponse = PayloadAdapterResult<PayloadUser>;

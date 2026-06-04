@@ -39,6 +39,14 @@ export type {
   SchemaParserDto,
   PayloadImage,
   Banner,
+  PayloadAdapterSuccessResult,
+  PayloadAdapterPaginatedSuccessResult,
+  PayloadAdapterFailureResult,
+  PayloadAdapterResult,
+  PayloadAdapterPaginatedResult,
+  PayloadBulkOperationSuccessResult,
+  PayloadBulkOperationFailureResult,
+  PayloadBulkOperationResult,
 } from './core';
 export * from './providers';
 export * from './hooks';
@@ -52,6 +60,7 @@ export type {
   OrderProductSelect as PayloadOrderProductSelect,
   RecentPurchasedHistory as PayloadPurchasedHistory,
   Payment as PayloadPaymentHistory,
+  Order as PayloadOrder,
 } from './types';
 
 // ui

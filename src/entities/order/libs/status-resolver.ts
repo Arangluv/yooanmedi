@@ -1,5 +1,3 @@
-// will remove
-
 import { OrderProductStatus, ORDER_PRODUCT_STATUS } from '@/entities/order-product/@x/order';
 import { PAYMENT_STATUS, PaymentStatus } from '../constants/payment-status';
 import { ORDER_STATUS, OrderStatus } from '../constants/order-status';
