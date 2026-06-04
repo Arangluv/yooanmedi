@@ -49,6 +49,7 @@ export type {
   PointTransaction as PayloadPointTransaction,
   OrderProduct as PayloadOrderProduct,
   OrderProductSelect as PayloadOrderProductSelect,
+  RecentPurchasedHistory as PayloadPurchasedHistory,
 } from './types';
 
 // ui

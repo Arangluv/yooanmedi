@@ -30,14 +30,12 @@ export class RecentPurchasedHistoryService implements IRecentPurchasedHistorySer
     await RecentPurchasedHistoryRepository.create(entity);
   }
 
-  public async getList(
-    dto: RecentPurchasedHistoryListRequestDto,
-  ): Promise<RecentPurchasedHistoryList> {
+  public async getList(dto: RecentPurchasedHistoryListRequestDto): Promise<RecentPurchasedHistoryList> {
     const repositoryDto = zodSafeParse(recentPurchasedHistoryListRequestSchema, dto);
     return await RecentPurchasedHistoryRepository.getList(repositoryDto);
   }
 
-  private async deleteRecentPurchasedHistory(targetHistory: RecentPurchasedHistoryItem) {
-    await RecentPurchasedHistoryRepository.delete(targetHistory.id);
-  }
+  // private async deleteRecentPurchasedHistory(targetHistory: RecentPurchasedHistoryItem) {
+  //   await RecentPurchasedHistoryRepository.delete(targetHistory.id);
+  // }
 }

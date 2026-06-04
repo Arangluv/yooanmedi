@@ -2,11 +2,9 @@
 
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
-
 import type { User } from '@/entities/user/@x/recent-purchased-history';
 import type { Product } from '@/entities/product/@x/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
-
 import { recentPurchasedHistoryQueries } from '../model/recent-purchased-history.queries';
 
 type RecentPurchasesTableProps = {
@@ -15,9 +13,7 @@ type RecentPurchasesTableProps = {
 };
 
 const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProps) => {
-  const { data } = useQuery(
-    recentPurchasedHistoryQueries.lists({ userId: user.id, productId: product.id }),
-  );
+  const { data } = useQuery(recentPurchasedHistoryQueries.lists({ userId: user.id, productId: product.id }));
 
   if (!data || data.length === 0) {
     return null;
