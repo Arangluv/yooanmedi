@@ -1,8 +1,12 @@
 import { z } from 'zod';
-import { orderProductSchema } from './order-product.schema';
 import { BaseSchema } from '@/shared';
+import { orderProductSchema } from './order-product.schema';
+import { ORDER_PRODUCT_STATUS } from '../constants';
 
-/** 수정가능한 필드는 pick을 통해 명시적으로 열어둘 수 있습니다 */
+export const createOrderProductSchema = orderProductSchema.omit({ id: true }).extend({
+  orderProductStatus: z.enum([ORDER_PRODUCT_STATUS.pending, ORDER_PRODUCT_STATUS.preparing]),
+});
+
 export const bulkUpdateOrderProductRequestSchema = z.object({
   orderProductIds: z.array(
     BaseSchema.collectionId({

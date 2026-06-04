@@ -1,6 +1,6 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { BaseError, TestErrorHelper } from '@/shared';
-import { MockUserRepository } from '@/entities/user/@x/point';
+import { MockUserRepository } from '@/entities/user/__test__';
 import { UsePointTransactionService } from '../../infrastructure/services/use';
 import { EarnPointTransactionService } from '../../infrastructure/services/earn';
 import { CancelUsePointTransactionService } from '../../infrastructure/services/cancel-use';
@@ -39,9 +39,7 @@ describe('Point Transaction Service', () => {
         orderProduct: 3,
         amount: 30,
       } as CreateUsePointHistoryRequestDto;
-      vi.mocked(mockPointTransactionApiRepository.create).mockResolvedValue(
-        createPointTransactionFixture({ ...dto }),
-      );
+      vi.mocked(mockPointTransactionApiRepository.create).mockResolvedValue(createPointTransactionFixture({ ...dto }));
 
       // When
       const result = await usePointTransactionService.createHistory(dto);
@@ -71,9 +69,7 @@ describe('Point Transaction Service', () => {
         orderProduct: 3,
         amount: 30,
       } as CreateUsePointHistoryRequestDto;
-      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(
-        TestErrorHelper.generateAdapterError(),
-      );
+      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(TestErrorHelper.generateAdapterError());
 
       // When & Then
       await expect(() => usePointTransactionService.createHistory(dto)).rejects.toThrow(BaseError);
@@ -87,9 +83,7 @@ describe('Point Transaction Service', () => {
         createPointTransactionFixture({ id: 1, amount: 200 }),
         createPointTransactionFixture({ id: 1, amount: 300 }),
       ];
-      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(
-        createUserFixture({ id: 3, point: 1000 }),
-      );
+      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(createUserFixture({ id: 3, point: 1000 }));
       vi.mocked(mockUserApiRepository.update).mockResolvedValue({} as any);
 
       // When - 1000 - 600
@@ -108,15 +102,13 @@ describe('Point Transaction Service', () => {
         createPointTransactionFixture({ id: 1, amount: 200 }),
         createPointTransactionFixture({ id: 1, amount: 300 }),
       ];
-      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(
-        createUserFixture({ id: 3, point: 300 }),
-      );
+      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(createUserFixture({ id: 3, point: 300 }));
       vi.mocked(mockUserApiRepository.update).mockResolvedValue({} as any);
 
       // When & Then
-      await expect(() =>
-        usePointTransactionService.updateUserPointFromHistories(userId, histories),
-      ).rejects.toThrow(BaseError);
+      await expect(() => usePointTransactionService.updateUserPointFromHistories(userId, histories)).rejects.toThrow(
+        BaseError,
+      );
     });
   });
 
@@ -139,9 +131,7 @@ describe('Point Transaction Service', () => {
         orderProduct: 3,
         amount: 30,
       } as CreateEarnPointHistoryRequestDto;
-      vi.mocked(mockPointTransactionApiRepository.create).mockResolvedValue(
-        createPointTransactionFixture({ ...dto }),
-      );
+      vi.mocked(mockPointTransactionApiRepository.create).mockResolvedValue(createPointTransactionFixture({ ...dto }));
 
       // When
       const result = await earnPointTransactionService.createHistory(dto);
@@ -170,9 +160,7 @@ describe('Point Transaction Service', () => {
         orderProduct: 3,
         amount: 30,
       } as CreateEarnPointHistoryRequestDto;
-      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(
-        TestErrorHelper.generateAdapterError(),
-      );
+      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(TestErrorHelper.generateAdapterError());
 
       // When & Then
       await expect(() => earnPointTransactionService.createHistory(dto)).rejects.toThrow(BaseError);
@@ -186,9 +174,7 @@ describe('Point Transaction Service', () => {
         createPointTransactionFixture({ id: 1, amount: 200 }),
         createPointTransactionFixture({ id: 1, amount: 300 }),
       ];
-      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(
-        createUserFixture({ id: 3, point: 1000 }),
-      );
+      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(createUserFixture({ id: 3, point: 1000 }));
       vi.mocked(mockUserApiRepository.update).mockResolvedValue({} as any);
 
       // When - 1000 + 600
@@ -248,9 +234,7 @@ describe('Point Transaction Service', () => {
       } as any;
 
       // When & Then
-      await expect(() => cancelUsePointTransactionService.createHistory(dto)).rejects.toThrow(
-        BaseError,
-      );
+      await expect(() => cancelUsePointTransactionService.createHistory(dto)).rejects.toThrow(BaseError);
     });
 
     it('create에 실패하면 error를 throw한다', async () => {
@@ -260,14 +244,10 @@ describe('Point Transaction Service', () => {
         orderProduct: 3,
         amount: 30,
       } as CreateCancelUsePointHistoryRequestDto;
-      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(
-        TestErrorHelper.generateAdapterError(),
-      );
+      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(TestErrorHelper.generateAdapterError());
 
       // When & Then
-      await expect(() => cancelUsePointTransactionService.createHistory(dto)).rejects.toThrow(
-        BaseError,
-      );
+      await expect(() => cancelUsePointTransactionService.createHistory(dto)).rejects.toThrow(BaseError);
     });
 
     it('updateUserPoint시 기존 포인트에서 사용한 포인트를 다시 더한 후 업데이트한다', async () => {
@@ -278,9 +258,7 @@ describe('Point Transaction Service', () => {
         createPointTransactionFixture({ id: 1, amount: 200 }),
         createPointTransactionFixture({ id: 1, amount: 300 }),
       ];
-      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(
-        createUserFixture({ id: 3, point: 1000 }),
-      );
+      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(createUserFixture({ id: 3, point: 1000 }));
       vi.mocked(mockUserApiRepository.update).mockResolvedValue({} as any);
 
       // When - 1000 + 600
@@ -340,9 +318,7 @@ describe('Point Transaction Service', () => {
       } as any;
 
       // When & Then
-      await expect(() => cancelEarnPointTransactionService.createHistory(dto)).rejects.toThrow(
-        BaseError,
-      );
+      await expect(() => cancelEarnPointTransactionService.createHistory(dto)).rejects.toThrow(BaseError);
     });
 
     it('create에 실패하면 error를 throw한다', async () => {
@@ -352,14 +328,10 @@ describe('Point Transaction Service', () => {
         orderProduct: 3,
         amount: 30,
       } as CreateCancelUsePointHistoryRequestDto;
-      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(
-        TestErrorHelper.generateAdapterError(),
-      );
+      vi.mocked(mockPointTransactionApiRepository.create).mockRejectedValue(TestErrorHelper.generateAdapterError());
 
       // When & Then
-      await expect(() => cancelEarnPointTransactionService.createHistory(dto)).rejects.toThrow(
-        BaseError,
-      );
+      await expect(() => cancelEarnPointTransactionService.createHistory(dto)).rejects.toThrow(BaseError);
     });
 
     it('updateUserPoint시 기존 포인트에서 적립된 포인트를 차감 후 업데이트한다', async () => {
@@ -370,9 +342,7 @@ describe('Point Transaction Service', () => {
         createPointTransactionFixture({ id: 1, amount: 200 }),
         createPointTransactionFixture({ id: 1, amount: 300 }),
       ];
-      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(
-        createUserFixture({ id: 3, point: 1000 }),
-      );
+      vi.mocked(mockUserApiRepository.findById).mockResolvedValue(createUserFixture({ id: 3, point: 1000 }));
       vi.mocked(mockUserApiRepository.update).mockResolvedValue({} as any);
 
       // When - 1000 + 600

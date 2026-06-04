@@ -1,10 +1,3 @@
-// test
-export {
-  basePaymentHistoryEntityFixture,
-  createPaymentHistoryEntityFixture,
-  MockPaymentHistoryAdapter,
-} from './__test__';
-
 // core
 export { type PaymentHistoryRepository } from './core';
 

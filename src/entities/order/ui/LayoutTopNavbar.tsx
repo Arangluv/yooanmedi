@@ -1,7 +1,7 @@
 'use client';
 
-import useAuthStore from '@/entities/user/model/useAuthStore';
 import { formatNumberWithCommas } from '@/shared';
+import { useAuthStore } from '@/entities/user';
 
 const LayoutTopNavbar = () => {
   const user = useAuthStore((state) => state.user);
@@ -15,10 +15,7 @@ const LayoutTopNavbar = () => {
         </span>
         <span className="text-muted-foreground text-[13px]">|</span>
         <span className="text-muted-foreground text-[13px]">
-          보유 적립금 :{' '}
-          <span className="text-secondary font-bold">
-            {formatNumberWithCommas(user.point ?? 0)}원
-          </span>
+          보유 적립금 : <span className="text-secondary font-bold">{formatNumberWithCommas(user.point ?? 0)}원</span>
         </span>
         <span className="text-muted-foreground text-[13px]">|</span>
         <button onClick={logout} className="text-muted-foreground cursor-pointer text-[13px]">

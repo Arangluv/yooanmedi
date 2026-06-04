@@ -1,5 +1,5 @@
 import { POINT_ACTION } from '../../constants';
-import { PointTransaction } from '../../types';
+import { PointTransaction, PointTransactionEntity } from '../../types';
 
 export const PointTransactionFixtures = {
   valid: {
@@ -74,16 +74,14 @@ export const PointTransactionFixtures = {
   },
 };
 
-export const createPointTransactionFixture = (
-  override?: Partial<PointTransaction>,
-): PointTransaction => {
+export const createPointTransactionFixture = (override?: Partial<PointTransaction>): PointTransaction => {
   return {
     ...PointTransactionFixtures.valid.basic,
     ...override,
   };
 };
 
-export const basePointTransactionResponseFixture = {
+export const basePointTransactionEntityFixture = {
   id: 3416,
   user: 3,
   orderProduct: 1869,
@@ -92,13 +90,13 @@ export const basePointTransactionResponseFixture = {
   amount: 156,
   updatedAt: '2026-05-13T07:42:38.801Z',
   createdAt: '2026-05-13T07:42:39.285Z',
-};
+} as PointTransactionEntity;
 
-export const createPointTransactionResponseFixture = (
-  override?: Partial<typeof basePointTransactionResponseFixture>,
-) => {
+export const createPointTransactionEntityFixture = (
+  override?: Partial<typeof basePointTransactionEntityFixture>,
+): PointTransactionEntity => {
   return {
-    ...basePointTransactionResponseFixture,
+    ...basePointTransactionEntityFixture,
     ...override,
   };
 };

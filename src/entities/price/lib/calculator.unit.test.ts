@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { getDeliveryFeeFromCartItemCosiderFlg, getDeliveryFeeFromCartItem } from './calculator';
 import { createCartItemFixture } from '@/entities/cart/__test__/cart.fixture';
-import { createProductFixture } from '@/entities/product/@x/price';
+import { createProductFixture } from '@/entities/product/__test__';
 
 describe('getDeliveryFeeFromCartItem', () => {
   it('is_cost_per_unit이 false인 경우, 1개의 상품에 대한 배송비를 반환한다', () => {

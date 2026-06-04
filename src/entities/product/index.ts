@@ -4,25 +4,8 @@ export { getProductCategories } from './api/product.api';
 // core
 export { type ProductRepository } from './core';
 
-// test
-export {
-  ProductFixtures,
-  createProductFixture,
-  ProductEntityFixtures,
-  createProductEntityFixture,
-  baseProductListFixture,
-  createProductListFixture,
-  baseProductCategoryEntityFixture,
-  createProductCategoryEntityFixture,
-} from './__test__';
-
 // schema
-export {
-  productSchema,
-  productListSchema,
-  productCategorySchema,
-  productCategoriesSchema,
-} from './schemas';
+export { productSchema, productListSchema, productCategorySchema, productCategoriesSchema } from './schemas';
 
 // types
 export type { Product, ProductList, ProductCategory } from './types';

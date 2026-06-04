@@ -67,7 +67,7 @@ const ProductAsideDetail = () => {
             isAccent={clieckedProduct.returnable ? true : false}
             variant={clieckedProduct.returnable ? 'brand' : 'default'}
           />
-          <RecentPurchasesTable product={clieckedProduct} user={user} />
+          <RecentPurchasesTable product={clieckedProduct.id} user={user.id} />
           <Divider className="my-2" />
           <DetailPointBenefitRow product={clieckedProduct} />
           <AddToCartInput productId={clieckedProduct.id} />

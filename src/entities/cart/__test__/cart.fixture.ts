@@ -1,5 +1,5 @@
 import type { Cart, CartItem } from '../model/cart.schema';
-import { createProductFixture } from '@/entities/product/@x/carts';
+import { createProductFixture } from '@/entities/product/__test__';
 
 const baseCartItemFixture = {
   quantity: 3,
@@ -40,9 +40,7 @@ const cartItemRequestDtoFixture = {
   product: 3,
   cartId: 4,
 };
-export const createCartItemRequestDtoFixture = (
-  override?: Partial<typeof cartItemRequestDtoFixture>,
-) => {
+export const createCartItemRequestDtoFixture = (override?: Partial<typeof cartItemRequestDtoFixture>) => {
   return {
     ...cartItemRequestDtoFixture,
     ...override,

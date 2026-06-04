@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createCustomPriceFixture } from '../__test__/custom-price.fixture';
-import { createProductFixture } from '@/entities/product/@x/custom-price';
+import { createProductFixture } from '@/entities/product/__test__';
 import { CustomPriceService } from './custom-price.service';
 
 describe('CustomPriceService', () => {

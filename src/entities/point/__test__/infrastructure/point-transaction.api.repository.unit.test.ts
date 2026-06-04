@@ -2,10 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BaseError, FindOption, TestErrorHelper } from '@/shared';
 import { PayloadAdapterResultManager } from '@/shared/server';
 import { MockPointTransactionAdapter } from '../mocks';
-import {
-  basePointTransactionResponseFixture,
-  createPointTransactionResponseFixture,
-} from '../fixtures';
+import { basePointTransactionEntityFixture, createPointTransactionEntityFixture } from '../fixtures';
 import { pointTransactionSchema } from '../../schemas';
 import { PointTransactionApiRepository, PointTransactionAdapter } from '../../infrastructure';
 import { CreatePointTransactionDto } from '../../types';
@@ -27,9 +24,8 @@ describe('Point Transaction API Repository', () => {
     it('point transaction이 생성된다', async () => {
       // Given
       const createEntity = {} as CreatePointTransactionDto;
-
       vi.mocked(mockPointTransactionAdapter.create).mockResolvedValue(
-        PayloadAdapterResultManager.ok(basePointTransactionResponseFixture),
+        PayloadAdapterResultManager.ok(basePointTransactionEntityFixture),
       );
 
       // When
@@ -49,9 +45,7 @@ describe('Point Transaction API Repository', () => {
       );
 
       // When & Then
-      await expect(() => pointTransactionApiRepository.create(createEntity)).rejects.toThrow(
-        BaseError,
-      );
+      await expect(() => pointTransactionApiRepository.create(createEntity)).rejects.toThrow(BaseError);
     });
   });
 
@@ -61,7 +55,7 @@ describe('Point Transaction API Repository', () => {
       const findOption = {} as FindOption;
 
       vi.mocked(mockPointTransactionAdapter.findOne).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createPointTransactionResponseFixture({ id: 1 })),
+        PayloadAdapterResultManager.ok(createPointTransactionEntityFixture({ id: 1 })),
       );
 
       // When
@@ -82,9 +76,7 @@ describe('Point Transaction API Repository', () => {
       );
 
       // When & Then
-      await expect(() => pointTransactionApiRepository.findOne(findOption)).rejects.toThrow(
-        BaseError,
-      );
+      await expect(() => pointTransactionApiRepository.findOne(findOption)).rejects.toThrow(BaseError);
     });
   });
 });

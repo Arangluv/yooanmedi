@@ -1,5 +1,3 @@
-export { baseOrderProductEntityFixture, createOrderProductFixture, MockOrderProductAdapter } from './__test__';
-
 export { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME, type OrderProductStatus } from './constants';
 
 export { type OrderProductRepository } from './core';

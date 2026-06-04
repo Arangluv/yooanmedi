@@ -1,10 +1,3 @@
-// test
-export {
-  basePurchasedHistoryEntityFixture,
-  createPurchasedHistoryEntityFixture,
-  MockPurchasedHistoryAdapter,
-} from './__test__';
-
 // api
 export { getPurchasedHistories } from './api';
 

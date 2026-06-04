@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { DeliveryFeeManager } from './delivery-fee-manager';
 import { createCartItemFixture } from '../__test__/cart.fixture';
-import { createProductFixture } from '@/entities/product/@x/carts';
+import { createProductFixture } from '@/entities/product/__test__';
 
 describe('DeliveryFeeManager', () => {
   describe('isFreeDelivery', () => {

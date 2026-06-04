@@ -1,11 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-
 import { EmptyProductList, Product } from '@/entities/product';
-
 import ProductList from '../ProductList';
-
 // TODO :: 잘못된 참조방식 -> 개선필요
 import useFavoritesProductStore from '@/features/favorites-product/model/useFavoritesProductStore';
 import { getFavoritesProductList } from '@/features/favorites-product/api/product-list';
@@ -36,10 +33,7 @@ const ListSection = ({ products }: { products: Product[] }) => {
       {products.length > 0 ? (
         <ProductList products={products} />
       ) : (
-        <EmptyProductList
-          title="등록된 관심상품이 없습니다."
-          description="등록된 관심상품이 없습니다."
-        />
+        <EmptyProductList title="등록된 관심상품이 없습니다." description="등록된 관심상품이 없습니다." />
       )}
     </div>
   );
