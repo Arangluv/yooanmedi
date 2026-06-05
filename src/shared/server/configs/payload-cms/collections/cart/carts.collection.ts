@@ -19,5 +19,12 @@ export const cart: CollectionConfig = {
       required: true,
       unique: true,
     },
+    {
+      name: 'cartItems',
+      type: 'join',
+      label: '장바구니 목록',
+      collection: 'cart-items',
+      on: 'carts',
+    },
   ],
 };

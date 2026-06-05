@@ -87,6 +87,9 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
+    carts: {
+      cartItems: 'cart-items';
+    };
     order: {
       orderProducts: 'order-product';
     };
@@ -178,6 +181,11 @@ export interface BannerImage {
 export interface Cart {
   id: number;
   user: number | User;
+  cartItems?: {
+    docs?: (number | CartItem)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -560,6 +568,7 @@ export interface BannerImageSelect<T extends boolean = true> {
  */
 export interface CartsSelect<T extends boolean = true> {
   user?: T;
+  cartItems?: T;
   updatedAt?: T;
   createdAt?: T;
 }
