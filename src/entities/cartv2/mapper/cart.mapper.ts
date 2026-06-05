@@ -6,7 +6,10 @@ import { cartSchema } from '../schemas';
 export class CartMapper {
   static entityToDomin(data: CartEntity): Cart {
     const dto = {
-      data,
+      data: {
+        ...data,
+        cartItems: data.cartItems?.docs,
+      },
       errorMsg: CART_ERROR_MESSAGE.invalidData,
     } as SchemaParserDto;
 
