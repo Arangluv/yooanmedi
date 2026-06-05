@@ -1,4 +1,4 @@
-import { PayloadAdapterFailureResult, PayloadAdapterResult, PayloadBulkOperationResult } from '@/shared';
+import { PayloadAdapterResult } from '@/shared';
 import { OrderProductEntity } from './order-product.type';
 
 export type CreateOrderProductResponse = PayloadAdapterResult<OrderProductEntity>;

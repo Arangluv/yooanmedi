@@ -62,6 +62,8 @@ export type {
   Payment as PayloadPaymentHistory,
   Order as PayloadOrder,
   ProductPrice as PayloadCustomPrice,
+  Cart as PayloadCart,
+  CartItem as PayloadCartItem,
 } from './types';
 
 // ui
