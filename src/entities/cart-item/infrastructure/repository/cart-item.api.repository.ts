@@ -12,7 +12,7 @@ export class CartItemApiRepository implements CartItemRepository {
   }
 
   async create(dto: CreateCartItemDto) {
-    const response = await this.adapter.create(dto);
+    const response = await this.adapter.createCartItem(dto);
     if (!response.ok) {
       throw response.error;
     }

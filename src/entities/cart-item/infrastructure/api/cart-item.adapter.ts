@@ -11,7 +11,7 @@ import {
 } from '../../types';
 
 export const CartItemAdapter = () => ({
-  create: async (dto: CreateCartItemDto): Promise<CreateCartItemResponse> => {
+  createCartItem: async (dto: CreateCartItemDto): Promise<CreateCartItemResponse> => {
     try {
       const payload = await PayloadCms.getInstance();
       const createdItems = await payload.create({
