@@ -64,6 +64,7 @@ export type {
   ProductPrice as PayloadCustomPrice,
   Cart as PayloadCart,
   CartItem as PayloadCartItem,
+  Favorite as PayloadFavoriteProduct,
 } from './types';
 
 // ui
