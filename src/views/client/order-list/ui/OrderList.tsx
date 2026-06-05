@@ -4,19 +4,14 @@ import Image from 'next/image';
 import moment from 'moment';
 import { ImageIcon, Info } from 'lucide-react';
 import { Divider } from '@heroui/react';
-import { formatNumberWithCommas } from '@/shared';
-import { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/entities/order';
+import { formatNumberWithCommas, PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/shared';
 import { ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
 import OrderListEmpty from './OrderListEmpty';
 import ExcelExportButton from './ExcelExportButton';
 import { AlertDialogProvider } from '@/shared';
 import { OrderPartialCancelTrigger } from './dialogs';
-import {
-  ClientOrderListSearchParams,
-  type ClientOrderDto,
-  useClientOrderList,
-} from '@/features/order/order-list';
+import { ClientOrderListSearchParams, type ClientOrderDto, useClientOrderList } from '@/features/order/order-list';
 
 const OrderList = ({ searchParams }: { searchParams: ClientOrderListSearchParams }) => {
   const orderList = useClientOrderList(searchParams);
@@ -47,15 +42,11 @@ const OrderItem = ({ order }: { order: ClientOrderDto }) => {
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <span className="text-foreground-500 text-sm">총 결제금액</span>
-          <span className="text-brand text-sm font-bold">
-            {formatNumberWithCommas(order.finalPrice)}원
-          </span>
+          <span className="text-brand text-sm font-bold">{formatNumberWithCommas(order.finalPrice)}원</span>
         </div>
         <div className="flex flex-col gap-1">
           <span className="text-foreground-500 text-sm">결제 방법</span>
-          <span className="text-brand text-sm font-bold">
-            {PAYMENTS_METHOD_NAME[order.paymentsMethod]}
-          </span>
+          <span className="text-brand text-sm font-bold">{PAYMENTS_METHOD_NAME[order.paymentsMethod]}</span>
         </div>
         <div className="flex flex-col gap-1">
           <span className="text-foreground-500 text-sm">주문일시</span>
@@ -69,8 +60,9 @@ const OrderItem = ({ order }: { order: ClientOrderDto }) => {
         </div>
       </div>
       <Divider />
-      {order.paymentsMethod === PAYMENTS_METHOD.bank_transfer &&
-        order.orderStatus === ORDER_STATUS.pending && <BankTransferPendingAlert />}
+      {order.paymentsMethod === PAYMENTS_METHOD.bank_transfer && order.orderStatus === ORDER_STATUS.pending && (
+        <BankTransferPendingAlert />
+      )}
       {/* 구매 상품 리스트 영역 */}
       <div className="flex flex-col gap-6">
         {order.orderProducts.map((orderProduct, idx) => (
@@ -117,9 +109,7 @@ const OrderProductItem = ({ orderProduct, order }: OrderProductItemProps) => {
     orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.preparing;
   return (
     <div className="flex flex-col gap-2">
-      <span className="font-bold">
-        {ORDER_PRODUCT_STATUS_NAME[orderProduct.orderProductStatus]}
-      </span>
+      <span className="font-bold">{ORDER_PRODUCT_STATUS_NAME[orderProduct.orderProductStatus]}</span>
       <div className="flex w-full items-center gap-6">
         {/* 상품이미지 */}
         <div className="flex aspect-square w-[100px] shrink-0 items-center justify-center rounded-md border border-neutral-100 bg-neutral-50">
@@ -142,9 +132,7 @@ const OrderProductItem = ({ orderProduct, order }: OrderProductItemProps) => {
           <div className="mt-4 flex items-center gap-10">
             <div className="flex flex-col text-sm">
               <span className="text-foreground-500">제조사</span>
-              <span className="text-foreground-700 font-medium">
-                {orderProduct.product.manufacturer}
-              </span>
+              <span className="text-foreground-700 font-medium">{orderProduct.product.manufacturer}</span>
             </div>
             <div className="flex flex-col text-sm">
               <span className="text-foreground-500">배송비</span>
@@ -166,9 +154,7 @@ const OrderProductItem = ({ orderProduct, order }: OrderProductItemProps) => {
         </div>
         {/* 주문 액션 */}
         <div className="flex w-full items-center justify-end">
-          {canPartialCancel && (
-            <OrderPartialCancelTrigger order={order} orderProduct={orderProduct} />
-          )}
+          {canPartialCancel && <OrderPartialCancelTrigger order={order} orderProduct={orderProduct} />}
         </div>
       </div>
     </div>

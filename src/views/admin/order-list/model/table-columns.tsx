@@ -3,10 +3,9 @@
 import Link from 'next/link';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
-import { PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
-import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-method';
+import { PAYMENT_STATUS_NAME, PaymentStatus } from '@/entities/order';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
-import { formatNumberWithCommas } from '@/shared';
+import { formatNumberWithCommas, PAYMENTS_METHOD_NAME } from '@/shared';
 import { Checkbox } from '@/shared/ui/shadcn/checkbox';
 import FlgStatusBadge from '../ui/badge/FlgStatusBadge';
 import { type AdminOrderListItemDto } from '@/features/order/order-list';
@@ -16,9 +15,7 @@ export const columns: ColumnDef<AdminOrderListItemDto>[] = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="전체선택"
       />
@@ -64,7 +61,8 @@ export const columns: ColumnDef<AdminOrderListItemDto>[] = [
     accessorKey: 'paymentStatus',
     header: '결제상태',
     cell: ({ row }) => {
-      return <div>{PAYMENT_STATUS_NAME[row.original.paymentStatus]}</div>;
+      const paymentStatus = row.original.paymentStatus as PaymentStatus;
+      return <div>{PAYMENT_STATUS_NAME[paymentStatus]}</div>;
     },
   },
   {
