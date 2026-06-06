@@ -17,7 +17,10 @@ export const CartItemAdapter = () => ({
       const createdItems = await payload.create({
         collection: 'cart-items',
         data: dto,
-        depth: 0,
+        populate: {
+          carts: {},
+        },
+        depth: 1,
       });
       return PayloadAdapterResultManager.ok(createdItems);
     } catch (error) {
@@ -33,7 +36,10 @@ export const CartItemAdapter = () => ({
       const { docs: cartItems } = await payload.find({
         collection: 'cart-items',
         ...option,
-        depth: 0,
+        populate: {
+          carts: {},
+        },
+        depth: 1,
       });
       return PayloadAdapterResultManager.ok(cartItems);
     } catch (error) {
@@ -50,7 +56,10 @@ export const CartItemAdapter = () => ({
         collection: 'cart-items',
         id: dto.cartItem,
         data: dto.data,
-        depth: 0,
+        populate: {
+          carts: {},
+        },
+        depth: 1,
       });
       return PayloadAdapterResultManager.ok(updatedItem);
     } catch (error) {
@@ -66,7 +75,10 @@ export const CartItemAdapter = () => ({
       const deletedItem = await payload.delete({
         collection: 'cart-items',
         id,
-        depth: 0,
+        populate: {
+          carts: {},
+        },
+        depth: 1,
       });
       return PayloadAdapterResultManager.ok(deletedItem);
     } catch (error) {
@@ -86,7 +98,10 @@ export const CartItemAdapter = () => ({
             in: ids,
           },
         },
-        depth: 0,
+        populate: {
+          carts: {},
+        },
+        depth: 1,
       });
 
       const nomalizedResult = PayloadAdapterResultManager.normalizeBulkOperationResult(deleteManyResult);

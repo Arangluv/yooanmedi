@@ -32,6 +32,7 @@ export const CartAdapter = () => ({
             equals: userId,
           },
         },
+        depth: 0,
       });
 
       if (cart.length > 1) {
