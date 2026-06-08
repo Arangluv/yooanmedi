@@ -1,1 +1,5 @@
-export { cartDetailSchema, customPricedCartItemSchema, customPricedCartItemsSchema } from './cart-detail.schema';
+export {
+  cartDetailSchema,
+  cartDetailItemSchema,
+  customPricedCartItemsSchema,
+} from './cart-detail.schema';

@@ -1,16 +1,16 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CartService } from './cart.service';
+import { CartDetailService } from './cart.service';
 import { CartItemRepository } from '../api/cart-items.repository';
 import { CartRepository } from '../api/cart.repository';
 import { createCartItemRequestDtoFixture, createCartItemFixture } from '../__test__/cart.fixture';
 
-describe('CartService', () => {
+describe('CartDetailService', () => {
   describe('createCart', () => {
     it('장바구니가 생성된다', async () => {
       const createSpy = vi.spyOn(CartRepository, 'create').mockResolvedValue(undefined);
       const TEST_USER_ID = 1;
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await service.createCart(TEST_USER_ID);
 
       expect(createSpy).toBeCalledTimes(1);
@@ -22,12 +22,12 @@ describe('CartService', () => {
       });
       const TEST_USER_ID = 1;
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await expect(() => service.createCart(TEST_USER_ID)).rejects.toThrowError();
     });
 
     it('올바르지 않은 User id를 받으면 실패한다', async () => {
-      const service = new CartService();
+      const service = new CartDetailService();
       await expect(() => service.createCart(null as any)).rejects.toThrowError();
     });
   });
@@ -36,7 +36,7 @@ describe('CartService', () => {
     const saveSpy = vi.spyOn(CartItemRepository, 'save').mockResolvedValue(null as any);
 
     it('데이터가 올바르게 저장된다', async () => {
-      const service = new CartService();
+      const service = new CartDetailService();
       await service.createCartItem(createCartItemRequestDtoFixture());
 
       expect(saveSpy).toBeCalled();
@@ -44,7 +44,7 @@ describe('CartService', () => {
     });
 
     it('DTO가 올바르지 않을 시 에러를 throw한다', async () => {
-      const service = new CartService();
+      const service = new CartDetailService();
       await expect(() => service.createCartItem(null as any)).rejects.toThrowError();
     });
   });
@@ -61,7 +61,7 @@ describe('CartService', () => {
         return { id: item.id };
       });
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await service.updateCart(updateList);
 
       expect(updateSpy).toBeCalledTimes(updateList.length);
@@ -73,7 +73,7 @@ describe('CartService', () => {
         .mockResolvedValueOnce({ id: 2 })
         .mockRejectedValueOnce(new Error('update failed'));
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await expect(() => service.updateCart(updateList)).rejects.toThrow();
     });
   });
@@ -86,7 +86,7 @@ describe('CartService', () => {
         .spyOn(CartItemRepository, 'delete')
         .mockResolvedValue(targetCartItem);
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await service.deleteCartItem(targetCartItem);
 
       expect(deleteItemSpy).toBeCalledTimes(1);
@@ -97,13 +97,13 @@ describe('CartService', () => {
         throw new Error('삭제 실패');
       });
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await expect(() => service.deleteCartItem(targetCartItem)).rejects.toThrowError();
     });
   });
 
   describe('clearCart', () => {
-    vi.spyOn(CartService.prototype, 'getCart').mockResolvedValue({
+    vi.spyOn(CartDetailService.prototype, 'getCart').mockResolvedValue({
       items: [{ id: 1 }, { id: 2 }, { id: 3 }],
     } as any);
 
@@ -112,7 +112,7 @@ describe('CartService', () => {
         .spyOn(CartItemRepository, 'deleteAll')
         .mockResolvedValue(undefined as any);
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await service.clearCart();
 
       expect(deleteAllSpy).toBeCalledTimes(1);
@@ -123,7 +123,7 @@ describe('CartService', () => {
         throw new Error('삭제 실패');
       });
 
-      const service = new CartService();
+      const service = new CartDetailService();
       await expect(() => service.clearCart()).rejects.toThrowError();
     });
   });

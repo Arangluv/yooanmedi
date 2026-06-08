@@ -1,5 +1,5 @@
 export {
-  type CustomPricedCartItemDto,
-  type SaveCartChangeRequestDto,
-  type DeleteCartItemToCartRequestDto,
+  type CartDetailItemDto,
+  type SaveCartDetailRequestDto,
+  type DeleteCartDetailItemRequestDto,
 } from './cart-detail.dto';

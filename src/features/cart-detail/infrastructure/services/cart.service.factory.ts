@@ -1,9 +1,12 @@
 import { CartAdapter, CartApiRepository } from '@/entities/cartv2/infrastructure';
 import { CartItemAdapter, CartItemApiRepository } from '@/entities/cart-item/infrastructure';
 import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
-import { CustomPriceAdapter, CustomPriceApiRepository } from '@/entities/custom-price/infrastructure';
-import { CartService } from './cart.service';
-import { CartUseCase } from '../../usecase';
+import {
+  CustomPriceAdapter,
+  CustomPriceApiRepository,
+} from '@/entities/custom-price/infrastructure';
+import { CartDetailService } from './cart.service';
+import { CartUseCase } from '../../usecases';
 
 export const createCartUseCase = (): CartUseCase => {
   const cartRepository = new CartApiRepository(CartAdapter());
@@ -11,7 +14,7 @@ export const createCartUseCase = (): CartUseCase => {
   const userRepository = new UserApiRepository(UserAdapter());
   const customPriceRepository = new CustomPriceApiRepository(CustomPriceAdapter());
 
-  return CartService({
+  return CartDetailService({
     repository: {
       cart: cartRepository,
       cartItem: cartItemRepository,

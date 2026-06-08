@@ -4,12 +4,12 @@ import { CartItemRepository, CreateCartItemDto } from '@/entities/cart-item';
 import { UserRepository } from '@/entities/user';
 import { CustomPriceRepository } from '@/entities/custom-price';
 import { CartDetailError, CartDetailFindOption } from '../../libs';
-import { CartAssembler, CartDetailItemMapper } from '../../mapper';
-import { CartUseCase } from '../../usecase';
+import { CartDetailAssembler, CartDetailItemMapper } from '../../mapper';
+import { CartUseCase } from '../../usecases';
 import { CART_DETAIL_ERROR_MESSAGE } from '../../constants';
-import { DeleteCartItemToCartRequestDto, SaveCartChangeRequestDto } from '../../dto';
+import { DeleteCartDetailItemRequestDto, SaveCartDetailRequestDto } from '../../dto';
 
-interface CartServiceDependencies {
+export interface CartDetailServiceDependencies {
   repository: {
     cart: CartRepository;
     cartItem: CartItemRepository;
@@ -18,16 +18,18 @@ interface CartServiceDependencies {
   };
 }
 
-export const CartService = ({ repository }: CartServiceDependencies): CartUseCase => ({
+export const CartDetailService = ({ repository }: CartDetailServiceDependencies): CartUseCase => ({
   getCart: async () => {
     try {
       const user = await repository.user.findByHeader();
       const cart = await repository.cart.findOneByUserId(user.id);
       const cartItems = await repository.cartItem.findMany(CartDetailFindOption.cartItems(cart));
-      const customPrices = await repository.customPrice.findMany(CartDetailFindOption.customPrice(cart));
+      const customPrices = await repository.customPrice.findMany(
+        CartDetailFindOption.customPrice(cart),
+      );
 
-      const customPricedCartItems = CartAssembler.applyCustomPrice(cartItems, customPrices);
-      return CartAssembler.toCartDetail(cart, customPricedCartItems);
+      const customPricedCartItems = CartDetailAssembler.applyCustomPrice(cartItems, customPrices);
+      return CartDetailAssembler.toCartDetail(cart, customPricedCartItems);
     } catch (error) {
       LoggerV2.error(error);
       const message = BaseErrorManager.resolveClientMessage(error);
@@ -44,7 +46,7 @@ export const CartService = ({ repository }: CartServiceDependencies): CartUseCas
     }
   },
 
-  saveCartChanges: async (dto: SaveCartChangeRequestDto) => {
+  saveCartChanges: async (dto: SaveCartDetailRequestDto) => {
     try {
       const requestDtos = CartDetailItemMapper.toDomainUpdateRequestDtoList(dto);
       return await Promise.all(
@@ -58,7 +60,7 @@ export const CartService = ({ repository }: CartServiceDependencies): CartUseCas
     }
   },
 
-  deleteFromCart: async (dto: DeleteCartItemToCartRequestDto) => {
+  deleteFromCart: async (dto: DeleteCartDetailItemRequestDto) => {
     try {
       return await repository.cartItem.delete(dto.id);
     } catch (error) {
@@ -69,7 +71,9 @@ export const CartService = ({ repository }: CartServiceDependencies): CartUseCas
 
   clearCart: async (cartId: number) => {
     try {
-      const cartItems = await repository.cartItem.findMany(CartDetailFindOption.allCartItem(cartId));
+      const cartItems = await repository.cartItem.findMany(
+        CartDetailFindOption.allCartItem(cartId),
+      );
       const ids = cartItems.map((item) => item.id);
       return await repository.cartItem.deleteMany(ids);
     } catch (error) {

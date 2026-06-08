@@ -1,7 +1,7 @@
 import { BaseError } from '../errors';
 
 export class TestErrorHelper {
-  static generateAdapterError() {
-    return new BaseError({ clientMsg: 'test error msg', errorName: 'TestError' });
+  static generateAdapterError(message = 'test error msg') {
+    return new BaseError({ clientMsg: message, errorName: 'TestError' });
   }
 }

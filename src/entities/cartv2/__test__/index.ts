@@ -1,2 +1,2 @@
 export { createCartEntityFixture, createCartFixture } from './fixtures';
-export { MockCartAdapter } from './mocks';
+export { MockCartAdapter, CartRepositoryMocks } from './mocks';

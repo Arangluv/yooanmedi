@@ -7,7 +7,7 @@ import { CartItemRepository } from '../api/cart-items.repository';
 import { buildCustomPriceFindOption } from '../lib/build-find-option';
 import { CustomPriceService } from '@/entities/custom-price/infrastructure';
 
-export class CartService {
+export class CartDetailService {
   // TODO :: 오류처리에 대한 경계를 다시한번 생각해볼 필요가 있다.
   public async createCart(userId: number): Promise<void> {
     try {

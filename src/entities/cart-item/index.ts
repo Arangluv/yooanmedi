@@ -5,7 +5,7 @@ export { type CartItemRepository } from './core';
 export { type CreateCartItemDto, type UpdateCartItemRequestDto } from './dto';
 
 // schema
-export { cartItemSchema, cartItemsSchema } from './schemas';
+export { cartItemSchema, cartItemsSchema, updateCartItemRequestSchema } from './schemas';
 
 // type
 export { type CartItem, type CartItemEntity } from './types';

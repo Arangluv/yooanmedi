@@ -4,4 +4,4 @@ export {
   createUserFixture,
   createUserResponseFixture,
 } from './fixtures';
-export { MockUserAdapter, MockUserRepository } from './mocks';
+export { MockUserAdapter, UserRepositoryMocks } from './mocks';

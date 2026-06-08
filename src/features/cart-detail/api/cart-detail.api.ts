@@ -1,9 +1,9 @@
 'use server';
 
 import { BaseErrorManager, EndPointResultManager } from '@/shared';
-import { createCartUseCase } from '../infrastructure';
 import { CreateCartItemDto } from '@/entities/cart-item';
-import { SaveCartChangeRequestDto, DeleteCartItemToCartRequestDto } from '../dto';
+import { createCartUseCase } from '../infrastructure';
+import { SaveCartDetailRequestDto, DeleteCartDetailItemRequestDto } from '../dto';
 import {
   GetCartDetailResponse,
   AddToCartReponse,
@@ -35,7 +35,9 @@ export const addToCartApi = async (dto: CreateCartItemDto): Promise<AddToCartRep
   }
 };
 
-export const saveCartChangesApi = async (dto: SaveCartChangeRequestDto): Promise<SaveCartChangesResponse> => {
+export const saveCartChangesApi = async (
+  dto: SaveCartDetailRequestDto,
+): Promise<SaveCartChangesResponse> => {
   try {
     const { saveCartChanges } = createCartUseCase();
     const cartItems = await saveCartChanges(dto);
@@ -46,7 +48,9 @@ export const saveCartChangesApi = async (dto: SaveCartChangeRequestDto): Promise
   }
 };
 
-export const deleteFromCartApi = async (dto: DeleteCartItemToCartRequestDto): Promise<DeleteFromCartResponse> => {
+export const deleteFromCartApi = async (
+  dto: DeleteCartDetailItemRequestDto,
+): Promise<DeleteFromCartResponse> => {
   try {
     const { deleteFromCart } = createCartUseCase();
     const cartItem = await deleteFromCart(dto);

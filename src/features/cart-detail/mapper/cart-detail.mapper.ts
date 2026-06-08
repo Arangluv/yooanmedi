@@ -1,9 +1,9 @@
 import { cartItemSchema, cartItemsSchema, UpdateCartItemRequestDto } from '@/entities/cart-item';
-import { CustomPricedCartItemDto } from '../dto';
+import { CartDetailItemDto } from '../dto';
 import { ZodSchemaParser, SchemaParserDto } from '@/shared';
 
 export class CartDetailItemMapper {
-  static toDomainUpdateRequestDto(data: CustomPricedCartItemDto): UpdateCartItemRequestDto {
+  static toDomainUpdateRequestDto(data: CartDetailItemDto): UpdateCartItemRequestDto {
     const dto = {
       data,
       errorMsg: '올바르지 않은 장바구니 아이템 데이터입니다',
@@ -18,7 +18,7 @@ export class CartDetailItemMapper {
     };
   }
 
-  static toDomainUpdateRequestDtoList(data: CustomPricedCartItemDto[]): UpdateCartItemRequestDto[] {
+  static toDomainUpdateRequestDtoList(data: CartDetailItemDto[]): UpdateCartItemRequestDto[] {
     const dto = {
       data,
       errorMsg: '올바르지 않은 장바구니 아이템 데이터입니다',

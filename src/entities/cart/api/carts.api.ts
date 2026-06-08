@@ -2,12 +2,12 @@
 
 import { EndPointResult, okWithData, failure, normalizeError, ok } from '@/shared';
 import { Logger } from '@/shared';
-import { CartService } from '../infrastructure';
+import { CartDetailService } from '../infrastructure';
 import type { Cart, CartItem, CreateCartItemRequestDto } from '../model/cart.schema';
 
 export const getCart = async (): Promise<EndPointResult<Cart>> => {
   try {
-    const cartService = new CartService();
+    const cartService = new CartDetailService();
     const cart = await cartService.getCart();
 
     return okWithData({
@@ -25,7 +25,7 @@ export const createCartItem = async (
   dto: CreateCartItemRequestDto,
 ): Promise<EndPointResult<CartItem>> => {
   try {
-    const cartService = new CartService();
+    const cartService = new CartDetailService();
     const createdItem = await cartService.createCartItem(dto);
 
     return okWithData({
@@ -42,7 +42,7 @@ export const createCartItem = async (
 
 export const deleteCartItem = async (cartItem: CartItem): Promise<EndPointResult<CartItem>> => {
   try {
-    const cartService = new CartService();
+    const cartService = new CartDetailService();
     const deletedItem = await cartService.deleteCartItem(cartItem);
 
     return okWithData({
@@ -59,7 +59,7 @@ export const deleteCartItem = async (cartItem: CartItem): Promise<EndPointResult
 
 export const updateCart = async (dto: CartItem[]) => {
   try {
-    const cartService = new CartService();
+    const cartService = new CartDetailService();
     await cartService.updateCart(dto);
 
     return ok('수량이 변경되었습니다.');
@@ -73,7 +73,7 @@ export const updateCart = async (dto: CartItem[]) => {
 
 export const clearCart = async () => {
   try {
-    const cartService = new CartService();
+    const cartService = new CartDetailService();
     await cartService.clearCart();
 
     return ok();

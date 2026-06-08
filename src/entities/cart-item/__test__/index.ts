@@ -4,4 +4,4 @@ export {
   createCartItemEntityFixture,
   createCartItemFixture,
 } from './fixtures';
-export { MockCartItemAdapter } from './mocks';
+export { MockCartItemAdapter, CartItemRepositoryMocks } from './mocks';

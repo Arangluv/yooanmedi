@@ -30,4 +30,12 @@ export class CartDetailError extends BaseError {
       errorName: 'CartDetailCreateError',
     });
   }
+
+  static outOfHydrator() {
+    return new CartDetailError({
+      clientMsg: CART_DETAIL_ERROR_MESSAGE.open,
+      devMsg: 'useCart는 CartDetailHydrator 내부에서 호출되어야 합니다',
+      errorName: 'CartDetailOpenError',
+    });
+  }
 }

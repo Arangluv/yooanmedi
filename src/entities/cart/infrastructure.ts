@@ -1,2 +1,2 @@
 export * from './api/carts.api';
-export { CartService } from './model/cart.service';
+export { CartDetailService } from './model/cart.service';

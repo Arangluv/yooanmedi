@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { APIError } from 'payload';
 import { PayloadCms } from '@/shared/server';
-import { CartService } from '@/entities/cart/infrastructure';
+import { CartDetailService } from '@/entities/cart/infrastructure';
 
 export async function POST(request: Request) {
-  const cartService = new CartService();
+  const cartService = new CartDetailService();
 
   try {
     const payload = await PayloadCms.getInstance();
@@ -27,7 +27,9 @@ export async function POST(request: Request) {
 
     const uploadedFileIds: number[] = [];
 
-    const fileEntries = formData.getAll('fileList').filter((file): file is File => file instanceof File);
+    const fileEntries = formData
+      .getAll('fileList')
+      .filter((file): file is File => file instanceof File);
 
     console.log(fileEntries);
     // 파일 업로드

@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { customPricedCartItemSchema } from '../schemas';
+import { cartDetailItemSchema } from '../schemas';
 
-export type CustomPricedCartItemDto = z.infer<typeof customPricedCartItemSchema>;
-export type SaveCartChangeRequestDto = Array<CustomPricedCartItemDto>;
-export type DeleteCartItemToCartRequestDto = CustomPricedCartItemDto;
+export type CartDetailItemDto = z.infer<typeof cartDetailItemSchema>;
+export type SaveCartDetailRequestDto = Array<CartDetailItemDto>;
+export type DeleteCartDetailItemRequestDto = CartDetailItemDto;
