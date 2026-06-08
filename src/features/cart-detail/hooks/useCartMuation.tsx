@@ -54,7 +54,7 @@ export const useCartMutation = () => {
   });
 
   const { mutate: clearCartMutate } = useMutation({
-    mutationFn: clearCartApi,
+    mutationFn: () => clearCartApi(cart.id),
     onSuccess: (result) => {
       if (result.isSuccess) {
         queryClient.invalidateQueries({ queryKey: CART_DETAIL_QUERY_KEYS.all() });

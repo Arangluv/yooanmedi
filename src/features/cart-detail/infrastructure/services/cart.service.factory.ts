@@ -1,4 +1,4 @@
-import { CartAdapter, CartApiRepository } from '@/entities/cartv2/infrastructure';
+import { CartAdapter, CartApiRepository } from '@/entities/cart/infrastructure';
 import { CartItemAdapter, CartItemApiRepository } from '@/entities/cart-item/infrastructure';
 import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 import {

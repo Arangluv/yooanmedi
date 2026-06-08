@@ -1,7 +1,7 @@
 'use server';
 
 import { login as payloadLogin } from '@payloadcms/next/auth';
-import { PayloadCms } from '@/shared/infrastructure';
+import { PayloadCms, payloadConfig } from '@/shared/infrastructure';
 
 export async function login(id: string, password: string) {
   try {
@@ -27,7 +27,7 @@ export async function login(id: string, password: string) {
     // 관리자면 로그인
     if (user.docs[0].role === 'admin') {
       await payloadLogin({
-        config,
+        config: payloadConfig,
         collection: 'users',
         password,
         username: id,
@@ -41,7 +41,7 @@ export async function login(id: string, password: string) {
     }
 
     await payloadLogin({
-      config,
+      config: payloadConfig,
       collection: 'users',
       password,
       username: id,

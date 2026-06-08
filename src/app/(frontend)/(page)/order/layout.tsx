@@ -7,6 +7,8 @@ import { getFavoritesList } from '@/features/favorites-product/api/favorites-lis
 import FavoritesProductInitProvider from '@/features/favorites-product/model/favorites-Init-provider';
 import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
 
+export const dynamic = 'force-dynamic';
+
 export default async function OrderLayout({ children }: { children: React.ReactNode }) {
   // todo :: error handling
   const userApiRepository = new UserApiRepository(UserAdapter());

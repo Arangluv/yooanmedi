@@ -3,7 +3,7 @@ import { BaseError } from '@/shared';
 import { createProductFixture } from '@/entities/product/__test__';
 import { createCartItemFixture } from '@/entities/cart-item/__test__';
 import { createCustomPriceFixture } from '@/entities/custom-price/__test__';
-import { createCartFixture } from '@/entities/cartv2/__test__';
+import { createCartFixture } from '@/entities/cart/__test__';
 import { createCartDetailItemFixture } from '../fixtures';
 import { CartDetailAssembler } from '../../mapper';
 import { cartDetailSchema, customPricedCartItemsSchema } from '../../schemas';

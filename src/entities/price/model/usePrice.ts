@@ -6,7 +6,7 @@ import {
   getDeliveryFeeFromCartItems,
   getDiscountedDeliveryFeeFromCartItems,
 } from '../lib/calculator';
-import { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item';
 
 type UsePriceProps = {
   cartItems: CartItem[];

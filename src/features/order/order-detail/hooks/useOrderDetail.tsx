@@ -1,18 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
-import { OrderDetailUseCase } from '../usecase';
-import { getPaymentStatus, ORDER_QUERY_KEYS, OrderStatus, PAYMENT_STATUS_NAME } from '@/entities/order';
+import {
+  getPaymentStatus,
+  ORDER_QUERY_KEYS,
+  OrderStatus,
+  PAYMENT_STATUS_NAME,
+} from '@/entities/order';
 import { BusinessLogicError, formatNumberWithCommas, PAYMENTS_METHOD_NAME } from '@/shared';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
+import { getOrderDetailApi } from '../api';
 
-export const createUseOrderDetail = (orderDetailuseCase: OrderDetailUseCase) => {
+export const createUseOrderDetail = () => {
   const useOrderDetail = (orderId: number) => {
     const { data: result } = useQuery({
       queryKey: ORDER_QUERY_KEYS.detail(orderId),
-      queryFn: () => orderDetailuseCase.getOrderDetail(orderId),
+      queryFn: () => getOrderDetailApi(orderId),
     });
 
     if (!result) {
-      throw new Error('useOrderDetailQuery는 OrderDetailHydrationProvider 내부에서 사용해야 합니다');
+      throw new Error(
+        'useOrderDetailQuery는 OrderDetailHydrationProvider 내부에서 사용해야 합니다',
+      );
     }
 
     if (!result.isSuccess) {

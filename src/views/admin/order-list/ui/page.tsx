@@ -1,7 +1,7 @@
 import { SearchParams } from 'nuqs';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
 import { OrderListSearchParamsGenerator } from '@/features/order/order-list/server';
-import { getAdminOrderList } from '@/features/order/order-list';
+import { getAdminOrderListApi } from '@/features/order/order-list';
 import { QueryHydrationProvider, AlertDialogProvider } from '@/shared';
 import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
@@ -9,7 +9,7 @@ import OrderListTableSection from './table/OrderListTableSection';
 const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
   const safeSearchParam =
     await OrderListSearchParamsGenerator.getAdminSafeSearchParams(searchParams);
-  const orderList = await getAdminOrderList(safeSearchParam);
+  const orderList = await getAdminOrderListApi(safeSearchParam);
 
   return (
     <QueryHydrationProvider

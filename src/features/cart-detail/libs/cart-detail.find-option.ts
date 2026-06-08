@@ -1,5 +1,5 @@
 import { FindOption } from '@/shared';
-import { Cart } from '@/entities/cartv2';
+import { Cart } from '@/entities/cart';
 
 export const CartDetailFindOption = {
   cartItems: (cart: Cart): FindOption => {

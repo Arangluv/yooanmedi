@@ -15,7 +15,7 @@ import {
 } from '../schemas';
 import { POINT_ACTION } from '../constants';
 import { Product } from '@/entities/product/@x/point';
-import { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item/@x/point';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../constants';
 
 export class PointTransactionMapper {

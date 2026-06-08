@@ -2,7 +2,7 @@ import { zodSafeParse } from '@/shared';
 import { pointItemSchema, type PointItem } from '@/entities/point';
 import { EnrichedOrderListItem } from '../model/schemas/payment-order-list.schema';
 import { PAYMENTS_METHOD } from '@/shared';
-import { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item';
 
 export class PaymentsMapper {
   static orderListItemToPointItem(data: EnrichedOrderListItem): PointItem {

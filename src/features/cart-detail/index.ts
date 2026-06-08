@@ -31,10 +31,8 @@ export type { CartDetail } from './types';
 // ui
 export {
   AddToCartInput,
-  CartDetailToast,
   CartDetailModal,
   CartDetailModalOpenTextButton,
   CartDetailModalOpenBottomButton,
   AddToCartButton,
-  DiscountAlertBox,
 } from './ui';

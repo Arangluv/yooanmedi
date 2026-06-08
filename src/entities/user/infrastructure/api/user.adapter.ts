@@ -22,7 +22,6 @@ export const UserAdapter = () => ({
       const payload = await PayloadCms.getInstance();
       const nextHeader = await nextHeaders();
       const { user } = await payload.auth({ headers: nextHeader, canSetHeaders: false });
-
       if (user === null) {
         return PayloadAdapterResultManager.fail(UserError.notFound());
       }

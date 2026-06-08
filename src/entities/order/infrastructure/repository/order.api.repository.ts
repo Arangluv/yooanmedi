@@ -1,12 +1,12 @@
-import { OrderAdaper } from '../api';
+import { OrderAdapter } from '../api';
 import { OrderRepository } from '../../core';
 import { CreateOrderRequestDto, UpdateOrderRequestDto } from '../../dto';
 import { OrderMapper } from '../../mapper';
 
 export class OrderApiRepository implements OrderRepository {
-  private adapter: ReturnType<typeof OrderAdaper>;
+  private adapter: ReturnType<typeof OrderAdapter>;
 
-  constructor(adapter: ReturnType<typeof OrderAdaper>) {
+  constructor(adapter: ReturnType<typeof OrderAdapter>) {
     this.adapter = adapter;
   }
 

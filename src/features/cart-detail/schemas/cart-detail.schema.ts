@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { cartSchema } from '@/entities/cartv2';
+import { cartSchema } from '@/entities/cart';
 import { cartItemSchema } from '@/entities/cart-item';
 
 export const cartDetailItemSchema = cartItemSchema.extend({

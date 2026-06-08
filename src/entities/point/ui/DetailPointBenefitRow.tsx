@@ -1,4 +1,4 @@
-import type { CartItem } from '@/entities/cart/@x/point';
+import { CartItem } from '@/entities/cart-item/@x/point';
 import { PointCalculator } from '@/entities/point';
 import { PointTransactionMapper } from '../mapper';
 

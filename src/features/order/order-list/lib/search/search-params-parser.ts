@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { parseAsInteger, parseAsString, parseAsStringLiteral, inferParserType } from 'nuqs/server';
-import { ORDER_STATUS, PAYMENT_STATUS, FLG_STATUS, PAYMENTS_METHOD } from '@/entities/order';
+import { PAYMENTS_METHOD } from '@/shared';
+import { ORDER_STATUS, PAYMENT_STATUS, FLG_STATUS } from '@/entities/order';
 
 /**
  * order-list에서 검색할 수 있는 조건

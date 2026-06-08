@@ -9,7 +9,7 @@ import type {
   PGPaymentAfterOrderContext,
 } from './payments-context/pg.schema';
 import { type EnrichedOrderListItem } from './payment-order-list.schema';
-import type { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item';
 import { CreateOrderProductRequestDto, ORDER_PRODUCT_STATUS } from '@/entities/order-product';
 import { CreatePurchasedHistoryRequestDto } from '@/entities/purchased-history';
 import { CreatePaymentHistorRequestyDto } from '@/entities/payment';

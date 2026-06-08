@@ -1,13 +1,13 @@
-import { CartItem, DeliveryFeeManager } from '@/entities/cart';
-import { PointAllocator } from '@/entities/point';
 import { zodSafeParse, BusinessLogicError } from '@/shared';
+import { DeliveryFeeManager } from '@/entities/cart'; // todo :: remove
+import { CartItem } from '@/entities/cart-item';
+import { PointAllocator } from '@/entities/point';
 import {
   enrichedOrderListSchema,
   populatedOrderListSchema,
   type EnrichedOrderList,
-  type PopulatedOrderList,
 } from './schemas/payment-order-list.schema';
-import { type Product } from '@/entities/product/model/schemas/product.schema';
+import { Product } from '@/entities/product';
 import { ProductAdapter, ProductApiRepository } from '@/entities/product/infrastructure';
 import { type BasePaymentContext } from './schemas/payments-context/base.schema';
 import { buildProductsFindOption } from '../lib/build-find-options';

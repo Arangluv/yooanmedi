@@ -6,30 +6,28 @@ import { Button, NumberInput, Divider } from '@heroui/react';
 import { ChevronRight } from 'lucide-react';
 import { usePrice } from '@/entities/price';
 import { useEarnPoint } from '@/entities/point';
-import type { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item';
 import { useSiteMetaStore, formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';
 import { useUsedPoint } from '@/entities/point';
 import PaymentsPopupListener from '../model/payments-popup-listener';
 import usePaymentsAction from '../model/usePaymentsAction';
 import BankTransferButton from './BankTransferButton';
-import { useCartQuery } from '@/entities/cart';
+import { useCart } from '@/features/cart-detail';
 
 const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
-  const {
-    result: { data },
-  } = useCartQuery();
+  const { cart } = useCart();
   const { minOrderPrice } = useSiteMetaStore();
   const user = useAuthStore((state) => state.user);
 
   const { originalPrice, originalDeliveryFee, discountedPrice, payablePrice } = usePrice({
-    cartItems: data.items,
+    cartItems: cart.cartItems,
     minOrderPrice,
   });
 
   const { pointStatus, updatePoint, updateFieldToMaxUseablePoint } = useUsedPoint({ user });
   const { mutate: registerOrderMutation } = usePaymentsAction({
-    cartItems: data.items,
+    cartItems: cart.cartItems,
     user,
     amount: payablePrice,
     minOrderPrice,
@@ -52,7 +50,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
               <span className="font-bold">{formatNumberWithCommas(originalDeliveryFee)}원</span>
             </div>
             <DeliveryDiscountInfo discountedDeliveryFee={discountedPrice} />
-            <TotalGetPoint cartItems={data.items} />
+            <TotalGetPoint cartItems={cart.cartItems} />
             <div className="flex justify-between gap-4">
               <span className="text-foreground-600 flex-shrink-0">적립금 사용</span>
               <div className="flex gap-2">
@@ -62,7 +60,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
                     radius="sm"
                     aria-label="적립금 사용"
                     variant="bordered"
-                    isDisabled={pointStatus.maxUseablePoint === 0 || data.items.length === 0}
+                    isDisabled={pointStatus.maxUseablePoint === 0 || cart.cartItems.length === 0}
                     hideStepper
                     value={pointStatus.usedPoint}
                     minValue={0}
@@ -85,7 +83,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
                   className="bg-brand h-8 text-white"
                   radius="sm"
                   onPress={() => updateFieldToMaxUseablePoint({ payablePrice })}
-                  isDisabled={pointStatus.maxUseablePoint === 0 || data.items.length === 0}
+                  isDisabled={pointStatus.maxUseablePoint === 0 || cart.cartItems.length === 0}
                 >
                   전액사용
                 </Button>
@@ -118,7 +116,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
           <div className="flex items-center gap-2">
             <BankTransferButton
               deliveryRequest={userRequest}
-              cartItems={data.items}
+              cartItems={cart.cartItems}
               usedPoint={pointStatus.usedPoint}
               userId={user.id}
               minOrderPrice={minOrderPrice}
@@ -128,7 +126,7 @@ const PaymentsAction = ({ userRequest }: { userRequest: string }) => {
               size="lg"
               radius="sm"
               className="bg-brand w-full text-white"
-              isDisabled={payablePrice === 0 || data.items.length === 0}
+              isDisabled={payablePrice === 0 || cart.cartItems.length === 0}
               onPress={() => registerOrderMutation()}
             >
               카드결제

@@ -12,3 +12,6 @@ export { cartSchema } from './schemas';
 
 // type
 export type { Cart, CartEntity } from './types';
+
+// lib
+export { DeliveryFeeManager } from './libs';

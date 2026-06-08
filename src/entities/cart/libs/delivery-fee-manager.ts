@@ -1,6 +1,7 @@
+// todo :: remove
 import type { PointAllocator } from '@/entities/point';
 import { getDeliveryFeeFromCartItemCosiderFlg } from '@/entities/price';
-import type { CartItem } from '@/entities/cart';
+import type { CartItem } from '@/entities/cart-item';
 
 type DeliveryFeeManagerCartItem = Omit<CartItem, 'id'>;
 

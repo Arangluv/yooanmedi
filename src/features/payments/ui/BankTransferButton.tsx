@@ -15,8 +15,8 @@ import {
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
 import { paymentBybankTransfer } from '../api/payments.api';
-import { type CartItem } from '@/entities/cart';
-import { useCart } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item';
+import { useCartMutation } from '@/features/cart-detail'; // todo :: 잘못된 참조 -> 다른 layer로 이동
 
 interface BankTransferButtonProps {
   deliveryRequest: string;
@@ -35,7 +35,7 @@ const BankTransferButton = ({
   minOrderPrice,
   amount,
 }: BankTransferButtonProps) => {
-  const { clearCart } = useCart();
+  const { clearCart } = useCartMutation();
   const { isOpen, onOpen } = useDisclosure();
 
   const { mutate } = useMutation({

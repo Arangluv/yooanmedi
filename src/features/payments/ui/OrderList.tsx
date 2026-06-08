@@ -3,27 +3,25 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ImageIcon } from 'lucide-react';
-import type { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item';
 import { PointCalculator } from '@/entities/point';
 import { usePrice } from '@/entities/price';
 import { formatNumberWithCommas, useSiteMetaStore } from '@/shared';
-import { useCartQuery } from '@/entities/cart';
+import { useCart } from '@/features/cart-detail';
 import { PaymentsMapper } from '../mapper';
 
 const OrderList = () => {
-  const {
-    result: { data },
-  } = useCartQuery();
+  const { cart } = useCart();
 
   const { minOrderPrice } = useSiteMetaStore();
-  const { discountFlg } = usePrice({ cartItems: data.items, minOrderPrice }); // 최소주문금액 만족 여부 확인
+  const { discountFlg } = usePrice({ cartItems: cart.cartItems, minOrderPrice }); // 최소주문금액 만족 여부 확인
 
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-xl font-bold">주문 리스트</span>
-      {data.items.length > 0 ? (
+      {cart.cartItems.length > 0 ? (
         <div className="border-foreground-200 flex w-full flex-col gap-3 rounded-lg border-1 p-3">
-          {data.items.map((item) => (
+          {cart.cartItems.map((item) => (
             <OrderListItem key={item.product.id} cartItem={item} discountFlg={discountFlg} />
           ))}
         </div>

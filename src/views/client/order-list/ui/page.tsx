@@ -4,7 +4,7 @@ import { QueryHydrationProvider } from '@/shared';
 import { Navbar } from '@/entities/order';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
 import { OrderListSearchParamsGenerator } from '@/features/order/order-list/server';
-import { getClientOrderList } from '@/features/order/order-list';
+import { getClientOrderListApi } from '@/features/order/order-list';
 import OrderListTitle from './OrderListTitle';
 import OrderListSearch from './OrderListSearch';
 import OrderList from './OrderList';
@@ -16,7 +16,7 @@ type PageProps = {
 const ClientOrderListPage = async ({ searchParams }: PageProps) => {
   const safeSearchParmas =
     await OrderListSearchParamsGenerator.getClientSafeSearchParams(searchParams);
-  const result = await getClientOrderList(safeSearchParmas);
+  const result = await getClientOrderListApi(safeSearchParmas);
 
   // TODO :: 보일러 플레이트 제거하기 -> Error 경계에서 해당 코드책임을 위임
   if (!result.isSuccess) {

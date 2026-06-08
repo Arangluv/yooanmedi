@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { userSchema } from '@/entities/user';
 import { orderProductSchema } from '@/entities/order-product';
-import { orderCommonSchema } from '@/entities/order';
+import { orderSchema } from '@/entities/order';
 import { BaseSchema } from '@/shared';
 
-export const adminOrderListPayloadRowItemSchema = orderCommonSchema.extend({
+export const adminOrderListPayloadRowItemSchema = orderSchema.extend({
   user: userSchema,
   orderProducts: z.object({
     docs: z.array(
@@ -17,7 +17,7 @@ export const adminOrderListPayloadRowItemSchema = orderCommonSchema.extend({
 });
 export type AdminOrderListPayloadRowItem = z.infer<typeof adminOrderListPayloadRowItemSchema>;
 
-export const adminOrderListItemSchema = orderCommonSchema.extend({
+export const adminOrderListItemSchema = orderSchema.extend({
   user: userSchema,
   orderProducts: z.array(
     orderProductSchema.pick({

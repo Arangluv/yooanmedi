@@ -6,7 +6,7 @@ import type { Product } from '@/entities/product';
 import { formatNumberWithCommas } from '@/shared';
 import useProductDetailStore from '../model/useProductDetailStore';
 import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
-import { AddToCartButton } from '@/entities/cart';
+import { AddToCartButton } from '@/features/cart-detail';
 import { PointCalculator, PointTransactionMapper } from '@/entities/point';
 
 const ProductItemCard = ({ product }: { product: Product }) => {

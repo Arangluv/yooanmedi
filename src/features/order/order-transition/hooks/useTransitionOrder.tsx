@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { OrderTransitionUseCase } from '../usecase';
-import { ORDER_QUERY_KEYS } from '@/entities/order';
 import { EndPointResult, useAlertDialog } from '@/shared';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { transitionOrderApi, transitionOrderListApi } from '../api';
 
-
-export const createUseTransitionOrder = (useCase: OrderTransitionUseCase) => {
+export const createUseTransitionOrder = () => {
   const useTransitionOrder = () => {
     const queryClient = useQueryClient();
     const { setActionDiabled, onClose } = useAlertDialog();
@@ -23,7 +22,7 @@ export const createUseTransitionOrder = (useCase: OrderTransitionUseCase) => {
     };
 
     const { mutate: transitionOrderMutate } = useMutation({
-      mutationFn: useCase.transitionOrder,
+      mutationFn: transitionOrderApi,
       onMutate: () => {
         setActionDiabled(true);
       },
@@ -35,7 +34,7 @@ export const createUseTransitionOrder = (useCase: OrderTransitionUseCase) => {
     });
 
     const { mutate: transitionOrderListMutate } = useMutation({
-      mutationFn: useCase.transitionOrderList,
+      mutationFn: transitionOrderListApi,
       onMutate: () => {
         setActionDiabled(true);
       },

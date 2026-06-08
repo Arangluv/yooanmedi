@@ -37,7 +37,7 @@ export const CartDetailModalOpenBottomButton = () => {
   );
 };
 
-export const AddToCartButton = ({ product }: { cartId: number; product: Product }) => {
+export const AddToCartButton = ({ product }: { product: Product }) => {
   const { addToCart, isAddToCartPending } = useCartMutation();
 
   return (

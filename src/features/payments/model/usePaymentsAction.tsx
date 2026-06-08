@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import type { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item';
 import type { User } from '@/entities/user';
 import { RegisterTransactionRequestDto } from '@/entities/easypay/model/schemas/easypay.register-transaction.schema';
 import { openPaymentsPopup } from '../lib/open-payments-popup';

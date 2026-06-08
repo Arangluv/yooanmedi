@@ -1,5 +1,5 @@
-import { BusinessLogicError } from '@/shared';
-import { Order, PAYMENTS_METHOD } from '@/entities/order';
+import { BusinessLogicError, PAYMENTS_METHOD } from '@/shared';
+import { Order } from '@/entities/order';
 import { PGTotalCancelCommand } from './pg';
 import { BankTransferTotalCancelCommand } from './bank-transfer';
 import { ITotalCancelCommand } from '../../core';

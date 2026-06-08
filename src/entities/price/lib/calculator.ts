@@ -1,4 +1,4 @@
-import { CartItem } from '@/entities/cart/@x/price';
+import { CartItem } from '@/entities/cart-item';
 
 export const getOriginalPriceFromCartItems = ({ cartItems }: { cartItems: CartItem[] }) => {
   return cartItems.reduce((acc, { product, quantity }) => acc + product.price * quantity, 0);
@@ -37,7 +37,7 @@ export const getDiscountedDeliveryFeeFromCartItems = ({
   return discountedDeliveryFee;
 };
 
-export const getDeliveryFeeFromCartItem = (cartItem: CartItem) => {
+export const getDeliveryFeeFromCartItem = (cartItem: Omit<CartItem, 'id'>) => {
   const { product, quantity } = cartItem;
 
   if (product.is_cost_per_unit) {
@@ -51,7 +51,7 @@ export const getDeliveryFeeFromCartItemCosiderFlg = ({
   cartItem,
   freeDeliveryFlg,
 }: {
-  cartItem: CartItem;
+  cartItem: Omit<CartItem, 'id'>;
   freeDeliveryFlg: boolean;
 }) => {
   const { product } = cartItem;

@@ -6,4 +6,6 @@ export {
 
 export { useOrderDetail } from './hooks';
 
-export { orderDetailUseCase } from './core';
+export { type OrderDetailRepository } from './core';
+
+export { getOrderDetailApi } from './api';

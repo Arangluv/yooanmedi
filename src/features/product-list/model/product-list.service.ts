@@ -9,7 +9,10 @@ import {
   buildCustomPriceFindOption,
   buildRankingProductsFindOption,
 } from '../lib/build-find-options';
-import { CustomPriceService } from '@/entities/custom-price/infrastructure';
+import {
+  CustomPriceAdapter,
+  CustomPriceApiRepository,
+} from '@/entities/custom-price/infrastructure';
 
 export class ProductListService implements IProductListService {
   public async getProductListAppliedCustomPrice(rawSearchParams: Promise<SearchParams>) {
@@ -20,37 +23,56 @@ export class ProductListService implements IProductListService {
       buildProductsFindOption(queries, searchParams.page),
     );
 
-    const customPriceService = new CustomPriceService();
+    const customPriceRepository = new CustomPriceApiRepository(CustomPriceAdapter());
     const userApiRepository = new UserApiRepository(UserAdapter());
     const user = await userApiRepository.findByHeader();
-
-    const customPriceList = await customPriceService.getCustomPrices(
-      buildCustomPriceFindOption(user),
-    );
-    const productsAppliedCustomPrice = customPriceService.applyCustomPriceListToProducts({
-      products: productList.products,
-      customPrices: customPriceList,
+    const customPriceList = await customPriceRepository.findMany(buildCustomPriceFindOption(user));
+    // 아래 부분 리팩토링
+    const map = new Map();
+    customPriceList.forEach((item) => {
+      map.set(item.product, item.price);
     });
-    return { ...productList, products: productsAppliedCustomPrice };
+    const appliedProducts = productList.products.map((product) => {
+      return {
+        ...product,
+        price: map.get(product.id),
+      };
+    });
+
+    // const productsAppliedCustomPrice = customPriceService.applyCustomPriceListToProducts({
+    //   products: productList.products,
+    //   customPrices: customPriceList,
+    // });
+    return { ...productList, products: appliedProducts };
   }
 
   public async getRankingProductList() {
     const productApiRepository = new ProductApiRepository(ProductAdapter());
     const productList = await productApiRepository.findMany(buildRankingProductsFindOption());
 
-    const customPriceService = new CustomPriceService();
+    const customPriceRepository = new CustomPriceApiRepository(CustomPriceAdapter());
     const userApiRepository = new UserApiRepository(UserAdapter());
     const user = await userApiRepository.findByHeader();
-    const customPriceList = await customPriceService.getCustomPrices(
-      buildCustomPriceFindOption(user),
-    );
+    const customPriceList = await customPriceRepository.findMany(buildCustomPriceFindOption(user));
 
-    const productsAppliedCustomPrice = customPriceService.applyCustomPriceListToProducts({
-      products: productList.products,
-      customPrices: customPriceList,
+    // 아래 부분 리팩토링
+    const map = new Map();
+    customPriceList.forEach((item) => {
+      map.set(item.product, item.price);
+    });
+    const appliedProducts = productList.products.map((product) => {
+      return {
+        ...product,
+        price: map.get(product.id),
+      };
     });
 
-    return productsAppliedCustomPrice;
+    // const productsAppliedCustomPrice = customPriceService.applyCustomPriceListToProducts({
+    //   products: productList.products,
+    //   customPrices: customPriceList,
+    // });
+
+    return appliedProducts;
   }
 
   public static async getSafeSearchParams(rawSearchParams: Promise<SearchParams>) {

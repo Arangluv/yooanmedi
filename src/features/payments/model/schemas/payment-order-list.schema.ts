@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { cartItemSchema } from '@/entities/cart/model/cart.schema';
+import { cartItemSchema } from '@/entities/cart-item';
 
 export const populatedOrderListItemSchema = cartItemSchema.omit({
   id: true,

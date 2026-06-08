@@ -6,9 +6,8 @@ import { bankTransferPaymentInitContextSchema } from './schemas/payments-context
 import { type BankTransferRequestDto } from './schemas/bank-transfer-request.schema';
 import { EnrichedOrderList } from './schemas/payment-order-list.schema';
 import { RegisterTransactionResult } from '@/entities/easypay/model/schemas/easypay.register-transaction-result.schema';
-import { zodSafeParse, generate15digitsNumberBasedOnDate } from '@/shared';
+import { zodSafeParse, generate15digitsNumberBasedOnDate, PAYMENTS_METHOD } from '@/shared';
 import { paymentInitContextSchema } from './schemas/payments-context/pg.schema';
-import { PAYMENTS_METHOD } from '@/entities/order';
 
 export interface PaymentContextFactory {
   createBase(data: unknown): BasePaymentContext;

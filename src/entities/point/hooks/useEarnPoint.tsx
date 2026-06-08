@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PAYMENTS_METHOD } from '@/shared';
-import { CartItem } from '@/entities/cart/@x/point';
+import { CartItem } from '@/entities/cart-item/@x/point';
 import { PointCalculator } from '../libs';
 import { PointTransactionMapper } from '../mapper';
 

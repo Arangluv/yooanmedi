@@ -1,5 +1,5 @@
 import { BaseErrorManager, LoggerV2 } from '@/shared';
-import { CartRepository } from '@/entities/cartv2';
+import { CartRepository } from '@/entities/cart';
 import { CartItemRepository, CreateCartItemDto } from '@/entities/cart-item';
 import { UserRepository } from '@/entities/user';
 import { CustomPriceRepository } from '@/entities/custom-price';

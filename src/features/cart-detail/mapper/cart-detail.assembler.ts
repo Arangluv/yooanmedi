@@ -1,5 +1,5 @@
 import { ZodSchemaParser, SchemaParserDto } from '@/shared';
-import { Cart } from '@/entities/cartv2';
+import { Cart } from '@/entities/cart';
 import { CartItem } from '@/entities/cart-item';
 import { CustomPrice, CustomPriceUtil } from '@/entities/custom-price';
 import { CartDetail } from '../types';

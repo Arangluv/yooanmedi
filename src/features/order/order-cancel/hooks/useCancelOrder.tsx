@@ -4,9 +4,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { EndPointResult, useAlertDialog } from '@/shared';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
-import { AdminCancelOrderUseCase, ClientCancelOrderUseCase } from '../usecase';
+import {
+  adminCancelPartialOrderApi,
+  adminCancelTotalOrderApi,
+  clientCancelPartialOrderApi,
+} from '../api';
 
-export const createUseAdminCancelOrder = (cancelOrderUseCase: AdminCancelOrderUseCase) => {
+export const createUseAdminCancelOrder = () => {
   const useAdminCancelOrder = () => {
     const queryClient = useQueryClient();
     const { setActionDiabled, onClose } = useAlertDialog();
@@ -29,7 +33,7 @@ export const createUseAdminCancelOrder = (cancelOrderUseCase: AdminCancelOrderUs
       onMutate: () => {
         setActionDiabled(true);
       },
-      mutationFn: cancelOrderUseCase.partialCancel,
+      mutationFn: adminCancelPartialOrderApi,
       onSuccess: onMutationSuccess,
     });
 
@@ -37,7 +41,7 @@ export const createUseAdminCancelOrder = (cancelOrderUseCase: AdminCancelOrderUs
       onMutate: () => {
         setActionDiabled(true);
       },
-      mutationFn: cancelOrderUseCase.totalCancel,
+      mutationFn: adminCancelTotalOrderApi,
       onSuccess: onMutationSuccess,
     });
 
@@ -47,7 +51,7 @@ export const createUseAdminCancelOrder = (cancelOrderUseCase: AdminCancelOrderUs
   return useAdminCancelOrder;
 };
 
-export const createUseClientCancelOrder = (cancelOrderUseCase: ClientCancelOrderUseCase) => {
+export const createUseClientCancelOrder = () => {
   const useClientCancelOrder = () => {
     const queryClient = useQueryClient();
     const { setActionDiabled, onClose } = useAlertDialog();
@@ -70,7 +74,7 @@ export const createUseClientCancelOrder = (cancelOrderUseCase: ClientCancelOrder
       onMutate: () => {
         setActionDiabled(true);
       },
-      mutationFn: cancelOrderUseCase.partialCancel,
+      mutationFn: clientCancelPartialOrderApi,
       onSuccess: onMutationSuccess,
     });
 

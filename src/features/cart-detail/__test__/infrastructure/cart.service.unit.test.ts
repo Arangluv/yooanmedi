@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BaseError } from '@/shared';
-import { CartRepositoryMocks } from '@/entities/cartv2/__test__';
+import { CartRepositoryMocks } from '@/entities/cart/__test__';
 import {
   CartItemRepositoryMocks,
   createCartItemEntityFixture,

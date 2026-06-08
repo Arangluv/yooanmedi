@@ -2,6 +2,8 @@ import { BrandLogo } from '@/shared';
 import JoinForm from './_components/Form';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default function JoinPage() {
   return (
     <section className="flex w-full items-center justify-center bg-neutral-50 py-12">

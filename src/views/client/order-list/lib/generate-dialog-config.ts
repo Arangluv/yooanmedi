@@ -1,5 +1,4 @@
-import { AlertDialogConfig, BusinessLogicError } from '@/shared';
-import { PAYMENTS_METHOD, PaymentsMethod } from '@/entities/order';
+import { AlertDialogConfig, BusinessLogicError, PAYMENTS_METHOD, PaymentsMethod } from '@/shared';
 import { ORDER_PRODUCT_STATUS, OrderProductStatus } from '@/entities/order-product';
 
 export const getDialogConfig = (

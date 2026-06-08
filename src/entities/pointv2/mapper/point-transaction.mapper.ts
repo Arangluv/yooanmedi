@@ -2,7 +2,7 @@ import { PAYMENTS_METHOD, ZodSchemaParser, SchemaParserDto } from '@/shared';
 import { PointItem, PointTransaction, PointTransactionEntity } from '../types';
 import { pointItemListSchema, pointItemSchema, pointTransactionSchema } from '../schemas';
 import { Product } from '@/entities/product/@x/point';
-import { CartItem } from '@/entities/cart';
+import { CartItem } from '@/entities/cart-item/@x/point';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../constants';
 
 export class PointTransactionMapper {

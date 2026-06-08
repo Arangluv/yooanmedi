@@ -1,5 +1,5 @@
-import { BusinessLogicError } from '@/shared';
-import { Order, ORDER_STATUS, PAYMENTS_METHOD } from '@/entities/order';
+import { BusinessLogicError, PAYMENTS_METHOD } from '@/shared';
+import { Order, ORDER_STATUS } from '@/entities/order';
 import {
   AdminBankTransferPartialCancel,
   BankTransferPartialCancelImmediateCommand,

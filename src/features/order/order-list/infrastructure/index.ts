@@ -1,1 +1,1 @@
-export { adminOrderListUseCase, clientOrderListUseCase } from './services';
+export { createAdminOrderListService, createClientOrderListService } from './services';
