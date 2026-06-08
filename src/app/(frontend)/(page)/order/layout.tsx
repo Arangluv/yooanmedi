@@ -1,22 +1,22 @@
-import { NuqsProvider } from '@/shared';
 import { AuthGuard } from '@/entities/user';
-import { SiteMetadataSetter } from '@/shared';
+import { NuqsProvider, SiteMetadataSetter } from '@/shared';
 import { getSiteMetadata } from '@/shared/infrastructure';
 import LayoutTopNavbar from '@/entities/order/ui/LayoutTopNavbar';
+import { CartDetailHydrator, getCartApi } from '@/features/cart-detail';
 import { getFavoritesList } from '@/features/favorites-product/api/favorites-list';
 import FavoritesProductInitProvider from '@/features/favorites-product/model/favorites-Init-provider';
 import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
-import { CartHydrationProvider } from '@/entities/cart';
-import { getCart } from '@/entities/cart/infrastructure';
 
 export default async function OrderLayout({ children }: { children: React.ReactNode }) {
   // todo :: error handling
   const userApiRepository = new UserApiRepository(UserAdapter());
   const user = await userApiRepository.findByHeader();
 
-  const favoritesList = await getFavoritesList(user);
-  const siteMetadata = await getSiteMetadata();
-  const cart = await getCart();
+  const [favoritesList, siteMetadata, cart] = await Promise.all([
+    getFavoritesList(user),
+    getSiteMetadata(),
+    getCartApi(),
+  ]);
 
   return (
     <AuthGuard user={user}>
@@ -25,7 +25,7 @@ export default async function OrderLayout({ children }: { children: React.ReactN
         <NuqsProvider>
           <LayoutTopNavbar />
           <FavoritesProductInitProvider initValue={favoritesList}>
-            <CartHydrationProvider initialData={cart}>{children}</CartHydrationProvider>
+            <CartDetailHydrator initialData={cart}>{children}</CartDetailHydrator>
           </FavoritesProductInitProvider>
         </NuqsProvider>
       </SiteMetadataSetter>

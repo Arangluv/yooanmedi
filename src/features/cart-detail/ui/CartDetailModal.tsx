@@ -11,27 +11,22 @@ import {
   ModalFooter,
   NumberInput,
 } from '@heroui/react';
-import { Button } from '@/shared';
-import { formatNumberWithCommas, useSiteMetaStore } from '@/shared';
-import { getDeliveryFeeFromCartItem, usePrice } from '@/entities/price';
-import useCartModalStore from '../model/hooks/useCartModalStore';
-import { useCartQuery } from '../model/hooks/useCartQuery';
-import { type CartItem } from '../model/cart.schema';
-import DiscountAlertBox from './DiscountAlertBox';
 import { Minus, Plus, Trash } from 'lucide-react';
-import useCart from '../model/hooks/useCart';
+import { Button, formatNumberWithCommas, useSiteMetaStore } from '@/shared';
+import { getDeliveryFeeFromCartItem, usePrice } from '@/entities/price';
+import { useCartModalStore, useCart, useCartMutation } from '../hooks';
+import { CartDetailItemDto } from '../dto';
+import { DiscountAlertBox } from './DiscountAlertBox';
 
-const CartModal = () => {
+export const CartDetailModal = () => {
   const { isOpen, onOpenChange } = useCartModalStore();
-  const {
-    result: { data },
-  } = useCartQuery();
-  const { updateCart, isUpdateCartPending } = useCart();
+  const { cart } = useCart();
+  const { saveCartChanges, isSaveCartChangesPending } = useCartMutation();
 
   const [isModified, setIsModified] = useState(false);
   const [quantityInfo, setQuantityInfo] = useState(() => {
     const map = new Map();
-    data.items.forEach((item) => {
+    cart.cartItems.forEach((item) => {
       map.set(item.id, item.quantity);
     });
 
@@ -40,9 +35,9 @@ const CartModal = () => {
 
   // TODO:: UI에 로직이 들어가 있다. -> 해당 부분 제거하기
   const onSaveClick = () => {
-    if (isUpdateCartPending) return;
+    if (isSaveCartChangesPending) return;
 
-    const cartItems = [...data.items];
+    const cartItems = [...cart.cartItems];
     cartItems.forEach((item) => {
       if (quantityInfo.get(item.id)) {
         item.quantity = quantityInfo.get(item.id);
@@ -50,7 +45,7 @@ const CartModal = () => {
     });
 
     try {
-      updateCart(cartItems);
+      saveCartChanges(cartItems);
       setIsModified(false);
     } catch (error) {
       alert('변경 사항을 저장하는데 문제가 발생했습니다');
@@ -86,7 +81,7 @@ const CartModal = () => {
               </tr>
             </thead>
             <tbody>
-              {data.items.map((item) => {
+              {cart.cartItems.map((item) => {
                 const { product } = item;
                 return (
                   <tr
@@ -142,18 +137,18 @@ const CartModal = () => {
             </Button>
           )}
         </ModalBody>
-        <CartSummary items={data.items} isModified={isModified} />
+        <CartSummary items={cart.cartItems} isModified={isModified} />
       </ModalContent>
     </Modal>
   );
 };
 
-const CartItemDeleteCell = ({ item }: { item: CartItem }) => {
-  const { deleteCartItem } = useCart();
+const CartItemDeleteCell = ({ item }: { item: CartDetailItemDto }) => {
+  const { deleteFromCart } = useCartMutation();
 
   return (
     <div className="mx-auto flex w-fit justify-center">
-      <button className="cursor-pointer" onClick={() => deleteCartItem(item)}>
+      <button className="cursor-pointer" onClick={() => deleteFromCart(item)}>
         <Trash className="text-danger-400 h-4 w-4 cursor-pointer" />
       </button>
     </div>
@@ -165,7 +160,7 @@ const CartItemQuantityEditCell = ({
   setIsModified,
   setQuantityInfo,
 }: {
-  item: CartItem;
+  item: CartDetailItemDto;
   setIsModified: Dispatch<SetStateAction<boolean>>;
   setQuantityInfo: Dispatch<SetStateAction<Map<any, any>>>;
 }) => {
@@ -234,7 +229,13 @@ const CartItemQuantityEditCell = ({
   );
 };
 
-const CartSummary = ({ items, isModified }: { items: CartItem[]; isModified: boolean }) => {
+const CartSummary = ({
+  items,
+  isModified,
+}: {
+  items: CartDetailItemDto[];
+  isModified: boolean;
+}) => {
   const router = useRouter();
   const { minOrderPrice } = useSiteMetaStore();
   const { onOpenChange } = useCartModalStore();
@@ -289,5 +290,3 @@ const CartSummary = ({ items, isModified }: { items: CartItem[]; isModified: boo
     </ModalFooter>
   );
 };
-
-export default CartModal;

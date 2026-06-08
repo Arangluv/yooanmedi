@@ -3,11 +3,15 @@
 import { useState } from 'react';
 import { Form, NumberInput, Button } from '@heroui/react';
 import { toast } from 'sonner';
-import useCart from '../model/hooks/useCart';
+import { useCartMutation } from '../hooks';
 
-const AddToCartInput = ({ productId }: { productId: number }) => {
+interface AddToCartInputProps {
+  productId: number;
+}
+
+export const AddToCartInput = ({ productId }: AddToCartInputProps) => {
   const [value, setValue] = useState<number>(0);
-  const { addToCart } = useCart();
+  const { addToCart } = useCartMutation();
 
   const onAddToCart = () => {
     if (value < 1 || value > 999) {
@@ -60,5 +64,3 @@ const AddToCartInput = ({ productId }: { productId: number }) => {
     </Form>
   );
 };
-
-export default AddToCartInput;

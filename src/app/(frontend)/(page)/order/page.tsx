@@ -2,7 +2,11 @@ import type { SearchParams } from 'nuqs';
 import Link from 'next/link';
 import { BrandLogo } from '@/shared';
 import OrderLink from '@/entities/order/ui/OrderLink';
-import { CartModal, CartModalOpenTextButton, CartModalOpenBottomButton } from '@/entities/cart';
+import {
+  CartDetailModal,
+  CartDetailModalOpenTextButton,
+  CartDetailModalOpenBottomButton,
+} from '@/features/cart-detail';
 import { getProductCategories } from '@/entities/product';
 import {
   ProductSearchForm,
@@ -37,7 +41,7 @@ export default async function OrderPage({ searchParams }: { searchParams: Promis
             {/* search area */}
             <ProductSearchForm />
             <div className="flex gap-2">
-              <CartModalOpenTextButton />
+              <CartDetailModalOpenTextButton />
               <OrderLink />
             </div>
           </header>
@@ -62,8 +66,8 @@ export default async function OrderPage({ searchParams }: { searchParams: Promis
         />
         <ProductAsideDetail />
       </div>
-      <CartModalOpenBottomButton />
-      <CartModal />
+      <CartDetailModalOpenBottomButton />
+      <CartDetailModal />
     </Wrapper>
   );
 }

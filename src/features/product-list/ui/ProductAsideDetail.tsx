@@ -9,7 +9,7 @@ import { useAuthStore } from '@/entities/user';
 import { RecentPurchasesTable } from '@/entities/purchased-history';
 import { formatNumberWithCommas } from '@/shared';
 import useProductDetailStore from '../model/useProductDetailStore';
-import { AddToCartInput } from '@/entities/cart';
+import { AddToCartInput } from '@/features/cart-detail';
 
 const ProductAsideDetail = () => {
   const { clieckedProduct } = useProductDetailStore();
@@ -47,7 +47,10 @@ const ProductAsideDetail = () => {
           </div>
           <DetailDefaultRow label="상품명" value={clieckedProduct.name} />
           <DetailDefaultRow label="제조사" value={clieckedProduct.manufacturer} />
-          <DetailDefaultRow label="가격" value={`${formatNumberWithCommas(clieckedProduct.price)}원`} />
+          <DetailDefaultRow
+            label="가격"
+            value={`${formatNumberWithCommas(clieckedProduct.price)}원`}
+          />
           <DetailDefaultRow label="규격" value={clieckedProduct.specification ?? ''} />
           <DetailDefaultRow label="보험코드" value={clieckedProduct.insurance_code ?? ''} />
           <DetailDeliveryFeeRow

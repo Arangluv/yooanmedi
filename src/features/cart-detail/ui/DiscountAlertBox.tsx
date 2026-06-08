@@ -1,15 +1,13 @@
 'use client';
 
 import { Info } from 'lucide-react';
-
-import { usePrice } from '@/entities/price';
 import { formatNumberWithCommas } from '@/shared';
-import { useCartQuery } from '../model/hooks/useCartQuery';
+import { usePrice } from '@/entities/price';
+import { useCart } from '../hooks';
 
-// TODO :: minOrderPrice 로직이 변경되면 props 삭제 필요할수도있음
-const DiscountAlertBox = ({ minOrderPrice }: { minOrderPrice: number }) => {
-  const { result } = useCartQuery();
-  const { discountFlg } = usePrice({ cartItems: result.data.items, minOrderPrice });
+export const DiscountAlertBox = ({ minOrderPrice }: { minOrderPrice: number }) => {
+  const { cart } = useCart();
+  const { discountFlg } = usePrice({ cartItems: cart.cartItems, minOrderPrice });
 
   if (!discountFlg) {
     return null;
@@ -25,5 +23,3 @@ const DiscountAlertBox = ({ minOrderPrice }: { minOrderPrice: number }) => {
     </div>
   );
 };
-
-export default DiscountAlertBox;

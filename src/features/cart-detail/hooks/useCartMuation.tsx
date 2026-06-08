@@ -3,7 +3,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useCart } from './useCart';
-import { CreateCartItemDto } from '@/entities/cart-item';
 import {
   addToCartApi,
   deleteFromCartApi,
@@ -12,10 +11,10 @@ import {
   clearCartApi,
 } from '../api';
 import { CartDetailToast } from '../ui';
-import { DeleteCartDetailItemRequestDto } from '../dto';
+import { DeleteCartDetailItemRequestDto, AddToCartRequestDto } from '../dto';
 
 export const useCartMutation = () => {
-  const { cartProductIdSet } = useCart();
+  const { cart, cartProductIdSet } = useCart();
   const queryClient = useQueryClient();
 
   const { mutate: addToCartMutate, isPending: isAddToCartPending } = useMutation({
@@ -65,7 +64,7 @@ export const useCartMutation = () => {
     },
   });
 
-  const addToCart = (dto: CreateCartItemDto) => {
+  const addToCart = (dto: AddToCartRequestDto) => {
     if (isAddToCartPending) return;
 
     if (cartProductIdSet.has(dto.product)) {
@@ -73,7 +72,7 @@ export const useCartMutation = () => {
       return;
     }
 
-    addToCartMutate(dto);
+    addToCartMutate({ ...dto, carts: cart.id });
   };
 
   const deleteFromCart = (dto: DeleteCartDetailItemRequestDto) => {
