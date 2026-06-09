@@ -1,99 +1,18 @@
 import { PAYMENTS_METHOD, ZodSchemaParser, SchemaParserDto } from '@/shared';
-import {
-  CreateUsePointHistoryRequestDto,
-  CreateEarnPointHistoryRequestDto,
-  CreateCancelEarnPointHistoryRequestDto,
-  CreateCancelUsePointHistoryRequestDto,
-} from '../dto';
-import { CreatePointTransactionDto, PointItem, PointTransaction, UserReference } from '../types';
-import {
-  createPointTransactionEntitySchema,
-  pointItemListSchema,
-  pointItemSchema,
-  pointTransactionSchema,
-  userReferenceSchema,
-} from '../schemas';
-import { POINT_ACTION } from '../constants';
+import { PointItem, PointTransaction, PointTransactionEntity } from '../types';
+import { pointItemListSchema, pointItemSchema, pointTransactionSchema } from '../schemas';
 import { Product } from '@/entities/product/@x/point';
 import { CartItem } from '@/entities/cart-item/@x/point';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../constants';
 
 export class PointTransactionMapper {
-  static responseToDomain(data: unknown): PointTransaction {
+  static entityToDomain(data: PointTransactionEntity): PointTransaction {
     const schemaDto: SchemaParserDto = {
       data,
       errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.create,
     };
 
     return ZodSchemaParser.safeParseOrThrow(pointTransactionSchema, schemaDto);
-  }
-
-  static toUsePointHistoryEntity(dto: CreateUsePointHistoryRequestDto): CreatePointTransactionDto {
-    const schemaDto: SchemaParserDto = {
-      data: {
-        ...dto,
-        type: POINT_ACTION.use,
-      },
-      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createUseHistory,
-    };
-
-    return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
-  }
-
-  static toEarnPointHistoryEntity(
-    dto: CreateEarnPointHistoryRequestDto,
-  ): CreatePointTransactionDto {
-    const schemaDto: SchemaParserDto = {
-      data: {
-        ...dto,
-        type: POINT_ACTION.earn,
-      },
-      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createEarnHistory,
-    };
-
-    return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
-  }
-
-  static toCancelUsePointHistoryEntity(
-    dto: CreateCancelUsePointHistoryRequestDto,
-    amount: number,
-  ): CreatePointTransactionDto {
-    const schemaDto: SchemaParserDto = {
-      data: {
-        ...dto,
-        amount,
-        type: POINT_ACTION.cancel_use,
-      },
-      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createCancelUseHistory,
-    };
-
-    return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
-  }
-
-  static toCancelEarnPointHistoryEntity(
-    dto: CreateCancelEarnPointHistoryRequestDto,
-    amount: number,
-  ): CreatePointTransactionDto {
-    const schemaDto: SchemaParserDto = {
-      data: {
-        ...dto,
-        amount,
-        type: POINT_ACTION.cancel_earn,
-      },
-      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.createCancelEarnHistory,
-    };
-
-    return ZodSchemaParser.safeParseOrThrow(createPointTransactionEntitySchema, schemaDto);
-  }
-
-  // todo :: will move to user entity
-  static toUserReference(data: unknown): UserReference {
-    const schemaDto: SchemaParserDto = {
-      data,
-      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.findUser,
-    };
-
-    return ZodSchemaParser.safeParseOrThrow(userReferenceSchema, schemaDto);
   }
 
   static productToPointItem(product: Product, quantity: number): PointItem {

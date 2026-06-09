@@ -1,9 +1,9 @@
 import { transactionContext } from './transaction-context';
 import { TransactionalCommand, SystemError } from '../../../core';
-import { PayloadCms } from '../../api';
+import { PayloadCms, getPayload } from '../../api';
 
 export const runWithTransaction = async <T>(command: TransactionalCommand<T>): Promise<T> => {
-  const payload = await PayloadCms.getInstance();
+  const payload = await getPayload();
   const transactionID = await payload.db.beginTransaction();
 
   if (!transactionID) {

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Navbar from '../../_components/Navbar';
 import { notFound } from 'next/navigation';
-import { PayloadCms } from '@/shared/server';
+import { getPayload } from '@/shared/server';
 import { ContentRenderer } from '@/shared';
 
 export default async function TermsPage({
@@ -15,7 +15,7 @@ export default async function TermsPage({
     return notFound();
   }
 
-  const payload = await PayloadCms.getInstance();
+  const payload = await getPayload();
   const { content } = await payload.findGlobal({
     slug: type === 'terms' ? 'terms' : 'privacy-policy',
   });

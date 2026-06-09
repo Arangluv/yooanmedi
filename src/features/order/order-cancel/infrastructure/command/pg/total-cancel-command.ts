@@ -2,13 +2,24 @@ import { runWithTransaction } from '@/shared/infrastructure';
 import { Order, ORDER_STATUS, OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
 import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { OrderProductRepository } from '@/entities/order-product';
-import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
-import { ORDER_PRODUCT_STATUS, OrderProduct, OrderProductFindOption } from '@/entities/order-product';
-import { IPointTransactionService } from '@/entities/point';
-import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
+import {
+  OrderProductAdapter,
+  OrderProductApiRepository,
+} from '@/entities/order-product/infrastructure';
+import {
+  ORDER_PRODUCT_STATUS,
+  OrderProduct,
+  OrderProductFindOption,
+} from '@/entities/order-product';
+import { createPointService } from '@/features/point/infrastructure';
 import { EasyPayService, IEasyPay } from '@/entities/easypay';
-import { PaymentHistoryAdapter, PaymentHistoryApiRepository } from '@/entities/payment/infrastructure';
+import {
+  PaymentHistoryAdapter,
+  PaymentHistoryApiRepository,
+} from '@/entities/payment/infrastructure';
 import { ITotalCancelCommand } from '../../../core';
+import { PointUsecase } from '@/features/point';
+import { POINT_ACTION } from '@/entities/point';
 
 type CancelStrategy = 'partial' | 'total';
 
@@ -33,16 +44,15 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
   public async run() {
     const option = OrderProductFindOption.totalCancelOrder.build(this.order.id);
     const orderProducts = await this.orderProductRepository.findMany(option);
-    const cancelEarnPointService = PointTransactionServiceFactory.forCancelEarn();
-    const cancelUsePointService = PointTransactionServiceFactory.forCancelUse();
+    const pointService = createPointService();
     const cancelPlan = this.resolveCancelPlan(orderProducts);
 
     // orderProduct update, user point action rollback
     await Promise.all(
       orderProducts.map(async (orderProduct) => {
         await this.updateOrderProductToCancelled(orderProduct.id);
-        await this.rollbackEarnPoint(cancelEarnPointService, orderProduct);
-        await this.rollbackUsePoint(cancelUsePointService, orderProduct);
+        await this.rollbackEarnPoint(pointService, orderProduct);
+        await this.rollbackUsePoint(pointService, orderProduct);
       }),
     );
 
@@ -80,28 +90,40 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
     await this.orderRepository.update(dto);
   }
 
-  private async rollbackEarnPoint(service: IPointTransactionService, orderProduct: OrderProduct) {
+  private async rollbackEarnPoint(service: PointUsecase, orderProduct: OrderProduct) {
     const canRollback = orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.pending;
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (canRollback && !isAlreayRollback) {
-      const history = await service.createHistory({
+      const history = await service.createRefundHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
+        type: POINT_ACTION.cancel_earn,
+        rollbackType: POINT_ACTION.use,
       });
-      await service.updateUserPointFromHistories(this.order.user, [history]);
+      await service.updateUserPointByHistories({
+        user: this.order.user,
+        histories: [history],
+        type: POINT_ACTION.cancel_earn,
+      });
     }
   }
 
-  private async rollbackUsePoint(service: IPointTransactionService, orderProduct: OrderProduct) {
+  private async rollbackUsePoint(service: PointUsecase, orderProduct: OrderProduct) {
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (!isAlreayRollback) {
-      const history = await service.createHistory({
+      const history = await service.createRefundHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
+        type: POINT_ACTION.cancel_earn,
+        rollbackType: POINT_ACTION.use,
       });
-      await service.updateUserPointFromHistories(this.order.user, [history]);
+      await service.updateUserPointByHistories({
+        user: this.order.user,
+        histories: [history],
+        type: POINT_ACTION.cancel_earn,
+      });
     }
   }
 

@@ -2,7 +2,7 @@ import { FindOption, LoggerV2 } from '@/shared';
 import {
   PayloadCmsErrorTranslator,
   PayloadAdapterResultManager,
-  PayloadCms,
+  getPayload,
   getTransactionContextFromStore,
 } from '@/shared/server';
 import { PRODUCT_ERROR_MESSAGE } from '../../constants';
@@ -34,7 +34,7 @@ export const ProductAdapter = () => ({
   // depth: 1 옵션은 중요합니다. 0으로 바꿀 시 image metadata가 아닌 collection id로 가져옵니다.
   getProduct: async (productId: number): Promise<GetProductResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const product = await payload.findByID({
         collection: 'product',
@@ -58,7 +58,7 @@ export const ProductAdapter = () => ({
   // depth: 1 옵션은 중요합니다. 0으로 바꿀 시 image metadata가 아닌 collection id로 가져옵니다.
   getProductList: async (option: FindOption): Promise<GetProductListResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const response = await payload.find({
         collection: 'product',
@@ -81,7 +81,7 @@ export const ProductAdapter = () => ({
 
   getAllCategories: async (): Promise<GetCategoriesResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const { docs } = await payload.find({
         collection: 'product-category',
         depth: 0,

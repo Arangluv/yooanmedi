@@ -1,7 +1,13 @@
-import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
+import { createPointService } from '@/features/point/infrastructure';
 import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
-import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
-import { PurchasedHistoryApiRepository, PurchasedHistoryAdapter } from '@/entities/purchased-history/infrastructure';
+import {
+  OrderProductAdapter,
+  OrderProductApiRepository,
+} from '@/entities/order-product/infrastructure';
+import {
+  PurchasedHistoryApiRepository,
+  PurchasedHistoryAdapter,
+} from '@/entities/purchased-history/infrastructure';
 import { runWithTransaction } from '@/shared/infrastructure';
 import { TransactionalCommand } from '@/shared';
 import { PaymentDto } from '../schemas/payments.dto';
@@ -15,8 +21,11 @@ import {
   BankTransferPaymentInitContext,
 } from '../schemas/payments-context/bank-transfer.schema';
 import { PointTransaction } from '@/entities/point';
+import { POINT_ACTION } from '@/entities/point';
 
-export class BankTransferPaymentCommand implements IPaymentsCommand<void>, TransactionalCommand<void> {
+export class BankTransferPaymentCommand
+  implements IPaymentsCommand<void>, TransactionalCommand<void>
+{
   private requestDto: BankTransferRequestDto;
 
   public constructor(requestDto: BankTransferRequestDto) {
@@ -35,14 +44,18 @@ export class BankTransferPaymentCommand implements IPaymentsCommand<void>, Trans
     return await runWithTransaction(this);
   }
 
-  private async initializeContext(contextFactory: PaymentContextFactory): Promise<BankTransferPaymentInitContext> {
+  private async initializeContext(
+    contextFactory: PaymentContextFactory,
+  ): Promise<BankTransferPaymentInitContext> {
     const baseContext = contextFactory.createBase(this.requestDto);
     const orderList = await enrichOrderList(baseContext);
 
     return contextFactory.initialize({ ...baseContext, orderList, amount: this.requestDto.amount });
   }
 
-  private async createOrder(ctx: BankTransferPaymentInitContext): Promise<BankTransferPaymentAfterOrderContext> {
+  private async createOrder(
+    ctx: BankTransferPaymentInitContext,
+  ): Promise<BankTransferPaymentAfterOrderContext> {
     const orderRepository = new OrderApiRepository(OrderAdapter());
     const dto = PaymentDto.createOrderForBankTransfer(ctx);
     const order = await orderRepository.create(dto);
@@ -54,7 +67,7 @@ export class BankTransferPaymentCommand implements IPaymentsCommand<void>, Trans
   }
 
   private async processOrderList(ctx: BankTransferPaymentAfterOrderContext) {
-    const usePointTransaction = PointTransactionServiceFactory.forUse();
+    const pointService = createPointService();
     const histories = [] as PointTransaction[];
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {
@@ -63,17 +76,22 @@ export class BankTransferPaymentCommand implements IPaymentsCommand<void>, Trans
         // step 2-2. 구매 히스토리 생성
         await this.createRecentPurchasedHistory(ctx, orderListItem);
         // step 2-3. 사용 포인트 차감 히스토리 생성
-        const history = await usePointTransaction.createHistory({
+        const history = await pointService.createUsageHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
+          type: POINT_ACTION.use,
         });
         histories.push(history);
       }),
     );
 
     // step 3. 사용 포인트 차감
-    await usePointTransaction.updateUserPointFromHistories(ctx.userId, histories);
+    await pointService.updateUserPointByHistories({
+      user: ctx.userId,
+      type: POINT_ACTION.use,
+      histories,
+    });
   }
 
   private async createRecentPurchasedHistory(
@@ -85,7 +103,10 @@ export class BankTransferPaymentCommand implements IPaymentsCommand<void>, Trans
     await purchasedHistoryRepository.create(dto);
   }
 
-  private async createOrderProduct(ctx: BankTransferPaymentAfterOrderContext, orderListItem: EnrichedOrderListItem) {
+  private async createOrderProduct(
+    ctx: BankTransferPaymentAfterOrderContext,
+    orderListItem: EnrichedOrderListItem,
+  ) {
     const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
     const requestDto = PaymentDto.createOrderProductForBank(ctx, orderListItem);
     const orderProduct = await orderProductRepository.create(requestDto);

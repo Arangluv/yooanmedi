@@ -17,7 +17,7 @@ export { useAuthStore } from './hooks';
 export { UserMapper } from './mapper';
 
 // schema
-export { userSchema, userListSchema } from './schemas';
+export { userSchema, userListSchema, updateUserSchema } from './schemas';
 
 // types
 export type { User } from './types';

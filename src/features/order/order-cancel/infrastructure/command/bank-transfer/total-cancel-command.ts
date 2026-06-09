@@ -2,11 +2,19 @@ import { runWithTransaction } from '@/shared/infrastructure';
 import { Order, ORDER_STATUS, OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
 import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import { OrderProductRepository } from '@/entities/order-product';
-import { OrderProductApiRepository, OrderProductAdapter } from '@/entities/order-product/infrastructure';
-import { ORDER_PRODUCT_STATUS, OrderProduct, OrderProductFindOption } from '@/entities/order-product';
-import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
-import { IPointTransactionService } from '@/entities/point';
+import {
+  OrderProductApiRepository,
+  OrderProductAdapter,
+} from '@/entities/order-product/infrastructure';
+import {
+  ORDER_PRODUCT_STATUS,
+  OrderProduct,
+  OrderProductFindOption,
+} from '@/entities/order-product';
+import { PointUsecase } from '@/features/point';
+import { createPointService } from '@/features/point/infrastructure';
 import { ITotalCancelCommand } from '../../../core';
+import { POINT_ACTION } from '@/entities/point';
 
 export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
   private readonly order: Order;
@@ -22,15 +30,14 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
   public async run() {
     const option = OrderProductFindOption.totalCancelOrder.build(this.order.id);
     const orderProducts = await this.orderProductRepository.findMany(option);
-    const cancelEarnPointService = PointTransactionServiceFactory.forCancelEarn();
-    const cancelUsePointService = PointTransactionServiceFactory.forCancelUse();
+    const pointService = createPointService();
 
     // orderProduct update, user point action rollback
     await Promise.all(
       orderProducts.map(async (orderProduct) => {
         await this.updateOrderProductToCancelled(orderProduct.id);
-        await this.rollbackEarnPoint(cancelEarnPointService, orderProduct);
-        await this.rollbackUsePoint(cancelUsePointService, orderProduct);
+        await this.rollbackEarnPoint(pointService, orderProduct);
+        await this.rollbackUsePoint(pointService, orderProduct);
       }),
     );
 
@@ -66,30 +73,42 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
     await this.orderRepository.update(dto);
   }
 
-  private async rollbackEarnPoint(service: IPointTransactionService, orderProduct: OrderProduct) {
+  private async rollbackEarnPoint(service: PointUsecase, orderProduct: OrderProduct) {
     const canRollback = orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.pending;
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (canRollback && !isAlreayRollback) {
-      const history = await service.createHistory({
+      const history = await service.createRefundHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
+        type: POINT_ACTION.cancel_earn,
+        rollbackType: POINT_ACTION.earn,
       });
 
-      await service.updateUserPointFromHistories(this.order.user, [history]);
+      await service.updateUserPointByHistories({
+        user: this.order.user,
+        type: POINT_ACTION.cancel_earn,
+        histories: [history],
+      });
     }
   }
 
-  private async rollbackUsePoint(service: IPointTransactionService, orderProduct: OrderProduct) {
+  private async rollbackUsePoint(service: PointUsecase, orderProduct: OrderProduct) {
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (!isAlreayRollback) {
-      const history = await service.createHistory({
+      const history = await service.createRefundHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
+        type: POINT_ACTION.cancel_use,
+        rollbackType: POINT_ACTION.use,
       });
 
-      await service.updateUserPointFromHistories(this.order.user, [history]);
+      await service.updateUserPointByHistories({
+        user: this.order.user,
+        type: POINT_ACTION.cancel_use,
+        histories: [history],
+      });
     }
   }
 }

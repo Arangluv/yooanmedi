@@ -1,6 +1,6 @@
 import { BaseError, FindOption, LoggerV2, PayloadOrderProductSelect } from '@/shared';
 import {
-  PayloadCms,
+  getPayload,
   PayloadAdapterResultManager,
   PayloadCmsErrorTranslator,
   getTransactionContextFromStore,
@@ -33,9 +33,11 @@ const ORDER_PRODUCT_SELECT: PayloadOrderProductSelect = {
 } as const;
 
 export const OrderProductAdapter = () => ({
-  createOrderProduct: async (dto: CreateOrderProductRequestDto): Promise<CreateOrderProductResponse> => {
+  createOrderProduct: async (
+    dto: CreateOrderProductRequestDto,
+  ): Promise<CreateOrderProductResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const result = await payload.create({
         collection: 'order-product',
@@ -48,14 +50,17 @@ export const OrderProductAdapter = () => ({
       return PayloadAdapterResultManager.ok(result);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(error, ORDER_PRODUCT_ERROR_MESSAGE.create);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(
+        error,
+        ORDER_PRODUCT_ERROR_MESSAGE.create,
+      );
       return PayloadAdapterResultManager.fail(baseError);
     }
   },
 
   getOrderProductById: async (orderProductId: number): Promise<GetOrderProductResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const result = await payload.findByID({
         collection: 'order-product',
@@ -68,14 +73,17 @@ export const OrderProductAdapter = () => ({
       return PayloadAdapterResultManager.ok(result);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(error, ORDER_PRODUCT_ERROR_MESSAGE.fetchFail);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(
+        error,
+        ORDER_PRODUCT_ERROR_MESSAGE.fetchFail,
+      );
       return PayloadAdapterResultManager.fail(baseError);
     }
   },
 
   getOrderProducts: async (option: FindOption): Promise<GetOrderProductsResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const { docs } = await payload.find({
         collection: 'order-product',
@@ -88,14 +96,19 @@ export const OrderProductAdapter = () => ({
       return PayloadAdapterResultManager.ok(docs);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(error, ORDER_PRODUCT_ERROR_MESSAGE.fetchFail);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(
+        error,
+        ORDER_PRODUCT_ERROR_MESSAGE.fetchFail,
+      );
       return PayloadAdapterResultManager.fail(baseError);
     }
   },
 
-  updateOrderProduct: async (dto: UpdateOrderProductRequestDto): Promise<UpdateOrderProductResponse> => {
+  updateOrderProduct: async (
+    dto: UpdateOrderProductRequestDto,
+  ): Promise<UpdateOrderProductResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const result = await payload.update({
         collection: 'order-product',
@@ -109,14 +122,19 @@ export const OrderProductAdapter = () => ({
       return PayloadAdapterResultManager.ok(result);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(error, ORDER_PRODUCT_ERROR_MESSAGE.update);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(
+        error,
+        ORDER_PRODUCT_ERROR_MESSAGE.update,
+      );
       return PayloadAdapterResultManager.fail(baseError);
     }
   },
 
-  bulkUpdateOrderProduct: async (dto: BulkUpdateOrderProductRequestDto): Promise<BulkUpdateOrderProductResponse> => {
+  bulkUpdateOrderProduct: async (
+    dto: BulkUpdateOrderProductRequestDto,
+  ): Promise<BulkUpdateOrderProductResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const result = await payload.update({
         collection: 'order-product',
@@ -143,7 +161,10 @@ export const OrderProductAdapter = () => ({
       return PayloadAdapterResultManager.ok(nomalizedResult.successData);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(error, ORDER_PRODUCT_ERROR_MESSAGE.update);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(
+        error,
+        ORDER_PRODUCT_ERROR_MESSAGE.update,
+      );
       return PayloadAdapterResultManager.fail(baseError);
     }
   },

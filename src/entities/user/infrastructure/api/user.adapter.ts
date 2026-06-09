@@ -2,9 +2,9 @@ import { headers as nextHeaders } from 'next/headers';
 import { FindOption, LoggerV2 } from '@/shared';
 import {
   getTransactionContextFromStore,
-  PayloadCms,
   PayloadCmsErrorTranslator,
   PayloadAdapterResultManager,
+  getPayload,
 } from '@/shared/server';
 import {
   GetUserByHeaderResponse,
@@ -19,7 +19,7 @@ import { USER_ERROR_MESSAGE } from '../../constants';
 export const UserAdapter = () => ({
   getUserByHeader: async (): Promise<GetUserByHeaderResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const nextHeader = await nextHeaders();
       const { user } = await payload.auth({ headers: nextHeader, canSetHeaders: false });
       if (user === null) {
@@ -35,7 +35,7 @@ export const UserAdapter = () => ({
 
   getUserById: async (id: number): Promise<GetUserByIdResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const user = await payload.findByID({
         collection: 'users',
@@ -52,7 +52,7 @@ export const UserAdapter = () => ({
   },
   getUserList: async (option: FindOption): Promise<GetUserListResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const { docs } = await payload.find({
         collection: 'users',
@@ -70,7 +70,7 @@ export const UserAdapter = () => ({
 
   updateUser: async (dto: UpdateUserDto): Promise<UpdateUserResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const user = await payload.update({
         collection: 'users',

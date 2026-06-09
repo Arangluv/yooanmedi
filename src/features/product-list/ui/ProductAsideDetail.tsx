@@ -3,13 +3,13 @@
 import Image from 'next/image';
 import { Image as ImageIcon } from 'lucide-react';
 import { Divider } from '@heroui/react';
+import { formatNumberWithCommas } from '@/shared';
 import { EmptyProductDetail, DetailDefaultRow, DetailDeliveryFeeRow } from '@/entities/product';
-import { DetailPointBenefitRow } from '@/entities/point';
 import { useAuthStore } from '@/entities/user';
 import { RecentPurchasesTable } from '@/entities/purchased-history';
-import { formatNumberWithCommas } from '@/shared';
-import useProductDetailStore from '../model/useProductDetailStore';
+import { DetailPointBenefitRow } from '@/features/point';
 import { AddToCartInput } from '@/features/cart-detail';
+import useProductDetailStore from '../model/useProductDetailStore';
 
 const ProductAsideDetail = () => {
   const { clieckedProduct } = useProductDetailStore();

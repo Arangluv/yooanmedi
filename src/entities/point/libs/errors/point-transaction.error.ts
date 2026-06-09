@@ -1,4 +1,4 @@
-import { BaseError } from '@/shared';
+import { BaseError, FindOption } from '@/shared';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../../constants';
 
 export class PointTransactionError extends BaseError {
@@ -20,6 +20,14 @@ export class PointTransactionError extends BaseError {
   static createHistoryFailed() {
     return new PointTransactionError({
       clientMsg: POINT_TRANSACTION_ERROR_MESSAGE.create,
+      errorName: 'CreatePointTransactionFailError',
+    });
+  }
+
+  static invalidFindOption(option: FindOption) {
+    return new PointTransactionError({
+      clientMsg: POINT_TRANSACTION_ERROR_MESSAGE.fetchFail,
+      devMsg: `잘못된 포인트 내역 조회 findOption 파라미터 입니다. \n ${option}`,
       errorName: 'CreatePointTransactionFailError',
     });
   }

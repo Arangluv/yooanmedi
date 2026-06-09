@@ -3,11 +3,15 @@ import { Order, ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
 import { OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
 import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
-import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
+import { createPointService } from '@/features/point/infrastructure';
 import { OrderProductRepository } from '@/entities/order-product';
-import { OrderProductApiRepository, OrderProductAdapter } from '@/entities/order-product/infrastructure';
+import {
+  OrderProductApiRepository,
+  OrderProductAdapter,
+} from '@/entities/order-product/infrastructure';
 import { isFullyCancelRequest, isFullyCancelled } from '../../../lib/status-helper';
 import { IPartialCancelCommand } from '../../../core';
+import { POINT_ACTION } from '@/entities/point';
 
 export class BankTransferPartialCancelImmediateCommand implements IPartialCancelCommand {
   private readonly order: Order;
@@ -59,30 +63,42 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
 
   private async rollbackEarnPoint() {
     if (this.order.orderStatus !== ORDER_STATUS.pending) {
-      const cancelEarnPointService = PointTransactionServiceFactory.forCancelEarn();
-      const history = await cancelEarnPointService.createHistory({
+      const pointService = createPointService();
+      const history = await pointService.createRefundHistory({
         user: this.order.user,
         orderProduct: this.targetOrderProductId,
+        type: POINT_ACTION.cancel_earn,
+        rollbackType: POINT_ACTION.earn,
       });
-
-      await cancelEarnPointService.updateUserPointFromHistories(this.order.user, [history]);
+      await pointService.updateUserPointByHistories({
+        user: this.order.user,
+        type: POINT_ACTION.cancel_earn,
+        histories: [history],
+      });
     }
   }
 
   private async rollbackUsePoint() {
-    const cancelUsePointService = PointTransactionServiceFactory.forCancelUse();
-    const history = await cancelUsePointService.createHistory({
+    const pointService = createPointService();
+    const history = await pointService.createRefundHistory({
       user: this.order.user,
       orderProduct: this.targetOrderProductId,
+      type: POINT_ACTION.cancel_use,
+      rollbackType: POINT_ACTION.use,
     });
-
-    await cancelUsePointService.updateUserPointFromHistories(this.order.user, [history]);
+    await pointService.updateUserPointByHistories({
+      user: this.order.user,
+      type: POINT_ACTION.cancel_use,
+      histories: [history],
+    });
   }
 
   private async getOrderOnGoingStatus() {
     const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
     const orderProducts = await this.orderProductRepository.findMany(option);
-    const orderProductStatuses = orderProducts.map((orderProduct) => orderProduct.orderProductStatus);
+    const orderProductStatuses = orderProducts.map(
+      (orderProduct) => orderProduct.orderProductStatus,
+    );
 
     if (isFullyCancelRequest(orderProductStatuses)) {
       return ORDER_STATUS.cancel_request;
@@ -137,7 +153,9 @@ export class BankTransferPartialCancelRequestCommand implements IPartialCancelCo
   private async getOrderOnGoingStatus() {
     const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
     const orderProducts = await this.orderProductRepository.findMany(option);
-    const orderProductStatuses = orderProducts.map((orderProduct) => orderProduct.orderProductStatus);
+    const orderProductStatuses = orderProducts.map(
+      (orderProduct) => orderProduct.orderProductStatus,
+    );
 
     if (isFullyCancelRequest(orderProductStatuses)) {
       return ORDER_STATUS.cancel_request;
@@ -207,30 +225,42 @@ export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
 
   private async rollbackEarnPoint() {
     if (this.order.orderStatus !== ORDER_STATUS.pending) {
-      const cancelEarnPointService = PointTransactionServiceFactory.forCancelEarn();
-      const history = await cancelEarnPointService.createHistory({
+      const pointService = createPointService();
+      const history = await pointService.createRefundHistory({
         user: this.order.user,
         orderProduct: this.targetOrderProductId,
+        type: POINT_ACTION.cancel_earn,
+        rollbackType: POINT_ACTION.earn,
       });
-
-      await cancelEarnPointService.updateUserPointFromHistories(this.order.user, [history]);
+      await pointService.updateUserPointByHistories({
+        user: this.order.user,
+        type: POINT_ACTION.cancel_earn,
+        histories: [history],
+      });
     }
   }
 
   private async rollbackUsePoint() {
-    const cancelUsePointService = PointTransactionServiceFactory.forCancelUse();
-    const history = await cancelUsePointService.createHistory({
+    const pointService = createPointService();
+    const history = await pointService.createRefundHistory({
       user: this.order.user,
       orderProduct: this.targetOrderProductId,
+      type: POINT_ACTION.cancel_use,
+      rollbackType: POINT_ACTION.use,
     });
-
-    await cancelUsePointService.updateUserPointFromHistories(this.order.user, [history]);
+    await pointService.updateUserPointByHistories({
+      user: this.order.user,
+      type: POINT_ACTION.cancel_use,
+      histories: [history],
+    });
   }
 
   private async getOrderOnGoingStatus() {
     const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
     const orderProducts = await this.orderProductRepository.findMany(option);
-    const orderProductStatuses = orderProducts.map((orderProduct) => orderProduct.orderProductStatus);
+    const orderProductStatuses = orderProducts.map(
+      (orderProduct) => orderProduct.orderProductStatus,
+    );
 
     if (isFullyCancelRequest(orderProductStatuses)) {
       return ORDER_STATUS.cancel_request;

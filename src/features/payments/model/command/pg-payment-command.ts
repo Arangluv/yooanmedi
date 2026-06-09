@@ -1,10 +1,19 @@
-import { PointTransactionServiceFactory } from '@/entities/point/infrastructure';
+import { createPointService } from '@/features/point/infrastructure';
 import { cancelPgPaymentAll } from '@/entities/payment'; // todo :: remove
 import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
-import { OrderProductAdapter, OrderProductApiRepository } from '@/entities/order-product/infrastructure';
-import { PaymentHistoryApiRepository, PaymentHistoryAdapter } from '@/entities/payment/infrastructure';
+import {
+  OrderProductAdapter,
+  OrderProductApiRepository,
+} from '@/entities/order-product/infrastructure';
+import {
+  PaymentHistoryApiRepository,
+  PaymentHistoryAdapter,
+} from '@/entities/payment/infrastructure';
 import { EasyPayService } from '@/entities/easypay/model/easypay.service';
-import { PurchasedHistoryApiRepository, PurchasedHistoryAdapter } from '@/entities/purchased-history/infrastructure';
+import {
+  PurchasedHistoryApiRepository,
+  PurchasedHistoryAdapter,
+} from '@/entities/purchased-history/infrastructure';
 import { runWithTransaction } from '@/shared/infrastructure';
 import { TransactionalCommand } from '@/shared';
 import { PaymentDto } from '../schemas/payments.dto';
@@ -19,6 +28,7 @@ import {
 } from '../schemas/payments-context/pg.schema';
 import { PointCalculator, PointTransaction } from '@/entities/point';
 import { PaymentsMapper } from '../../mapper';
+import { POINT_ACTION } from '@/entities/point';
 
 export interface PGPaymentCommandResult {
   approvalDate: string;
@@ -30,7 +40,11 @@ export class PGPaymentCommand
   implements IPaymentsCommand<PGPaymentCommandResult>, TransactionalCommand<PGPaymentCommandResult>
 {
   private requestDto: FormData;
-  private context: null | PGPaymentInitContext | PGPaymentAfterApprovalContext | PGPaymentAfterOrderContext;
+  private context:
+    | null
+    | PGPaymentInitContext
+    | PGPaymentAfterApprovalContext
+    | PGPaymentAfterOrderContext;
   public constructor(requestDto: FormData) {
     this.requestDto = requestDto;
     this.context = null;
@@ -123,8 +137,7 @@ export class PGPaymentCommand
    * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
    */
   private async processOrderList(ctx: PGPaymentAfterOrderContext) {
-    const usePointTransactionService = PointTransactionServiceFactory.forUse();
-    const earnPointTransactionService = PointTransactionServiceFactory.forEarn();
+    const pointService = createPointService();
     const usePointHistoryStack = [] as PointTransaction[];
     const earnPointHistoryStack = [] as PointTransaction[];
 
@@ -135,10 +148,11 @@ export class PGPaymentCommand
         // step 2. 구매 히스토리 생성
         await this.createRecentPurchasedHistory(ctx, orderListItem);
         // step 3-1. 사용 포인트 차감 히스토리 생성
-        const usePointHistory = await usePointTransactionService.createHistory({
+        const usePointHistory = await pointService.createUsageHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
+          type: POINT_ACTION.use,
         });
         usePointHistoryStack.push(usePointHistory);
         // step 3-2. 사용 포인트 차감 히스토리 push
@@ -146,10 +160,11 @@ export class PGPaymentCommand
         // step 4-1. 구매 포인트 적립 히스토리 생성
         const pointItem = PaymentsMapper.orderListItemToPointItem(orderListItem);
         const willEarnPoint = PointCalculator.forCardWithQuantity(pointItem);
-        const earnPointHistory = await earnPointTransactionService.createHistory({
+        const earnPointHistory = await pointService.createUsageHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: willEarnPoint,
+          type: POINT_ACTION.earn,
         });
         // step 4-2. 구매 포인트 적립 히스토리 push
         earnPointHistoryStack.push(earnPointHistory);
@@ -157,12 +172,24 @@ export class PGPaymentCommand
     );
 
     // step 5. 구매 포인트 적립
-    await usePointTransactionService.updateUserPointFromHistories(ctx.userId, usePointHistoryStack);
+    await pointService.updateUserPointByHistories({
+      user: ctx.userId,
+      type: POINT_ACTION.earn,
+      histories: earnPointHistoryStack,
+    });
+
     // step 6. 사용 포인트 차감
-    await earnPointTransactionService.updateUserPointFromHistories(ctx.userId, earnPointHistoryStack);
+    await pointService.updateUserPointByHistories({
+      user: ctx.userId,
+      type: POINT_ACTION.use,
+      histories: usePointHistoryStack,
+    });
   }
 
-  private async createOrderProduct(ctx: PGPaymentAfterOrderContext, orderListItem: EnrichedOrderListItem) {
+  private async createOrderProduct(
+    ctx: PGPaymentAfterOrderContext,
+    orderListItem: EnrichedOrderListItem,
+  ) {
     const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
     const requestDto = PaymentDto.createOrderProductForPg(ctx, orderListItem);
     const orderProduct = await orderProductRepository.create(requestDto);

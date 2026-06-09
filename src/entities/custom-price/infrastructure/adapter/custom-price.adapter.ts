@@ -2,7 +2,7 @@ import { FindOption, LoggerV2 } from '@/shared';
 import {
   getTransactionContextFromStore,
   PayloadAdapterResultManager,
-  PayloadCms,
+  getPayload,
   PayloadCmsErrorTranslator,
 } from '@/shared/server';
 import { CUSTOM_PRICE_ERROR_MESSAGE } from '../../constants';
@@ -11,7 +11,7 @@ import { GetCustomPricesReponse } from '../../types';
 export const CustomPriceAdapter = () => ({
   getCustomPrices: async (option: FindOption): Promise<GetCustomPricesReponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const { docs: customPrices } = await payload.find({
         collection: 'product-price',
@@ -22,7 +22,10 @@ export const CustomPriceAdapter = () => ({
       return PayloadAdapterResultManager.ok(customPrices);
     } catch (error) {
       LoggerV2.error(error);
-      const baseError = PayloadCmsErrorTranslator.toBaseError(error, CUSTOM_PRICE_ERROR_MESSAGE.fetchFail);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(
+        error,
+        CUSTOM_PRICE_ERROR_MESSAGE.fetchFail,
+      );
       return PayloadAdapterResultManager.fail(baseError);
     }
   },

@@ -1,6 +1,6 @@
 import { FindOption } from '@/shared';
-import { PointTransactionAdapter } from '../api/point-transaction.adapter';
-import { CreatePointTransactionDto } from '../../types';
+import { PointTransactionAdapter } from '../api';
+import { CreatePointHistoryRequestDto } from '../../dto';
 import { PointTransactionRepository } from '../../core';
 import { PointTransactionMapper } from '../../mapper';
 
@@ -11,12 +11,12 @@ export class PointTransactionApiRepository implements PointTransactionRepository
     this.adapter = adapter;
   }
 
-  public async create(entity: CreatePointTransactionDto) {
+  public async create(entity: CreatePointHistoryRequestDto) {
     const result = await this.adapter.create(entity);
     if (!result.ok) {
       throw result.error;
     }
-    return PointTransactionMapper.responseToDomain(result.data);
+    return PointTransactionMapper.entityToDomain(result.data);
   }
 
   public async findOne(option: FindOption) {
@@ -24,6 +24,6 @@ export class PointTransactionApiRepository implements PointTransactionRepository
     if (!result.ok) {
       throw result.error;
     }
-    return PointTransactionMapper.responseToDomain(result.data);
+    return PointTransactionMapper.entityToDomain(result.data);
   }
 }

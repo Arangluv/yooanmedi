@@ -1,6 +1,6 @@
 'use server';
 
-import { PayloadCms } from '@/shared/server';
+import { getPayload } from '@/shared/server';
 
 export async function findId(dto: {
   hospitalName: string;
@@ -9,7 +9,7 @@ export async function findId(dto: {
   phoneNumber: string;
 }) {
   try {
-    const payload = await PayloadCms.getInstance();
+    const payload = await getPayload();
     const { hospitalName, businessNumber, nursingNumber, phoneNumber } = dto;
     const user = await payload.find({
       collection: 'users',
@@ -51,7 +51,7 @@ export async function findIdToResetPassword(dto: {
   nursingNumber: string;
 }) {
   try {
-    const payload = await PayloadCms.getInstance();
+    const payload = await getPayload();
     const { username, hospitalName, nursingNumber } = dto;
     const user = await payload.find({
       collection: 'users',
@@ -87,7 +87,7 @@ export async function findIdToResetPassword(dto: {
 
 export async function resetPassword(dto: { username: string; password: string }) {
   try {
-    const payload = await PayloadCms.getInstance();
+    const payload = await getPayload();
     const { username, password } = dto;
     const user = await payload.update({
       collection: 'users',

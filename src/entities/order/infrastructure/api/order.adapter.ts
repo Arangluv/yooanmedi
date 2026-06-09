@@ -1,6 +1,6 @@
 import { LoggerV2 } from '@/shared';
 import {
-  PayloadCms,
+  getPayload,
   getTransactionContextFromStore,
   PayloadAdapterResultManager,
   PayloadCmsErrorTranslator,
@@ -12,7 +12,7 @@ import { GetOrderResponse, UpdateOrderResponse, CreateOrderResponse } from '../.
 export const OrderAdapter = () => ({
   createOrder: async (dto: CreateOrderRequestDto): Promise<CreateOrderResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const order = await payload.create({
         collection: 'order',
@@ -30,7 +30,7 @@ export const OrderAdapter = () => ({
 
   getOrderById: async (id: number): Promise<GetOrderResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const order = await payload.findByID({
         collection: 'order',
@@ -38,7 +38,6 @@ export const OrderAdapter = () => ({
         depth: 0,
         req,
       });
-      console.log(order);
       return PayloadAdapterResultManager.ok(order);
     } catch (error) {
       LoggerV2.error(error);
@@ -49,7 +48,7 @@ export const OrderAdapter = () => ({
 
   updateOrder: async (dto: UpdateOrderRequestDto): Promise<UpdateOrderResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const order = await payload.update({
         collection: 'order',

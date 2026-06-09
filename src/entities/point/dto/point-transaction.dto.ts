@@ -1,16 +1,4 @@
 import { z } from 'zod';
-import {
-  createUsePointHistoryRequestSchema,
-  createEarnPointHistoryRequestSchema,
-  createCancelUsePointHistoryRequestSchema,
-  createCancelEarnPointHistoryRequestSchema,
-} from '../schemas';
+import { createPointTransactionSchema } from '../schemas';
 
-export type CreateUsePointHistoryRequestDto = z.infer<typeof createUsePointHistoryRequestSchema>;
-export type CreateEarnPointHistoryRequestDto = z.infer<typeof createEarnPointHistoryRequestSchema>;
-export type CreateCancelUsePointHistoryRequestDto = z.infer<
-  typeof createCancelUsePointHistoryRequestSchema
->;
-export type CreateCancelEarnPointHistoryRequestDto = z.infer<
-  typeof createCancelEarnPointHistoryRequestSchema
->;
+export type CreatePointHistoryRequestDto = z.infer<typeof createPointTransactionSchema>;

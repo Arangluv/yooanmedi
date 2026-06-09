@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { APIError } from 'payload';
-import { PayloadCms } from '@/shared/server';
+import { getPayload } from '@/shared/server';
 import { CartAdapter, CartApiRepository } from '@/entities/cart/infrastructure';
 
 export async function POST(request: Request) {
   const cartRepository = new CartApiRepository(CartAdapter());
 
   try {
-    const payload = await PayloadCms.getInstance();
+    const payload = await getPayload();
     const formData = await request.formData();
 
     const id = formData.get('id') as string;

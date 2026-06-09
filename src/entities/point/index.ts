@@ -1,13 +1,20 @@
 export { PointCalculator, PointAllocator } from './libs';
 
+export { POINT_ACTION, type PointAction } from './constants';
+
 export { PointTransactionMapper } from './mapper';
 
-export { pointItemSchema, pointTransactionSchema } from './schemas';
+export {
+  pointItemSchema,
+  pointTransactionSchema,
+  createPointTransactionSchema,
+  pointItemListSchema,
+} from './schemas';
 
-export type { CreatePointTransactionDto, PointTransaction, UserReference, PointItem } from './types';
+export { type PointTransaction, type PointItem } from './types';
 
-export { useEarnPoint, useUsedPoint } from './hooks';
+export { type PointTransactionRepository } from './core';
 
-export { type IPointTransactionService } from './core';
+export { type CreatePointHistoryRequestDto } from './dto';
 
 export { default as DetailPointBenefitRow } from './ui/DetailPointBenefitRow';

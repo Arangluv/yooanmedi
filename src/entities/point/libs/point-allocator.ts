@@ -1,4 +1,4 @@
-import { DeliveryFeeManager } from '@/entities/cart'; // todo :: remove
+import { DeliveryFeeManager } from '@/entities/cart';
 
 export class PointAllocator {
   private readonly deliveryFeeManager: DeliveryFeeManager;

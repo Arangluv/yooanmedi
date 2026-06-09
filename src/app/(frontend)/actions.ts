@@ -1,11 +1,11 @@
 'use server';
 
 import { login as payloadLogin } from '@payloadcms/next/auth';
-import { PayloadCms, payloadConfig } from '@/shared/infrastructure';
+import { payloadConfig, getPayload } from '@/shared/infrastructure';
 
 export async function login(id: string, password: string) {
   try {
-    const payload = await PayloadCms.getInstance();
+    const payload = await getPayload();
 
     const user = await payload.find({
       collection: 'users',

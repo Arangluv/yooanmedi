@@ -1,7 +1,8 @@
 import { FindOption } from '@/shared';
-import { CreatePointTransactionDto, PointTransaction } from '../types';
+import { PointTransaction } from '../types';
+import { CreatePointHistoryRequestDto } from '../dto';
 
 export interface PointTransactionRepository {
-  create: (entity: CreatePointTransactionDto) => Promise<PointTransaction>;
+  create: (entity: CreatePointHistoryRequestDto) => Promise<PointTransaction>;
   findOne: (option: FindOption) => Promise<PointTransaction>;
 }

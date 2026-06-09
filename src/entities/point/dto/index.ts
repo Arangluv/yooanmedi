@@ -1,6 +1,1 @@
-export type {
-  CreateCancelEarnPointHistoryRequestDto,
-  CreateCancelUsePointHistoryRequestDto,
-  CreateEarnPointHistoryRequestDto,
-  CreateUsePointHistoryRequestDto,
-} from './point-transaction.dto';
+export type { CreatePointHistoryRequestDto } from './point-transaction.dto';

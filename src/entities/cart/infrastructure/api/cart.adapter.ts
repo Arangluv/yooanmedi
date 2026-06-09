@@ -1,5 +1,9 @@
 import { LoggerV2 } from '@/shared';
-import { PayloadAdapterResultManager, PayloadCms, PayloadCmsErrorTranslator } from '@/shared/server';
+import {
+  PayloadAdapterResultManager,
+  PayloadCmsErrorTranslator,
+  getPayload,
+} from '@/shared/server';
 import { CreateCartDto } from '../../dto';
 import { CART_ERROR_MESSAGE } from '../../constants';
 import { CartError } from '../../libs';
@@ -8,7 +12,7 @@ import { GetCartResponse, CreateCartResponse } from '../../types';
 export const CartAdapter = () => ({
   createCart: async (dto: CreateCartDto): Promise<CreateCartResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const createdCart = await payload.create({
         collection: 'carts',
         data: dto,
@@ -24,7 +28,7 @@ export const CartAdapter = () => ({
 
   getCartByUserId: async (userId: number): Promise<GetCartResponse> => {
     try {
-      const payload = await PayloadCms.getInstance();
+      const payload = await getPayload();
       const { docs: cart } = await payload.find({
         collection: 'carts',
         where: {
