@@ -4,4 +4,4 @@ export {
   PointItemFixture,
   createPointItemFixture,
 } from './fixtures';
-export { MockPointTransactionAdapter } from './mocks';
+export { MockPointTransactionAdapter, PointTransactionRepositoryMocks } from './mocks';
