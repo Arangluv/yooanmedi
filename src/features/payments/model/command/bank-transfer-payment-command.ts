@@ -1,4 +1,3 @@
-import { createPointService } from '@/features/point/infrastructure';
 import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import {
   OrderProductAdapter,
@@ -20,16 +19,27 @@ import {
   BankTransferPaymentAfterOrderContext,
   BankTransferPaymentInitContext,
 } from '../schemas/payments-context/bank-transfer.schema';
-import { PointHistory } from '@/entities/point';
-import { POINT_ACTION } from '@/entities/point';
+import {
+  PointHistory,
+  POINT_ACTION,
+  PointHistoryRepository,
+  PointCalculator,
+} from '@/entities/point';
+import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
+import { UserRepository } from '@/entities/user';
+import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 
 export class BankTransferPaymentCommand
   implements IPaymentsCommand<void>, TransactionalCommand<void>
 {
   private requestDto: BankTransferRequestDto;
+  private pointHistoryRepository: PointHistoryRepository;
+  private userRepository: UserRepository;
 
   public constructor(requestDto: BankTransferRequestDto) {
     this.requestDto = requestDto;
+    this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
+    this.userRepository = new UserApiRepository(UserAdapter());
   }
 
   public async run(): Promise<void> {
@@ -67,7 +77,6 @@ export class BankTransferPaymentCommand
   }
 
   private async processOrderList(ctx: BankTransferPaymentAfterOrderContext) {
-    const pointService = createPointService();
     const histories = [] as PointHistory[];
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {
@@ -76,7 +85,7 @@ export class BankTransferPaymentCommand
         // step 2-2. 구매 히스토리 생성
         await this.createRecentPurchasedHistory(ctx, orderListItem);
         // step 2-3. 사용 포인트 차감 히스토리 생성
-        const history = await pointService.createUsageHistory({
+        const history = await this.pointHistoryRepository.createUsageHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
@@ -87,10 +96,17 @@ export class BankTransferPaymentCommand
     );
 
     // step 3. 사용 포인트 차감
-    await pointService.updateUserPointByHistories({
+    const user = await this.userRepository.findById(ctx.userId);
+    const updatedPoint = PointCalculator.getUpdatePoint({
+      current: user.point,
+      delta: PointCalculator.getDeltaPointByHistories(histories),
+      action: POINT_ACTION.cancel_earn,
+    });
+    await this.userRepository.update({
       user: ctx.userId,
-      type: POINT_ACTION.use,
-      histories,
+      data: {
+        point: updatedPoint,
+      },
     });
   }
 

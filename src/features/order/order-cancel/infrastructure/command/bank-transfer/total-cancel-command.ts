@@ -11,8 +11,10 @@ import {
   OrderProduct,
   OrderProductFindOption,
 } from '@/entities/order-product';
-import { PointUsecase } from '@/features/point';
-import { createPointService } from '@/features/point/infrastructure';
+import { PointCalculator, PointHistoryRepository } from '@/entities/point';
+import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
+import { UserRepository } from '@/entities/user';
+import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 import { ITotalCancelCommand } from '../../../core';
 import { POINT_ACTION } from '@/entities/point';
 
@@ -20,24 +22,27 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
   private readonly order: Order;
   private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
+  private readonly pointHistoryRepository: PointHistoryRepository;
+  private readonly userRepository: UserRepository;
 
   constructor(order: Order) {
     this.order = order;
     this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
+    this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
+    this.userRepository = new UserApiRepository(UserAdapter());
   }
 
   public async run() {
     const option = OrderProductFindOption.totalCancelOrder.build(this.order.id);
     const orderProducts = await this.orderProductRepository.findMany(option);
-    const pointService = createPointService();
 
     // orderProduct update, user point action rollback
     await Promise.all(
       orderProducts.map(async (orderProduct) => {
         await this.updateOrderProductToCancelled(orderProduct.id);
-        await this.rollbackEarnPoint(pointService, orderProduct);
-        await this.rollbackUsePoint(pointService, orderProduct);
+        await this.rollbackEarnPoint(orderProduct);
+        await this.rollbackUsePoint(orderProduct);
       }),
     );
 
@@ -73,41 +78,53 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
     await this.orderRepository.update(dto);
   }
 
-  private async rollbackEarnPoint(service: PointUsecase, orderProduct: OrderProduct) {
+  private async rollbackEarnPoint(orderProduct: OrderProduct) {
     const canRollback = orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.pending;
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (canRollback && !isAlreayRollback) {
-      const history = await service.createRefundHistory({
+      const user = await this.userRepository.findById(this.order.user);
+      const history = await this.pointHistoryRepository.createRollbackHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
         type: POINT_ACTION.cancel_earn,
-        rollbackType: POINT_ACTION.earn,
+      });
+      const updatedPoint = PointCalculator.getUpdatePoint({
+        current: user.point,
+        delta: PointCalculator.getDeltaPointByHistory(history),
+        action: POINT_ACTION.cancel_earn,
       });
 
-      await service.updateUserPointByHistories({
+      await this.userRepository.update({
         user: this.order.user,
-        type: POINT_ACTION.cancel_earn,
-        histories: [history],
+        data: {
+          point: updatedPoint,
+        },
       });
     }
   }
 
-  private async rollbackUsePoint(service: PointUsecase, orderProduct: OrderProduct) {
+  private async rollbackUsePoint(orderProduct: OrderProduct) {
     const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
 
     if (!isAlreayRollback) {
-      const history = await service.createRefundHistory({
+      const user = await this.userRepository.findById(this.order.user);
+      const history = await this.pointHistoryRepository.createRollbackHistory({
         user: this.order.user,
         orderProduct: orderProduct.id,
         type: POINT_ACTION.cancel_use,
-        rollbackType: POINT_ACTION.use,
+      });
+      const updatedPoint = PointCalculator.getUpdatePoint({
+        current: user.point,
+        delta: PointCalculator.getDeltaPointByHistory(history),
+        action: POINT_ACTION.cancel_use,
       });
 
-      await service.updateUserPointByHistories({
+      await this.userRepository.update({
         user: this.order.user,
-        type: POINT_ACTION.cancel_use,
-        histories: [history],
+        data: {
+          point: updatedPoint,
+        },
       });
     }
   }

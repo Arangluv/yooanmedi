@@ -1,4 +1,3 @@
-import { createPointService } from '@/features/point/infrastructure';
 import { cancelPgPaymentAll } from '@/entities/payment'; // todo :: remove
 import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import {
@@ -29,6 +28,10 @@ import {
 import { PointCalculator, PointHistory } from '@/entities/point';
 import { PaymentsMapper } from '../../mapper';
 import { POINT_ACTION } from '@/entities/point';
+import { PointHistoryRepository } from '@/entities/point';
+import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
+import { UserRepository } from '@/entities/user';
+import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 
 export interface PGPaymentCommandResult {
   approvalDate: string;
@@ -45,9 +48,14 @@ export class PGPaymentCommand
     | PGPaymentInitContext
     | PGPaymentAfterApprovalContext
     | PGPaymentAfterOrderContext;
+  private pointRepository: PointHistoryRepository;
+  private userRepository: UserRepository;
+
   public constructor(requestDto: FormData) {
     this.requestDto = requestDto;
     this.context = null;
+    this.pointRepository = new PointHistoryApiRepository(PointHistoryAdapter());
+    this.userRepository = new UserApiRepository(UserAdapter());
   }
 
   public async run(): Promise<PGPaymentCommandResult> {
@@ -137,7 +145,6 @@ export class PGPaymentCommand
    * side effect: 주문 상품 생성, 구매 히스토리 생성, 사용 포인트 차감, 구매 포인트 적립
    */
   private async processOrderList(ctx: PGPaymentAfterOrderContext) {
-    const pointService = createPointService();
     const usePointHistoryStack = [] as PointHistory[];
     const earnPointHistoryStack = [] as PointHistory[];
 
@@ -148,7 +155,7 @@ export class PGPaymentCommand
         // step 2. 구매 히스토리 생성
         await this.createRecentPurchasedHistory(ctx, orderListItem);
         // step 3-1. 사용 포인트 차감 히스토리 생성
-        const usePointHistory = await pointService.createUsageHistory({
+        const usePointHistory = await this.pointRepository.createUsageHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: orderListItem.calculatedUsedPoint,
@@ -160,7 +167,7 @@ export class PGPaymentCommand
         // step 4-1. 구매 포인트 적립 히스토리 생성
         const pointItem = PaymentsMapper.orderListItemToPointItem(orderListItem);
         const willEarnPoint = PointCalculator.forCardWithQuantity(pointItem);
-        const earnPointHistory = await pointService.createUsageHistory({
+        const earnPointHistory = await this.pointRepository.createUsageHistory({
           user: ctx.userId,
           orderProduct: orderProduct.id,
           amount: willEarnPoint,
@@ -172,17 +179,39 @@ export class PGPaymentCommand
     );
 
     // step 5. 구매 포인트 적립
-    await pointService.updateUserPointByHistories({
-      user: ctx.userId,
-      type: POINT_ACTION.earn,
-      histories: earnPointHistoryStack,
-    });
+    await this.earnPoint(earnPointHistoryStack, ctx);
 
     // step 6. 사용 포인트 차감
-    await pointService.updateUserPointByHistories({
+    await this.usePoint(usePointHistoryStack, ctx);
+  }
+
+  private async earnPoint(stack: PointHistory[], ctx: PGPaymentAfterOrderContext) {
+    const user = await this.userRepository.findById(ctx.userId);
+    const updatedPoint = PointCalculator.getUpdatePoint({
+      current: user.point,
+      delta: PointCalculator.getDeltaPointByHistories(stack),
+      action: POINT_ACTION.earn,
+    });
+    await this.userRepository.update({
       user: ctx.userId,
-      type: POINT_ACTION.use,
-      histories: usePointHistoryStack,
+      data: {
+        point: updatedPoint,
+      },
+    });
+  }
+
+  private async usePoint(stack: PointHistory[], ctx: PGPaymentAfterOrderContext) {
+    const user = await this.userRepository.findById(ctx.userId);
+    const updatedPoint = PointCalculator.getUpdatePoint({
+      current: user.point,
+      delta: PointCalculator.getDeltaPointByHistories(stack),
+      action: POINT_ACTION.use,
+    });
+    await this.userRepository.update({
+      user: ctx.userId,
+      data: {
+        point: updatedPoint,
+      },
     });
   }
 

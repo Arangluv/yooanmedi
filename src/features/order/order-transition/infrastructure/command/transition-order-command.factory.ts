@@ -6,7 +6,8 @@ import {
 } from '@/entities/order-product/infrastructure';
 import { OrderProduct } from '@/entities/order-product';
 import { PointCalculator, PointHistory } from '@/entities/point';
-import { createPointService } from '@/features/point/infrastructure';
+import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
+import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 import { TransitionOrderCommand } from './transition-order-command';
 import { createTransitionOrderContext } from '../../lib/transition-order-context';
 import { TransitionOrderMapper } from '../../mapper';
@@ -17,17 +18,18 @@ export class TransitionOrderCommandFactory {
     const context = createTransitionOrderContext(order);
     const orderRepository = new OrderApiRepository(OrderAdapter());
     const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
+    const pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
+    const userRepository = new UserApiRepository(UserAdapter());
 
     if (context.shouldTriggerEarnPointAction) {
       const earnPoint = async (orderProducts: OrderProduct[]) => {
-        const pointService = createPointService();
         const histories = [] as PointHistory[];
         // 유저 포인트 적립 히스토리 생성
         await Promise.all(
           orderProducts.map(async (orderProduct) => {
             const pointItem = TransitionOrderMapper.orderProductToPointItem(orderProduct);
             const willEarnPoint = PointCalculator.forBank(pointItem);
-            const history = await pointService.createUsageHistory({
+            const history = await pointHistoryRepository.createUsageHistory({
               user: order.user,
               orderProduct: orderProduct.id,
               type: POINT_ACTION.earn,
@@ -38,10 +40,18 @@ export class TransitionOrderCommandFactory {
         );
 
         // 유저 포인트 업데이트
-        await pointService.updateUserPointByHistories({
+        const user = await userRepository.findById(order.user);
+        const updatedPoint = PointCalculator.getUpdatePoint({
+          current: user.point,
+          delta: PointCalculator.getDeltaPointByHistories(histories),
+          action: POINT_ACTION.cancel_earn,
+        });
+
+        await userRepository.update({
           user: order.user,
-          type: POINT_ACTION.earn,
-          histories,
+          data: {
+            point: updatedPoint,
+          },
         });
       };
 

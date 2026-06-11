@@ -4,6 +4,8 @@ export { POINT_ACTION, type PointAction } from './constants';
 
 export { PointHistoryMapper } from './mapper';
 
+export { useEarnPoint, useUsedPoint } from './hooks';
+
 export {
   pointItemSchema,
   pointHistorySchema,

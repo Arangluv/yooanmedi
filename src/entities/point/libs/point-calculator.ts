@@ -79,20 +79,4 @@ export class PointCalculator {
         return current - delta;
     }
   }
-
-  static pointEarn(current: number, delta: number): number {
-    return current + delta;
-  }
-
-  static pointUse(current: number, delta: number): number {
-    return current - delta;
-  }
-
-  static cancelEarnPoint(current: number, delta: number): number {
-    return current - delta;
-  }
-
-  static cancelUsePoint(current: number, delta: number): number {
-    return current + delta;
-  }
 }

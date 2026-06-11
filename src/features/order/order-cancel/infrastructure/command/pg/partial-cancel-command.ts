@@ -7,7 +7,10 @@ import {
   OrderProductAdapter,
 } from '@/entities/order-product/infrastructure';
 import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
-import { createPointService } from '@/features/point/infrastructure';
+import { PointCalculator, PointHistoryRepository } from '@/entities/point';
+import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
+import { UserRepository } from '@/entities/user';
+import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 import { EasyPayService, IEasyPay } from '@/entities/easypay';
 import {
   PaymentHistoryApiRepository,
@@ -23,6 +26,8 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
   private readonly easypayService: IEasyPay;
+  private readonly pointHistoryRepository: PointHistoryRepository;
+  private readonly userRepository: UserRepository;
 
   constructor(order: Order, orderProductId: number) {
     this.order = order;
@@ -30,6 +35,8 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
     this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
     this.easypayService = new EasyPayService();
+    this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
+    this.userRepository = new UserApiRepository(UserAdapter());
   }
 
   public async run() {
@@ -87,32 +94,44 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   }
 
   private async rollbackEarnPoint() {
-    const pointService = createPointService();
-    const history = await pointService.createRefundHistory({
+    const user = await this.userRepository.findById(this.order.user);
+    const history = await this.pointHistoryRepository.createRollbackHistory({
       user: this.order.user,
       orderProduct: this.targetOrderProductId,
       type: POINT_ACTION.cancel_earn,
-      rollbackType: POINT_ACTION.earn,
     });
-    await pointService.updateUserPointByHistories({
+    const updatedPoint = PointCalculator.getUpdatePoint({
+      current: user.point,
+      delta: PointCalculator.getDeltaPointByHistory(history),
+      action: POINT_ACTION.cancel_earn,
+    });
+
+    await this.userRepository.update({
       user: this.order.user,
-      type: POINT_ACTION.cancel_earn,
-      histories: [history],
+      data: {
+        point: updatedPoint,
+      },
     });
   }
 
   private async rollbackUsePoint() {
-    const pointService = createPointService();
-    const history = await pointService.createRefundHistory({
+    const user = await this.userRepository.findById(this.order.user);
+    const history = await this.pointHistoryRepository.createRollbackHistory({
       user: this.order.user,
       orderProduct: this.targetOrderProductId,
-      type: POINT_ACTION.cancel_use,
-      rollbackType: POINT_ACTION.use,
+      type: POINT_ACTION.cancel_earn,
     });
-    await pointService.updateUserPointByHistories({
+    const updatedPoint = PointCalculator.getUpdatePoint({
+      current: user.point,
+      delta: PointCalculator.getDeltaPointByHistory(history),
+      action: POINT_ACTION.cancel_earn,
+    });
+
+    await this.userRepository.update({
       user: this.order.user,
-      type: POINT_ACTION.cancel_use,
-      histories: [history],
+      data: {
+        point: updatedPoint,
+      },
     });
   }
 
