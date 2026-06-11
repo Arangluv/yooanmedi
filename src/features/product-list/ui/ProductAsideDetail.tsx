@@ -7,7 +7,7 @@ import { formatNumberWithCommas } from '@/shared';
 import { EmptyProductDetail, DetailDefaultRow, DetailDeliveryFeeRow } from '@/entities/product';
 import { useAuthStore } from '@/entities/user';
 import { RecentPurchasesTable } from '@/entities/purchased-history';
-import { DetailPointBenefitRow } from '@/features/point';
+import { DetailPointBenefitRow } from '@/entities/point';
 import { AddToCartInput } from '@/features/cart-detail';
 import useProductDetailStore from '../model/useProductDetailStore';
 

@@ -11,7 +11,8 @@ import {
   OrderProduct,
   OrderProductFindOption,
 } from '@/entities/order-product';
-import { EasyPayService, IEasyPay } from '@/entities/easypay';
+import { EasyPayRepository } from '@/entities/easypay';
+import { EasyPayAdapter, EasyPayApiRepository } from '@/entities/easypay/infrastructure';
 import { UserRepository } from '@/entities/user';
 import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
 import { PointCalculator, PointHistoryRepository } from '@/entities/point';
@@ -21,7 +22,6 @@ import {
   PaymentHistoryApiRepository,
 } from '@/entities/payment/infrastructure';
 import { ITotalCancelCommand } from '../../../core';
-import { PointUsecase } from '@/features/point';
 import { POINT_ACTION } from '@/entities/point';
 
 type CancelStrategy = 'partial' | 'total';
@@ -35,7 +35,7 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
   private readonly order: Order;
   private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
-  private readonly easypayService: IEasyPay;
+  private readonly easyPayRepository: EasyPayRepository;
   private readonly pointHistoryRepository: PointHistoryRepository;
   private readonly userRepository: UserRepository;
 
@@ -43,7 +43,7 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
     this.order = order;
     this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-    this.easypayService = new EasyPayService();
+    this.easyPayRepository = new EasyPayApiRepository(EasyPayAdapter());
     this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
     this.userRepository = new UserApiRepository(UserAdapter());
   }
@@ -152,9 +152,9 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
     const paymentHistory = await paymentHistoryRepository.findByOrderId(this.order.id);
 
     if (strategy === 'total') {
-      await this.easypayService.totalCancelRequest({ amount, pgCno: paymentHistory.pgCno });
+      await this.easyPayRepository.totalCancel({ amount, pgCno: paymentHistory.pgCno });
     } else {
-      await this.easypayService.partialCancelRequest({ amount, pgCno: paymentHistory.pgCno });
+      await this.easyPayRepository.partialCancel({ amount, pgCno: paymentHistory.pgCno });
     }
   }
 

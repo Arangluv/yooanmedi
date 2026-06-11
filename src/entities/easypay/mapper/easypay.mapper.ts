@@ -21,19 +21,40 @@ import {
   EasyPayRegisterTransactionRequestEntity,
   EasyPayPaymentApprovalRequestEntity,
   EasyPayPaymentCancelRequestEntity,
+  EasyPayPaymentAuthenticationResponse,
 } from '../types';
 import {
   EasyPayPaymentApprovalSchemas,
   EasyPayRegistrationSchemas,
   EasyPayPaymentCancelSchemas,
+  EasyPayPaymentAuthenticationSchemas,
 } from '../schemas';
 import {
   EasyPayRegisterTransactionRequestDto,
   EasyPayApprovePaymentRequestDto,
   EasyPayPaymentCancelRequestDto,
+  EasyPayPaymentAuthenticationDto,
 } from '../dto';
 
 export class EasyPayMapper {
+  static toAuthenticationDto(
+    response: EasyPayPaymentAuthenticationResponse,
+  ): EasyPayPaymentAuthenticationDto {
+    return ZodSchemaParser.safeParseOrThrow(EasyPayPaymentAuthenticationSchemas.dto, {
+      data: {
+        authorizationId: response.authorizationId,
+        shopOrderNo: response.shopOrderNo,
+        deliveryRequest: response.shopValue1,
+        orderList: JSON.parse(response.shopValue2),
+        usedPoint: parseInt(response.shopValue3),
+        userId: parseInt(response.shopValue4),
+        paymentMethod: response.shopValue5,
+        minOrderPrice: parseInt(response.shopValue6),
+      } as EasyPayPaymentAuthenticationDto,
+      errorMsg: '잘못된 결제인증 정보입니다',
+    });
+  }
+
   static toRegistrationRequestEntity(
     dto: EasyPayRegisterTransactionRequestDto,
   ): EasyPayRegisterTransactionRequestEntity {

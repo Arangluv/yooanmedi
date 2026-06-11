@@ -8,7 +8,8 @@ import {
   PaymentHistoryApiRepository,
   PaymentHistoryAdapter,
 } from '@/entities/payment/infrastructure';
-import { EasyPayService } from '@/entities/easypay/model/easypay.service';
+import { EasyPayRepository } from '@/entities/easypay';
+import { EasyPayAdapter, EasyPayApiRepository } from '@/entities/easypay/infrastructure';
 import {
   PurchasedHistoryApiRepository,
   PurchasedHistoryAdapter,
@@ -32,6 +33,7 @@ import { PointHistoryRepository } from '@/entities/point';
 import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
 import { UserRepository } from '@/entities/user';
 import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
+import { EasyPayMapper } from '@/entities/easypay/mapper';
 
 export interface PGPaymentCommandResult {
   approvalDate: string;
@@ -50,10 +52,12 @@ export class PGPaymentCommand
     | PGPaymentAfterOrderContext;
   private pointRepository: PointHistoryRepository;
   private userRepository: UserRepository;
+  private easyPayRepository: EasyPayRepository;
 
   public constructor(requestDto: FormData) {
     this.requestDto = requestDto;
     this.context = null;
+    this.easyPayRepository = new EasyPayApiRepository(EasyPayAdapter());
     this.pointRepository = new PointHistoryApiRepository(PointHistoryAdapter());
     this.userRepository = new UserApiRepository(UserAdapter());
   }
@@ -109,14 +113,12 @@ export class PGPaymentCommand
       data[key as string] = value;
     });
 
-    const easyPayService = new EasyPayService();
-    return easyPayService.validateAndParseRegisterTransactionResult(data);
+    return EasyPayMapper.toAuthenticationDto(data);
   }
 
   private async approvePayment(ctx: PGPaymentInitContext) {
-    const easyPayService = new EasyPayService();
     const dto = PaymentDto.approvePayment(ctx);
-    const approvalResult = await easyPayService.approvePayment(dto);
+    const approvalResult = await this.easyPayRepository.approvePayment(dto);
 
     const afterApprovalCtx = {
       ...ctx,

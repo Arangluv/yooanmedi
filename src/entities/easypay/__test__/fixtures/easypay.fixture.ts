@@ -1,12 +1,15 @@
+import { PAYMENTS_METHOD } from '@/shared';
 import {
   EasyPayRegisterTransactionRequestDto,
   EasyPayApprovePaymentRequestDto,
   EasyPayPaymentCancelRequestDto,
+  EasyPayPaymentAuthenticationDto,
 } from '../../dto';
 import {
   EasyPayRegisterTransactionApiSuccessResponse,
   EasyPayPaymentApprovalApiSuccessResponse,
   EasyPayPaymentCancelApiSuccessResponse,
+  EasyPayPaymentAuthenticationResponse,
 } from '../../types';
 import { EasyPayFixtureUtil } from './easypay.fixture.util';
 
@@ -43,12 +46,25 @@ export const EasyPayFixtures = {
       amount: 32000,
     } as EasyPayPaymentCancelRequestDto,
   },
+
   easyPayResponse: {
     register: {
       resCd: '0000',
       resMsg: '성공',
       authPageUrl: 'http://testurl.com',
     } as EasyPayRegisterTransactionApiSuccessResponse,
+
+    auth: {
+      authorizationId: EasyPayFixtureUtil.generateAuthorizationId(),
+      shopOrderNo: EasyPayFixtureUtil.generateShopOrderNo(),
+      shopValue1: '테스트요청사항',
+      shopValue2:
+        '[{"product":{"id":1684,"price":2000},"quantity":1},{"product":{"id":1683,"price":2000},"quantity":1},{"product":{"id":1681,"price":2000},"quantity":1}]',
+      shopValue3: '1000', // usedPoint
+      shopValue4: '3', // userId,
+      shopValue5: PAYMENTS_METHOD.credit_card,
+      shopValue6: '30000', // minOrderPrice
+    } as EasyPayPaymentAuthenticationResponse,
 
     approve: {
       resCd: '0000',

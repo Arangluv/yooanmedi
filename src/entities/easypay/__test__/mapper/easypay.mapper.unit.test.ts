@@ -5,10 +5,22 @@ import {
   EasyPayRegistrationSchemas,
   EasyPayPaymentApprovalSchemas,
   EasyPayPaymentCancelSchemas,
+  EasyPayPaymentAuthenticationSchemas
 } from '../../schemas';
 import { EASYPAY_CONFIG } from '@/shared';
 
 describe('EasyPayMapper', () => {
+  it('[toAuthenticationDto] response가 dto로 파싱된다', () => {
+    // Given
+    const response = EasyPayFixtures.easyPayResponse;
+
+    // When
+    const result = EasyPayMapper.toAuthenticationDto(response.auth);
+
+    // Then
+    expect(result).toEqual(expect.schemaMatching(EasyPayPaymentAuthenticationSchemas.dto));
+  });
+
   it('[toRegistrationRequestEntity] requestDto가 requestEntity로 파싱된다', () => {
     // Given
     const dto = EasyPayFixtures.dto.register;

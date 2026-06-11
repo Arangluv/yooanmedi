@@ -14,6 +14,7 @@ export type {
   EasyPayRegisterTransactionApiFailureResponse,
   EasyPayRegisterTransactionApiResponse,
   EasyPayRegisterTransactionResponse,
+  EasyPayPaymentAuthenticationResponse,
   EasyPayPaymentApprovalApiResponse,
   EasyPayPaymentApprovalApiSuccessResponse,
   EasyPayPaymentCancelApiResponse,

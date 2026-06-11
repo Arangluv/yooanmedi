@@ -11,7 +11,8 @@ import { PointCalculator, PointHistoryRepository } from '@/entities/point';
 import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
 import { UserRepository } from '@/entities/user';
 import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
-import { EasyPayService, IEasyPay } from '@/entities/easypay';
+import { EasyPayRepository } from '@/entities/easypay';
+import { EasyPayAdapter, EasyPayApiRepository } from '@/entities/easypay/infrastructure';
 import {
   PaymentHistoryApiRepository,
   PaymentHistoryAdapter,
@@ -25,7 +26,7 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
   private readonly targetOrderProductId: number;
   private readonly orderRepository: OrderRepository;
   private readonly orderProductRepository: OrderProductRepository;
-  private readonly easypayService: IEasyPay;
+  private readonly easyPayRepository: EasyPayRepository;
   private readonly pointHistoryRepository: PointHistoryRepository;
   private readonly userRepository: UserRepository;
 
@@ -34,7 +35,7 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
     this.targetOrderProductId = orderProductId;
     this.orderRepository = new OrderApiRepository(OrderAdapter());
     this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-    this.easypayService = new EasyPayService();
+    this.easyPayRepository = new EasyPayApiRepository(EasyPayAdapter());
     this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
     this.userRepository = new UserApiRepository(UserAdapter());
   }
@@ -140,7 +141,7 @@ export class PGPartialCancelCommand implements IPartialCancelCommand {
     const orderProduct = await this.orderProductRepository.findById(this.targetOrderProductId);
     const paymentHistory = await paymentHistoryRepository.findByOrderId(this.order.id);
 
-    await this.easypayService.partialCancelRequest({
+    await this.easyPayRepository.partialCancel({
       amount: orderProduct.totalAmount,
       pgCno: paymentHistory.pgCno,
     });

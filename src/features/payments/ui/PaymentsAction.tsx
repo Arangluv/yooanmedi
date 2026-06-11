@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button, NumberInput, Divider } from '@heroui/react';
 import { ChevronRight } from 'lucide-react';
 import { usePrice } from '@/entities/price';
-import { useEarnPoint, useUsedPoint } from '@/features/point';
+import { useEarnPoint, useUsedPoint } from '@/entities/point';
 import { CartItem } from '@/entities/cart-item';
 import { useSiteMetaStore, formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';

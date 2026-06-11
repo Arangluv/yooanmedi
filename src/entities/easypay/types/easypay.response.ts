@@ -4,6 +4,7 @@ import {
   EasyPayRegistrationSchemas,
   EasyPayPaymentApprovalSchemas,
   EasyPayPaymentCancelSchemas,
+  EasyPayPaymentAuthenticationSchemas,
 } from '../schemas';
 import {
   EasyPayRegisterTransactionResult,
@@ -41,9 +42,9 @@ export type EasyPayRegisterTransactionResponse =
   EasyPayAdapterResult<EasyPayRegisterTransactionResult>;
 
 // ─── 결제등록 검증 ───────────────────────────────────────────────
-// export type EasyPayPaymentAuthenticationResponse = z.infer<
-//   typeof EasyPayPaymentAuthenticationSchemas.response
-// >;
+export type EasyPayPaymentAuthenticationResponse = z.infer<
+  typeof EasyPayPaymentAuthenticationSchemas.response
+>;
 
 // ─── 결제승인 요청 ───────────────────────────────────────────────
 export type EasyPayPaymentApprovalApiSuccessResponse = z.infer<

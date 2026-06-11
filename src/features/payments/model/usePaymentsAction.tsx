@@ -3,9 +3,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { CartItem } from '@/entities/cart-item';
 import type { User } from '@/entities/user';
-import { RegisterTransactionRequestDto } from '@/entities/easypay/model/schemas/easypay.register-transaction.schema';
+import { registerTransactionApi, EasyPayRegisterTransactionRequestDto } from '@/entities/easypay';
 import { openPaymentsPopup } from '../lib/open-payments-popup';
-import { registerTransaction } from '@/entities/easypay/api/easypay.api';
 
 interface UsePaymentsActionProps {
   cartItems: CartItem[];
@@ -46,20 +45,16 @@ const usePaymentsAction = ({
       userId: user.id,
       minOrderPrice,
     },
-  } as RegisterTransactionRequestDto;
+  } as EasyPayRegisterTransactionRequestDto;
 
   const { mutate } = useMutation({
-    mutationFn: () => registerTransaction(dto),
+    mutationFn: () => registerTransactionApi(dto),
     onSuccess: (actionResult) => {
       if (actionResult.isSuccess) {
         openPaymentsPopup(actionResult.data.authPageUrl);
       } else {
         alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요');
       }
-    },
-    onError: (error) => {
-      // todo :: mudation onError 처리 정리하기
-      alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요');
     },
   });
 
