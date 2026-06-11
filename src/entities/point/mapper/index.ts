@@ -1,1 +1,1 @@
-export { PointTransactionMapper } from './point-transaction.mapper';
+export { PointHistoryMapper } from './point-history.mapper';

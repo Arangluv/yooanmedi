@@ -7,13 +7,11 @@ import { formatNumberWithCommas } from '@/shared';
 import useProductDetailStore from '../model/useProductDetailStore';
 import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
 import { AddToCartButton } from '@/features/cart-detail';
-import { PointCalculator, PointTransactionMapper } from '@/entities/point';
+import { PointCalculator, PointHistoryMapper } from '@/entities/point';
 
 const ProductItemCard = ({ product }: { product: Product }) => {
   const { setClieckedProduct } = useProductDetailStore();
-  const maxPoint = PointCalculator.maxForItem(
-    PointTransactionMapper.productToPointItem(product, 1),
-  );
+  const maxPoint = PointCalculator.maxForItem(PointHistoryMapper.productToPointItem(product, 1));
 
   return (
     <div className="flex w-full flex-col">

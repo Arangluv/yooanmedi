@@ -1,11 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PointFeatureFixture } from '../fixtures';
 import { PointFeatureMapper } from '../../mapper';
-import {
-  createPointTransactionSchema,
-  pointItemSchema,
-  pointItemListSchema,
-} from '@/entities/point';
+import { createPointHistorySchema, pointItemSchema, pointItemListSchema } from '@/entities/point';
 import { updateUserSchema } from '@/entities/user';
 import { createProductFixture } from '@/entities/product/__test__';
 import { createCartItemFixture } from '@/entities/cart-item/__test__';
@@ -21,7 +17,7 @@ describe('PointFeatureMapper', () => {
       const result = PointFeatureMapper.refundReqtoDomainRequestDto(dto, amount);
 
       // Then
-      expect(result).toEqual(expect.schemaMatching(createPointTransactionSchema));
+      expect(result).toEqual(expect.schemaMatching(createPointHistorySchema));
     });
   });
 
@@ -34,7 +30,7 @@ describe('PointFeatureMapper', () => {
       const result = PointFeatureMapper.useageReqtoDomain(dto);
 
       // Then
-      expect(result).toEqual(expect.schemaMatching(createPointTransactionSchema));
+      expect(result).toEqual(expect.schemaMatching(createPointHistorySchema));
     });
   });
 

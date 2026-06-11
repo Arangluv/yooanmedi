@@ -115,7 +115,7 @@ describe('PG사 결제 통합테스트', () => {
         expect(productIds).toEqual(expect.arrayContaining(findedHistoryIds));
 
         // 4. 포인트 차감 히스토리를 생성했는가? -> 유저 + orderProductId
-        const { docs: usePointTransactionHistory } = await (payload as BasePayload).find({
+        const { docs: usePointHistoryHistory } = await (payload as BasePayload).find({
           collection: 'point-transaction',
           select: {
             amount: true,
@@ -135,15 +135,15 @@ describe('PG사 결제 통합테스트', () => {
             transactionID: transactionID as string,
           },
         });
-        const recordedPointSum = usePointTransactionHistory.reduce(
+        const recordedPointSum = usePointHistoryHistory.reduce(
           (sum, history) => sum + (typeof history.amount === 'number' ? history.amount : 0),
           0,
         );
-        expect(usePointTransactionHistory.length).toEqual(orderList.length);
+        expect(usePointHistoryHistory.length).toEqual(orderList.length);
         expect(recordedPointSum).toEqual(usedPoint);
 
         // 4. 포인트 적립 히스토리를 생성했는가? -> 유저 + orderProductId
-        const { docs: earnPointTransactionHistory } = await (payload as BasePayload).find({
+        const { docs: earnPointHistoryHistory } = await (payload as BasePayload).find({
           collection: 'point-transaction',
           select: {
             amount: true,
@@ -163,7 +163,7 @@ describe('PG사 결제 통합테스트', () => {
             transactionID: transactionID as string,
           },
         });
-        expect(earnPointTransactionHistory.length).toEqual(orderList.length);
+        expect(earnPointHistoryHistory.length).toEqual(orderList.length);
 
         // 5. 유저 포인트가 차감되었는가?
         const afterPaymentsUser = await (payload as BasePayload).findByID({
@@ -272,7 +272,7 @@ describe('PG사 결제 통합테스트', () => {
       expect(recentPurchasHistoryDocs.length).toBe(0);
 
       // 포인트 사용 히스토리가 만들어지지 않아야한다.
-      const { docs: usePointTransactionHistoryDocs } = await payload.find({
+      const { docs: usePointHistoryHistoryDocs } = await payload.find({
         collection: 'point-transaction',
         where: {
           type: {
@@ -283,10 +283,10 @@ describe('PG사 결제 통합테스트', () => {
           },
         },
       });
-      expect(usePointTransactionHistoryDocs.length).toBe(0);
+      expect(usePointHistoryHistoryDocs.length).toBe(0);
 
       // 포인트 적립 히스토리가 만들어지지 않아야한다.
-      const { docs: earnPointTransactionHistoryDocs } = await payload.find({
+      const { docs: earnPointHistoryHistoryDocs } = await payload.find({
         collection: 'point-transaction',
         where: {
           type: {
@@ -297,7 +297,7 @@ describe('PG사 결제 통합테스트', () => {
           },
         },
       });
-      expect(earnPointTransactionHistoryDocs.length).toBe(0);
+      expect(earnPointHistoryHistoryDocs.length).toBe(0);
 
       // 유저의 포인트가 초기 포인트와 동일해야한다.
       const afterPaymentsUser = await payload.findByID({

@@ -20,7 +20,7 @@ import {
   BankTransferPaymentAfterOrderContext,
   BankTransferPaymentInitContext,
 } from '../schemas/payments-context/bank-transfer.schema';
-import { PointTransaction } from '@/entities/point';
+import { PointHistory } from '@/entities/point';
 import { POINT_ACTION } from '@/entities/point';
 
 export class BankTransferPaymentCommand
@@ -68,7 +68,7 @@ export class BankTransferPaymentCommand
 
   private async processOrderList(ctx: BankTransferPaymentAfterOrderContext) {
     const pointService = createPointService();
-    const histories = [] as PointTransaction[];
+    const histories = [] as PointHistory[];
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {
         // step 2-1. 주문 상품 생성

@@ -1,1 +1,1 @@
-export { PointTransactionApiRepository } from './point-transaction.api.repository';
+export { PointHistoryApiRepository } from './point-history.api.repository';

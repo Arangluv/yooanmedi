@@ -1,1 +1,1 @@
-export { PointTransactionError } from './point-transaction.error';
+export { PointHistoryError } from './point-transaction.error';

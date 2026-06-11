@@ -5,19 +5,22 @@ import {
   PayloadCmsErrorTranslator,
   PayloadAdapterResultManager,
 } from '@/shared/server';
-import { CreatePointHistoryRequestDto } from '../../dto';
-import { CreatePointTransactionResponse, GetPointTransactionResponse } from '../../types';
+import {
+  CreatePointHistoryEntity,
+  CreatePointHistoryResponse,
+  GetPointHistoryResponse,
+} from '../../types';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../../constants';
-import { PointTransactionError } from '../../libs';
+import { PointHistoryError } from '../../libs';
 
-export const PointTransactionAdapter = () => ({
-  create: async (dto: CreatePointHistoryRequestDto): Promise<CreatePointTransactionResponse> => {
+export const PointHistoryAdapter = () => ({
+  create: async (entity: CreatePointHistoryEntity): Promise<CreatePointHistoryResponse> => {
     try {
       const payload = await getPayload();
       const req = getTransactionContextFromStore();
       const result = await payload.create({
         collection: 'point-transaction',
-        data: dto,
+        data: entity,
         depth: 0,
         req,
       });
@@ -33,7 +36,7 @@ export const PointTransactionAdapter = () => ({
     }
   },
 
-  findOne: async (option: FindOption): Promise<GetPointTransactionResponse> => {
+  findOne: async (option: FindOption): Promise<GetPointHistoryResponse> => {
     try {
       const payload = await getPayload();
       const req = getTransactionContextFromStore();
@@ -45,7 +48,7 @@ export const PointTransactionAdapter = () => ({
       });
 
       if (pointTransaction.length > 1) {
-        const error = PointTransactionError.invalidFindOption(option);
+        const error = PointHistoryError.invalidFindOption(option);
         throw error;
       }
 

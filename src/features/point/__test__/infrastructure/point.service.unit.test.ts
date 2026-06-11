@@ -1,9 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createUserFixture, UserRepositoryMocks } from '@/entities/user/__test__';
-import {
-  createPointTransactionFixture,
-  PointTransactionRepositoryMocks,
-} from '@/entities/point/__test__';
+import { createPointHistoryFixture, PointHistoryRepositoryMocks } from '@/entities/point/__test__';
 import { PointService, PointServiceDependencies } from '../../infrastructure/point.service';
 import {
   CreatePointRefundHistoryRequestDto,
@@ -19,7 +16,7 @@ describe('PointService', () => {
 
     beforeEach(() => {
       const userRepository = UserRepositoryMocks.createSuccess();
-      const pointRepository = PointTransactionRepositoryMocks.createSuccess();
+      const pointRepository = PointHistoryRepositoryMocks.createSuccess();
 
       dependencies = {
         repository: {
@@ -74,7 +71,7 @@ describe('PointService', () => {
         rollbackType: 'USE',
       } as CreatePointRefundHistoryRequestDto;
       vi.mocked(dependencies.repository.point.findOne).mockResolvedValue(
-        createPointTransactionFixture({
+        createPointHistoryFixture({
           type: 'USE',
           amount: rollbackAmount,
         }),
@@ -103,7 +100,7 @@ describe('PointService', () => {
         rollbackType: 'EARN',
       } as CreatePointRefundHistoryRequestDto;
       vi.mocked(dependencies.repository.point.findOne).mockResolvedValue(
-        createPointTransactionFixture({
+        createPointHistoryFixture({
           type: 'EARN',
           amount: rollbackAmount,
         }),
@@ -128,9 +125,9 @@ describe('PointService', () => {
         user: 1,
         type: 'USE',
         histories: [
-          createPointTransactionFixture({ id: 1, amount: 100 }),
-          createPointTransactionFixture({ id: 1, amount: 200 }),
-          createPointTransactionFixture({ id: 1, amount: 300 }),
+          createPointHistoryFixture({ id: 1, amount: 100 }),
+          createPointHistoryFixture({ id: 1, amount: 200 }),
+          createPointHistoryFixture({ id: 1, amount: 300 }),
         ],
       } as UpdateUserPointRequestDto;
 
@@ -153,7 +150,7 @@ describe('PointService', () => {
 
     beforeEach(() => {
       const userRepository = UserRepositoryMocks.createError();
-      const pointRepository = PointTransactionRepositoryMocks.createError();
+      const pointRepository = PointHistoryRepositoryMocks.createError();
 
       dependencies = {
         repository: {
@@ -196,9 +193,9 @@ describe('PointService', () => {
         user: 1,
         type: 'USE',
         histories: [
-          createPointTransactionFixture({ id: 1, amount: 100 }),
-          createPointTransactionFixture({ id: 1, amount: 200 }),
-          createPointTransactionFixture({ id: 1, amount: 300 }),
+          createPointHistoryFixture({ id: 1, amount: 100 }),
+          createPointHistoryFixture({ id: 1, amount: 200 }),
+          createPointHistoryFixture({ id: 1, amount: 300 }),
         ],
       } as UpdateUserPointRequestDto;
       vi.mocked(dependencies.repository.user.findById).mockResolvedValue(
@@ -217,9 +214,9 @@ describe('PointService', () => {
         user: 1,
         type: 'USE',
         histories: [
-          createPointTransactionFixture({ id: 1, amount: 100 }),
-          createPointTransactionFixture({ id: 1, amount: 200 }),
-          createPointTransactionFixture({ id: 1, amount: 300 }),
+          createPointHistoryFixture({ id: 1, amount: 100 }),
+          createPointHistoryFixture({ id: 1, amount: 200 }),
+          createPointHistoryFixture({ id: 1, amount: 300 }),
         ],
       } as UpdateUserPointRequestDto;
 

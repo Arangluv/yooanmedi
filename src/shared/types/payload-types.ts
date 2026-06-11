@@ -77,7 +77,7 @@ export interface Config {
     order: Order;
     'order-product': OrderProduct;
     payment: Payment;
-    'point-transaction': PointTransaction;
+    'point-transaction': PointHistory;
     product: Product;
     'product-category': ProductCategory;
     'recent-purchased-history': RecentPurchasedHistory;
@@ -105,12 +105,16 @@ export interface Config {
     order: OrderSelect<false> | OrderSelect<true>;
     'order-product': OrderProductSelect<false> | OrderProductSelect<true>;
     payment: PaymentSelect<false> | PaymentSelect<true>;
-    'point-transaction': PointTransactionSelect<false> | PointTransactionSelect<true>;
+    'point-transaction': PointHistorySelect<false> | PointHistorySelect<true>;
     product: ProductSelect<false> | ProductSelect<true>;
     'product-category': ProductCategorySelect<false> | ProductCategorySelect<true>;
-    'recent-purchased-history': RecentPurchasedHistorySelect<false> | RecentPurchasedHistorySelect<true>;
+    'recent-purchased-history':
+      | RecentPurchasedHistorySelect<false>
+      | RecentPurchasedHistorySelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
-    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-locked-documents':
+      | PayloadLockedDocumentsSelect<false>
+      | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
@@ -385,7 +389,13 @@ export interface OrderProduct {
   id: number;
   product: number | Product;
   order: number | Order;
-  orderProductStatus: 'pending' | 'preparing' | 'shipping' | 'delivered' | 'cancel_request' | 'cancelled';
+  orderProductStatus:
+    | 'pending'
+    | 'preparing'
+    | 'shipping'
+    | 'delivered'
+    | 'cancel_request'
+    | 'cancelled';
   productNameSnapshot: string;
   priceSnapshot: number;
   totalAmount: number;
@@ -413,7 +423,7 @@ export interface Payment {
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "point-transaction".
  */
-export interface PointTransaction {
+export interface PointHistory {
   id: number;
   user?: (number | null) | User;
   orderProduct?: (number | null) | OrderProduct;
@@ -485,7 +495,7 @@ export interface PayloadLockedDocument {
       } | null)
     | ({
         relationTo: 'point-transaction';
-        value: number | PointTransaction;
+        value: number | PointHistory;
       } | null)
     | ({
         relationTo: 'product';
@@ -691,7 +701,7 @@ export interface PaymentSelect<T extends boolean = true> {
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "point-transaction_select".
  */
-export interface PointTransactionSelect<T extends boolean = true> {
+export interface PointHistorySelect<T extends boolean = true> {
   user?: T;
   orderProduct?: T;
   type?: T;
@@ -1002,7 +1012,6 @@ export interface PrivacyPolicySelect<T extends boolean = true> {
 export interface Auth {
   [k: string]: unknown;
 }
-
 
 declare module 'payload' {
   export interface GeneratedTypes extends Config {}

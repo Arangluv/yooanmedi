@@ -1,14 +1,14 @@
 import { CartItem } from '@/entities/cart-item/@x/point';
 import { PointCalculator } from '@/entities/point';
-import { PointTransactionMapper } from '../mapper';
+import { PointHistoryMapper } from '../mapper';
 
 const DetailPointBenefitRow = ({ product }: Pick<CartItem, 'product'>) => {
   const SINGLE_PRODUCT_QUANTITY = 1;
   const willEarnPointForCard = PointCalculator.forCard(
-    PointTransactionMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
+    PointHistoryMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
   );
   const willEarnPointForBankTransfer = PointCalculator.forCard(
-    PointTransactionMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
+    PointHistoryMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
   );
 
   if (willEarnPointForCard === 0 && willEarnPointForBankTransfer === 0) {

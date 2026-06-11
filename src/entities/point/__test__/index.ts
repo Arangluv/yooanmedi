@@ -1,7 +1,7 @@
 export {
-  PointTransactionFixtures,
-  createPointTransactionFixture,
+  PointHistoryFixtures,
+  createPointHistoryFixture,
   PointItemFixture,
   createPointItemFixture,
 } from './fixtures';
-export { MockPointTransactionAdapter, PointTransactionRepositoryMocks } from './mocks';
+export { MockPointHistoryAdapter, PointHistoryRepositoryMocks } from './mocks';

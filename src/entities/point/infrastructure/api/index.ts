@@ -1,1 +1,1 @@
-export { PointTransactionAdapter } from './point-transaction.adapter';
+export { PointHistoryAdapter } from './point-history.adapter';

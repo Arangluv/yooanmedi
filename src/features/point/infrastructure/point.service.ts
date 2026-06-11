@@ -1,6 +1,6 @@
 import { LoggerV2 } from '@/shared';
 import { UserRepository } from '@/entities/user';
-import { POINT_ACTION, PointTransactionRepository } from '@/entities/point';
+import { POINT_ACTION, PointHistoryRepository } from '@/entities/point';
 import {
   CreatePointRefundHistoryRequestDto,
   CreatePointUsageHistoryRequestDto,
@@ -18,7 +18,7 @@ import {
 export interface PointServiceDependencies {
   repository: {
     user: UserRepository;
-    point: PointTransactionRepository;
+    point: PointHistoryRepository;
   };
 }
 

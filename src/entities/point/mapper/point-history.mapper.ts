@@ -1,18 +1,37 @@
 import { PAYMENTS_METHOD, ZodSchemaParser, SchemaParserDto } from '@/shared';
-import { PointItem, PointTransaction, PointTransactionEntity } from '../types';
-import { pointItemListSchema, pointItemSchema, pointTransactionSchema } from '../schemas';
+import { PointItem, PointHistory, PointHistoryEntity, CreatePointHistoryEntity } from '../types';
+import { pointItemListSchema, pointItemSchema, pointHistorySchema } from '../schemas';
 import { Product } from '@/entities/product/@x/point';
 import { CartItem } from '@/entities/cart-item/@x/point';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../constants';
+import { CreateRollbackPointHistoryRequestDto } from '../dto';
 
-export class PointTransactionMapper {
-  static entityToDomain(data: PointTransactionEntity): PointTransaction {
+export class PointHistoryMapper {
+  static toRequestEntity({
+    dto,
+    rollbackHistory,
+  }: {
+    dto: CreateRollbackPointHistoryRequestDto;
+    rollbackHistory: PointHistory;
+  }): CreatePointHistoryEntity {
+    return ZodSchemaParser.safeParseOrThrow(pointHistorySchema, {
+      data: {
+        user: dto.user,
+        type: dto.type,
+        orderProduct: dto.orderProduct,
+        amount: rollbackHistory.amount,
+      } as CreatePointHistoryEntity,
+      errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.create,
+    });
+  }
+
+  static entityToDomain(data: PointHistoryEntity): PointHistory {
     const schemaDto: SchemaParserDto = {
       data,
       errorMsg: POINT_TRANSACTION_ERROR_MESSAGE.create,
     };
 
-    return ZodSchemaParser.safeParseOrThrow(pointTransactionSchema, schemaDto);
+    return ZodSchemaParser.safeParseOrThrow(pointHistorySchema, schemaDto);
   }
 
   static productToPointItem(product: Product, quantity: number): PointItem {

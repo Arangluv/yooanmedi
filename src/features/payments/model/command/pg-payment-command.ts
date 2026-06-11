@@ -26,7 +26,7 @@ import {
   PGPaymentAfterOrderContext,
   PGPaymentInitContext,
 } from '../schemas/payments-context/pg.schema';
-import { PointCalculator, PointTransaction } from '@/entities/point';
+import { PointCalculator, PointHistory } from '@/entities/point';
 import { PaymentsMapper } from '../../mapper';
 import { POINT_ACTION } from '@/entities/point';
 
@@ -138,8 +138,8 @@ export class PGPaymentCommand
    */
   private async processOrderList(ctx: PGPaymentAfterOrderContext) {
     const pointService = createPointService();
-    const usePointHistoryStack = [] as PointTransaction[];
-    const earnPointHistoryStack = [] as PointTransaction[];
+    const usePointHistoryStack = [] as PointHistory[];
+    const earnPointHistoryStack = [] as PointHistory[];
 
     await Promise.all(
       ctx.orderList.map(async (orderListItem) => {

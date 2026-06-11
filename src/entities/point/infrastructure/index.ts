@@ -1,2 +1,2 @@
-export { PointTransactionApiRepository } from './repository';
-export { PointTransactionAdapter } from './api';
+export { PointHistoryApiRepository } from './repository';
+export { PointHistoryAdapter } from './api';

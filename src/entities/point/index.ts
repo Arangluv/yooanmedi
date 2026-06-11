@@ -2,19 +2,22 @@ export { PointCalculator, PointAllocator } from './libs';
 
 export { POINT_ACTION, type PointAction } from './constants';
 
-export { PointTransactionMapper } from './mapper';
+export { PointHistoryMapper } from './mapper';
 
 export {
   pointItemSchema,
-  pointTransactionSchema,
-  createPointTransactionSchema,
+  pointHistorySchema,
+  CreatePointSchema,
   pointItemListSchema,
 } from './schemas';
 
-export { type PointTransaction, type PointItem } from './types';
+export { type PointHistory, type PointItem } from './types';
 
-export { type PointTransactionRepository } from './core';
+export { type PointHistoryRepository } from './core';
 
-export { type CreatePointHistoryRequestDto } from './dto';
+export {
+  type CreateRollbackPointHistoryRequestDto,
+  type CreateUsagePointHistoryRequestDto,
+} from './dto';
 
 export { default as DetailPointBenefitRow } from './ui/DetailPointBenefitRow';

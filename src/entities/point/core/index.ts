@@ -1,1 +1,1 @@
-export { type PointTransactionRepository } from './point-transaction.repository';
+export { type PointHistoryRepository } from './point-history.repository';

@@ -1,2 +1,2 @@
-export { MockPointTransactionAdapter } from './point-transaction-adapter.mock';
-export { PointTransactionRepositoryMocks } from './point-transaction-repository.mock';
+export { MockPointHistoryAdapter } from './point-history-adapter.mock';
+export { PointHistoryRepositoryMocks } from './point-history-repository.mock';

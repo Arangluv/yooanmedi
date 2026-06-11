@@ -1,4 +1,4 @@
-import { createPointTransactionFixture } from '@/entities/point/__test__';
+import { createPointHistoryFixture } from '@/entities/point/__test__';
 import {
   CreatePointRefundHistoryRequestDto,
   CreatePointUsageHistoryRequestDto,
@@ -25,9 +25,9 @@ export const PointFeatureFixture = {
     user: 3,
     type: 'USE',
     histories: [
-      createPointTransactionFixture({ amount: 10 }),
-      createPointTransactionFixture({ amount: 20 }),
-      createPointTransactionFixture({ amount: 32 }),
+      createPointHistoryFixture({ amount: 10 }),
+      createPointHistoryFixture({ amount: 20 }),
+      createPointHistoryFixture({ amount: 32 }),
     ],
   } as UpdateUserPointRequestDto,
 };

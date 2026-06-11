@@ -14,19 +14,15 @@
       ]
     },
     {
-      "name": "refactor.cart",
+      "name": "refactor-point",
       "paths": [
         {
-          "path": "src/entities/cartv2",
-          "alias": "entity.cartv2"
+          "path": "src/entities/point",
+          "alias": "entity.point"
         },
         {
-          "path": "src/entities/cart",
-          "alias": "entity.cart"
-        },
-        {
-          "path": "src/features/cart",
-          "alias": "feature.cart"
+          "path": "src/features/point",
+          "alias": "feature.point"
         }
       ]
     }

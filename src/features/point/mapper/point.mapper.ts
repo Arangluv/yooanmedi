@@ -1,6 +1,6 @@
 import { ZodSchemaParser, SchemaParserDto, PAYMENTS_METHOD } from '@/shared';
 import {
-  createPointTransactionSchema,
+  createPointHistorySchema,
   CreatePointHistoryRequestDto,
   pointItemSchema,
   pointItemListSchema,
@@ -31,7 +31,7 @@ export class PointFeatureMapper {
       errorMsg: POINT_FEATURE_ERROR_MESSAGE.invalidData,
     } as SchemaParserDto;
 
-    return ZodSchemaParser.safeParseOrThrow(createPointTransactionSchema, schemaDto);
+    return ZodSchemaParser.safeParseOrThrow(createPointHistorySchema, schemaDto);
   }
 
   static useageReqtoDomain(dto: CreatePointUsageHistoryRequestDto): CreatePointHistoryRequestDto {
@@ -40,7 +40,7 @@ export class PointFeatureMapper {
       errorMsg: POINT_FEATURE_ERROR_MESSAGE.invalidData,
     } as SchemaParserDto;
 
-    return ZodSchemaParser.safeParseOrThrow(createPointTransactionSchema, schemaDto);
+    return ZodSchemaParser.safeParseOrThrow(createPointHistorySchema, schemaDto);
   }
 
   static toUserUpdateDto(dto: UpdateUserPointRequestDto & { amount: number }): UpdateUserDto {

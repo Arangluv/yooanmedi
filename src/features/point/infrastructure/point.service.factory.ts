@@ -1,13 +1,10 @@
 import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 import { PointService } from './point.service';
-import {
-  PointTransactionAdapter,
-  PointTransactionApiRepository,
-} from '@/entities/point/infrastructure';
+import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
 
 export const createPointService = () => {
   const userRepository = new UserApiRepository(UserAdapter());
-  const pointRepository = new PointTransactionApiRepository(PointTransactionAdapter());
+  const pointRepository = new PointHistoryApiRepository(PointHistoryAdapter());
 
   return PointService({
     repository: {

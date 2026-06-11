@@ -1,19 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BaseError, FindOption, TestErrorHelper } from '@/shared';
 import { PayloadAdapterResultManager } from '@/shared/server';
-import { MockPointTransactionAdapter } from '../mocks';
-import { basePointTransactionEntityFixture, createPointTransactionEntityFixture } from '../fixtures';
-import { pointTransactionSchema } from '../../schemas';
-import { PointTransactionApiRepository, PointTransactionAdapter } from '../../infrastructure';
-import { CreatePointHistoryRequestDto } from '../../dto';
+import { MockPointHistoryAdapter } from '../mocks';
+import { createPointHistoryEntityFixture } from '../fixtures';
+import { PointHistoryApiRepository, PointHistoryAdapter } from '../../infrastructure';
+import { CreateRollbackPointHistoryRequestDto, CreateUsagePointHistoryRequestDto } from '../../dto';
 
 describe('Point Transaction API Repository', () => {
-  let mockAdapter: ReturnType<typeof PointTransactionAdapter>;
-  let repository: PointTransactionApiRepository;
+  let mockAdapter: ReturnType<typeof PointHistoryAdapter>;
+  let repository: PointHistoryApiRepository;
 
   beforeEach(() => {
-    mockAdapter = MockPointTransactionAdapter();
-    repository = new PointTransactionApiRepository(mockAdapter);
+    mockAdapter = MockPointHistoryAdapter();
+    repository = new PointHistoryApiRepository(mockAdapter);
   });
 
   describe('create', () => {
@@ -26,7 +25,7 @@ describe('Point Transaction API Repository', () => {
         amount: 156,
       } as CreatePointHistoryRequestDto;
       vi.mocked(mockAdapter.create).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createPointTransactionEntityFixture()),
+        PayloadAdapterResultManager.ok(createPointHistoryEntityFixture()),
       );
 
       // When
@@ -61,7 +60,7 @@ describe('Point Transaction API Repository', () => {
       const option = { pagination: false, limit: 1 } as FindOption;
 
       vi.mocked(mockAdapter.findOne).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createPointTransactionEntityFixture()),
+        PayloadAdapterResultManager.ok(createPointHistoryEntityFixture()),
       );
 
       // When

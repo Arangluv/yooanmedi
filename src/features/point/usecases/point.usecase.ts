@@ -1,4 +1,4 @@
-import { PointTransaction } from '@/entities/point';
+import { PointHistory } from '@/entities/point';
 import { User } from '@/entities/user';
 import {
   CreatePointRefundHistoryRequestDto,
@@ -7,7 +7,7 @@ import {
 } from '../dto';
 
 export interface PointUsecase {
-  createUsageHistory: (dto: CreatePointUsageHistoryRequestDto) => Promise<PointTransaction>;
-  createRefundHistory: (dto: CreatePointRefundHistoryRequestDto) => Promise<PointTransaction>;
+  createUsageHistory: (dto: CreatePointUsageHistoryRequestDto) => Promise<PointHistory>;
+  createRefundHistory: (dto: CreatePointRefundHistoryRequestDto) => Promise<PointHistory>;
   updateUserPointByHistories: (dto: UpdateUserPointRequestDto) => Promise<User>;
 }

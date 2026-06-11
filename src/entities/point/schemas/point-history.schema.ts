@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { BaseSchema } from '@/shared';
 import { POINT_ACTION } from '../constants';
 
-export const pointTransactionSchema = z.object({
+export const pointHistorySchema = z.object({
   id: BaseSchema.collectionId({
     required_message: '포인트 사용내역 아이디가 누락되었습니다',
     invalid_message: '잘못된 포인트 사용내역 타입입니다',

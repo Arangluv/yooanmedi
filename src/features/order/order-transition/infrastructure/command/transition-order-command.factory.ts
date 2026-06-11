@@ -5,7 +5,7 @@ import {
   OrderProductApiRepository,
 } from '@/entities/order-product/infrastructure';
 import { OrderProduct } from '@/entities/order-product';
-import { PointCalculator, PointTransaction } from '@/entities/point';
+import { PointCalculator, PointHistory } from '@/entities/point';
 import { createPointService } from '@/features/point/infrastructure';
 import { TransitionOrderCommand } from './transition-order-command';
 import { createTransitionOrderContext } from '../../lib/transition-order-context';
@@ -21,7 +21,7 @@ export class TransitionOrderCommandFactory {
     if (context.shouldTriggerEarnPointAction) {
       const earnPoint = async (orderProducts: OrderProduct[]) => {
         const pointService = createPointService();
-        const histories = [] as PointTransaction[];
+        const histories = [] as PointHistory[];
         // 유저 포인트 적립 히스토리 생성
         await Promise.all(
           orderProducts.map(async (orderProduct) => {

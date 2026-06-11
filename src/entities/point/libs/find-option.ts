@@ -1,9 +1,10 @@
+import { FindOption } from '@/shared';
 import { POINT_ACTION } from '../constants';
-import { CreatePointHistoryRequestDto } from '../dto';
+import { CreateRollbackPointHistoryRequestDto } from '../dto';
 
 export const PointHistoryFindOption = {
   findOne: {
-    earn: (dto: CreatePointHistoryRequestDto) => {
+    earn: (dto: CreateRollbackPointHistoryRequestDto): FindOption => {
       return {
         pagination: false,
         where: {
@@ -19,7 +20,7 @@ export const PointHistoryFindOption = {
         },
       };
     },
-    use: (dto: CreatePointHistoryRequestDto) => {
+    use: (dto: CreateRollbackPointHistoryRequestDto): FindOption => {
       return {
         pagination: false,
         where: {

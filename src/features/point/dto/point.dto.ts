@@ -3,7 +3,7 @@ import {
   createPointUsageHistoryRequestSchema,
   createPointRefundHistoryRequestSchema,
 } from '../schemas';
-import { PointTransaction, PointAction } from '@/entities/point';
+import { PointHistory, PointAction } from '@/entities/point';
 
 export type CreatePointUsageHistoryRequestDto = z.infer<
   typeof createPointUsageHistoryRequestSchema
@@ -15,5 +15,5 @@ export type CreatePointRefundHistoryRequestDto = z.infer<
 export type UpdateUserPointRequestDto = {
   user: number;
   type: PointAction;
-  histories: PointTransaction[];
+  histories: PointHistory[];
 };

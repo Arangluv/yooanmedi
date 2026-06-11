@@ -1,7 +1,7 @@
 export {
-  PointTransactionFixtures,
-  createPointTransactionFixture,
-  basePointTransactionEntityFixture,
-  createPointTransactionEntityFixture,
-} from './point-transaction.fixture';
+  PointHistoryFixtures,
+  createPointHistoryFixture,
+  basePointHistoryEntityFixture,
+  createPointHistoryEntityFixture,
+} from './point-history.fixture';
 export { PointItemFixture, createPointItemFixture } from './point-item.fixture';

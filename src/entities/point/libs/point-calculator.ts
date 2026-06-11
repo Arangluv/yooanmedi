@@ -1,4 +1,5 @@
-import { PointItem } from '../types';
+import { POINT_ACTION, PointAction } from '../constants';
+import { PointHistory, PointItem } from '../types';
 import { PAYMENTS_METHOD, PaymentsMethod } from '@/shared';
 
 export class PointCalculator {
@@ -48,6 +49,35 @@ export class PointCalculator {
     return items.reduce((sum, item) => {
       return sum + PointCalculator.forPayment(item, method) * item.quantity;
     }, 0);
+  }
+
+  static getDeltaPointByHistory(history: PointHistory) {
+    return history.amount;
+  }
+
+  static getDeltaPointByHistories(histories: PointHistory[]) {
+    return histories.reduce((acc, history) => acc + history.amount, 0);
+  }
+
+  static getUpdatePoint({
+    current,
+    delta,
+    action,
+  }: {
+    current: number;
+    delta: number;
+    action: PointAction;
+  }) {
+    switch (action) {
+      case POINT_ACTION.use:
+        return current - delta;
+      case POINT_ACTION.earn:
+        return current + delta;
+      case POINT_ACTION.cancel_use:
+        return current + delta;
+      case POINT_ACTION.cancel_earn:
+        return current - delta;
+    }
   }
 
   static pointEarn(current: number, delta: number): number {

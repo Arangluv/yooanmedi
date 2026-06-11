@@ -1,20 +1,20 @@
 import { vi } from 'vitest';
 import { BaseError, TestErrorHelper } from '@/shared';
-import { createPointTransactionFixture } from '../fixtures';
+import { createPointHistoryFixture } from '../fixtures';
 
-export interface MockPointTransactionRepository {
+export interface MockPointHistoryRepository {
   create: ReturnType<typeof vi.fn>;
   findOne: ReturnType<typeof vi.fn>;
 }
 
-export const PointTransactionRepositoryMocks = {
-  create: (): MockPointTransactionRepository => ({
+export const PointHistoryRepositoryMocks = {
+  create: (): MockPointHistoryRepository => ({
     create: vi.fn(),
     findOne: vi.fn(),
   }),
 
-  createSuccess: (): MockPointTransactionRepository => {
-    const pointFixture = createPointTransactionFixture();
+  createSuccess: (): MockPointHistoryRepository => {
+    const pointFixture = createPointHistoryFixture();
     return {
       create: vi.fn().mockResolvedValue(pointFixture),
       findOne: vi.fn().mockResolvedValue(pointFixture),
@@ -23,7 +23,7 @@ export const PointTransactionRepositoryMocks = {
 
   createError: (
     error: BaseError = TestErrorHelper.generateAdapterError(),
-  ): MockPointTransactionRepository => ({
+  ): MockPointHistoryRepository => ({
     create: vi.fn().mockRejectedValue(error),
     findOne: vi.fn().mockRejectedValue(error),
   }),

@@ -1,1 +1,4 @@
-export type { CreatePointHistoryRequestDto } from './point-transaction.dto';
+export type {
+  CreateRollbackPointHistoryRequestDto,
+  CreateUsagePointHistoryRequestDto,
+} from './point-history.dto';
