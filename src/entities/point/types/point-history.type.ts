@@ -7,7 +7,5 @@ export type PointHistory = z.infer<typeof pointHistorySchema>;
 export type PointItem = z.infer<typeof pointItemSchema>;
 
 export type CreatePointHistoryEntity =
-  | z.infer<typeof CreatePointSchema.use.entity>
-  | z.infer<typeof CreatePointSchema.earn.entity>
-  | z.infer<typeof CreatePointSchema.cancel_use.entity>
-  | z.infer<typeof CreatePointSchema.cacel_earn.entity>;
+  | z.infer<typeof CreatePointSchema.usage.entity>
+  | z.infer<typeof CreatePointSchema.rollback.entity>;

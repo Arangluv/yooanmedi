@@ -1,6 +1,11 @@
 import { PAYMENTS_METHOD, ZodSchemaParser, SchemaParserDto } from '@/shared';
 import { PointItem, PointHistory, PointHistoryEntity, CreatePointHistoryEntity } from '../types';
-import { pointItemListSchema, pointItemSchema, pointHistorySchema } from '../schemas';
+import {
+  pointItemListSchema,
+  pointItemSchema,
+  pointHistorySchema,
+  CreatePointSchema,
+} from '../schemas';
 import { Product } from '@/entities/product/@x/point';
 import { CartItem } from '@/entities/cart-item/@x/point';
 import { POINT_TRANSACTION_ERROR_MESSAGE } from '../constants';
@@ -14,7 +19,7 @@ export class PointHistoryMapper {
     dto: CreateRollbackPointHistoryRequestDto;
     rollbackHistory: PointHistory;
   }): CreatePointHistoryEntity {
-    return ZodSchemaParser.safeParseOrThrow(pointHistorySchema, {
+    return ZodSchemaParser.safeParseOrThrow(CreatePointSchema.rollback.entity, {
       data: {
         user: dto.user,
         type: dto.type,

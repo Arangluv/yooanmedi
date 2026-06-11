@@ -18,34 +18,18 @@ export const createRollbackPointHistoryRequestSchema = baseCreateRequestSchema.e
 });
 
 export const CreatePointSchema = {
-  use: {
+  usage: {
     request: createUsagePointHistoryRequestSchema,
     entity: baseCreateRequestSchema.extend({
-      type: z.literal(POINT_ACTION.use),
+      type: z.enum([POINT_ACTION.use, POINT_ACTION.earn]),
       amount: amountSchema,
     }),
   },
 
-  earn: {
-    request: createUsagePointHistoryRequestSchema,
-    entity: baseCreateRequestSchema.extend({
-      type: z.literal(POINT_ACTION.earn),
-      amount: amountSchema,
-    }),
-  },
-
-  cancel_use: {
+  rollback: {
     request: createRollbackPointHistoryRequestSchema,
-    entity: baseCreateRequestSchema.extend({
-      type: z.literal(POINT_ACTION.cancel_use),
-      amount: amountSchema,
-    }),
-  },
-
-  cacel_earn: {
-    request: createRollbackPointHistoryRequestSchema,
-    entity: baseCreateRequestSchema.extend({
-      type: z.literal(POINT_ACTION.cancel_earn),
+    entity: createRollbackPointHistoryRequestSchema.extend({
+      type: z.enum([POINT_ACTION.cancel_use, POINT_ACTION.cancel_earn]),
       amount: amountSchema,
     }),
   },
