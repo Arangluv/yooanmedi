@@ -33,7 +33,7 @@ export class BankTransferContextFactory implements PaymentContextFactory {
 export class PGContextFactory implements PaymentContextFactory {
   createBase(dto: EasyPayPaymentAuthenticationDto) {
     return zodSafeParse(basePaymentContextSchema, {
-      shopOrderNo: generate15digitsNumberBasedOnDate(),
+      shopOrderNo: dto.shopOrderNo,
       deliveryRequest: dto.deliveryRequest,
       orderList: dto.orderList,
       usedPoint: dto.usedPoint,

@@ -3,7 +3,6 @@ import {
   EasyPayRegisterTransactionRequestDto,
   EasyPayApprovePaymentRequestDto,
   EasyPayPaymentCancelRequestDto,
-  EasyPayPaymentAuthenticationDto,
 } from '../../dto';
 import {
   EasyPayRegisterTransactionApiSuccessResponse,

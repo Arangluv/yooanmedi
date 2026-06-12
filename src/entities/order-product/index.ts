@@ -1,4 +1,8 @@
-export { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME, type OrderProductStatus } from './constants';
+export {
+  ORDER_PRODUCT_STATUS,
+  ORDER_PRODUCT_STATUS_NAME,
+  type OrderProductStatus,
+} from './constants';
 
 export { type OrderProductRepository } from './core';
 
@@ -13,4 +17,4 @@ export { OrderProductFindOption } from './lib';
 
 export { type OrderProduct } from './types';
 
-export { orderProductSchema, orderProductsSchema } from './schemas';
+export { orderProductSchema, orderProductsSchema, createOrderProductSchema } from './schemas';

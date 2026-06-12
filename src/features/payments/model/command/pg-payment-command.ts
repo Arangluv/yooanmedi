@@ -66,7 +66,9 @@ export class PGPaymentCommand
     const contextFactory = new PGContextFactory();
     const initCtx = await this.initializeContext(contextFactory);
 
-    // step 1. 결제승인 요청
+    // step 1. 결제승인 요청 --> 나중액션으로 빠져야하고
+    // easypay return값과 결과값이 다르면 rollback 시켜야함
+
     const afterApprovalCtx = await this.approvePayment(initCtx);
     // step 2. 주문 생성
     const afterOrderCtx = await this.createOrder(afterApprovalCtx);
@@ -107,6 +109,7 @@ export class PGPaymentCommand
     return initCtx;
   }
 
+  // API Handler로 이동 -> ok
   private refineEasypayRegisterResult() {
     let data = {} as any;
     this.requestDto.forEach((value: any, key: string) => {

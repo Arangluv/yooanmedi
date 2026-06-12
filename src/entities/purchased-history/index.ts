@@ -11,7 +11,11 @@ export type { CreatePurchasedHistoryRequestDto, GetPurchasedHistoriesRequestDto 
 export { PurchasedHistoryFindOption } from './libs';
 
 // schemas
-export { purchasedHistorySchema, purchasedHistoriesSchema } from './schemas';
+export {
+  purchasedHistorySchema,
+  purchasedHistoriesSchema,
+  createPurchasedHistoryRequestSchema,
+} from './schemas';
 
 // types
 export type { PurchasedHistory, PurchasedHistoryEntity } from './types';

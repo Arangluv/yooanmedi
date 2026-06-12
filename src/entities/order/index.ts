@@ -6,7 +6,7 @@ export {
   type CreateOrderRequestForPgDto,
 } from './dto';
 
-export { orderSchema } from './schemas';
+export { orderSchema, createOrderSchemaForBankTransfer, createOrderSchemaForPG } from './schemas';
 
 export { type Order } from './types';
 

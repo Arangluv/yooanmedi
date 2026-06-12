@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Logger } from '@/shared';
+import { EasyPayMapper } from '@/entities/easypay';
 import { PGPaymentCommand } from '@/features/payments/model/command/pg-payment-command';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
+    let data = {} as any;
+    formData.forEach((value: any, key: string) => {
+      data[key as string] = value;
+    });
+
+    const easyPayAuthenticationResult = EasyPayMapper.toAuthenticationDto(data);
+
     const manager = new PGPaymentCommand(formData);
     const result = await manager.execute();
 

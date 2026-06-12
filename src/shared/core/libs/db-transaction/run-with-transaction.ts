@@ -1,4 +1,4 @@
-export interface TransactionalCommand<T> {
-  run(): Promise<T>;
+export interface TransactionalCommand<TResult> {
+  run(): Promise<TResult>;
   onRollback?(): Promise<void>;
 }
