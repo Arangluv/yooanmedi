@@ -6,13 +6,15 @@ export const PAYMENT_ERROR_MESSAGE = {
   createOrderProduct: '주문상품을 생성하는데 문제가 발생했습니다',
   createPurchasedHistory: '구매내역을 생성하는데 문제가 발생했습니다',
   createUsePointHistory: '포인트 사용내역을 생성하는데 문제가 발생했습니다',
+  createPaymentHistory: '결제내역을 생성하는데 문제가 발생했습니다',
   subtractUserPoint: '사용포인트 차감을 하는 과정에서 문제가 발생했습니다',
+  approvePayment: '결제승인 요청을 하는 과정에서 문제가 발생했습니다',
 };
 
 export class PaymentError extends BaseError {
-  static paymentFail() {
+  static paymentFail(message: string = PAYMENT_ERROR_MESSAGE.paymentFail) {
     return new PaymentError({
-      clientMsg: PAYMENT_ERROR_MESSAGE.paymentFail,
+      clientMsg: message,
       errorName: 'PaymentCommandError',
     });
   }

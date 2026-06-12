@@ -21,7 +21,7 @@ interface BankTransferCommandDependencies {
     user: UserRepository;
     order: OrderRepository;
     orderProduct: OrderProductRepository;
-    purchasedHistoryRepository: PurchasedHistoryRepository;
+    purchasedHistory: PurchasedHistoryRepository;
   };
 }
 
@@ -82,7 +82,7 @@ export class PaymentCommandForBankTransfer extends TransactionCommand<BankTransf
 
   private async createRecentPurchasedHistory(orderItem: PaymentOrderItemDto): Promise<void> {
     const dto = BankTransferPaymentMapper.toPurchasedHistoryDto(this.dto.user.id, orderItem);
-    await this.repository.purchasedHistoryRepository.create(dto);
+    await this.repository.purchasedHistory.create(dto);
   }
 
   private async createUsePointHistory({

@@ -5,7 +5,7 @@ export { type PaymentHistoryRepository } from './core';
 export { type CreatePaymentHistorRequestyDto } from './dto';
 
 // schema
-export { paymentHistorySchema } from './schemas';
+export { paymentHistorySchema, createPaymentHistorySchema } from './schemas';
 
 // type
 export type { PaymentHistory, PaymentHistoryEntity } from './types';

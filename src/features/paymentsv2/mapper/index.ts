@@ -1,2 +1,2 @@
-export {BankTransferPaymentMapper} from "./bank-transfer-payment.mapper"
-export {} from "./pg-payment.mapper"
+export { BankTransferPaymentMapper } from './bank-transfer-payment.mapper';
+export { PGPaymentMapper } from './pg-payment.mapper';

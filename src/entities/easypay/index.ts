@@ -12,8 +12,11 @@ export type {
   EasyPayPaymentCancelRequestDto,
 } from './dto';
 
+// type
+export type { EasyPayPaymentApprovalResult } from './types';
+
 // mapper
 export { EasyPayMapper } from './mapper';
 
 // schema
-export { EasyPayPaymentAuthenticationSchemas } from './schemas';
+export { EasyPayPaymentAuthenticationSchemas, EasyPayPaymentApprovalSchemas } from './schemas';
