@@ -1,4 +1,4 @@
-import { PAYMENTS_METHOD, ZodSchemaParser } from '@/shared';
+import { PAYMENTS_METHOD, PriceItemDto, ZodSchemaParser, priceItemListSchema } from '@/shared';
 import {
   createOrderSchemaForPG,
   CreateOrderRequestForPgDto,
@@ -31,11 +31,12 @@ import {
   EasyPayPaymentApprovalSchemas,
 } from '@/entities/easypay';
 import { CreatePaymentHistorRequestyDto, createPaymentHistorySchema } from '@/entities/payment';
-import { PaymentByPGRequestDto, PaymentOrderItemDto } from '../dto';
+import { Product } from '@/entities/product';
+import { PGPaymentCommandDto, PaymentOrderItemDto } from '../dto';
 import { PAYMENT_ERROR_MESSAGE } from '../core';
 
 export class PGPaymentMapper {
-  static toCreateOrderDto(dto: PaymentByPGRequestDto): CreateOrderRequestForPgDto {
+  static toCreateOrderDto(dto: PGPaymentCommandDto): CreateOrderRequestForPgDto {
     return ZodSchemaParser.safeParseOrThrow(createOrderSchemaForPG, {
       data: {
         orderRequest: dto.user.deliveryRequest,
@@ -93,7 +94,7 @@ export class PGPaymentMapper {
     orderItem,
     orderProduct,
   }: {
-    dto: PaymentByPGRequestDto;
+    dto: PGPaymentCommandDto;
     orderItem: PaymentOrderItemDto;
     orderProduct: OrderProduct;
   }): CreateUsagePointHistoryRequestDto {
@@ -113,7 +114,7 @@ export class PGPaymentMapper {
     orderItem,
     orderProduct,
   }: {
-    dto: PaymentByPGRequestDto;
+    dto: PGPaymentCommandDto;
     orderItem: PaymentOrderItemDto;
     orderProduct: OrderProduct;
   }): CreateUsagePointHistoryRequestDto {
@@ -176,7 +177,7 @@ export class PGPaymentMapper {
     });
   }
 
-  static toApprovePaymentDto(dto: PaymentByPGRequestDto): EasyPayApprovePaymentRequestDto {
+  static toApprovePaymentDto(dto: PGPaymentCommandDto): EasyPayApprovePaymentRequestDto {
     return ZodSchemaParser.safeParseOrThrow(EasyPayPaymentApprovalSchemas.requestDto, {
       data: {
         authorizationId: dto.paymentInfo.authorizationId,
@@ -201,6 +202,25 @@ export class PGPaymentMapper {
         paymentsMethod: PAYMENTS_METHOD.credit_card,
       } as CreatePaymentHistorRequestyDto,
       errorMsg: PAYMENT_ERROR_MESSAGE.createPaymentHistory,
+    });
+  }
+
+  static toPrcieItems(data: Array<{ product: Product; quantity: number }>): PriceItemDto[] {
+    const dto = data.map((item) => {
+      return {
+        id: item.product.id,
+        product: {
+          price: item.product.price,
+          delivery_fee: item.product.delivery_fee,
+          is_cost_per_unit: item.product.is_cost_per_unit,
+          is_free_delivery: item.product.is_free_delivery,
+        },
+        quantity: item.quantity,
+      } as PriceItemDto;
+    });
+    return ZodSchemaParser.safeParseOrThrow(priceItemListSchema, {
+      data: dto,
+      errorMsg: PAYMENT_ERROR_MESSAGE.createContext,
     });
   }
 }

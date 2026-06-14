@@ -2,7 +2,7 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { BaseError, FindOption, TestErrorHelper } from '@/shared';
 import { PayloadAdapterResultManager } from '@/shared/server';
 import { MockOrderProductAdapter } from '../mocks';
-import { createOrderProductFixture } from '../fixtures';
+import { createOrderProductEntityFixture } from '../fixtures';
 import { OrderProductApiRepository } from '../../infrastructure/repository';
 import { OrderProductAdapter } from '../../infrastructure/api';
 import {
@@ -39,7 +39,7 @@ describe('OrderProduct Api Repository', () => {
         cashback_rate_for_bank: 1.5,
       } as CreateOrderProductRequestDto;
       vi.mocked(mockOrderProductAdapter.createOrderProduct).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createOrderProductFixture()),
+        PayloadAdapterResultManager.ok(createOrderProductEntityFixture()),
       );
 
       // When
@@ -79,7 +79,7 @@ describe('OrderProduct Api Repository', () => {
       // Given
       const orderProductId = 3;
       vi.mocked(mockOrderProductAdapter.getOrderProductById).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createOrderProductFixture()),
+        PayloadAdapterResultManager.ok(createOrderProductEntityFixture()),
       );
 
       // When
@@ -99,7 +99,9 @@ describe('OrderProduct Api Repository', () => {
       );
 
       // When & Then
-      await expect(() => orderProductApiRepository.findById(orderProductId)).rejects.toThrow(BaseError);
+      await expect(() => orderProductApiRepository.findById(orderProductId)).rejects.toThrow(
+        BaseError,
+      );
     });
   });
 
@@ -109,9 +111,9 @@ describe('OrderProduct Api Repository', () => {
       const option = {} as FindOption;
       vi.mocked(mockOrderProductAdapter.getOrderProducts).mockResolvedValue(
         PayloadAdapterResultManager.ok([
-          createOrderProductFixture({ id: 1 }),
-          createOrderProductFixture({ id: 2 }),
-          createOrderProductFixture({ id: 3 }),
+          createOrderProductEntityFixture({ id: 1 }),
+          createOrderProductEntityFixture({ id: 2 }),
+          createOrderProductEntityFixture({ id: 3 }),
         ]),
       );
 
@@ -147,7 +149,7 @@ describe('OrderProduct Api Repository', () => {
         },
       } as UpdateOrderProductRequestDto;
       vi.mocked(mockOrderProductAdapter.updateOrderProduct).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createOrderProductFixture()),
+        PayloadAdapterResultManager.ok(createOrderProductEntityFixture()),
       );
 
       // When
@@ -187,9 +189,9 @@ describe('OrderProduct Api Repository', () => {
       } as BulkUpdateOrderProductRequestDto;
       vi.mocked(mockOrderProductAdapter.bulkUpdateOrderProduct).mockResolvedValue(
         PayloadAdapterResultManager.ok([
-          createOrderProductFixture({ id: 1 }),
-          createOrderProductFixture({ id: 2 }),
-          createOrderProductFixture({ id: 3 }),
+          createOrderProductEntityFixture({ id: 1 }),
+          createOrderProductEntityFixture({ id: 2 }),
+          createOrderProductEntityFixture({ id: 3 }),
         ]),
       );
 

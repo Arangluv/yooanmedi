@@ -1,6 +1,7 @@
 import { BaseError } from '@/shared';
 
 export const PAYMENT_ERROR_MESSAGE = {
+  createContext: '결제 컨텍스트를 생성하는데 문제가 발생했습니다',
   paymentFail: '결제를 처리하는데 문제가 발생했습니다',
   createOrder: '주문을 생성하는데 문제가 발생했습니다',
   createOrderProduct: '주문상품을 생성하는데 문제가 발생했습니다',

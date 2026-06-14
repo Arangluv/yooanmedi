@@ -1,13 +1,18 @@
-import { DeliveryFeeManager } from '@/entities/cart';
+import { Product } from '@/entities/product';
+
+export interface PointAllocatorItem {
+  product: Product;
+  quantity: number;
+}
 
 export class PointAllocator {
-  private readonly deliveryFeeManager: DeliveryFeeManager;
+  private readonly items: PointAllocatorItem[];
   private readonly usedPoint: number;
   private ratioMap: Map<number, number>;
   private pointMap: Map<number, number>;
 
-  constructor(deliveryFeeManager: DeliveryFeeManager, usedPoint: number) {
-    this.deliveryFeeManager = deliveryFeeManager;
+  constructor(items: PointAllocatorItem[], usedPoint: number) {
+    this.items = items;
     this.usedPoint = usedPoint;
     this.ratioMap = this.createRatioMap();
     this.pointMap = this.createPointMap();
@@ -19,18 +24,17 @@ export class PointAllocator {
    */
   private createRatioMap() {
     const ratioMap = new Map<number, number>();
-    const cartItems = this.deliveryFeeManager.getCartItems();
-    const totalPriceWithoutDeliveryFee = cartItems.reduce(
+    const totalPriceWithoutDeliveryFee = this.items.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
       0,
     );
 
     let remainingWeightSum = 100;
 
-    cartItems.forEach((item, idx) => {
+    this.items.forEach((item, idx) => {
       const orderProductPrice = item.product.price * item.quantity;
       const weight =
-        idx === cartItems.length - 1
+        idx === this.items.length - 1
           ? remainingWeightSum
           : this.calculateWeight(totalPriceWithoutDeliveryFee, orderProductPrice);
 
@@ -43,9 +47,8 @@ export class PointAllocator {
 
   private createPointMap() {
     const pointMap = new Map<number, number>();
-    const cartItems = this.deliveryFeeManager.getCartItems();
 
-    cartItems.forEach((item) => {
+    this.items.forEach((item) => {
       const ratio = this.ratioMap.get(item.product.id);
       if (!ratio) throw new Error('주문 상품의 가중치가 존재하지 않습니다');
 
@@ -58,7 +61,7 @@ export class PointAllocator {
     let remainingPoint = this.usedPoint - distributedPointSum;
 
     // 1원씩 순서대로 분배 (floor로 생긴 잔여 포인트는 소액이므로 순회로 처리)
-    for (const item of cartItems) {
+    for (const item of this.items) {
       if (remainingPoint <= 0) break;
 
       const productPrice = item.product.price * item.quantity;

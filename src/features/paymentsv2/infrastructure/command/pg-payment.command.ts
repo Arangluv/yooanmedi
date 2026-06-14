@@ -12,7 +12,7 @@ import {
   EasyPayRepository,
 } from '@/entities/easypay';
 import { PaymentHistoryRepository } from '@/entities/payment';
-import { PaymentByPGRequestDto, PaymentOrderItemDto } from '../../dto';
+import { PGPaymentCommandDto, PaymentOrderItemDto } from '../../dto';
 import { PGPaymentMapper } from '../../mapper';
 import { PaymentError } from '../../core';
 
@@ -22,7 +22,7 @@ interface PGCommandResult {
   shopOrderNo: string;
 }
 
-interface PGCommandDependencies {
+export interface PGCommandDependencies {
   payload: BasePayload;
   repository: {
     easyPay: EasyPayRepository;
@@ -35,12 +35,12 @@ interface PGCommandDependencies {
   };
 }
 
-export class PaymentCommandForPG extends TransactionCommand<PGCommandResult> {
-  private readonly dto: PaymentByPGRequestDto;
+export class PGPaymentCommand extends TransactionCommand<PGCommandResult> {
+  private readonly dto: PGPaymentCommandDto;
   private readonly repository: PGCommandDependencies['repository'];
   private rollbackDto: EasyPayPaymentCancelRequestDto | null;
 
-  constructor(dto: PaymentByPGRequestDto, dependencies: PGCommandDependencies) {
+  constructor(dto: PGPaymentCommandDto, dependencies: PGCommandDependencies) {
     super(dependencies.payload);
     this.dto = dto;
     this.repository = dependencies.repository;

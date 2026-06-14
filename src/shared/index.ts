@@ -34,6 +34,8 @@ export {
   PaymentsBaseSchema,
   cn,
   PriceResolver,
+  priceItemListSchema,
+  priceItemSchema,
 } from './core';
 export type {
   TransactionalCommand,

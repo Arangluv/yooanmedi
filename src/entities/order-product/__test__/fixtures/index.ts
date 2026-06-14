@@ -1,1 +1,5 @@
-export { baseOrderProductEntityFixture, createOrderProductFixture } from './order-product.fixture';
+export {
+  baseOrderProductEntityFixture,
+  createOrderProductEntityFixture,
+  createOrderProductFixture,
+} from './order-product.fixture';

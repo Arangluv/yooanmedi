@@ -1,4 +1,4 @@
 import { z } from 'zod';
-import { priceItemDtoSchema } from './price.schema';
+import { priceItemSchema } from './price.schema';
 
-export type PriceItemDto = z.infer<typeof priceItemDtoSchema>;
+export type PriceItemDto = z.infer<typeof priceItemSchema>;

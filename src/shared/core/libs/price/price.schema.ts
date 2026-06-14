@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { BaseSchema } from '../../schemas';
 
-export const priceItemDtoSchema = z.object({
+export const priceItemSchema = z.object({
   id: BaseSchema.number({
     required_message: 'priceItem 식별자가 누락되었습니다',
     invalid_message: '잘못된 priceItem 식별자 타입입니다',
@@ -14,6 +14,8 @@ export const priceItemDtoSchema = z.object({
   }),
   quantity: BaseSchema.number({ min: 1, required_message: '수량이 누락되었습니다' }),
 });
+
+export const priceItemListSchema = z.array(priceItemSchema);
 
 export const resolvedPriceItemSchema = z.object({
   id: BaseSchema.number({

@@ -36,4 +36,4 @@ export {
 } from './end-point-result';
 export { type FindOption } from './find-option';
 export { zodSafeParse, ZodSchemaParser, type SchemaParserDto } from './zod';
-export { PriceResolver, type PriceItemDto } from './price';
+export { PriceResolver, type PriceItemDto, priceItemListSchema, priceItemSchema } from './price';

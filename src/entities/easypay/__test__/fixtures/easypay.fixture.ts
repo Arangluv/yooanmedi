@@ -91,4 +91,24 @@ export const EasyPayFixtures = {
       cancelPgCno: EasyPayFixtureUtil.generatePgCno(),
     } as EasyPayPaymentCancelApiSuccessResponse,
   },
+
+  result: {
+    approve: {
+      mallId: EasyPayFixtureUtil.generateMID(),
+      pgCno: EasyPayFixtureUtil.generatePgCno(),
+      shopOrderNo: EasyPayFixtureUtil.generateShopOrderNo(),
+      shopTransactionId: EasyPayFixtureUtil.generateShopTransactionId(),
+      statusCode: 'TS03',
+      statusMessage: '매입요청',
+      msgAuthValue: '**************',
+      escrowUsed: 'N',
+      amount: 13000,
+      transactionDate: '20260403153020',
+      paymentInfo: {
+        payMethodTypeCode: '11',
+        approvalNo: '87858392',
+        approvalDate: '20260403153020',
+      },
+    },
+  },
 };

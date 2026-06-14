@@ -1,4 +1,4 @@
-import { ZodSchemaParser } from '@/shared';
+import { PriceItemDto, ZodSchemaParser, priceItemListSchema } from '@/shared';
 import {
   createOrderSchemaForBankTransfer,
   CreateOrderRequestForBankTransferDto,
@@ -24,13 +24,14 @@ import {
   PointCalculator,
   PointHistory,
 } from '@/entities/point';
+import { CartItem } from '@/entities/cart-item';
 import { UpdateUserDto, updateUserSchema, User } from '@/entities/user';
-import { PaymentByBankTransferRequestDto, PaymentOrderItemDto } from '../dto';
+import { BankTransferPaymentCommandDto, PaymentOrderItemDto } from '../dto';
 import { PAYMENT_ERROR_MESSAGE } from '../core';
 
 export class BankTransferPaymentMapper {
   static toCreateOrderDto(
-    dto: PaymentByBankTransferRequestDto,
+    dto: BankTransferPaymentCommandDto,
   ): CreateOrderRequestForBankTransferDto {
     return ZodSchemaParser.safeParseOrThrow(createOrderSchemaForBankTransfer, {
       data: {
@@ -89,7 +90,7 @@ export class BankTransferPaymentMapper {
     orderItem,
     orderProduct,
   }: {
-    dto: PaymentByBankTransferRequestDto;
+    dto: BankTransferPaymentCommandDto;
     orderItem: PaymentOrderItemDto;
     orderProduct: OrderProduct;
   }): CreateUsagePointHistoryRequestDto {
@@ -110,7 +111,7 @@ export class BankTransferPaymentMapper {
   }: {
     user: User;
     histories: PointHistory[];
-  }) {
+  }): UpdateUserDto {
     const updatedPoint = PointCalculator.getUpdatePoint({
       current: user.point,
       delta: PointCalculator.getDeltaPointByHistories(histories),
@@ -125,6 +126,25 @@ export class BankTransferPaymentMapper {
         },
       } as UpdateUserDto,
       errorMsg: PAYMENT_ERROR_MESSAGE.subtractUserPoint,
+    });
+  }
+
+  static toPriceItems(data: CartItem[]): PriceItemDto[] {
+    const dto: PriceItemDto[] = data.map((item) => {
+      return {
+        id: item.id,
+        product: {
+          is_cost_per_unit: item.product.is_cost_per_unit,
+          is_free_delivery: item.product.is_free_delivery,
+          price: item.product.price,
+          delivery_fee: item.product.delivery_fee,
+        },
+        quantity: item.quantity,
+      };
+    });
+    return ZodSchemaParser.safeParseOrThrow(priceItemListSchema, {
+      data: dto,
+      errorMsg: PAYMENT_ERROR_MESSAGE.createContext,
     });
   }
 }

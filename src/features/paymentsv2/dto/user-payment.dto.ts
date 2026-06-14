@@ -1,6 +1,13 @@
 import { z } from 'zod';
-import { UserPaymentRequestDto, paymentOrderItemSchema } from '../schemas';
+import { UserPaymentDto, paymentOrderItemSchema } from '../schemas';
 
-export type PaymentByPGRequestDto = z.infer<typeof UserPaymentRequestDto.pg>;
-export type PaymentByBankTransferRequestDto = z.infer<typeof UserPaymentRequestDto.bankTransfer>;
+// ─── RequestDto ───────────────────────────────────────────────
+export type PGPaymentRequestDto = FormData;
+export type BankTransferPaymentRequestDto = z.infer<typeof UserPaymentDto.request.bankTransfer>;
+
+// ─── CommandDto ───────────────────────────────────────────────
+export type PGPaymentCommandDto = z.infer<typeof UserPaymentDto.command.pg>;
+export type BankTransferPaymentCommandDto = z.infer<typeof UserPaymentDto.command.bankTransfer>;
+
+// ─── feature Domain ───────────────────────────────────────────────
 export type PaymentOrderItemDto = z.infer<typeof paymentOrderItemSchema>;

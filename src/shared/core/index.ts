@@ -23,6 +23,8 @@ export {
   zodSafeParse,
   ZodSchemaParser,
   PriceResolver,
+  priceItemListSchema,
+  priceItemSchema,
 } from './libs';
 export type {
   TransactionalCommand,

@@ -6,7 +6,7 @@ import { UserRepository } from '@/entities/user';
 import { Order, OrderRepository } from '@/entities/order';
 import { OrderProduct, OrderProductRepository } from '@/entities/order-product';
 import { PurchasedHistoryRepository } from '@/entities/purchased-history';
-import { PaymentByBankTransferRequestDto, PaymentOrderItemDto } from '../../dto';
+import { BankTransferPaymentCommandDto, PaymentOrderItemDto } from '../../dto';
 import { BankTransferPaymentMapper } from '../../mapper';
 import { PaymentError } from '../../core';
 
@@ -14,7 +14,7 @@ interface BankTransferCommandResult {
   ok: boolean;
 }
 
-interface BankTransferCommandDependencies {
+export interface BankTransferCommandDependencies {
   payload: BasePayload;
   repository: {
     pointHistory: PointHistoryRepository;
@@ -25,11 +25,11 @@ interface BankTransferCommandDependencies {
   };
 }
 
-export class PaymentCommandForBankTransfer extends TransactionCommand<BankTransferCommandResult> {
-  private readonly dto: PaymentByBankTransferRequestDto;
+export class BankTransferPaymentCommand extends TransactionCommand<BankTransferCommandResult> {
+  private readonly dto: BankTransferPaymentCommandDto;
   private readonly repository: BankTransferCommandDependencies['repository'];
 
-  constructor(dto: PaymentByBankTransferRequestDto, dependencies: BankTransferCommandDependencies) {
+  constructor(dto: BankTransferPaymentCommandDto, dependencies: BankTransferCommandDependencies) {
     super(dependencies.payload);
     this.dto = dto;
     this.repository = dependencies.repository;
@@ -97,8 +97,7 @@ export class PaymentCommandForBankTransfer extends TransactionCommand<BankTransf
       orderItem,
       orderProduct,
     });
-    const history = await this.repository.pointHistory.createUsageHistory(dto);
-    return history;
+    return await this.repository.pointHistory.createUsageHistory(dto);
   }
 
   private async subtractUserPoint(histories: PointHistory[]) {
