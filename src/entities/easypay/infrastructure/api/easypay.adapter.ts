@@ -17,7 +17,7 @@ import {
 import { EasyPayError } from '../../core';
 import { EasyPayMapper } from '../../mapper';
 
-const EASYPAY_SUCCESS_RES_CODE = '9999';
+const EASYPAY_SUCCESS_RES_CODE = '0000';
 
 export const EasyPayAdapter = () => ({
   registerTransaction: async (
@@ -37,6 +37,7 @@ export const EasyPayAdapter = () => ({
       }
 
       const easypayResponse = (await res.json()) as EasyPayRegisterTransactionApiResponse;
+
       if (easypayResponse.resCd !== EASYPAY_SUCCESS_RES_CODE) {
         throw EasyPayError.registerFail(easypayResponse.resMsg);
       }

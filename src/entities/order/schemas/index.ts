@@ -1,4 +1,4 @@
-export { orderSchema } from './order.schema';
+export { orderSchema, createdOrderSchema } from './order.schema';
 export {
   createOrderSchemaForPG,
   createOrderSchemaForBankTransfer,

@@ -17,7 +17,10 @@ export const orderSchema = z.object({
       invalid_message: '잘못된 주문상품 아이디 타입입니다',
     }),
   ),
-  paymentsMethod: z.enum([PAYMENTS_METHOD.credit_card, PAYMENTS_METHOD.bank_transfer], '잘못된 결제방법 입니다'),
+  paymentsMethod: z.enum(
+    [PAYMENTS_METHOD.credit_card, PAYMENTS_METHOD.bank_transfer],
+    '잘못된 결제방법 입니다',
+  ),
   orderStatus: z.enum(
     [
       ORDER_STATUS.pending,
@@ -31,7 +34,12 @@ export const orderSchema = z.object({
   ),
   flgStatus: z.enum([FLG_STATUS.init_normal, FLG_STATUS.need_process, FLG_STATUS.complete]),
   paymentStatus: z.enum(
-    [PAYMENT_STATUS.pending, PAYMENT_STATUS.complete, PAYMENT_STATUS.partial_cancel, PAYMENT_STATUS.total_cancel],
+    [
+      PAYMENT_STATUS.pending,
+      PAYMENT_STATUS.complete,
+      PAYMENT_STATUS.partial_cancel,
+      PAYMENT_STATUS.total_cancel,
+    ],
     '잘못된 주문 결제상태 입니다',
   ),
   orderDeliveryFee: BaseSchema.number({ min: 0, required_message: '주문 배송비가 누락되었습니다' }),
@@ -41,4 +49,8 @@ export const orderSchema = z.object({
   usedPoint: BaseSchema.number({ min: 0, required_message: '사용 포인트가 누락되었습니다' }),
   createdAt: BaseSchema.isoString,
   updatedAt: BaseSchema.isoString,
+});
+
+export const createdOrderSchema = orderSchema.extend({
+  orderProducts: z.literal(undefined),
 });

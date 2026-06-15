@@ -28,7 +28,7 @@ export const CartDetailFindOption = {
     return {
       pagination: false,
       where: {
-        cart: {
+        carts: {
           equals: cartId,
         },
       },

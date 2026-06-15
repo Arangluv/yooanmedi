@@ -9,3 +9,6 @@ export { cartItemSchema, cartItemsSchema, updateCartItemRequestSchema } from './
 
 // type
 export { type CartItem, type CartItemEntity } from './types';
+
+// mapper
+export { CartItemMapper } from './mapper';

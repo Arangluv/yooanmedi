@@ -1,13 +1,7 @@
-import { PaymentsView } from '@/features/payments';
-import { Navbar } from '@/entities/order';
+import { PaymentPage } from '@/views/client/payments';
 
-const PaymentsPage = async () => {
-  return (
-    <div className="flex w-full flex-col">
-      <Navbar />
-      <PaymentsView />
-    </div>
-  );
+const PaymentsPage = () => {
+  return <PaymentPage />;
 };
 
 export default PaymentsPage;

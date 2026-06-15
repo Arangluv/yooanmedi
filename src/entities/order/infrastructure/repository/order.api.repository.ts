@@ -15,7 +15,7 @@ export class OrderApiRepository implements OrderRepository {
     if (!response.ok) {
       throw response.error;
     }
-    return OrderMapper.entityToDomain(response.data);
+    return OrderMapper.toCreatedOrder(response.data);
   }
 
   async findById(id: number) {

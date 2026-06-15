@@ -1,36 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Logger } from '@/shared';
-import { EasyPayMapper } from '@/entities/easypay';
-import { PGPaymentCommand } from '@/features/payments/model/command/pg-payment-command';
+import { payByPgApi, USER_PAYMENT_CONSTANTS } from '@/features/user-payment';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    let data = {} as any;
-    formData.forEach((value: any, key: string) => {
-      data[key as string] = value;
-    });
-
-    const easyPayAuthenticationResult = EasyPayMapper.toAuthenticationDto(data);
-
-    const manager = new PGPaymentCommand(formData);
-    const result = await manager.execute();
+    const result = await payByPgApi(formData);
 
     const url = request.nextUrl.clone();
-    url.pathname = '/order/payments/popup-callback';
-    url.searchParams.set('status', 'success');
-    url.searchParams.set('approvalDate', result.approvalDate.toString());
-    url.searchParams.set('amount', result.amount.toString());
-    url.searchParams.set('shopOrderNo', result.shopOrderNo);
 
+    if (!result.isSuccess) {
+      url.pathname = '/order/payments/popup-callback';
+      url.searchParams.set('status', USER_PAYMENT_CONSTANTS.status.fail);
+      url.searchParams.set('message', result.message);
+      return NextResponse.redirect(url, { status: 302 });
+    }
+
+    const { approvalDate, amount, shopOrderNo } = result.data;
+    url.pathname = '/order/payments/popup-callback';
+    url.searchParams.set('status', USER_PAYMENT_CONSTANTS.status.success);
+    url.searchParams.set('approvalDate', approvalDate);
+    url.searchParams.set('amount', amount.toString());
+    url.searchParams.set('shopOrderNo', shopOrderNo);
     return NextResponse.redirect(url, { status: 302 });
-  } catch (error: any) {
-    Logger.error(error);
-    // 리다이렉트 -> TODO: searchParams를 set하는 방식에 대해 고민이 필요합니다
+  } catch (error) {
     const url = request.nextUrl.clone();
     url.pathname = '/order/payments/popup-callback';
-    url.searchParams.set('status', 'error');
-    url.searchParams.set('code', error.cause?.code || 'unknown');
+    url.searchParams.set('status', USER_PAYMENT_CONSTANTS.status.fail);
+    url.searchParams.set('message', '결제요청을 처리하는데 문제가 발생했습니다');
     return NextResponse.redirect(url, { status: 302 });
   }
 }

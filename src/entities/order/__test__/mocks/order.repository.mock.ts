@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { BaseError, TestErrorHelper } from '@/shared';
-import { createOrderFixture } from '../fixtures';
+import { createOrderFixture, createCreatedOrderFixture } from '../fixtures';
 
 export interface MockOrderRepository {
   create: ReturnType<typeof vi.fn>;
@@ -16,9 +16,11 @@ export const OrderRepositoryMocks = {
   }),
 
   createSuccess: (): MockOrderRepository => {
+    const createdOrder = createCreatedOrderFixture();
     const order = createOrderFixture();
+
     return {
-      create: vi.fn().mockResolvedValue(order),
+      create: vi.fn().mockResolvedValue(createdOrder),
       findById: vi.fn().mockResolvedValue(order),
       update: vi.fn().mockResolvedValue(order),
     };

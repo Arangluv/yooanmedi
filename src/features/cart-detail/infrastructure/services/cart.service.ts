@@ -74,6 +74,7 @@ export const CartDetailService = ({ repository }: CartDetailServiceDependencies)
       const cartItems = await repository.cartItem.findMany(
         CartDetailFindOption.allCartItem(cartId),
       );
+
       const ids = cartItems.map((item) => item.id);
       return await repository.cartItem.deleteMany(ids);
     } catch (error) {
