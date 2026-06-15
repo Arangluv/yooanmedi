@@ -1,21 +1,32 @@
 import { Product } from '@/entities/product';
+import { BaseError } from '@/shared';
 
-export interface PointAllocatorItem {
+export interface PointAllocatorItemDto {
   product: Product;
   quantity: number;
 }
 
 export class PointAllocator {
-  private readonly items: PointAllocatorItem[];
+  private readonly items: PointAllocatorItemDto[];
   private readonly usedPoint: number;
   private ratioMap: Map<number, number>;
   private pointMap: Map<number, number>;
 
-  constructor(items: PointAllocatorItem[], usedPoint: number) {
+  constructor(items: PointAllocatorItemDto[], usedPoint: number) {
     this.items = items;
     this.usedPoint = usedPoint;
     this.ratioMap = this.createRatioMap();
     this.pointMap = this.createPointMap();
+  }
+
+  public getAllocatedPoint(productId: number) {
+    const point = this.pointMap.get(productId);
+
+    if (point === undefined) {
+      throw new Error('분배된 포인트가 존재하지 않습니다');
+    }
+
+    return point;
   }
 
   /**
@@ -50,7 +61,13 @@ export class PointAllocator {
 
     this.items.forEach((item) => {
       const ratio = this.ratioMap.get(item.product.id);
-      if (!ratio) throw new Error('주문 상품의 가중치가 존재하지 않습니다');
+      if (!ratio) {
+        throw new BaseError({
+          clientMsg: '적립금을 처리하는데 문제가 발생했습니다',
+          devMsg: '포인트 가중치가 존재하지 않습니다',
+          errorName: 'PointAllocatorError',
+        });
+      }
 
       const point = Math.floor((this.usedPoint * ratio) / 100);
       const productPrice = item.product.price * item.quantity;
@@ -83,15 +100,5 @@ export class PointAllocator {
     const weight = Math.floor((orderProductPrice / totalPriceWithoutDeliveryFee) * 100);
 
     return Math.max(minWeight, weight);
-  }
-
-  public getAllocatedPoint(productId: number) {
-    const point = this.pointMap.get(productId);
-
-    if (point === undefined) {
-      throw new Error('분배된 포인트가 존재하지 않습니다');
-    }
-
-    return point;
   }
 }
