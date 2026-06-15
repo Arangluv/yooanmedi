@@ -67,8 +67,14 @@ export class PriceResolver {
     const isFreeDelivery = this.calcIsFreeDelivery(dto, minOrderPrice);
     dto.forEach((item) => {
       if (priceMap.get(item.id)) {
-        throw new Error('asd');
+        throw new BaseError({
+          clientMsg: '요청을 처리하는데 문제가 발생했습니다',
+          devMsg:
+            'priceMap 컨텍스트를 생성하는데 문제가 발생했습니다. priceItem 식별자가 중복되었습니다.',
+          errorName: 'PriceResolverError',
+        });
       }
+
       const resolvedItem = ZodSchemaParser.safeParseOrThrow(resolvedPriceItemSchema, {
         data: {
           id: item.id,

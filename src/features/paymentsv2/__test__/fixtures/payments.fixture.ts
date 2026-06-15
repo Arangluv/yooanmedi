@@ -1,6 +1,12 @@
-import { BankTransferPaymentCommandDto, PGPaymentCommandDto, PaymentOrderItemDto } from '../../dto';
+import {
+  BankTransferPaymentCommandDto,
+  BankTransferPaymentRequestDto,
+  PGPaymentCommandDto,
+  PaymentOrderItemDto,
+} from '../../dto';
 import { createProductFixture } from '@/entities/product/__test__';
 import { EasyPayFixtureUtil } from '@/entities/easypay/__test__';
+import { createCartItemFixture } from '@/entities/cart-item/__test__';
 
 const basePaymentOrderItem = {
   product: createProductFixture({ id: 1, price: 3000 }),
@@ -57,5 +63,24 @@ export const PaymentFixtures = {
       },
       minOrderPrice: 30000,
     } as PGPaymentCommandDto,
+  },
+
+  request: {
+    bank: {
+      user: {
+        id: 1,
+        deliveryRequest: '테스트 배송요청 사항',
+        usedPoint: 3000,
+      },
+      paymentInfo: {
+        orderList: [
+          createCartItemFixture({ id: 1, product: createProductFixture({ id: 1 }) }),
+          createCartItemFixture({ id: 2, product: createProductFixture({ id: 2 }) }),
+          createCartItemFixture({ id: 3, product: createProductFixture({ id: 3 }) }),
+        ],
+        totalAmount: 3000,
+      },
+      minOrderPrice: 30000,
+    } as BankTransferPaymentRequestDto,
   },
 };

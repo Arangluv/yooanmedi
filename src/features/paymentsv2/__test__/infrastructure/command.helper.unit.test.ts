@@ -2,7 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { PAYMENTS_METHOD } from '@/shared';
 import { EasyPayPaymentAuthenticationSchemas } from '@/entities/easypay';
 import { EasyPayFixtureUtil } from '@/entities/easypay/__test__';
+import { PaymentFixtures } from '../fixtures';
 import { PaymentCommandHelper } from '../../infrastructure';
+import { UserPaymentDto } from '../../schemas';
 
 describe('PaymentCommandHelper', () => {
   describe('toPaymentAuthResult', () => {
@@ -30,16 +32,15 @@ describe('PaymentCommandHelper', () => {
   });
 
   describe('createBankTransferCommandDto', () => {
-    it('FormData가 PaymentAuthResult로 파싱된다', () => {
-      // PointAllocator --> 테스트코드를 작성해야한다
-
+    it('BankTransferPaymentCommandDto로 파싱된다', () => {
       // Given
-      const requestDto = '' as any;
+      const requestDto = PaymentFixtures.request.bank;
 
       // When
-      const result = PaymentCommandHelper.createBankTransferCommandDto('ASD' as any);
+      const result = PaymentCommandHelper.createBankTransferCommandDto(requestDto);
 
       // Then
+      expect(result).toEqual(expect.schemaMatching(UserPaymentDto.command.bankTransfer));
     });
   });
 });

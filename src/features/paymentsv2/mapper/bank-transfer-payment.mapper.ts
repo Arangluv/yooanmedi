@@ -132,7 +132,7 @@ export class BankTransferPaymentMapper {
   static toPriceItems(data: CartItem[]): PriceItemDto[] {
     const dto: PriceItemDto[] = data.map((item) => {
       return {
-        id: item.id,
+        id: item.product.id,
         product: {
           is_cost_per_unit: item.product.is_cost_per_unit,
           is_free_delivery: item.product.is_free_delivery,

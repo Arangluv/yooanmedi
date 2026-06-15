@@ -1,4 +1,9 @@
-import { generate15digitsNumberBasedOnDate, PAYMENTS_METHOD, PriceResolver } from '@/shared';
+import {
+  BaseError,
+  generate15digitsNumberBasedOnDate,
+  PAYMENTS_METHOD,
+  PriceResolver,
+} from '@/shared';
 import { EasyPayMapper, EasyPayPaymentAuthenticationDto } from '@/entities/easypay';
 import { PointAllocator } from '@/entities/point';
 import { ProductRepository } from '@/entities/product';
@@ -32,7 +37,10 @@ export class PaymentCommandHelper {
     const populatedProducts = dto.orderList.map((item) => {
       const product = products.find((product) => product.id === item.product.id);
       if (!product) {
-        throw new Error('asd');
+        throw new BaseError({
+          clientMsg: '결제 과정에서 문제가 발생했습니다',
+          errorName: 'PGCommnadError',
+        });
       }
 
       return {
@@ -81,9 +89,9 @@ export class PaymentCommandHelper {
     };
   }
 
-  static async createBankTransferCommandDto(
+  static createBankTransferCommandDto(
     dto: BankTransferPaymentRequestDto,
-  ): Promise<BankTransferPaymentCommandDto> {
+  ): BankTransferPaymentCommandDto {
     const priceItems = BankTransferPaymentMapper.toPriceItems(dto.paymentInfo.orderList);
     const priceResolver = new PriceResolver(priceItems, dto.minOrderPrice);
     const pointAllocator = new PointAllocator(dto.paymentInfo.orderList, dto.user.usedPoint);
