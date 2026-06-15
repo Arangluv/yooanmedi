@@ -39,6 +39,8 @@ export class PaymentCommandHelper {
       if (!product) {
         throw new BaseError({
           clientMsg: '결제 과정에서 문제가 발생했습니다',
+          devMsg:
+            'PGCommandDto를 생성하는 과정에서 문제가 발생했습니다. 상품정보를 찾을 수 없습니다',
           errorName: 'PGCommnadError',
         });
       }

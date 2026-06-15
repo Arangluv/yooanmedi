@@ -9,6 +9,10 @@ import {
   EasyPayPaymentApprovalApiSuccessResponse,
   EasyPayPaymentCancelApiSuccessResponse,
   EasyPayPaymentAuthenticationResponse,
+  // result
+  EasyPayRegisterTransactionResult,
+  EasyPayPaymentApprovalResult,
+  EasyPayPaymentCancelResult,
 } from '../../types';
 import { EasyPayFixtureUtil } from './easypay.fixture.util';
 
@@ -93,6 +97,10 @@ export const EasyPayFixtures = {
   },
 
   result: {
+    register: {
+      authPageUrl: 'https://test-url.com',
+    } as EasyPayRegisterTransactionResult,
+
     approve: {
       mallId: EasyPayFixtureUtil.generateMID(),
       pgCno: EasyPayFixtureUtil.generatePgCno(),
@@ -102,13 +110,17 @@ export const EasyPayFixtures = {
       statusMessage: '매입요청',
       msgAuthValue: '**************',
       escrowUsed: 'N',
-      amount: 13000,
+      amount: 77588,
       transactionDate: '20260403153020',
       paymentInfo: {
         payMethodTypeCode: '11',
         approvalNo: '87858392',
         approvalDate: '20260403153020',
       },
-    },
+    } as EasyPayPaymentApprovalResult,
+
+    cancel: {
+      cancelPgCno: EasyPayFixtureUtil.generatePgCno(),
+    } as EasyPayPaymentCancelResult,
   },
 };

@@ -10,21 +10,10 @@ describe('PaymentCommandHelper', () => {
   describe('toPaymentAuthResult', () => {
     it('FormData가 PaymentAuthResult로 파싱된다', () => {
       // Given
-      const formData = new FormData();
-      formData.append('authorizationId', EasyPayFixtureUtil.generateAuthorizationId());
-      formData.append('shopOrderNo', EasyPayFixtureUtil.generateShopOrderNo());
-      formData.append('shopValue1', '테스트 요청사항');
-      formData.append(
-        'shopValue2',
-        '[{"product":{"id":1,"price":3000},"quantity":3},{"product":{"id":2,"price":2300},"quantity":2},{"product":{"id":3,"price":2000},"quantity":1}]',
-      );
-      formData.append('shopValue3', '2300');
-      formData.append('shopValue4', '1');
-      formData.append('shopValue5', PAYMENTS_METHOD.credit_card);
-      formData.append('shopValue6', '30000');
+      const requestDto = PaymentFixtures.request.pg;
 
       // When
-      const result = PaymentCommandHelper.toPaymentAuthResult(formData);
+      const result = PaymentCommandHelper.toPaymentAuthResult(requestDto);
 
       // Then
       expect(result).toEqual(expect.schemaMatching(EasyPayPaymentAuthenticationSchemas.dto));

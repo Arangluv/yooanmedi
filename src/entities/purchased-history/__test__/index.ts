@@ -1,2 +1,2 @@
-export { basePurchasedHistoryEntityFixture, createPurchasedHistoryEntityFixture } from './fixtures';
-export { MockPurchasedHistoryAdapter } from './mocks';
+export { createPurchasedHistoryFixture, createPurchasedHistoryEntityFixture } from './fixtures';
+export { MockPurchasedHistoryAdapter, PurchasedHistoryRepositoryMocks } from './mocks';

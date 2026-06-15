@@ -1,5 +1,5 @@
 import { PaginatedDocs } from 'payload';
-import { Product, ProductEntity } from '../../types';
+import { Product, ProductEntity, ProductCategory, ProductCategoryEntity } from '../../types';
 
 export const ProductFixtures = {
   noImage: {
@@ -133,13 +133,24 @@ export const createProductListFixture = (override?: Partial<typeof baseProductLi
   };
 };
 
-export const baseProductCategoryEntityFixture = { id: 1, name: '의약품' };
+export const baseProductCategoryEntityFixture = { id: 1, name: '의약품' } as ProductCategoryEntity;
 
 export const createProductCategoryEntityFixture = (
   override?: Partial<typeof baseProductCategoryEntityFixture>,
-) => {
+): ProductCategoryEntity => {
   return {
     ...baseProductCategoryEntityFixture,
+    ...override,
+  };
+};
+
+export const baseProductCategoryFixture = { id: 1, name: '의약품' } as ProductCategory;
+
+export const createProductCategoryFixture = (
+  override?: Partial<typeof baseProductCategoryFixture>,
+): ProductCategory => {
+  return {
+    ...baseProductCategoryFixture,
     ...override,
   };
 };

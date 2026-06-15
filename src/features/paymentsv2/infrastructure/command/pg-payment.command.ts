@@ -16,13 +16,13 @@ import { PGPaymentCommandDto, PaymentOrderItemDto } from '../../dto';
 import { PGPaymentMapper } from '../../mapper';
 import { PaymentError } from '../../core';
 
-interface PGCommandResult {
+export interface PGPaymentCommandResult {
   approvalDate: string;
   amount: number;
   shopOrderNo: string;
 }
 
-export interface PGCommandDependencies {
+export interface PGPaymentCommandDependencies {
   payload: BasePayload;
   repository: {
     easyPay: EasyPayRepository;
@@ -35,12 +35,12 @@ export interface PGCommandDependencies {
   };
 }
 
-export class PGPaymentCommand extends TransactionCommand<PGCommandResult> {
+export class PGPaymentCommand extends TransactionCommand<PGPaymentCommandResult> {
   private readonly dto: PGPaymentCommandDto;
-  private readonly repository: PGCommandDependencies['repository'];
+  private readonly repository: PGPaymentCommandDependencies['repository'];
   private rollbackDto: EasyPayPaymentCancelRequestDto | null;
 
-  constructor(dto: PGPaymentCommandDto, dependencies: PGCommandDependencies) {
+  constructor(dto: PGPaymentCommandDto, dependencies: PGPaymentCommandDependencies) {
     super(dependencies.payload);
     this.dto = dto;
     this.repository = dependencies.repository;
@@ -164,7 +164,8 @@ export class PGPaymentCommand extends TransactionCommand<PGCommandResult> {
   private async approvePayment(): Promise<EasyPayPaymentApprovalResult> {
     const dto = PGPaymentMapper.toApprovePaymentDto(this.dto);
     const result = await this.repository.easyPay.approvePayment(dto);
-
+    console.log('result');
+    console.log(result);
     this.rollbackDto = { pgCno: result.pgCno, amount: result.amount };
 
     if (result.amount !== this.dto.paymentInfo.totalAmount) {

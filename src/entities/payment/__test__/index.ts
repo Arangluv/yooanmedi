@@ -1,2 +1,2 @@
 export { basePaymentHistoryEntityFixture, createPaymentHistoryEntityFixture } from './fixtures';
-export { MockPaymentHistoryAdapter } from './mocks';
+export { MockPaymentHistoryAdapter, PaymentHistoryRepositoryMocks } from './mocks';

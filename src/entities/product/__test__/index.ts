@@ -7,6 +7,7 @@ export {
   createProductListFixture,
   baseProductCategoryEntityFixture,
   createProductCategoryEntityFixture,
+  createProductCategoryFixture,
 } from './fixtures';
 
-export { MockProductAdapter } from './mocks';
+export { MockProductAdapter, ProductRepositoryMocks, type MockProductRepository } from './mocks';

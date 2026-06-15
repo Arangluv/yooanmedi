@@ -18,7 +18,7 @@ import {
 } from '@/entities/payment/infrastructure';
 import { PGPaymentRequestDto, BankTransferPaymentRequestDto } from '../../dto';
 import { PaymentCommandHelper } from '../libs';
-import { PGCommandDependencies, PGPaymentCommand } from './pg-payment.command';
+import { PGPaymentCommandDependencies, PGPaymentCommand } from './pg-payment.command';
 import {
   BankTransferCommandDependencies,
   BankTransferPaymentCommand,
@@ -26,7 +26,7 @@ import {
 
 export class PaymentCommandFactory {
   static async createCommandForPG(dto: PGPaymentRequestDto) {
-    const dependencies: PGCommandDependencies = {
+    const dependencies: PGPaymentCommandDependencies = {
       payload: await getPayload(),
       repository: {
         easyPay: new EasyPayApiRepository(EasyPayAdapter()),
@@ -61,7 +61,8 @@ export class PaymentCommandFactory {
       },
     };
 
-    const commandDto = await PaymentCommandHelper.createBankTransferCommandDto(dto);
+    const commandDto = PaymentCommandHelper.createBankTransferCommandDto(dto);
+
     return new BankTransferPaymentCommand(commandDto, dependencies);
   }
 }

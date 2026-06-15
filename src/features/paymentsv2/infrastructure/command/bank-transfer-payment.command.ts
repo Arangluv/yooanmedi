@@ -10,7 +10,7 @@ import { BankTransferPaymentCommandDto, PaymentOrderItemDto } from '../../dto';
 import { BankTransferPaymentMapper } from '../../mapper';
 import { PaymentError } from '../../core';
 
-interface BankTransferCommandResult {
+export interface BankTransferCommandResult {
   ok: boolean;
 }
 

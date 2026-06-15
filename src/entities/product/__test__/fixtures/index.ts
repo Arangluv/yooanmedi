@@ -7,4 +7,5 @@ export {
   createProductListFixture,
   baseProductCategoryEntityFixture,
   createProductCategoryEntityFixture,
+  createProductCategoryFixture,
 } from './product.fixture';

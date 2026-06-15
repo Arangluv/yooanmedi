@@ -1,1 +1,4 @@
-export { basePurchasedHistoryEntityFixture, createPurchasedHistoryEntityFixture } from './purchased-history.fixture';
+export {
+  createPurchasedHistoryFixture,
+  createPurchasedHistoryEntityFixture,
+} from './purchased-history.fixture';

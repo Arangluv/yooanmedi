@@ -1,1 +1,5 @@
-export { basePaymentHistoryEntityFixture, createPaymentHistoryEntityFixture } from './payment-history.fixture';
+export {
+  basePaymentHistoryEntityFixture,
+  createPaymentHistoryEntityFixture,
+  createPaymentHistoryFixture,
+} from './payment-history.fixture';

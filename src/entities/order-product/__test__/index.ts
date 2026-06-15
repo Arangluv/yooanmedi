@@ -3,4 +3,4 @@ export {
   createOrderProductEntityFixture,
   createOrderProductFixture,
 } from './fixtures';
-export { MockOrderProductAdapter } from './mocks';
+export { MockOrderProductAdapter, OrderProductRepositoryMocks } from './mocks';
