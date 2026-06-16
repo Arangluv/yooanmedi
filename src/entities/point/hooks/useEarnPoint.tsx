@@ -14,7 +14,7 @@ export const useEarnPoint = ({ cartItems }: { cartItems: CartItem[] }) => {
     const pointItems = PointHistoryMapper.cartItemListToPointItemList(cartItems);
 
     setCardPoint(PointCalculator.totalForCart(pointItems, PAYMENTS_METHOD.credit_card));
-    setBankPoint(PointCalculator.totalForCart(pointItems, PAYMENTS_METHOD.credit_card));
+    setBankPoint(PointCalculator.totalForCart(pointItems, PAYMENTS_METHOD.bank_transfer));
   }, [cartItems]);
 
   return { cardPoint, bankPoint };

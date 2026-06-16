@@ -19,7 +19,7 @@ export class ProductListService implements IProductListService {
     const searchParams = await ProductListService.getSafeSearchParams(rawSearchParams);
     const queries = generateProductListQueries(searchParams);
     const productApiRepository = new ProductApiRepository(ProductAdapter());
-    const productList = await productApiRepository.findMany(
+    const { products, totalCount } = await productApiRepository.findMany(
       buildProductsFindOption(queries, searchParams.page),
     );
 
@@ -27,23 +27,21 @@ export class ProductListService implements IProductListService {
     const userApiRepository = new UserApiRepository(UserAdapter());
     const user = await userApiRepository.findByHeader();
     const customPriceList = await customPriceRepository.findMany(buildCustomPriceFindOption(user));
-    // 아래 부분 리팩토링
+
+    // TODO :: 아래 부분 리팩토링
     const map = new Map();
     customPriceList.forEach((item) => {
       map.set(item.product, item.price);
     });
-    const appliedProducts = productList.products.map((product) => {
+
+    const appliedProducts = products.map((product) => {
       return {
         ...product,
-        price: map.get(product.id),
+        price: map.get(product.id) || product.price,
       };
     });
 
-    // const productsAppliedCustomPrice = customPriceService.applyCustomPriceListToProducts({
-    //   products: productList.products,
-    //   customPrices: customPriceList,
-    // });
-    return { ...productList, products: appliedProducts };
+    return { products: appliedProducts, totalCount };
   }
 
   public async getRankingProductList() {
@@ -63,14 +61,9 @@ export class ProductListService implements IProductListService {
     const appliedProducts = productList.products.map((product) => {
       return {
         ...product,
-        price: map.get(product.id),
+        price: map.get(product.id) || product.price,
       };
     });
-
-    // const productsAppliedCustomPrice = customPriceService.applyCustomPriceListToProducts({
-    //   products: productList.products,
-    //   customPrices: customPriceList,
-    // });
 
     return appliedProducts;
   }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { baseOrderEntityFixture } from '../fixtures';
+import { createOrderEntityFixture } from '../fixtures';
 import { OrderMapper } from '../../mapper';
 import { orderSchema } from '../../schemas';
 
@@ -7,7 +7,7 @@ describe('Order Mapper', () => {
   describe('entityToDomain', () => {
     it('파싱에 성공한다', () => {
       // Given
-      const entity = baseOrderEntityFixture;
+      const entity = createOrderEntityFixture();
 
       // When
       const result = OrderMapper.entityToDomain(entity);

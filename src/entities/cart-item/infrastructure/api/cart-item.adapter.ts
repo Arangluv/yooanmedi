@@ -18,6 +18,24 @@ export const CartItemAdapter = () => ({
   createCartItem: async (dto: CreateCartItemDto): Promise<CreateCartItemResponse> => {
     try {
       const payload = await getPayload();
+
+      const { docs: existCartItemDocs } = await payload.find({
+        collection: 'cart-items',
+        where: {
+          product: {
+            equals: dto.product,
+          },
+        },
+      });
+
+      if (existCartItemDocs.length !== 0) {
+        const error = new BaseError({
+          clientMsg: '이미 장바구니에 담겨있는 상품입니다',
+          errorName: 'CartItemAdapterError',
+        });
+        return PayloadAdapterResultManager.fail(error);
+      }
+
       const createdItems = await payload.create({
         collection: 'cart-items',
         data: dto,
@@ -46,7 +64,7 @@ export const CartItemAdapter = () => ({
         populate: {
           carts: {},
         },
-        depth: 1,
+        depth: 2,
       });
       return PayloadAdapterResultManager.ok(cartItems);
     } catch (error) {

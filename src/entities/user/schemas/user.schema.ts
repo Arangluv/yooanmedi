@@ -18,7 +18,7 @@ export const userSchema = z.object({
   businessNumber: BaseSchema.string({}),
   nursingNumber: BaseSchema.string({}),
   address: BaseSchema.string({}),
-  contactEmail: BaseSchema.email,
+  contactEmail: BaseSchema.email.nullable(),
   phoneNumber: BaseSchema.string({}),
   faxNumber: BaseSchema.string({}),
   username: BaseSchema.string({}), // 도메인의 ID

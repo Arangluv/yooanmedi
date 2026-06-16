@@ -20,6 +20,7 @@ export const OrderAdapter = () => ({
         depth: 0,
         req,
       });
+
       return PayloadAdapterResultManager.ok(order);
     } catch (error) {
       LoggerV2.error(error);

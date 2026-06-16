@@ -7,7 +7,7 @@ const DetailPointBenefitRow = ({ product }: Pick<CartItem, 'product'>) => {
   const willEarnPointForCard = PointCalculator.forCard(
     PointHistoryMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
   );
-  const willEarnPointForBankTransfer = PointCalculator.forCard(
+  const willEarnPointForBankTransfer = PointCalculator.forBank(
     PointHistoryMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
   );
 

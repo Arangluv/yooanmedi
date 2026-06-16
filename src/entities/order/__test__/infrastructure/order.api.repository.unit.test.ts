@@ -2,8 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BaseError, TestErrorHelper } from '@/shared';
 import { PayloadAdapterResultManager } from '@/shared/server';
 import { MockOrderAdapter } from '../mocks';
-import { createOrderEntityFixture } from '../fixtures';
-import { CreateOrderRequestForBankTransferDto, CreateOrderRequestForPgDto, UpdateOrderRequestDto } from '../../dto';
+import { createOrderEntityFixture, OrderEntityFixtures } from '../fixtures';
+import {
+  CreateOrderRequestForBankTransferDto,
+  CreateOrderRequestForPgDto,
+  UpdateOrderRequestDto,
+} from '../../dto';
 import { OrderApiRepository, OrderAdapter } from '../../infrastructure';
 
 describe('Order Api Repository', () => {
@@ -30,7 +34,9 @@ describe('Order Api Repository', () => {
         finalPrice: 6000,
         usedPoint: 0,
       } as CreateOrderRequestForPgDto;
-      vi.mocked(mockAdapter.createOrder).mockResolvedValue(PayloadAdapterResultManager.ok(createOrderEntityFixture()));
+      vi.mocked(mockAdapter.createOrder).mockResolvedValue(
+        PayloadAdapterResultManager.ok(OrderEntityFixtures.create),
+      );
 
       // When
       await repository.create(dto);
@@ -67,7 +73,9 @@ describe('Order Api Repository', () => {
     it('주문 조회에 성공한다', async () => {
       // Given
       const targetOrderId = 3;
-      vi.mocked(mockAdapter.getOrderById).mockResolvedValue(PayloadAdapterResultManager.ok(createOrderEntityFixture()));
+      vi.mocked(mockAdapter.getOrderById).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createOrderEntityFixture()),
+      );
 
       // When
       await repository.findById(targetOrderId);
@@ -98,7 +106,9 @@ describe('Order Api Repository', () => {
           orderStatus: 'delivered',
         },
       } as UpdateOrderRequestDto;
-      vi.mocked(mockAdapter.updateOrder).mockResolvedValue(PayloadAdapterResultManager.ok(createOrderEntityFixture()));
+      vi.mocked(mockAdapter.updateOrder).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createOrderEntityFixture()),
+      );
 
       // When
       await repository.update(dto);

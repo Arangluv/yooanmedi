@@ -1,6 +1,5 @@
 export {
-  baseOrderEntityFixture,
-  baseOrderFixture,
+  OrderEntityFixtures,
   createOrderEntityFixture,
   createOrderFixture,
   createCreatedOrderFixture,
