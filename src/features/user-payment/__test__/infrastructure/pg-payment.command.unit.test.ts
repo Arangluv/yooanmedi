@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BaseError } from '@/shared';
 import { PaymentCommandHelper } from '../../infrastructure';
-import { PGPaymentCommand } from '../../infrastructure/command';
+import { PGPaymentCommand, PGPaymentCommandDependencies } from '../../infrastructure/command';
 import { MockCommandDependencies } from '../mocks';
 import { PaymentFixtures } from '../fixtures';
 import {
@@ -10,11 +10,17 @@ import {
   createProductFixture,
 } from '@/entities/product/__test__';
 import { ProductRepository } from '@/entities/product';
+import { PGPaymentCommandDto, PGPaymentRequestDto } from '../../dto';
+import { BasePayload } from 'payload';
 
 describe('PGPaymentCommand', () => {
   const mockProductRepository = ProductRepositoryMocks.create() as MockProductRepository;
+  let requestDto: PGPaymentRequestDto;
+  let mockPayload: BasePayload;
+  let mockRepositories: PGPaymentCommandDependencies['repository'];
+  let commandDto: PGPaymentCommandDto;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.mocked(mockProductRepository.findMany).mockResolvedValue({
       products: [
         createProductFixture({ id: 1, price: 16500 }),
@@ -24,20 +30,95 @@ describe('PGPaymentCommand', () => {
       totalCount: 3,
     });
 
-    vi.clearAllMocks();
-  });
+    requestDto = PaymentFixtures.request.usePoint.pg;
+    const { payload, repository } = MockCommandDependencies.pg.success;
+    mockPayload = payload;
+    mockRepositories = repository;
 
-  it('PG 결제에 성공 후 transaction이 commit된다', async () => {
-    // Given
-    const requestDto = PaymentFixtures.request.pg;
-    const { payload: mockPayload, repository: mockRepositories } =
-      MockCommandDependencies.pg.success;
     const paymentAuthResult = PaymentCommandHelper.toPaymentAuthResult(requestDto);
-    const commandDto = await PaymentCommandHelper.createPGCommandDto(
+    commandDto = await PaymentCommandHelper.createPGCommandDto(
       paymentAuthResult,
       mockProductRepository as unknown as ProductRepository,
     );
 
+    vi.clearAllMocks();
+  });
+
+  it('주문이 생성된다', async () => {
+    // Given
+    const command = new PGPaymentCommand(commandDto, {
+      payload: mockPayload,
+      repository: mockRepositories,
+    });
+
+    // When
+    await command.execute();
+
+    // Then
+    expect(mockRepositories.order.create).toHaveBeenCalledTimes(1);
+  });
+
+  it('주문상품 / 최근구매내역 / 포인트 적립 / 포인트 사용 히스토리가 생성된다', async () => {
+    // Given
+    const command = new PGPaymentCommand(commandDto, {
+      payload: mockPayload,
+      repository: mockRepositories,
+    });
+
+    // When
+    await command.execute();
+
+    // Then
+    const callTimes = commandDto.paymentInfo.orderList.length;
+    expect(mockRepositories.orderProduct.create).toHaveBeenCalledTimes(callTimes);
+    expect(mockRepositories.pointHistory.createUsageHistory).toHaveBeenCalledTimes(callTimes * 2);
+    expect(mockRepositories.purchasedHistory.create).toHaveBeenCalledTimes(callTimes);
+  });
+
+  it('유저의 포인트가 차감된다', async () => {
+    // Given
+    const command = new PGPaymentCommand(commandDto, {
+      payload: mockPayload,
+      repository: mockRepositories,
+    });
+
+    // When
+    await command.execute();
+
+    // Then
+    expect(mockRepositories.user.update).toHaveBeenCalledTimes(2);
+  });
+
+  it('결제 승인 요청을 성공한다', async () => {
+    // Given
+    const command = new PGPaymentCommand(commandDto, {
+      payload: mockPayload,
+      repository: mockRepositories,
+    });
+
+    // When
+    await command.execute();
+
+    // Then
+    expect(mockRepositories.easyPay.approvePayment).toHaveBeenCalledTimes(1);
+  });
+
+  it('결제내역 히스토리를 생성한다', async () => {
+    // Given
+    const command = new PGPaymentCommand(commandDto, {
+      payload: mockPayload,
+      repository: mockRepositories,
+    });
+
+    // When
+    await command.execute();
+
+    // Then
+    expect(mockRepositories.paymentHistory.create).toHaveBeenCalledTimes(1);
+  });
+
+  it('PG 결제에 성공 후 transaction이 commit된다', async () => {
+    // Given
     const command = new PGPaymentCommand(commandDto, {
       payload: mockPayload,
       repository: mockRepositories,
@@ -54,33 +135,33 @@ describe('PGPaymentCommand', () => {
 
   it('PG 결제에 실패 시 BaseError를 throw한다', async () => {
     // Given
-    const requestDto = PaymentFixtures.request.pg;
-    const { payload: mockPayload, repository: mockRepositories } = MockCommandDependencies.pg.fail;
-    const paymentAuthResult = PaymentCommandHelper.toPaymentAuthResult(requestDto);
-    const commandDto = await PaymentCommandHelper.createPGCommandDto(
-      paymentAuthResult,
-      mockProductRepository as unknown as ProductRepository,
-    );
-
+    const { payload, repository } = MockCommandDependencies.pg.fail;
     const command = new PGPaymentCommand(commandDto, {
-      payload: mockPayload,
-      repository: mockRepositories,
+      payload,
+      repository,
     });
 
     // When & Then
     await expect(() => command.execute()).rejects.toThrow(BaseError);
   });
 
+  it('PG 결제에 실패 시 전체 결제취소 요청이 실행된다', async () => {
+    // Given
+    const { payload: mockPayload, repository: mockRepositories } =
+      MockCommandDependencies.pg.totalCancelCase;
+    const command = new PGPaymentCommand(commandDto, {
+      payload: mockPayload,
+      repository: mockRepositories,
+    });
+
+    // When & Then
+    await expect(() => command.execute()).rejects.toThrow();
+    expect(mockRepositories.easyPay.totalCancel).toHaveBeenCalledTimes(1);
+  });
+
   it('PG 결제에 실패 시 rollbackTransaction이 실행된다', async () => {
     // Given
-    const requestDto = PaymentFixtures.request.pg;
     const { payload: mockPayload, repository: mockRepositories } = MockCommandDependencies.pg.fail;
-    const paymentAuthResult = PaymentCommandHelper.toPaymentAuthResult(requestDto);
-    const commandDto = await PaymentCommandHelper.createPGCommandDto(
-      paymentAuthResult,
-      mockProductRepository as unknown as ProductRepository,
-    );
-
     const command = new PGPaymentCommand(commandDto, {
       payload: mockPayload,
       repository: mockRepositories,

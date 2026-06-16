@@ -39,11 +39,11 @@ export const MockCommandDependencies = {
         },
       },
       repository: {
-        order: OrderRepositoryMocks.createError() as any,
-        orderProduct: OrderProductRepositoryMocks.createError() as any,
-        pointHistory: PointHistoryRepositoryMocks.createError() as any,
+        order: OrderRepositoryMocks.createSuccess() as any,
+        orderProduct: OrderProductRepositoryMocks.createSuccess() as any,
+        pointHistory: PointHistoryRepositoryMocks.createSuccess() as any,
+        purchasedHistory: PurchasedHistoryRepositoryMocks.createSuccess() as any,
         user: UserRepositoryMocks.createError() as any,
-        purchasedHistory: PurchasedHistoryRepositoryMocks.createError() as any,
       },
     } as unknown as BankTransferCommandDependencies,
   },
@@ -83,6 +83,25 @@ export const MockCommandDependencies = {
         pointHistory: PointHistoryRepositoryMocks.createError() as any,
         user: UserRepositoryMocks.createError() as any,
         purchasedHistory: PurchasedHistoryRepositoryMocks.createError() as any,
+      },
+    } as unknown as PGPaymentCommandDependencies,
+
+    totalCancelCase: {
+      payload: {
+        db: {
+          beginTransaction: vi.fn().mockResolvedValue('text-tx-id'),
+          commitTransaction: vi.fn(),
+          rollbackTransaction: vi.fn(),
+        },
+      },
+      repository: {
+        easyPay: EasyPayRepositoryMocks.createSuccess() as any,
+        order: OrderRepositoryMocks.createSuccess() as any,
+        orderProduct: OrderProductRepositoryMocks.createSuccess() as any,
+        pointHistory: PointHistoryRepositoryMocks.createSuccess() as any,
+        user: UserRepositoryMocks.createSuccess() as any,
+        purchasedHistory: PurchasedHistoryRepositoryMocks.createSuccess() as any,
+        paymentHistory: PaymentHistoryRepositoryMocks.createError() as any, // history생성 fail
       },
     } as unknown as PGPaymentCommandDependencies,
   },

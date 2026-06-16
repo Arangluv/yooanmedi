@@ -10,6 +10,7 @@ export const paymentHistory: CollectionConfig = {
   lockDocuments: false,
   admin: {
     group: '주문 관리',
+    defaultColumns: ['order', 'pgCno', 'createdAt'],
   },
   fields: [
     {

@@ -3,14 +3,14 @@ import { priceItemListSchema } from '@/shared';
 import { createOrderSchemaForPG } from '@/entities/order';
 import { createOrderProductSchema } from '@/entities/order-product';
 import { createPurchasedHistoryRequestSchema } from '@/entities/purchased-history';
-import { CreatePointSchema } from '@/entities/point';
+import { CreatePointSchema, pointItemSchema } from '@/entities/point';
 import { updateUserSchema } from '@/entities/user';
 import { EasyPayPaymentApprovalSchemas } from '@/entities/easypay';
 import { createPaymentHistorySchema } from '@/entities/payment';
 import { EasyPayFixtures } from '@/entities/easypay/__test__';
-import { createOrderFixture } from '@/entities/order/__test__';
+import { createCreatedOrderFixture } from '@/entities/order/__test__';
 import { createOrderProductFixture } from '@/entities/order-product/__test__';
-import { createPointHistoryFixture } from '@/entities/point/__test__';
+import { createPointHistoryFixture, createPointItemFixture } from '@/entities/point/__test__';
 import { createUserFixture } from '@/entities/user/__test__';
 import { createProductFixture } from '@/entities/product/__test__';
 import { PGPaymentMapper } from '../../mapper';
@@ -33,7 +33,7 @@ describe('PGPaymentMapper', () => {
   describe('toCreateOrderProductDto', () => {
     it('CreateOrderProductRequestDto로 파싱된다', () => {
       // Given
-      const order = createOrderFixture();
+      const order = createCreatedOrderFixture();
       const orderItem = createPaymentOrderItemDto();
 
       // When
@@ -55,6 +55,38 @@ describe('PGPaymentMapper', () => {
 
       // Then
       expect(result).toEqual(expect.schemaMatching(createPurchasedHistoryRequestSchema));
+    });
+  });
+
+  describe('orderItemtoPointItem', () => {
+    it('pointItem으로 파싱된다', () => {
+      // Given
+      const orderItem = createPaymentOrderItemDto();
+
+      // When
+      const result = PGPaymentMapper.orderItemtoPointItem(orderItem);
+
+      // Then
+      expect(result).toEqual(expect.schemaMatching(pointItemSchema));
+    });
+  });
+
+  describe('toCreateEarnPointHistoryDto', () => {
+    it('CreateUsagePointHistoryRequestDto로 파싱된다', () => {
+      // Given
+      const commandDto = PaymentFixtures.commandDto.pg;
+      const pointItem = createPointItemFixture();
+      const orderProduct = createOrderProductFixture();
+
+      // When
+      const result = PGPaymentMapper.toCreateEarnPointHistoryDto({
+        dto: commandDto,
+        pointItem,
+        orderProduct,
+      });
+
+      // Then
+      expect(result).toEqual(expect.schemaMatching(CreatePointSchema.usage.request));
     });
   });
 
@@ -131,7 +163,7 @@ describe('PGPaymentMapper', () => {
   describe('toCreatePaymentHistoryDto', () => {
     it('CreatePaymentHistoryRequestDto로 파싱된다', () => {
       // Given
-      const order = createOrderFixture();
+      const order = createCreatedOrderFixture();
       const approvalResult = EasyPayFixtures.result.approve;
 
       // When

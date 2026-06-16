@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { priceItemListSchema } from '@/shared';
-import { createOrderFixture } from '@/entities/order/__test__';
+import { createCreatedOrderFixture } from '@/entities/order/__test__';
 import { createOrderSchemaForBankTransfer } from '@/entities/order';
 import { createOrderProductSchema } from '@/entities/order-product';
 import { createPurchasedHistoryRequestSchema } from '@/entities/purchased-history';
@@ -30,7 +30,7 @@ describe('BankTransferPaymentMapper', () => {
   describe('toCreateOrderProductDto', () => {
     it('CreateOrderProductRequestDto로 파싱된다', () => {
       // Given
-      const order = createOrderFixture();
+      const order = createCreatedOrderFixture();
       const orderItem = createPaymentOrderItemDto();
 
       // When

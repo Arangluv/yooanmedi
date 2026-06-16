@@ -8,6 +8,7 @@ import {
   PAYMENT_STATUS_NAME,
 } from '@/entities/order';
 import { PAYMENTS_METHOD } from '@/shared';
+
 export const order: CollectionConfig = {
   slug: 'order',
   labels: {

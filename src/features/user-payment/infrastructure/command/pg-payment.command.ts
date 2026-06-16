@@ -134,11 +134,13 @@ export class PGPaymentCommand extends TransactionCommand<PGPaymentCommandResult>
     orderItem: PaymentOrderItemDto;
     orderProduct: OrderProduct;
   }) {
+    const pointItem = PGPaymentMapper.orderItemtoPointItem(orderItem);
     const dto = PGPaymentMapper.toCreateEarnPointHistoryDto({
       dto: this.dto,
-      orderItem,
+      pointItem,
       orderProduct,
     });
+
     const history = await this.repository.pointHistory.createUsageHistory(dto);
     return history;
   }

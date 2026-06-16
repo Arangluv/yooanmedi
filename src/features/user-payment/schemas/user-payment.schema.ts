@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { BaseSchema } from '@/shared';
 import { productSchema } from '@/entities/product';
+import { USER_PAYMENT_CONSTANTS } from '../constants';
 
 export const paymentOrderItemSchema = z.object({
   product: productSchema,
@@ -25,3 +26,17 @@ export const paymentOrderItemSchema = z.object({
     min: 0,
   }),
 });
+
+export const PaymentResultSearchParamSchemas = {
+  success: z.object({
+    status: z.literal(USER_PAYMENT_CONSTANTS.status.success),
+    amount: BaseSchema.number({ min: 0 }),
+    approvalDate: BaseSchema.string({ required_message: 'approvalDate가 누락되었습니다' }),
+    shopOrderNo: BaseSchema.string({ required_message: 'shopOrderNo가 누락되었습니다' }),
+  }),
+
+  fail: z.object({
+    status: z.literal(USER_PAYMENT_CONSTANTS.status.fail),
+    message: BaseSchema.string({ required_message: 'message가 누락되었습니다' }),
+  }),
+};

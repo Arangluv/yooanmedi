@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { CartItem } from '@/entities/cart-item';
 import { User } from '@/entities/user';
 import { registerTransactionApi, EasyPayRegisterTransactionRequestDto } from '@/entities/easypay';
-import { PopupManager } from '../libs';
+import { usePopup } from '../hooks';
 
 interface UsePaymentsActionProps {
   cartItems: CartItem[];
@@ -23,6 +23,8 @@ export const usePaymentsAction = ({
   usedPoint,
   userRequest,
 }: UsePaymentsActionProps) => {
+  const { popupOpen } = usePopup();
+
   const dto = {
     amount: amount - usedPoint,
     orderInfo: {
@@ -51,8 +53,7 @@ export const usePaymentsAction = ({
     mutationFn: () => registerTransactionApi(dto),
     onSuccess: (result) => {
       if (result.isSuccess) {
-        const popupManager = new PopupManager(result.data.authPageUrl);
-        popupManager.open();
+        popupOpen(result.data.authPageUrl);
       } else {
         alert('결제창을 불러오는데 실패했습니다. 다시 시도해주세요');
       }

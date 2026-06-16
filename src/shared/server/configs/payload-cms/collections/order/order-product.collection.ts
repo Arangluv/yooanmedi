@@ -16,6 +16,7 @@ export const orderProduct: CollectionConfig = {
       'productDeliveryFee',
       'quantity',
       'totalAmount',
+      'createdAt',
     ],
     useAsTitle: 'productNameSnapshot',
     group: '주문 관리',

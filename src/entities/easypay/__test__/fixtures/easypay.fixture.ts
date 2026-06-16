@@ -110,7 +110,7 @@ export const EasyPayFixtures = {
       statusMessage: '매입요청',
       msgAuthValue: '**************',
       escrowUsed: 'N',
-      amount: 77588,
+      amount: 75302,
       transactionDate: '20260403153020',
       paymentInfo: {
         payMethodTypeCode: '11',

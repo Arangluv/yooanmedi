@@ -6,7 +6,7 @@ import { USER_PAYMENT_CONSTANTS } from '../constants';
 
 interface PaymentSuccessMessageEventData {
   status: typeof USER_PAYMENT_CONSTANTS.status.success;
-  amount: string;
+  amount: number;
   approvalDate: string;
   shopOrderNo: string;
 }

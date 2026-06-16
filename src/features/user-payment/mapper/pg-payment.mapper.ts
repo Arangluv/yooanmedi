@@ -23,6 +23,8 @@ import {
   POINT_ACTION,
   PointCalculator,
   PointHistory,
+  PointItem,
+  pointItemSchema,
 } from '@/entities/point';
 import { UpdateUserDto, updateUserSchema, User } from '@/entities/user';
 import {
@@ -68,7 +70,7 @@ export class PGPaymentMapper {
         productDeliveryFee: dto.deliveryFee,
         priceSnapshot: dto.product.price,
         productNameSnapshot: dto.product.name,
-        orderProductStatus: ORDER_PRODUCT_STATUS.pending,
+        orderProductStatus: ORDER_PRODUCT_STATUS.preparing,
       } as CreateOrderProductRequestDto,
       errorMsg: PAYMENT_ERROR_MESSAGE.createOrderProduct,
     });
@@ -109,20 +111,36 @@ export class PGPaymentMapper {
     });
   }
 
+  static orderItemtoPointItem(orderItem: PaymentOrderItemDto): PointItem {
+    return ZodSchemaParser.safeParseOrThrow(pointItemSchema, {
+      data: {
+        rates: {
+          creditCard: orderItem.product.cashback_rate,
+          bankTransfer: orderItem.product.cashback_rate_for_bank,
+        },
+        quantity: orderItem.quantity,
+        price: orderItem.product.price,
+      } as PointItem,
+      errorMsg: 'orderItem을 pointItem으로 변환하는 과정에서 문제가 발생했습니다',
+    });
+  }
+
   static toCreateEarnPointHistoryDto({
     dto,
-    orderItem,
     orderProduct,
+    pointItem,
   }: {
     dto: PGPaymentCommandDto;
-    orderItem: PaymentOrderItemDto;
     orderProduct: OrderProduct;
+    pointItem: PointItem;
   }): CreateUsagePointHistoryRequestDto {
+    const earnedPoint = PointCalculator.forCardWithQuantity(pointItem);
+
     return ZodSchemaParser.safeParseOrThrow(CreatePointSchema.usage.request, {
       data: {
         user: dto.user.id,
         orderProduct: orderProduct.id,
-        amount: orderItem.usedPoint,
+        amount: earnedPoint,
         type: POINT_ACTION.earn,
       } as CreateUsagePointHistoryRequestDto,
       errorMsg: PAYMENT_ERROR_MESSAGE.createUsePointHistory,

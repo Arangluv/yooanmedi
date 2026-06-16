@@ -16,7 +16,7 @@ import {
 } from '../../dto';
 
 export class PaymentCommandHelper {
-  static toPaymentAuthResult(data: FormData) {
+  static toPaymentAuthResult(data: FormData): EasyPayPaymentAuthenticationDto {
     let rowData = {} as any;
     data.forEach((value: any, key: string) => {
       rowData[key as string] = value;

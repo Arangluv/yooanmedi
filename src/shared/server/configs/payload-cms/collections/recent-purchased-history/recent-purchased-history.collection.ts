@@ -8,7 +8,7 @@ export const recentPurchasedHistory: CollectionConfig = {
   },
   lockDocuments: false,
   admin: {
-    defaultColumns: ['user', 'product', 'quantity', 'amount'],
+    defaultColumns: ['user', 'product', 'quantity', 'amount', 'createdAt'],
     group: '유저 관리',
     useAsTitle: 'id',
   },
