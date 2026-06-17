@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Tabs, Tab } from '@heroui/react';
 import { type ProductCategory } from '@/entities/product';
-import { useSearchQueryState } from '../model/useSearchQueryState';
-import { ProductListSearchParams } from '../lib/generate-search-params';
+import { useSearchQueryState } from '../hooks';
+import { ProductListSearchParams } from '../core';
 
-const ProductCategotyNavigation = ({ categories }: { categories: ProductCategory[] }) => {
+export const ProductCategotyNavigation = ({ categories }: { categories: ProductCategory[] }) => {
   const { filters, updateCategory, updateFavorites } = useSearchQueryState();
   const [selectedKey, setSelectedKey] = useState<string>(keyResolver(filters));
 
@@ -62,5 +62,3 @@ const keyResolver = (filters: ProductListSearchParams) => {
   if (filters.category) return String(filters.category);
   return 'all';
 };
-
-export default ProductCategotyNavigation;

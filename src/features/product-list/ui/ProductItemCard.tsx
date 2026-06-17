@@ -4,10 +4,10 @@ import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { formatNumberWithCommas } from '@/shared';
 import type { Product } from '@/entities/product';
-import useProductDetailStore from '../model/useProductDetailStore';
 import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
 import { AddToCartButton } from '@/features/cart-detail';
 import { PointCalculator, PointHistoryMapper } from '@/entities/point';
+import { useProductDetailStore } from '../hooks';
 
 const ProductItemCard = ({ product }: { product: Product }) => {
   const { setClieckedProduct } = useProductDetailStore();

@@ -15,8 +15,8 @@ import {
   ProductCategotyNavigation,
   ProductAsideDetail,
   ProductListView,
-} from '@/features/product-listv2';
-import { ProductListSearchParamsGenerator } from '@/features/product-listv2/infrastructure';
+} from '@/features/product-list';
+import { ProductListSearchParamsGenerator } from '@/features/product-list/infrastructure';
 import { ProductListHydrator } from './_providers';
 
 export default async function OrderPage({ searchParams }: { searchParams: Promise<SearchParams> }) {

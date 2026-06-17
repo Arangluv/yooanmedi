@@ -9,9 +9,9 @@ import { useAuthStore } from '@/entities/user';
 import { RecentPurchasesTable } from '@/entities/purchased-history';
 import { DetailPointBenefitRow } from '@/entities/point';
 import { AddToCartInput } from '@/features/cart-detail';
-import useProductDetailStore from '../model/useProductDetailStore';
+import { useProductDetailStore } from '../hooks';
 
-const ProductAsideDetail = () => {
+export const ProductAsideDetail = () => {
   const { clieckedProduct } = useProductDetailStore();
   const user = useAuthStore((state) => state.user);
 
@@ -79,5 +79,3 @@ const ProductAsideDetail = () => {
     </div>
   );
 };
-
-export default ProductAsideDetail;

@@ -3,8 +3,8 @@ import {
   PRODUCT_LIST_QUERY_KEYS,
   GetProductListApiResponse,
   GetRankingProductListApiResponse,
-} from '@/features/product-listv2';
-import { ProductListServerSearchParams } from '@/features/product-listv2/infrastructure';
+} from '@/features/product-list';
+import { ProductListServerSearchParams } from '@/features/product-list/infrastructure';
 
 interface ProductListHydratorProps {
   initialData: {

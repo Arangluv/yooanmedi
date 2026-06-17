@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Search, CircleArrowRight } from 'lucide-react';
 import { EmptyProductList } from '@/entities/product';
 import type { Product } from '@/entities/product';
-import { SearchFieldKey } from '../../constant/search-field';
+import { ProductListSearchFieldKey } from '../../constants';
 import ProductListPagination from '../ProductListPagination';
 import ProductList from '../ProductList';
 
@@ -10,7 +10,7 @@ interface SearchResultProps {
   products: Product[];
   totalCount: number;
   keyword: string;
-  condition: SearchFieldKey;
+  condition: ProductListSearchFieldKey;
 }
 
 const ProductSearchResultView = ({
