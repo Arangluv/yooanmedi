@@ -8,4 +8,5 @@ export const productListSchema = z.object({
     min: 0,
   }),
 });
+
 export type ProductList = z.infer<typeof productListSchema>;

@@ -6,7 +6,8 @@ import { ProductCategory } from '../types';
 import { ProductAdapter, ProductApiRepository } from '../infrastructure';
 import { PRODUCT_ERROR_MESSAGE } from '../constants';
 
-export const getProductCategories = async (): Promise<EndPointResult<ProductCategory[]>> => {
+export type GetProductCategoriesApiResponse = EndPointResult<ProductCategory[]>;
+export const getProductCategoriesApi = async (): Promise<GetProductCategoriesApiResponse> => {
   try {
     const productApiRepository = new ProductApiRepository(ProductAdapter());
     const categories = await productApiRepository.getAllCategories();

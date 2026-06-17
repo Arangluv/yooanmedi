@@ -1,11 +1,16 @@
 // api
-export { getProductCategories } from './api/product.api';
+export { getProductCategoriesApi, type GetProductCategoriesApiResponse } from './api/product.api';
 
 // core
 export { type ProductRepository } from './core';
 
 // schema
-export { productSchema, productListSchema, productCategorySchema, productCategoriesSchema } from './schemas';
+export {
+  productSchema,
+  productListSchema,
+  productCategorySchema,
+  productCategoriesSchema,
+} from './schemas';
 
 // types
 export type { Product, ProductList, ProductCategory } from './types';
