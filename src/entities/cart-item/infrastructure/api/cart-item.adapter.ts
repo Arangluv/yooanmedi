@@ -25,6 +25,9 @@ export const CartItemAdapter = () => ({
           product: {
             equals: dto.product,
           },
+          carts: {
+            equals: dto.carts,
+          },
         },
       });
 
