@@ -12,5 +12,3 @@ export {
   ProductSearchForm,
   ProductListView,
 } from './ui';
-
-export { ProductListHydrator } from './providers';

@@ -1,4 +1,4 @@
-export { createProductListUsecase } from './services';
+export { createProductListUsecase, ProductListService } from './services';
 export {
   ProductListSearchParamsGenerator,
   ProductListFindOption,

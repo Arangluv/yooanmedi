@@ -1,4 +1,4 @@
-import { GetProductListRequestDto } from '../infrastructure/dto';
+import { GetProductListRequestDto } from '../core';
 import { ProductListResult } from '../types';
 
 export interface ProductListUseCase {
