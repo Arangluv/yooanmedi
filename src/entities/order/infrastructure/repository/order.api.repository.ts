@@ -28,9 +28,10 @@ export class OrderApiRepository implements OrderRepository {
 
   async update(dto: UpdateOrderRequestDto) {
     const response = await this.adapter.updateOrder(dto);
+
     if (!response.ok) {
       throw response.error;
     }
-    return OrderMapper.entityToDomain(response.data);
+    return OrderMapper.toOperatorResult(response.data);
   }
 }

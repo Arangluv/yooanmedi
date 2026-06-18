@@ -1,68 +1,55 @@
+import { PAYMENTS_METHOD } from '@/shared';
 import { Order } from '@/entities/order';
-import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
 import {
-  OrderProductAdapter,
-  OrderProductApiRepository,
-} from '@/entities/order-product/infrastructure';
-import { OrderProduct } from '@/entities/order-product';
-import { PointCalculator, PointHistory } from '@/entities/point';
-import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
-import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
-import { TransitionOrderCommand } from './transition-order-command';
-import { createTransitionOrderContext } from '../../libs/transition-order-context';
+  PGTransitionOrderCommand,
+  PGTransitionOrderCommandDependencies,
+} from './pg-transition-order.command';
+import {
+  BankTransferTransitionOrderCommand,
+  BankTransferTransitionOrderCommandDependencies,
+} from './bank-transfer-transition-order.command';
+import { TransitionOrderScenarioResolver, TransitionOrderError } from '../../core';
 import { TransitionOrderMapper } from '../../mapper';
-import { POINT_ACTION } from '@/entities/point';
+import { TransitionOrderServiceDependencies } from '../services';
 
 export class TransitionOrderCommandFactory {
-  public static createCommand(order: Order) {
-    const context = createTransitionOrderContext(order);
-    const orderRepository = new OrderApiRepository(OrderAdapter());
-    const orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-    const pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
-    const userRepository = new UserApiRepository(UserAdapter());
-
-    if (context.shouldTriggerEarnPointAction) {
-      const earnPoint = async (orderProducts: OrderProduct[]) => {
-        const histories = [] as PointHistory[];
-        // 유저 포인트 적립 히스토리 생성
-        await Promise.all(
-          orderProducts.map(async (orderProduct) => {
-            const pointItem = TransitionOrderMapper.orderProductToPointItem(orderProduct);
-            const willEarnPoint = PointCalculator.forBank(pointItem);
-            const history = await pointHistoryRepository.createUsageHistory({
-              user: order.user,
-              orderProduct: orderProduct.id,
-              type: POINT_ACTION.earn,
-              amount: willEarnPoint,
-            });
-            histories.push(history);
-          }),
-        );
-
-        // 유저 포인트 업데이트
-        const user = await userRepository.findById(order.user);
-        const updatedPoint = PointCalculator.getUpdatePoint({
-          current: user.point,
-          delta: PointCalculator.getDeltaPointByHistories(histories),
-          action: POINT_ACTION.cancel_earn,
-        });
-
-        await userRepository.update({
-          user: order.user,
-          data: {
-            point: updatedPoint,
+  public static createCommand(order: Order, dependencies: TransitionOrderServiceDependencies) {
+    switch (order.paymentsMethod) {
+      case PAYMENTS_METHOD.credit_card: {
+        const commandDependencies: PGTransitionOrderCommandDependencies = {
+          payload: dependencies.payload,
+          repository: {
+            order: dependencies.repository.order,
+            orderProduct: dependencies.repository.orderProduct,
           },
-        });
-      };
+        };
 
-      return new TransitionOrderCommand(
-        context,
-        orderRepository,
-        orderProductRepository,
-        earnPoint,
-      );
+        const scenario = TransitionOrderScenarioResolver.getTransitionScenarioForPG(order);
+        const commandDto = TransitionOrderMapper.toPGCommandDto({ order, scenario });
+
+        return new PGTransitionOrderCommand(commandDependencies, commandDto);
+      }
+
+      case PAYMENTS_METHOD.bank_transfer: {
+        const commandDependencies: BankTransferTransitionOrderCommandDependencies = {
+          payload: dependencies.payload,
+          repository: {
+            order: dependencies.repository.order,
+            orderProduct: dependencies.repository.orderProduct,
+            user: dependencies.repository.user,
+            pointHistory: dependencies.repository.pointHistory,
+          },
+        };
+
+        const scenario =
+          TransitionOrderScenarioResolver.getTransitionScenarioForBankTransfer(order);
+        const commandDto = TransitionOrderMapper.toBankCommandDto({ order, scenario });
+
+        return new BankTransferTransitionOrderCommand(commandDependencies, commandDto);
+      }
+
+      default:
+        throw TransitionOrderError.invalidData(order);
     }
-
-    return new TransitionOrderCommand(context, orderRepository, orderProductRepository);
   }
 }

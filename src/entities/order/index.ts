@@ -8,7 +8,7 @@ export {
 
 export { orderSchema, createOrderSchemaForBankTransfer, createOrderSchemaForPG } from './schemas';
 
-export { type Order, type CreatedOrder } from './types';
+export { type Order, type OperatorResultOrder } from './types';
 
 export { getPaymentStatus, getFlgStatus, getOrderStatusForList } from './libs';
 

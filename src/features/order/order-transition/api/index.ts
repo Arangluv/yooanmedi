@@ -1,1 +1,6 @@
-export { transitionOrderApi, transitionOrderListApi } from './order-transition.api';
+export {
+  transitionOrderApi,
+  transitionOrderListApi,
+  type TransitionOrderApiResponse,
+  type TransitionOrderListApiResponse,
+} from './order-transition.api';

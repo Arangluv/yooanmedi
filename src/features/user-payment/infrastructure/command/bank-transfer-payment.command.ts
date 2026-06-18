@@ -3,7 +3,7 @@ import { BaseError } from '@/shared';
 import { TransactionCommand } from '@/shared/server';
 import { PointHistory, PointHistoryRepository } from '@/entities/point';
 import { UserRepository } from '@/entities/user';
-import { Order, OrderRepository, CreatedOrder } from '@/entities/order';
+import { Order, OrderRepository, OperatorResultOrder } from '@/entities/order';
 import { OrderProduct, OrderProductRepository } from '@/entities/order-product';
 import { PurchasedHistoryRepository } from '@/entities/purchased-history';
 import {
@@ -65,13 +65,13 @@ export class BankTransferPaymentCommand extends TransactionCommand<BankTransferP
     }
   }
 
-  private async createOrder(): Promise<CreatedOrder> {
+  private async createOrder(): Promise<OperatorResultOrder> {
     const dto = BankTransferPaymentMapper.toCreateOrderDto(this.dto);
     return await this.repository.order.create(dto);
   }
 
   private async createOrderProduct(
-    order: CreatedOrder,
+    order: OperatorResultOrder,
     orderItem: PaymentOrderItemDto,
   ): Promise<OrderProduct> {
     const dto = BankTransferPaymentMapper.toCreateOrderProductDto(order, orderItem);

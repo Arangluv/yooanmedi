@@ -31,6 +31,13 @@ export const TransitionDialogTrigger = ({ selectedRows }: TransitionTriggerProps
   const selectedOrderCount = Object.keys(selectedRows).length;
   const dialogConfig = getTransitionDialogConfig(currentOrderStatus, selectedOrderCount);
 
+  console.log(
+    'AdminOrderListMapper.toTransitionOrderListDto(selectedRows.map((row) => row.original))',
+  );
+  console.log(
+    AdminOrderListMapper.toTransitionOrderListDto(selectedRows.map((row) => row.original)),
+  );
+
   return (
     <AlertDialogTrigger asChild>
       <Button

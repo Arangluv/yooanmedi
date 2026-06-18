@@ -3,16 +3,10 @@ import { Order } from '@/entities/order';
 import { OrderProduct } from '@/entities/order-product';
 import { PointItem, pointItemSchema } from '@/entities/point';
 import { TransitionScenarioDefinition } from '../core';
-import { TransitionConfigDefinition } from '../constants';
-import { transitionOrderContextSchema, TransitionOrderCommandSchema } from '../schemas';
+import { TransitionOrderCommandSchema } from '../schemas';
 import { PGTransitionOrderCommandDto, BankTransferTransitionOrderCommandDto } from '../dto';
 
 export class TransitionOrderMapper {
-  // todo :: will remove
-  static toContext(order: Order, config: TransitionConfigDefinition) {
-    return zodSafeParse(transitionOrderContextSchema, { order, ...config });
-  }
-
   static orderProductToPointItem(orderProduct: OrderProduct): PointItem {
     return ZodSchemaParser.safeParseOrThrow(pointItemSchema, {
       data: {

@@ -1,4 +1,4 @@
-import { OrderEntity, Order, CreatedOrder } from '../../types';
+import { OrderEntity, Order, OperatorResultOrder } from '../../types';
 
 export const baseOrderFixture = {
   id: 879,
@@ -66,8 +66,10 @@ export const createOrderEntityFixture = (override?: Partial<OrderEntity>): Order
 export const baseCreatedOrderFixture = {
   ...baseOrderFixture,
   orderProducts: undefined,
-} as CreatedOrder;
+} as OperatorResultOrder;
 
-export const createCreatedOrderFixture = (override?: Partial<CreatedOrder>): CreatedOrder => {
+export const createCreatedOrderFixture = (
+  override?: Partial<OperatorResultOrder>,
+): OperatorResultOrder => {
   return { ...baseCreatedOrderFixture, ...override };
 };

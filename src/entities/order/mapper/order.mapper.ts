@@ -1,11 +1,11 @@
 import { ZodSchemaParser, SchemaParserDto } from '@/shared';
-import { OrderEntity } from '../types';
-import { orderSchema, createdOrderSchema } from '../schemas';
+import { OperatorResultOrder, OrderEntity } from '../types';
+import { orderSchema, operatorResultOrderSchema } from '../schemas';
 import { ORDER_ERROR_MESSAGE } from '../constants';
 
 export class OrderMapper {
   static toCreatedOrder(data: OrderEntity) {
-    return ZodSchemaParser.safeParseOrThrow(createdOrderSchema, {
+    return ZodSchemaParser.safeParseOrThrow(operatorResultOrderSchema, {
       data,
       errorMsg: ORDER_ERROR_MESSAGE.invalidData,
     });
@@ -18,5 +18,12 @@ export class OrderMapper {
     } as SchemaParserDto;
 
     return ZodSchemaParser.safeParseOrThrow(orderSchema, dto);
+  }
+
+  static toOperatorResult(data: OrderEntity): OperatorResultOrder {
+    return ZodSchemaParser.safeParseOrThrow(operatorResultOrderSchema, {
+      data,
+      errorMsg: ORDER_ERROR_MESSAGE.invalidData,
+    });
   }
 }

@@ -1,4 +1,3 @@
-// export { TransitionOrderCommandFactory } from './transition-order-command.factory'; --> will remove
 export {
   BankTransferTransitionOrderCommand,
   type BankTransferTransitionOrderCommandDependencies,
@@ -6,6 +5,5 @@ export {
 export {
   PGTransitionOrderCommand,
   type PGTransitionOrderCommandDependencies,
-  type PGTransitionOrderCommandResult,
 } from './pg-transition-order.command';
-export { TransitionOrderCommandFactory } from './transition-order-command.factoryV2';
+export { TransitionOrderCommandFactory } from './transition-order-command.factory';

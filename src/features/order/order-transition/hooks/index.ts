@@ -1,3 +1,1 @@
-import { createUseTransitionOrder } from './useTransitionOrder';
-
-export const useTransitionOrder = createUseTransitionOrder();
+export { useTransitionOrder } from './useTransitionOrder';

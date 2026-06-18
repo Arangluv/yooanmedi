@@ -5,7 +5,7 @@ import {
   ORDER_STATUS,
   PAYMENT_STATUS,
   FLG_STATUS,
-  CreatedOrder,
+  OperatorResultOrder,
 } from '@/entities/order';
 import {
   CreateOrderProductRequestDto,
@@ -56,7 +56,7 @@ export class PGPaymentMapper {
   }
 
   static toCreateOrderProductDto(
-    order: CreatedOrder,
+    order: OperatorResultOrder,
     dto: PaymentOrderItemDto,
   ): CreateOrderProductRequestDto {
     return ZodSchemaParser.safeParseOrThrow(createOrderProductSchema, {
@@ -209,7 +209,7 @@ export class PGPaymentMapper {
     order,
     approvalResult,
   }: {
-    order: CreatedOrder;
+    order: OperatorResultOrder;
     approvalResult: EasyPayPaymentApprovalResult;
   }): CreatePaymentHistorRequestyDto {
     return ZodSchemaParser.safeParseOrThrow(createPaymentHistorySchema, {

@@ -5,7 +5,7 @@ import {
   ORDER_STATUS,
   PAYMENT_STATUS,
   FLG_STATUS,
-  CreatedOrder,
+  OperatorResultOrder,
 } from '@/entities/order';
 import {
   CreateOrderProductRequestDto,
@@ -50,7 +50,7 @@ export class BankTransferPaymentMapper {
   }
 
   static toCreateOrderProductDto(
-    order: CreatedOrder,
+    order: OperatorResultOrder,
     dto: PaymentOrderItemDto,
   ): CreateOrderProductRequestDto {
     return ZodSchemaParser.safeParseOrThrow(createOrderProductSchema, {

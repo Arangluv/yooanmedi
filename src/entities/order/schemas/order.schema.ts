@@ -15,7 +15,7 @@ export const orderSchema = z.object({
     BaseSchema.collectionId({
       required_message: '주문상품 아이디가 누락되었습니다',
       invalid_message: '잘못된 주문상품 아이디 타입입니다',
-    }),
+    }).optional(),
   ),
   paymentsMethod: z.enum(
     [PAYMENTS_METHOD.credit_card, PAYMENTS_METHOD.bank_transfer],
@@ -51,6 +51,6 @@ export const orderSchema = z.object({
   updatedAt: BaseSchema.isoString,
 });
 
-export const createdOrderSchema = orderSchema.extend({
+export const operatorResultOrderSchema = orderSchema.extend({
   orderProducts: z.literal(undefined),
 });
