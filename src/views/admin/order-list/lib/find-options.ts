@@ -13,7 +13,7 @@ export const OrderListFindOption = {
 
     return {
       pagination: true,
-      limit: 25,
+      limit: 50,
       page,
       depth: 1,
       where,

@@ -8,9 +8,10 @@ import { type AdminOrderListSearchParams } from '../../lib/generate-search-param
 
 const OrderListTableSection = ({ searchParams }: { searchParams: AdminOrderListSearchParams }) => {
   const { orders, totalCount } = useOrderListQuery(searchParams);
+
   return (
     <div className="bg-background flex min-h-0 flex-1 flex-col gap-8 rounded-lg p-4">
-      <TableHeader totalCount={totalCount} />
+      <TableHeader totalCount={totalCount} orders={orders} />
       <OrderListDataTable columns={columns} data={orders} totalCount={totalCount} />
     </div>
   );

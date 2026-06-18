@@ -1,1 +1,1 @@
-export const SHOW_ORDER_LIST_COUNT = 25;
+export const SHOW_ORDER_LIST_COUNT = 50;

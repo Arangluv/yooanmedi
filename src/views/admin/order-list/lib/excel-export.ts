@@ -18,11 +18,10 @@ type ExcelExportData = {
   결제상태: string;
 };
 
-export const ExportExcel = async () => {
+export const ExportExcel = async (orders: any) => {
   const workbook = XLSX.utils.book_new();
 
-  const data = await getExcelExportData();
-  const exportData: ExcelExportData[] = data.map((item) => {
+  const exportData: ExcelExportData[] = orders.map((item: any) => {
     return {
       번호: item.index,
       주문번호: item.orderNo,
@@ -34,7 +33,9 @@ export const ExportExcel = async () => {
       가격: item.price,
       주문수량: item.quantity,
       총금액: item.totalPrice,
+      // @ts-ignore
       결제방법: PAYMENTS_METHOD_NAME[item.paymentsMethod],
+      // @ts-ignore
       결제상태: ORDER_STATUS_NAME[item.orderStatus],
     };
   });
