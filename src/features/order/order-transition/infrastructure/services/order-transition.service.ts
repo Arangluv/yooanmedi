@@ -1,35 +1,36 @@
-import { ok, failure, normalizeError, okWithData } from '@/shared';
+import { BaseError } from '@/shared';
 import { TransitionOrderCommandFactory } from '../command';
 import { OrderTransitionUseCase } from '../../usecase';
 import { TransitionOrderRequestDto, TransitionOrderListRequestDto } from '../../dto';
+import { TransitionOrderCommandResult, TransitionOrderError } from '../../core';
 
 export const OrderTransitionService = (): OrderTransitionUseCase => ({
   transitionOrder: async (dto: TransitionOrderRequestDto) => {
     try {
-      const command = TransitionOrderCommandFactory.createCommand(dto.order);
-      await command.execute();
-
-      return ok('주문상태가 변경되었습니다');
+      const command = await TransitionOrderCommandFactory.createCommand(dto.order);
+      return await command.execute();
     } catch (error) {
-      const { message } = normalizeError(error);
-      return failure(message);
+      if (error instanceof BaseError) {
+        throw error;
+      }
+      throw TransitionOrderError.transitionFail();
     }
   },
   transitionOrderList: async (dto: TransitionOrderListRequestDto) => {
     try {
+      const results = [] as TransitionOrderCommandResult[];
       for (const order of dto.orders) {
-        const command = TransitionOrderCommandFactory.createCommand(order);
-        await command.execute();
+        const command = await TransitionOrderCommandFactory.createCommand(order);
+        const result = await command.execute();
+        results.push(result);
       }
 
-      return okWithData({
-        data: {
-          totalCount: dto.orders.length,
-        },
-      });
+      return results[0];
     } catch (error) {
-      const { message } = normalizeError(error);
-      return failure(message);
+      if (error instanceof BaseError) {
+        throw error;
+      }
+      throw TransitionOrderError.transitionFail();
     }
   },
 });

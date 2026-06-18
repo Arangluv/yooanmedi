@@ -1,4 +1,4 @@
-import { ORDER_STATUS, OrderStatus, Order } from '@/entities/order';
+import { ORDER_STATUS, OrderStatus, Order, PaymentStatus, PAYMENT_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, OrderProductStatus } from '@/entities/order-product';
 import { TransitionOrderError } from './transition-order.error';
 
@@ -10,6 +10,9 @@ export interface TransitionScenarioDefinition {
   orderProductStatus: {
     from: OrderProductStatus;
     to: OrderProductStatus;
+  };
+  paymentStatus: {
+    to: PaymentStatus;
   };
   messages: {
     success: string;
@@ -29,6 +32,9 @@ const ORDER_TRANSITION_SCENARIO: TransitionScenario = {
       from: ORDER_PRODUCT_STATUS.pending,
       to: ORDER_PRODUCT_STATUS.preparing,
     },
+    paymentStatus: {
+      to: PAYMENT_STATUS.complete,
+    },
     messages: {
       success: '배송준비 상태로 변경되었습니다',
       error: '배송준비 상태로 변경하는데 문제가 발생했습니다',
@@ -43,6 +49,9 @@ const ORDER_TRANSITION_SCENARIO: TransitionScenario = {
       from: ORDER_PRODUCT_STATUS.preparing,
       to: ORDER_PRODUCT_STATUS.shipping,
     },
+    paymentStatus: {
+      to: PAYMENT_STATUS.complete,
+    },
     messages: {
       success: '배송중 상태로 변경되었습니다',
       error: '배송중 상태로 변경하는데 문제가 발생했습니다',
@@ -56,6 +65,9 @@ const ORDER_TRANSITION_SCENARIO: TransitionScenario = {
     orderProductStatus: {
       from: ORDER_PRODUCT_STATUS.shipping,
       to: ORDER_PRODUCT_STATUS.delivered,
+    },
+    paymentStatus: {
+      to: PAYMENT_STATUS.complete,
     },
     messages: {
       success: '배송완료 상태로 변경되었습니다',
@@ -75,6 +87,11 @@ export class TransitionOrderScenarioResolver {
     if (!transitionScenario) {
       throw TransitionOrderError.notSupportOrder(order);
     }
+
+    if (order.paymentStatus === PAYMENT_STATUS.partial_cancel) {
+      transitionScenario.paymentStatus.to = order.paymentStatus;
+    }
+
     return transitionScenario;
   }
 
@@ -87,6 +104,10 @@ export class TransitionOrderScenarioResolver {
 
     if (!transitionScenario) {
       throw TransitionOrderError.notSupportOrder(order);
+    }
+
+    if (order.paymentStatus === PAYMENT_STATUS.partial_cancel) {
+      transitionScenario.paymentStatus.to = order.paymentStatus;
     }
 
     return transitionScenario;

@@ -1,1 +1,4 @@
-export { type ITransitionOrderCommand } from './transition-order-command';
+export {
+  type TransitionOrderCommand,
+  type TransitionOrderCommandResult,
+} from './transition-order-command';

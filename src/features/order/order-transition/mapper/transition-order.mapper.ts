@@ -8,21 +8,23 @@ import { transitionOrderContextSchema, TransitionOrderCommandSchema } from '../s
 import { PGTransitionOrderCommandDto, BankTransferTransitionOrderCommandDto } from '../dto';
 
 export class TransitionOrderMapper {
+  // todo :: will remove
   static toContext(order: Order, config: TransitionConfigDefinition) {
     return zodSafeParse(transitionOrderContextSchema, { order, ...config });
   }
 
   static orderProductToPointItem(orderProduct: OrderProduct): PointItem {
-    const dto: PointItem = {
-      rates: {
-        [PAYMENTS_METHOD.bank_transfer]: orderProduct.cashback_rate_for_bank,
-        [PAYMENTS_METHOD.credit_card]: orderProduct.cashback_rate,
-      },
-      quantity: orderProduct.quantity,
-      price: orderProduct.priceSnapshot,
-    };
-
-    return zodSafeParse(pointItemSchema, dto);
+    return ZodSchemaParser.safeParseOrThrow(pointItemSchema, {
+      data: {
+        rates: {
+          [PAYMENTS_METHOD.bank_transfer]: orderProduct.cashback_rate_for_bank,
+          [PAYMENTS_METHOD.credit_card]: orderProduct.cashback_rate,
+        },
+        quantity: orderProduct.quantity,
+        price: orderProduct.priceSnapshot,
+      } as PointItem,
+      errorMsg: '주문상태를 변경하는데 문제가 발생했습니다',
+    });
   }
 
   static toPGCommandDto({

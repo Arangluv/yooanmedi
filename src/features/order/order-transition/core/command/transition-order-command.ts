@@ -1,5 +1,8 @@
 import { TransactionalCommand } from '@/shared';
 
-export interface ITransitionOrderCommand extends TransactionalCommand<void> {
-  execute: () => void;
+export interface TransitionOrderCommandResult {
+  message: string;
 }
+
+export interface TransitionOrderCommand
+  extends TransactionalCommand<TransitionOrderCommandResult> {}

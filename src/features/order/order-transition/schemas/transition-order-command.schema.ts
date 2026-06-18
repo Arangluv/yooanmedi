@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseSchema, PAYMENTS_METHOD } from '@/shared';
-import { orderSchema, ORDER_STATUS } from '@/entities/order';
+import { orderSchema, ORDER_STATUS, PAYMENT_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
 
 export const TransitionOrderCommandSchema = {
@@ -16,6 +16,9 @@ export const TransitionOrderCommandSchema = {
     orderProductStatus: z.object({
       from: z.enum([ORDER_PRODUCT_STATUS.preparing, ORDER_PRODUCT_STATUS.shipping]),
       to: z.enum([ORDER_PRODUCT_STATUS.shipping, ORDER_PRODUCT_STATUS.delivered]),
+    }),
+    paymentStatus: z.object({
+      to: z.enum([PAYMENT_STATUS.complete, PAYMENT_STATUS.partial_cancel]),
     }),
     messages: z.object({
       success: BaseSchema.string({ required_message: '성공 메세지가 누락되었습니다' }),
@@ -43,6 +46,9 @@ export const TransitionOrderCommandSchema = {
         ORDER_PRODUCT_STATUS.shipping,
         ORDER_PRODUCT_STATUS.delivered,
       ]),
+    }),
+    paymentStatus: z.object({
+      to: z.enum([PAYMENT_STATUS.complete, PAYMENT_STATUS.partial_cancel]),
     }),
     messages: z.object({
       success: BaseSchema.string({ required_message: '성공 메세지가 누락되었습니다' }),

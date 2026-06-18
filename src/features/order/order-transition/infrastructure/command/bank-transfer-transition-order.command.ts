@@ -1,4 +1,5 @@
 import { BasePayload } from 'payload';
+import { BaseError } from '@/shared';
 import { TransactionCommand } from '@/shared/server';
 import { UserRepository } from '@/entities/user';
 import {
@@ -10,7 +11,8 @@ import {
 import { OrderRepository } from '@/entities/order';
 import { OrderProduct, OrderProductRepository } from '@/entities/order-product';
 import { BankTransferTransitionOrderCommandDto } from '../../dto';
-import { TransitionOrderFindOption } from '../../core';
+import { TransitionOrderFindOption, TransitionOrderCommandResult } from '../../core';
+import { TransitionOrderMapper } from '../../mapper';
 
 export interface BankTransferTransitionOrderCommandDependencies {
   payload: BasePayload;
@@ -22,7 +24,7 @@ export interface BankTransferTransitionOrderCommandDependencies {
   };
 }
 
-export class BankTransferTransitionOrderCommand extends TransactionCommand<void> {
+export class BankTransferTransitionOrderCommand extends TransactionCommand<TransitionOrderCommandResult> {
   private readonly repository: BankTransferTransitionOrderCommandDependencies['repository'];
   private readonly commandDto: BankTransferTransitionOrderCommandDto;
   constructor(
@@ -34,28 +36,66 @@ export class BankTransferTransitionOrderCommand extends TransactionCommand<void>
     this.commandDto = dto;
   }
 
-  async execute(): Promise<void> {}
+  protected async run() {
+    try {
+      // step 1. update order status
+      await this.repository.order.update({
+        order: this.commandDto.order.id,
+        data: {
+          orderStatus: this.commandDto.orderStatus.to,
+          paymentStatus: this.commandDto.paymentStatus.to,
+        },
+      });
 
-  protected async run() {}
+      // step 2. find filterd orderProduct - 현재상태(from state)인 orderProduct를 찾는다.
+      const findOption = TransitionOrderFindOption.orderProduct.findMany(this.commandDto);
+      const orderProducts = await this.repository.orderProduct.findMany(findOption);
 
-  private async createEarnPointHistories(): Promise<PointHistory[]> {
-    const { orderProducts: orderProductIds, user } = this.commandDto.order;
-    const findOption = TransitionOrderFindOption.orderProduct.findMany(this.commandDto);
-    const orderProducts = await this.repository.orderProduct.findMany(findOption);
+      // step 3. update orderProduct status
+      await this.repository.orderProduct.updateMany({
+        orderProductIds: orderProducts.map((item) => item.id),
+        data: {
+          orderProductStatus: this.commandDto.orderProductStatus.to,
+        },
+      });
+
+      // step 4. optional - 입금대기중인 상태인 경우
+      if (this.commandDto.orderStatus.from === 'pending') {
+        // step 4-1. create earn point history
+        const histories = await this.createEarnPointHistories(orderProducts);
+
+        // step 4-2. update user point
+        await this.addUserPoint(histories);
+      }
+
+      return { message: this.commandDto.messages.success };
+    } catch (error) {
+      if (error instanceof BaseError) {
+        throw error;
+      }
+      throw new BaseError({
+        clientMsg: this.commandDto.messages.error,
+        errorName: 'PGTransitionOrderCommandError',
+      });
+    }
+  }
+
+  private async createEarnPointHistories(orderProducts: OrderProduct[]): Promise<PointHistory[]> {
+    const { user } = this.commandDto.order;
 
     return await Promise.all(
       orderProducts.map(async (orderProduct) => {
+        const pointItem = TransitionOrderMapper.orderProductToPointItem(orderProduct);
+        const earnedPoint = PointCalculator.forBank(pointItem);
         return await this.repository.pointHistory.createUsageHistory({
           user: user,
           orderProduct: orderProduct.id,
           type: POINT_ACTION.earn,
-          amount: 123,
+          amount: earnedPoint,
         });
       }),
     );
   }
-
-  private async createEarnPointHistory(orderProduct: OrderProduct) {}
 
   private async addUserPoint(histories: PointHistory[]) {
     const user = await this.repository.user.findById(this.commandDto.order.user);

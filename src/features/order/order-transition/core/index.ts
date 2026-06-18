@@ -1,7 +1,7 @@
-export { type ITransitionOrderCommand } from './command';
+export { type TransitionOrderCommand, type TransitionOrderCommandResult } from './command';
 export {
   TransitionOrderError,
   TransitionOrderScenarioResolver,
-  TransitionOrderFindOption
+  TransitionOrderFindOption,
   type TransitionScenarioDefinition,
 } from './libs';

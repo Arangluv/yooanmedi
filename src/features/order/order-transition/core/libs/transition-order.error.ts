@@ -2,6 +2,13 @@ import { BaseError } from '@/shared';
 import { Order } from '@/entities/order';
 
 export class TransitionOrderError extends BaseError {
+  static transitionFail() {
+    throw new TransitionOrderError({
+      clientMsg: '주문 상태를 변경하는데 문제가 발생했습니다',
+      errorName: 'TransitionOrderFailError',
+    });
+  }
+
   static cancelRequestExists() {
     throw new TransitionOrderError({
       clientMsg: '주문 상태를 변경하는데 문제가 발생했습니다 - 주문취소요청 사항이 있습니다',

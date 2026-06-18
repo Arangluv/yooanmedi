@@ -1,14 +1,29 @@
 'use server';
 
+import { BaseErrorManager, EndPointResultManager } from '@/shared';
 import { TransitionOrderListRequestDto, TransitionOrderRequestDto } from '../dto';
 import { createTransitionOrderService } from '../infrastructure';
 
 export const transitionOrderApi = async (dto: TransitionOrderRequestDto) => {
-  const useCases = createTransitionOrderService();
-  return await useCases.transitionOrder(dto);
+  try {
+    const { transitionOrder } = createTransitionOrderService();
+    const result = await transitionOrder(dto);
+    return EndPointResultManager.ok(result.message);
+  } catch (error) {
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(message ?? '주문상태를 변경하는데 문제가 발생했습니다');
+  }
 };
 
 export const transitionOrderListApi = async (dto: TransitionOrderListRequestDto) => {
-  const useCases = createTransitionOrderService();
-  return await useCases.transitionOrderList(dto);
+  try {
+    const { transitionOrderList } = createTransitionOrderService();
+    const result = await transitionOrderList(dto);
+    return EndPointResultManager.ok(result.message);
+  } catch (error) {
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(
+      message ?? '주문리스트 상태를 변경하는데 문제가 발생했습니다',
+    );
+  }
 };
