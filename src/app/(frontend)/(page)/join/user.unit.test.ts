@@ -22,7 +22,5 @@ describe('asd', () => {
         email: 'asd@naver.com',
       },
     });
-    console.log(user1);
-    console.log(user2);
   });
 });

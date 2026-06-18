@@ -20,19 +20,13 @@ type ExcelExportData = {
 
 export const ExportExcel = async (orders: any) => {
   const workbook = XLSX.utils.book_new();
-
-  const exportData: ExcelExportData[] = orders.map((item: any) => {
+  const exportData: ExcelExportData[] = orders.map((item: any, index: number) => {
     return {
-      번호: item.index,
+      번호: index + 1,
       주문번호: item.orderNo,
       주문일시: moment(item.orderDate).format('YYYY-MM-DD'),
-      상호명: item.orderUser,
-      제조사: item.manufacturer,
-      상품명: item.productName,
-      보험코드: item.insuranceCode,
-      가격: item.price,
-      주문수량: item.quantity,
-      총금액: item.totalPrice,
+      상호명: item.user.hospitalName,
+      총금액: item.finalPrice,
       // @ts-ignore
       결제방법: PAYMENTS_METHOD_NAME[item.paymentsMethod],
       // @ts-ignore
@@ -85,7 +79,7 @@ export const ExportExcel = async (orders: any) => {
   }
 
   // 특정 컬럼 데이터 중앙정렬
-  const centerAlignColumns = [0, 1, 2, 3, 6, 10, 11];
+  const centerAlignColumns = [0, 1, 2, 3, 5, 6];
 
   for (let R = range.s.r + 1; R <= range.e.r; ++R) {
     centerAlignColumns.forEach((C) => {

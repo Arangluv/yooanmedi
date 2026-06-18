@@ -38,11 +38,17 @@ export type ExcelExportDto = {
   paymentsMethod: PaymentsMethod;
 };
 
-export const getExcelExportData = async () => {
+export const getExcelExportData = async (orderIds: number[]) => {
   const payload = await getPayload();
 
   const data = await payload.find({
     collection: 'order',
+    pagination: false,
+    where: {
+      id: {
+        in: orderIds,
+      },
+    },
     select: {
       finalPrice: true,
       orderNo: true,
