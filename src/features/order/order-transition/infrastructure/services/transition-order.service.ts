@@ -1,13 +1,30 @@
+import { BasePayload } from 'payload';
 import { BaseError } from '@/shared';
-import { TransitionOrderCommandFactory } from '../command';
+import { UserRepository } from '@/entities/user';
+import { PointHistoryRepository } from '@/entities/point';
+import { OrderRepository } from '@/entities/order';
+import { OrderProductRepository } from '@/entities/order-product';
 import { OrderTransitionUseCase } from '../../usecase';
 import { TransitionOrderRequestDto, TransitionOrderListRequestDto } from '../../dto';
 import { TransitionOrderCommandResult, TransitionOrderError } from '../../core';
+import { TransitionOrderCommandFactory } from '../command';
 
-export const OrderTransitionService = (): OrderTransitionUseCase => ({
+export interface TransitionOrderServiceDependencies {
+  payload: BasePayload;
+  repository: {
+    user: UserRepository;
+    pointHistory: PointHistoryRepository;
+    order: OrderRepository;
+    orderProduct: OrderProductRepository;
+  };
+}
+
+export const TransitionOrderService = (
+  dependencies: TransitionOrderServiceDependencies,
+): OrderTransitionUseCase => ({
   transitionOrder: async (dto: TransitionOrderRequestDto) => {
     try {
-      const command = await TransitionOrderCommandFactory.createCommand(dto.order);
+      const command = TransitionOrderCommandFactory.createCommand(dto.order, dependencies);
       return await command.execute();
     } catch (error) {
       if (error instanceof BaseError) {
@@ -16,11 +33,12 @@ export const OrderTransitionService = (): OrderTransitionUseCase => ({
       throw TransitionOrderError.transitionFail();
     }
   },
+
   transitionOrderList: async (dto: TransitionOrderListRequestDto) => {
     try {
       const results = [] as TransitionOrderCommandResult[];
       for (const order of dto.orders) {
-        const command = await TransitionOrderCommandFactory.createCommand(order);
+        const command = TransitionOrderCommandFactory.createCommand(order, dependencies);
         const result = await command.execute();
         results.push(result);
       }
