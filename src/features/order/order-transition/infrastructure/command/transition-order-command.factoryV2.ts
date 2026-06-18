@@ -8,13 +8,13 @@ export class TransitionOrderCommandFactory {
     switch (order.paymentsMethod) {
       case PAYMENTS_METHOD.credit_card: {
         const scenario = TransitionOrderScenarioResolver.getTransitionScenarioForPG(order);
-        const commandDto = TransitionOrderMapper.toPGCommnadDto({ order, scenario });
+        const commandDto = TransitionOrderMapper.toPGCommandDto({ order, scenario });
         return;
       }
       case PAYMENTS_METHOD.bank_transfer: {
         const scenario =
           TransitionOrderScenarioResolver.getTransitionScenarioForBankTransfer(order);
-        const commandDto = TransitionOrderMapper.toBankCommnadDto({ order, scenario });
+        const commandDto = TransitionOrderMapper.toBankCommandDto({ order, scenario });
         return;
       }
       default:
