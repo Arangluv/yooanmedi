@@ -2,7 +2,7 @@ import { runWithTransaction } from '@/shared/infrastructure';
 import { OrderProductRepository, OrderProduct } from '@/entities/order-product';
 import { OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
 import { TransitionOrderContext } from '../../schemas';
-import { OrderDetailFindOption } from '../../lib';
+import { OrderDetailFindOption } from '../../libs';
 import { ITransitionOrderCommand } from '../../core';
 
 export class TransitionOrderCommand implements ITransitionOrderCommand {

@@ -3,7 +3,10 @@ import { PAYMENT_STATUS, PaymentStatus } from '../constants/payment-status';
 import { ORDER_STATUS, OrderStatus } from '../constants/order-status';
 import { FLG_STATUS } from '../constants/flg-status';
 
-export const getPaymentStatus = (orderStatus: OrderStatus, orderProductStatus: OrderProductStatus[]): PaymentStatus => {
+export const getPaymentStatus = (
+  orderStatus: OrderStatus,
+  orderProductStatus: OrderProductStatus[],
+): PaymentStatus => {
   if (isFullyCancelld(orderProductStatus)) {
     return PAYMENT_STATUS.total_cancel;
   }
@@ -27,7 +30,10 @@ export const getFlgStatus = (orderProductStatus: OrderProductStatus[]) => {
   return FLG_STATUS.complete;
 };
 
-export const getOrderStatusForList = (orderStatus: OrderStatus, orderProductStatus: OrderProductStatus[]) => {
+export const getOrderStatusForList = (
+  orderStatus: OrderStatus,
+  orderProductStatus: OrderProductStatus[],
+) => {
   if (hasCancellRequest(orderProductStatus)) {
     return ORDER_STATUS.cancel_request;
   }

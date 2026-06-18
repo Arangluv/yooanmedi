@@ -9,7 +9,7 @@ import { PointCalculator, PointHistory } from '@/entities/point';
 import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
 import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
 import { TransitionOrderCommand } from './transition-order-command';
-import { createTransitionOrderContext } from '../../lib/transition-order-context';
+import { createTransitionOrderContext } from '../../libs/transition-order-context';
 import { TransitionOrderMapper } from '../../mapper';
 import { POINT_ACTION } from '@/entities/point';
 

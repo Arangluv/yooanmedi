@@ -1,1 +1,1 @@
-export { getPaymentStatus, getFlgStatus, getOrderStatusForList } from './status-resolver';
+export { getPaymentStatus, getFlgStatus, getOrderStatusForList } from './order.status-resolver';
