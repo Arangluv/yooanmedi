@@ -3,7 +3,6 @@ import { orderSchema } from '@/entities/order';
 import { orderProductSchema } from '@/entities/order-product';
 import { productSchema } from '@/entities/product';
 import { userSchema } from '@/entities/user';
-import { BaseSchema } from '@/shared';
 
 const ClientOrderListReference = {
   product: productSchema.pick({ id: true, manufacturer: true, insurance_code: true, image: true }),
