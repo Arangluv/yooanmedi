@@ -1,11 +1,11 @@
 import { zodSafeParse } from '@/shared';
 import { orderSchema } from '@/entities/order';
-import { ClientOrderDto } from '@/features/order/order-list';
+import { ClientOrderListItem } from '@/features/order/order-list';
 import { PartialCancelOrderRequestDto } from '@/features/order/order-cancel';
 
 export class ClientOrderListMapper {
   public static toPartialCancelOrderRequestDto(
-    orderDto: ClientOrderDto,
+    orderDto: ClientOrderListItem,
     orderProductId: number,
   ): PartialCancelOrderRequestDto {
     const order = zodSafeParse(orderSchema, {

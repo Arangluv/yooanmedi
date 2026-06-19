@@ -1,5 +1,3 @@
-import { createUseAdminOrderList, createUseClientOrderList } from './useOrderList';
-
+export { useAdminOrderList } from './useAdminOrderList';
+export { useClientOrderList } from './useClientOrderList';
 export { useOrderListSearchFilter } from './useOrderListSearchFilter';
-export const useAdminOrderList = createUseAdminOrderList();
-export const useClientOrderList = createUseClientOrderList();

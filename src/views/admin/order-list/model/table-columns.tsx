@@ -8,14 +8,16 @@ import OrderStatusBadge from '@/entities/order/ui/admin/badge';
 import { formatNumberWithCommas, PAYMENTS_METHOD_NAME } from '@/shared';
 import { Checkbox } from '@/shared/ui/shadcn/checkbox';
 import FlgStatusBadge from '../ui/badge/FlgStatusBadge';
-import { type AdminOrderListItemDto } from '@/features/order/order-list';
+import { type AdminOrderListItem } from '@/features/order/order-list';
 
-export const columns: ColumnDef<AdminOrderListItemDto>[] = [
+export const columns: ColumnDef<AdminOrderListItem>[] = [
   {
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        checked={
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="전체선택"
       />

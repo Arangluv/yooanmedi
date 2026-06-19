@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { zodSafeParse } from '@/shared';
-import { AdminOrderListItemDto } from '@/features/order/order-list';
 import { Order, orderSchema } from '@/entities/order';
 import { TotalCancelOrderRequestDto } from '@/features/order/order-cancel';
 import { TransitionOrderListRequestDto } from '@/features/order/order-transition';
+import { AdminOrderListItem } from '@/features/order/order-list';
 
 export class AdminOrderListMapper {
-  public static toTotalCancelRequestDto(dto: AdminOrderListItemDto[]): TotalCancelOrderRequestDto {
+  public static toTotalCancelRequestDto(dto: AdminOrderListItem[]): TotalCancelOrderRequestDto {
     const orders: Order[] = dto.map((order) => {
       return {
         ...order,
@@ -20,9 +20,7 @@ export class AdminOrderListMapper {
     };
   }
 
-  public static toTransitionOrderListDto(
-    dto: AdminOrderListItemDto[],
-  ): TransitionOrderListRequestDto {
+  public static toTransitionOrderListDto(dto: AdminOrderListItem[]): TransitionOrderListRequestDto {
     const orders: Order[] = dto.map((order) => {
       return {
         ...order,

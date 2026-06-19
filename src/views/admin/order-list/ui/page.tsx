@@ -1,8 +1,8 @@
 import { SearchParams } from 'nuqs';
-import { ORDER_QUERY_KEYS } from '@/entities/order';
-import { OrderListSearchParamsGenerator } from '@/features/order/order-list/server';
-import { getAdminOrderListApi } from '@/features/order/order-list';
 import { QueryHydrationProvider, AlertDialogProvider } from '@/shared';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { getAdminOrderListApi } from '@/features/order/order-list';
+import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
 import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
 

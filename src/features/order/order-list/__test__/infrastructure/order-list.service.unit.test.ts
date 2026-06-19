@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createUserFixture } from '@/entities/user/__test__';
+import { UserRepositoryMocks } from '@/entities/user/__test__';
 import { OrderListRepositoryMocks } from '../mocks';
 import { OrderListService, OrderListServiceDependencies } from '../../infrastructure';
 import { GetAdminOrderListRequestDto, GetClientOrderListRequestDto } from '../../dto';
@@ -16,6 +16,7 @@ describe('OrderListService', () => {
       const { getAdminOrderList } = OrderListService({
         repository: {
           orderList: mockOrderListRepository,
+          user: UserRepositoryMocks.createSuccess(),
         },
       } as OrderListServiceDependencies);
       const dto = {} as GetAdminOrderListRequestDto;
@@ -35,12 +36,10 @@ describe('OrderListService', () => {
       const { getClientOrderList } = OrderListService({
         repository: {
           orderList: mockOrderListRepository,
+          user: UserRepositoryMocks.createSuccess(),
         },
       } as OrderListServiceDependencies);
-      const dto = {
-        user: createUserFixture(),
-        searchParams: {},
-      } as GetClientOrderListRequestDto;
+      const dto = {} as GetClientOrderListRequestDto;
 
       // When
       await getClientOrderList(dto);

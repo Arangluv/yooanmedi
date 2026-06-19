@@ -3,8 +3,7 @@
 import TableHeader from './TableHeader';
 import OrderListDataTable from './OrderListDataTable';
 import { columns } from '../../model/table-columns';
-import { AdminOrderListSearchParams } from '@/features/order/order-list';
-import { useAdminOrderList } from '@/features/order/order-list';
+import { AdminOrderListSearchParams, useAdminOrderList } from '@/features/order/order-list';
 
 const OrderListTableSection = ({ searchParams }: { searchParams: AdminOrderListSearchParams }) => {
   const { orders, totalCount } = useAdminOrderList(searchParams);

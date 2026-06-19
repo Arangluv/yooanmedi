@@ -3,7 +3,7 @@
 import * as XLSX from 'xlsx-js-style';
 import moment from 'moment';
 import SharedExcelExportButton from '@/shared/ui/ExcelExportButton';
-import { type ClientOrderDto } from '@/features/order/order-list';
+import { ClientOrderListItem } from '@/features/order/order-list';
 
 type ExcelExportData = {
   번호: number;
@@ -16,7 +16,7 @@ type ExcelExportData = {
   총금액: number;
 };
 
-const ExcelExportButton = ({ data }: { data: ClientOrderDto[] }) => {
+const ExcelExportButton = ({ data }: { data: ClientOrderListItem[] }) => {
   const handleExcelExport = () => {
     const workbook = XLSX.utils.book_new();
 

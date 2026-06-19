@@ -1,13 +1,15 @@
+import { BaseErrorManager } from '@/shared';
+import { UserRepository } from '@/entities/user';
+import { OrderListFindOption } from '../libs';
 import { OrderListUsecase } from '../../usecases';
 import { GetAdminOrderListRequestDto, GetClientOrderListRequestDto } from '../../dto';
 import { OrderListRepository } from '../../core';
-import { BaseErrorManager } from '@/shared';
-import { OrderListFindOption } from '../libs';
 import { OrderListError } from '../../core/libs';
 
 export interface OrderListServiceDependencies {
   repository: {
     orderList: OrderListRepository;
+    user: UserRepository;
   };
 }
 
@@ -26,7 +28,8 @@ export const OrderListService = ({
 
   getClientOrderList: async (dto: GetClientOrderListRequestDto) => {
     try {
-      const option = OrderListFindOption.client(dto);
+      const user = await repository.user.findByHeader();
+      const option = OrderListFindOption.client({ searchParams: dto, user });
       return await repository.orderList.findMandForClient(option);
     } catch (error) {
       const message = BaseErrorManager.resolveClientMessage(error);

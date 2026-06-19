@@ -1,7 +1,7 @@
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { Button, useAlertDialog } from '@/shared';
 import { getDialogConfig } from '../lib/generate-dialog-config';
-import { type ClientOrderDto } from '@/features/order/order-list';
+import { ClientOrderListItem } from '@/features/order/order-list';
 import { useClientCancelOrder } from '@/features/order/order-cancel';
 import { ClientOrderListMapper } from '../mapper';
 
@@ -9,8 +9,8 @@ export const OrderPartialCancelTrigger = ({
   order,
   orderProduct,
 }: {
-  order: ClientOrderDto;
-  orderProduct: ClientOrderDto['orderProducts'][number];
+  order: ClientOrderListItem;
+  orderProduct: ClientOrderListItem['orderProducts'][number];
 }) => {
   const { partialCancelOrder } = useClientCancelOrder();
   const { onOpen, setDialogConfig } = useAlertDialog();
