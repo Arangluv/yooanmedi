@@ -6,3 +6,8 @@ export {
   type AdminOrderListServerSearchParams,
   type ClientOrderListServerSearchParams,
 } from './libs';
+export {
+  createOrderListUsecase,
+  OrderListService,
+  type OrderListServiceDependencies,
+} from './service';

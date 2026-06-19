@@ -4,6 +4,8 @@ import {
   GetClientOrderListResponse,
   AdminOrderListItem,
   ClientOrderListItem,
+  AdminOrderListResult,
+  ClientOrderListResult,
 } from '../../types';
 import { createOrderEntityFixture } from '@/entities/order/__test__';
 import { createUserFixture } from '@/entities/user/__test__';
@@ -94,4 +96,19 @@ export const OrderListResponseFixture = {
     admin: PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
     client: PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
   },
+};
+
+export const OrderListResultFixtures = {
+  admin: {
+    orders: [OrderListItemFixtures.admin, OrderListItemFixtures.admin],
+    totalCount: 2,
+  } as AdminOrderListResult,
+
+  client: {
+    orders: [
+      OrderListItemFixtures.client,
+      OrderListItemFixtures.client,
+      OrderListItemFixtures.client,
+    ],
+  } as ClientOrderListResult,
 };
