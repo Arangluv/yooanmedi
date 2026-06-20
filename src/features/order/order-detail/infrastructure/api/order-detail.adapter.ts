@@ -8,7 +8,6 @@ export const OrderDetailAdapter = () => ({
       collection: 'order',
       id: orderId,
       ...option,
-   
     });
 
     return order;
