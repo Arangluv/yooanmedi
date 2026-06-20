@@ -7,7 +7,7 @@ import { GetOrderDetailRequestDto } from '../../dto';
 import { OrderDetailAdapter, OrderDetailApiRepository } from '../../infrastructure';
 
 describe('OrderDetailApiRepository', () => {
-  describe('asd', () => {
+  describe('getOrderDetail', () => {
     let mockAdapter: ReturnType<typeof OrderDetailAdapter>;
     let repository: OrderDetailApiRepository;
 

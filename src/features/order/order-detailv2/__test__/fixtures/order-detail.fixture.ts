@@ -8,10 +8,12 @@ import {
 import { createOrderEntityFixture, createOrderFixture } from '@/entities/order/__test__';
 import { createProductEntityFixture, createProductFixture } from '@/entities/product/__test__';
 import { OrderDetailDto } from '../../dto';
+import { createUserFixture, createUserResponseFixture } from '@/entities/user/__test__';
 
 export const OrderDetailFixtures = {
   response: PayloadAdapterResultManager.ok(
     createOrderEntityFixture({
+      user: createUserResponseFixture(),
       orderProducts: {
         docs: [
           createOrderProductEntityFixture({
@@ -41,6 +43,7 @@ export const OrderDetailFixtures = {
   ),
 
   dto: createOrderFixture({
+    user: createUserFixture() as any,
     orderProducts: [
       createOrderProductFixture({
         id: 1,

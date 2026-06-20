@@ -9,16 +9,11 @@ describe('OrderDetailMapper', () => {
       // Given
       const response = OrderDetailFixtures.response;
 
-      console.log(JSON.stringify(response, null, 2));
-      try {
-        // When
-        const result = OrderDetailMapper.responseToDto(response);
+      // When
+      const result = OrderDetailMapper.responseToDto(response);
 
-        // Then
-        expect(result).toEqual(expect.schemaMatching(orderDetailSchema));
-      } catch (error) {
-        console.log(error);
-      }
+      // Then
+      expect(result).toEqual(expect.schemaMatching(orderDetailSchema));
     });
   });
 });

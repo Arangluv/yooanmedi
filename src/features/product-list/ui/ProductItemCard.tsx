@@ -11,9 +11,6 @@ import { useProductDetailStore } from '../hooks';
 
 const ProductItemCard = ({ product }: { product: Product }) => {
   const { setClieckedProduct } = useProductDetailStore();
-  if (!product.price) {
-    console.log(product);
-  }
   const maxPoint = PointCalculator.maxForItem(PointHistoryMapper.productToPointItem(product, 1));
 
   return (
