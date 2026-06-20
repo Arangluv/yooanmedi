@@ -18,6 +18,7 @@ export const OrderDetailAdapter = () => ({
         id: dto.order,
         depth: 4,
         populate: {
+          order: {},
           'order-product': {
             product: true,
             orderProductStatus: true,

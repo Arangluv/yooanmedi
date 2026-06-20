@@ -14,7 +14,9 @@ export const baseOrderProductEntityFixture = {
   cashback_rate_for_bank: 1.5,
 } as const;
 
-export const createOrderProductEntityFixture = (override?: Partial<OrderProductEntity>) => {
+export const createOrderProductEntityFixture = (
+  override?: Partial<OrderProductEntity>,
+): OrderProductEntity => {
   return {
     ...baseOrderProductEntityFixture,
     ...override,
