@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/shadcn/card';
-import { useOrderDetail } from '@/features/order/order-detail';
+import { useOrderDetail } from '@/features/order/order-detailv2';
 
 const DeliveryInfo = ({ orderId }: { orderId: number }) => {
   const { deliveryInfo } = useOrderDetail(orderId);

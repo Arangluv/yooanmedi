@@ -17,15 +17,14 @@ import { ItemGroup, ItemSeparator } from '@/shared/ui/shadcn/item';
 import OrderProductItem from './OrderProductItem';
 import { ORDER_DETAIL_UI_CONFIG, OrderInfomationCardType } from '../config/order-detail-ui-config';
 import { TransitionDialogTrigger } from './dialogs';
-import { OrderDetailDto, OrderDetailOrderProductReference } from '@/features/order/order-detail';
-import { useOrderDetail } from '@/features/order/order-detail';
+import { OrderDetailDto, useOrderDetail } from '@/features/order/order-detailv2';
 
 interface OrderInfoCardProps {
   type: OrderInfomationCardType;
   order: OrderDetailDto;
   status: OrderStatus | null;
   date: string;
-  orderProducts: OrderDetailOrderProductReference[];
+  orderProducts: OrderDetailDto['orderProducts'];
   children?: React.ReactNode;
 }
 

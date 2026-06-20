@@ -1,17 +1,22 @@
-import { type FindOption } from '@/shared';
+import { OrderDetailAdapter } from '../api';
 import { OrderDetailRepository } from '../../core';
-import { OrderDetailAdapter } from '../api/order-detail.adapter';
+import { GetOrderDetailRequestDto } from '../../dto';
 import { OrderDetailMapper } from '../../mapper';
 
 export class OrderDetailApiRepository implements OrderDetailRepository {
-  private adapter: ReturnType<typeof OrderDetailAdapter>;
+  private readonly adapter: ReturnType<typeof OrderDetailAdapter>;
 
-  constructor() {
-    this.adapter = OrderDetailAdapter();
+  constructor(adapter: ReturnType<typeof OrderDetailAdapter>) {
+    this.adapter = adapter;
   }
 
-  public async getOrderDetail(orderId: number, option: FindOption) {
-    const order = await this.adapter.getOrderDetail(orderId, option);
-    return OrderDetailMapper.toResponse(order);
+  async getOrderDetail(dto: GetOrderDetailRequestDto) {
+    const response = await this.adapter.getOrderDetail(dto);
+
+    if (!response.ok) {
+      throw response.error;
+    }
+
+    return OrderDetailMapper.responseToDto(response);
   }
 }

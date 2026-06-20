@@ -1,6 +1,6 @@
 import { PartialCancelOrderRequestDto } from '@/features/order/order-cancel';
 import { TransitionOrderRequestDto } from '@/features/order/order-transition';
-import { OrderDetailDto } from '@/features/order/order-detail';
+import { OrderDetailDto } from '@/features/order/order-detailv2';
 
 export class AdminOrderDetailMapper {
   public static toPartialCancelOrderDto(

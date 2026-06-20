@@ -1,1 +1,1 @@
-export { type OrderDetailRepository } from './repository';
+export { type OrderDetailRepository } from './order-detail.repository';

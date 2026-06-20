@@ -9,7 +9,7 @@ import {
 } from './order-info-card';
 import { QueryHydrationProvider } from '@/shared';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
-import { getOrderDetailApi } from '@/features/order/order-detail';
+import { getOrderDetailApi } from '@/features/order/order-detailv2';
 
 interface AdminOrderDetailPageProps {
   doc: {
@@ -18,7 +18,7 @@ interface AdminOrderDetailPageProps {
 }
 
 const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
-  const result = await getOrderDetailApi(doc.id);
+  const result = await getOrderDetailApi({ order: doc.id });
 
   // todo :: 에러경계를 활용하여 분리해야합니다
   if (!result.isSuccess) {

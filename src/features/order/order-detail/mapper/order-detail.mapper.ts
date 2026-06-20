@@ -1,18 +1,20 @@
-import {
-  OrderDetailDto,
-  OrderDetailResponse,
-  orderDetailResponseSchema,
-  orderDetailSchema,
-} from '../schemas';
-import { zodSafeParse } from '@/shared';
+import { ZodSchemaParser } from '@/shared';
+import { GetOrderDetailResponse } from '../types';
+import { orderDetailSchema } from '../schemas';
+import { OrderDetailDto } from '../dto';
 
 export class OrderDetailMapper {
-  public static toResponse(data: any): OrderDetailResponse {
-    return zodSafeParse(orderDetailResponseSchema, data);
-  }
+  static responseToDto(response: GetOrderDetailResponse): OrderDetailDto {
+    if (!response.ok) {
+      throw response.error;
+    }
 
-  public static toDto(response: OrderDetailResponse): OrderDetailDto {
-    const dto = { ...response, orderProducts: response.orderProducts.docs };
-    return zodSafeParse(orderDetailSchema, dto);
+    return ZodSchemaParser.safeParseOrThrow(orderDetailSchema, {
+      data: {
+        ...response.data,
+        orderProducts: response.data.orderProducts?.docs,
+      } as OrderDetailDto,
+      errorMsg: '주문 상세내역으로 변환하는 과정에서 문제가 발생했습니다',
+    });
   }
 }

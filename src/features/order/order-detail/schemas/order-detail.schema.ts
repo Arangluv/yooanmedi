@@ -1,48 +1,23 @@
 import { z } from 'zod';
+import { BaseSchema } from '@/shared';
 import { orderSchema } from '@/entities/order';
-import { userSchema } from '@/entities/user';
 import { orderProductSchema } from '@/entities/order-product';
+import { userSchema } from '@/entities/user';
 import { productSchema } from '@/entities/product';
 
-const productReferenceSchema = productSchema.pick({
-  id: true,
-  name: true,
-  image: true,
-  insurance_code: true,
-  specification: true,
-  manufacturer: true,
-  ingredient: true,
-});
-
-export type OrderDetailProductReference = z.infer<typeof productReferenceSchema>;
-
-const orderProductReferenceSchema = orderProductSchema
-  .extend({ product: productReferenceSchema })
-  .pick({
-    id: true,
-    product: true,
-    orderProductStatus: true,
-    productNameSnapshot: true,
-    priceSnapshot: true,
-    totalAmount: true,
-    productDeliveryFee: true,
-    quantity: true,
-  });
-
-export type OrderDetailOrderProductReference = z.infer<typeof orderProductReferenceSchema>;
-
-export const orderDetailResponseSchema = orderSchema.extend({
+const OrderDetailReferenceSchema = {
   user: userSchema,
-  orderProducts: z.object({
-    docs: z.array(orderProductReferenceSchema),
+  orderProduct: orderProductSchema.extend({
+    product: productSchema,
+    order: z.object({
+      id: BaseSchema.collectionId({
+        required_message: '주문 ID가 누락되었습니다',
+      }),
+    }),
   }),
-});
-
-export type OrderDetailResponse = z.infer<typeof orderDetailResponseSchema>;
+};
 
 export const orderDetailSchema = orderSchema.extend({
-  user: userSchema,
-  orderProducts: z.array(orderProductReferenceSchema),
+  user: OrderDetailReferenceSchema.user,
+  orderProducts: z.array(OrderDetailReferenceSchema.orderProduct),
 });
-
-export type OrderDetailDto = z.infer<typeof orderDetailSchema>;

@@ -1,3 +1,1 @@
-import { createUseOrderDetail } from './useOrderDetail';
-
-export const useOrderDetail = createUseOrderDetail();
+export { useOrderDetail } from './useOrderDetail';
