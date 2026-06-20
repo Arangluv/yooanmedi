@@ -3,7 +3,7 @@ import { PackageX } from 'lucide-react';
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { OrderStatus } from '@/entities/order';
 import { useAdminCancelOrder } from '@/features/order/order-cancel';
-import { OrderDetailDto } from '@/features/order/order-detailv2';
+import { OrderDetailDto } from '@/features/order/order-detail';
 import { useTransitionOrder } from '@/features/order/order-transition';
 import { AdminOrderDetailMapper } from '../mapper';
 import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';

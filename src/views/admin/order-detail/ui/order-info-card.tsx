@@ -17,7 +17,7 @@ import { ItemGroup, ItemSeparator } from '@/shared/ui/shadcn/item';
 import OrderProductItem from './OrderProductItem';
 import { ORDER_DETAIL_UI_CONFIG, OrderInfomationCardType } from '../config/order-detail-ui-config';
 import { TransitionDialogTrigger } from './dialogs';
-import { OrderDetailDto, useOrderDetail } from '@/features/order/order-detailv2';
+import { OrderDetailDto, useOrderDetail } from '@/features/order/order-detail';
 
 interface OrderInfoCardProps {
   type: OrderInfomationCardType;

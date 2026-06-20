@@ -9,7 +9,7 @@ import {
 } from './order-info-card';
 import { QueryHydrationProvider } from '@/shared';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
-import { getOrderDetailApi } from '@/features/order/order-detailv2';
+import { getOrderDetailApi } from '@/features/order/order-detail';
 
 interface AdminOrderDetailPageProps {
   doc: {

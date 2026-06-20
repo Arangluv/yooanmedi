@@ -4,7 +4,7 @@ import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription } from '@/shar
 import { formatNumberWithCommas } from '@/shared';
 import { PartialCancelDialogIconTrigger } from './dialogs';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
-import { OrderDetailDto } from '@/features/order/order-detailv2';
+import { OrderDetailDto } from '@/features/order/order-detail';
 
 interface OrderProductItemProps {
   order: OrderDetailDto;
