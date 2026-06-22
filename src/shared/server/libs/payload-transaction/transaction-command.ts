@@ -27,12 +27,11 @@ export abstract class TransactionCommand<TResult> {
   }
 
   protected async run(): Promise<TResult> {
-    const error = new BaseError({
+    throw new BaseError({
       clientMsg: '요청을 처리하는데 문제가 발생했습니다',
       devMsg: '구현체에서 run()을 구현해야합니다',
       errorName: 'TransactionCommandError',
     });
-    throw error;
   }
 
   protected async onRollback(): Promise<void> {}
@@ -40,12 +39,11 @@ export abstract class TransactionCommand<TResult> {
   private async getTransactionId(): Promise<TransactionId> {
     const txId = await this.payload.db.beginTransaction();
     if (!txId) {
-      const error = {
+      throw new BaseError({
         clientMsg: '요청을 처리하는데 문제가 발생했습니다',
         devMsg: 'payload transaction ID가 누락되었습니다',
         errorName: 'TransactionCommandError',
-      };
-      throw error;
+      });
     }
 
     return txId;

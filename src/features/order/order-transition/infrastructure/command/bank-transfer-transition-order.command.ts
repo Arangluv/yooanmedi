@@ -27,6 +27,7 @@ export interface BankTransferTransitionOrderCommandDependencies {
 export class BankTransferTransitionOrderCommand extends TransactionCommand<TransitionOrderCommandResult> {
   private readonly repository: BankTransferTransitionOrderCommandDependencies['repository'];
   private readonly commandDto: BankTransferTransitionOrderCommandDto;
+
   constructor(
     dependencies: BankTransferTransitionOrderCommandDependencies,
     dto: BankTransferTransitionOrderCommandDto,
