@@ -3,7 +3,7 @@ import { ORDER_PRODUCT_STATUS, OrderProduct, OrderProductStatus } from '@/entiti
 export class CancelOrderStatusResolver {
   static hasCancelRequestInOrderProducts(orderProduct: OrderProduct[]) {
     const statuses = orderProduct.map((item) => item.orderProductStatus);
-    return statuses.every((status) => status === 'cancel_request');
+    return statuses.some((status) => status === 'cancel_request');
   }
 
   static hasOrderProductsCancelled(orderProduct: OrderProduct[]) {

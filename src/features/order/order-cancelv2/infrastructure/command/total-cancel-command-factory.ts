@@ -2,7 +2,7 @@ import { BaseError } from '@/shared';
 import { Order } from '@/entities/order';
 import { PGTotalCancelCommand } from './pg';
 import { BankTransferTotalCancelCommand } from './bank-transfer';
-import { ClientCancelOrderServiceDependencies } from '../service';
+import { CancelOrderServiceDependencies } from '../../core';
 
 export class AdminOrderTotalCancelCommandFactory {
   public static createCommand({
@@ -10,7 +10,7 @@ export class AdminOrderTotalCancelCommandFactory {
     dependencies,
   }: {
     order: Order;
-    dependencies: ClientCancelOrderServiceDependencies;
+    dependencies: CancelOrderServiceDependencies;
   }) {
     switch (order.paymentsMethod) {
       case 'creditCard':

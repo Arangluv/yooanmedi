@@ -1,29 +1,11 @@
-import { BasePayload } from 'payload';
 import { BaseErrorManager, BaseError } from '@/shared';
-import { OrderRepository } from '@/entities/order';
-import { OrderProductRepository } from '@/entities/order-product';
-import { PointHistoryRepository } from '@/entities/point';
-import { UserRepository } from '@/entities/user';
-import { EasyPayRepository } from '@/entities/easypay';
-import { PaymentHistoryRepository } from '@/entities/payment';
 import { ClientPartialOrderCancelCommandFactory } from '../command';
 import { ClientCancelOrderUseCase } from '../../usecase';
+import { CancelOrderServiceDependencies } from '../../core';
 import { PartialCancelOrderRequestDto } from '../../dto';
 
-export interface ClientCancelOrderServiceDependencies {
-  payload: BasePayload;
-  repository: {
-    order: OrderRepository;
-    orderProduct: OrderProductRepository;
-    pointHistory: PointHistoryRepository;
-    user: UserRepository;
-    easyPay: EasyPayRepository;
-    paymentHistory: PaymentHistoryRepository;
-  };
-}
-
 export const ClientCancelOrderService = (
-  dependencies: ClientCancelOrderServiceDependencies,
+  dependencies: CancelOrderServiceDependencies,
 ): ClientCancelOrderUseCase => ({
   partialCancel: async (dto: PartialCancelOrderRequestDto) => {
     try {

@@ -1,35 +1,26 @@
-import { BasePayload } from 'payload';
 import { TransactionCommand } from '@/shared/server';
 import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
 import { OrderProduct, OrderProductStatus } from '@/entities/order-product';
-import { OrderRepository } from '@/entities/order';
-import { PointCalculator, PointHistoryRepository } from '@/entities/point';
-import { OrderProductRepository } from '@/entities/order-product';
+import { PointCalculator } from '@/entities/point';
 import { POINT_ACTION } from '@/entities/point';
-import { UserRepository } from '@/entities/user';
-import { CancelOrderFindOption, CancelOrderStatusResolver } from '../../../core';
-
-export interface BankTransferPartialCancelCommandDependencies {
-  payload: BasePayload;
-  repository: {
-    order: OrderRepository;
-    orderProduct: OrderProductRepository;
-    pointHistory: PointHistoryRepository;
-    user: UserRepository;
-  };
-}
+import {
+  CancelOrderFindOption,
+  CancelOrderStatusResolver,
+  CancelOrderCommandResult,
+  CancelOrderServiceDependencies,
+} from '../../../core';
 
 export interface BankTransferPartialCancelCommandDto {
   order: Order;
   orderProductId: number;
 }
 
-export abstract class BankTransferPartialCancelCommand extends TransactionCommand<void> {
-  protected readonly repository: BankTransferPartialCancelCommandDependencies['repository'];
+export abstract class BankTransferPartialCancelCommand extends TransactionCommand<CancelOrderCommandResult> {
+  protected readonly repository: CancelOrderServiceDependencies['repository'];
   protected readonly commandDto: BankTransferPartialCancelCommandDto;
 
   constructor(
-    dependencies: BankTransferPartialCancelCommandDependencies,
+    dependencies: CancelOrderServiceDependencies,
     commandDto: BankTransferPartialCancelCommandDto,
   ) {
     super(dependencies.payload);
@@ -37,7 +28,7 @@ export abstract class BankTransferPartialCancelCommand extends TransactionComman
     this.commandDto = commandDto;
   }
 
-  protected abstract run(): Promise<any>;
+  protected abstract run(): Promise<CancelOrderCommandResult>;
 
   // 사용 포인트 환불
   protected async rollbackUsePoint() {
@@ -95,6 +86,7 @@ export abstract class BankTransferPartialCancelCommand extends TransactionComman
     await this.repository.order.update({
       order: order.id,
       data: {
+        paymentStatus: status.payment,
         orderStatus: status.order,
       },
     });
@@ -125,7 +117,7 @@ export abstract class BankTransferPartialCancelCommand extends TransactionComman
 /** 입금 확인중 상태에서 사용되는 부분취소 커맨드 - 즉시 주문취소시킨다 */
 export class BankTransferPartialCancelCommandForImmediate extends BankTransferPartialCancelCommand {
   constructor(
-    dependencies: BankTransferPartialCancelCommandDependencies,
+    dependencies: CancelOrderServiceDependencies,
     commandDto: BankTransferPartialCancelCommandDto,
   ) {
     super(dependencies, commandDto);
@@ -147,13 +139,15 @@ export class BankTransferPartialCancelCommandForImmediate extends BankTransferPa
         ? { status: { order: 'cancelled', payment: 'TOTAL_CANCEL' } }
         : { status: { order: order.orderStatus, payment: 'PARTIAL_CANCEL' } },
     );
+
+    return { message: '주문이 취소처리 되었습니다' };
   }
 }
 
 /** 결제가 완료된 상태에서 사용되는 부분취소 커맨드 */
 export class BankTransferPartialCancelCommandForPaied extends BankTransferPartialCancelCommand {
   constructor(
-    dependencies: BankTransferPartialCancelCommandDependencies,
+    dependencies: CancelOrderServiceDependencies,
     commandDto: BankTransferPartialCancelCommandDto,
   ) {
     super(dependencies, commandDto);
@@ -175,26 +169,24 @@ export class BankTransferPartialCancelCommandForPaied extends BankTransferPartia
 
     if (CancelOrderStatusResolver.isOrderProductFullyCancelled(orderProducts)) {
       await this.updateOrderStatus({ status: { order: 'cancelled', payment: 'TOTAL_CANCEL' } });
-      return;
-    }
-
-    if (CancelOrderStatusResolver.hasCancelRequestInOrderProducts(orderProducts)) {
+    } else if (CancelOrderStatusResolver.hasCancelRequestInOrderProducts(orderProducts)) {
       await this.updateOrderStatus({
         status: { order: 'cancel_request', payment: 'PARTIAL_CANCEL' },
       });
-      return;
+    } else {
+      await this.updateOrderStatus({
+        status: { order: order.orderStatus, payment: 'PARTIAL_CANCEL' },
+      });
     }
 
-    await this.updateOrderStatus({
-      status: { order: order.orderStatus, payment: 'PARTIAL_CANCEL' },
-    });
+    return { message: '주문이 취소처리 되었습니다' };
   }
 }
 
 /** 결제취소 요청을 보내는 부분취소 커맨드 */
 export class BankTransferPartialCancelCommandForRequest extends BankTransferPartialCancelCommand {
   constructor(
-    dependencies: BankTransferPartialCancelCommandDependencies,
+    dependencies: CancelOrderServiceDependencies,
     commandDto: BankTransferPartialCancelCommandDto,
   ) {
     super(dependencies, commandDto);
@@ -208,8 +200,14 @@ export class BankTransferPartialCancelCommandForRequest extends BankTransferPart
     await this.rollbackUsePoint();
 
     // step 4. 주문 상태 업데이트
-    await this.updateOrderStatus({
-      status: { order: 'cancel_request', payment: 'PARTIAL_CANCEL' },
-    });
+    const orderProducts = await this.getOrderProducts();
+    const isFullyCancelled = CancelOrderStatusResolver.isOrderProductFullyCancelled(orderProducts);
+    await this.updateOrderStatus(
+      isFullyCancelled
+        ? { status: { order: 'cancel_request', payment: 'TOTAL_CANCEL' } }
+        : { status: { order: 'cancel_request', payment: 'PARTIAL_CANCEL' } },
+    );
+
+    return { message: '주문이 취소요청 처리되었습니다' };
   }
 }

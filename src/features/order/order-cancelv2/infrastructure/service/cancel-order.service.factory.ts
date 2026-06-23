@@ -11,14 +11,9 @@ import {
   PaymentHistoryAdapter,
   PaymentHistoryApiRepository,
 } from '@/entities/payment/infrastructure';
-import {
-  AdminCancelOrderService,
-  AdminOrderServiceDependencies,
-} from './admin.cancel-order.service';
-import {
-  ClientCancelOrderService,
-  ClientCancelOrderServiceDependencies,
-} from './client-cancel-order.service';
+import { CancelOrderServiceDependencies } from '../../core';
+import { AdminCancelOrderService } from './admin.cancel-order.service';
+import { ClientCancelOrderService } from './client-cancel-order.service';
 
 export const createAdminCancelOrderUseCase = async () => {
   const payload = await getPayload();
@@ -32,7 +27,7 @@ export const createAdminCancelOrderUseCase = async () => {
       easyPay: new EasyPayApiRepository(EasyPayAdapter()),
       paymentHistory: new PaymentHistoryApiRepository(PaymentHistoryAdapter()),
     },
-  } as AdminOrderServiceDependencies;
+  } as CancelOrderServiceDependencies;
   return AdminCancelOrderService(dependencies);
 };
 
@@ -48,6 +43,6 @@ export const createClientCancelOrderUseCase = async () => {
       easyPay: new EasyPayApiRepository(EasyPayAdapter()),
       paymentHistory: new PaymentHistoryApiRepository(PaymentHistoryAdapter()),
     },
-  } as ClientCancelOrderServiceDependencies;
+  } as CancelOrderServiceDependencies;
   return ClientCancelOrderService(dependencies);
 };

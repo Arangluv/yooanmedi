@@ -1,14 +1,15 @@
-import { BasePayload } from 'payload';
 import { TransactionCommand } from '@/shared/infrastructure';
-import { Order, OrderRepository, OrderStatus, PaymentStatus } from '@/entities/order';
-import { OrderProductRepository, OrderProductStatus } from '@/entities/order-product';
+import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
+import { OrderProductStatus } from '@/entities/order-product';
 import { ORDER_PRODUCT_STATUS, OrderProduct } from '@/entities/order-product';
-import { EasyPayRepository } from '@/entities/easypay';
-import { UserRepository } from '@/entities/user';
-import { PointCalculator, PointHistoryRepository } from '@/entities/point';
+import { PointCalculator } from '@/entities/point';
 import { POINT_ACTION } from '@/entities/point';
-import { PaymentHistoryRepository } from '@/entities/payment';
-import { CancelOrderFindOption, CancelOrderStatusResolver } from '../../../core';
+import {
+  CancelOrderFindOption,
+  CancelOrderStatusResolver,
+  CancelOrderCommandResult,
+  CancelOrderServiceDependencies,
+} from '../../../core';
 
 type CancelStrategy = 'partial' | 'total';
 
@@ -17,27 +18,15 @@ interface CancelPlan {
   amount: number;
 }
 
-export interface PGTotalCancelCommandDependencies {
-  payload: BasePayload;
-  repository: {
-    order: OrderRepository;
-    orderProduct: OrderProductRepository;
-    pointHistory: PointHistoryRepository;
-    user: UserRepository;
-    easyPay: EasyPayRepository;
-    paymentHistory: PaymentHistoryRepository;
-  };
-}
-
 export interface PGTotalCancelCommandDto {
   order: Order;
 }
 
-export class PGTotalCancelCommand extends TransactionCommand<void> {
-  protected readonly repository: PGTotalCancelCommandDependencies['repository'];
+export class PGTotalCancelCommand extends TransactionCommand<CancelOrderCommandResult> {
+  protected readonly repository: CancelOrderServiceDependencies['repository'];
   protected readonly commandDto: PGTotalCancelCommandDto;
 
-  constructor(dependencies: PGTotalCancelCommandDependencies, commandDto: PGTotalCancelCommandDto) {
+  constructor(dependencies: CancelOrderServiceDependencies, commandDto: PGTotalCancelCommandDto) {
     super(dependencies.payload);
     this.repository = dependencies.repository;
     this.commandDto = commandDto;
@@ -63,6 +52,8 @@ export class PGTotalCancelCommand extends TransactionCommand<void> {
     });
 
     await this.cancelRequestToEasypay(cancelPlan);
+
+    return { message: '주문이 취소처리 되었습니다' };
   }
 
   // 주문상품 상태 업데이트
@@ -88,6 +79,7 @@ export class PGTotalCancelCommand extends TransactionCommand<void> {
     await this.repository.order.update({
       order: order.id,
       data: {
+        paymentStatus: status.payment,
         orderStatus: status.order,
       },
     });

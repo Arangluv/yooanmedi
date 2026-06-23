@@ -1,33 +1,25 @@
-import { BasePayload } from 'payload';
 import { TransactionCommand } from '@/shared/infrastructure';
-import { Order, OrderRepository, OrderStatus, PaymentStatus } from '@/entities/order';
-import { OrderProductRepository, OrderProductStatus } from '@/entities/order-product';
+import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
+import { OrderProductStatus } from '@/entities/order-product';
 import { OrderProduct } from '@/entities/order-product';
-import { PointCalculator, PointHistoryRepository } from '@/entities/point';
-import { UserRepository } from '@/entities/user';
+import { PointCalculator } from '@/entities/point';
 import { POINT_ACTION } from '@/entities/point';
-import { CancelOrderFindOption } from '../../../core';
-
-export interface BankTransferTotalCancelCommandDependencies {
-  payload: BasePayload;
-  repository: {
-    order: OrderRepository;
-    orderProduct: OrderProductRepository;
-    pointHistory: PointHistoryRepository;
-    user: UserRepository;
-  };
-}
+import {
+  CancelOrderFindOption,
+  CancelOrderCommandResult,
+  CancelOrderServiceDependencies,
+} from '../../../core';
 
 export interface BankTransferTotalCancelCommandDto {
   order: Order;
 }
 
-export class BankTransferTotalCancelCommand extends TransactionCommand<void> {
-  protected readonly repository: BankTransferTotalCancelCommandDependencies['repository'];
+export class BankTransferTotalCancelCommand extends TransactionCommand<CancelOrderCommandResult> {
+  protected readonly repository: CancelOrderServiceDependencies['repository'];
   protected readonly commandDto: BankTransferTotalCancelCommandDto;
 
   constructor(
-    dependencies: BankTransferTotalCancelCommandDependencies,
+    dependencies: CancelOrderServiceDependencies,
     commandDto: BankTransferTotalCancelCommandDto,
   ) {
     super(dependencies.payload);
@@ -52,6 +44,8 @@ export class BankTransferTotalCancelCommand extends TransactionCommand<void> {
         payment: 'TOTAL_CANCEL',
       },
     });
+
+    return { message: '주문이 취소처리 되었습니다' };
   }
 
   // 사용 포인트 환불
@@ -119,6 +113,7 @@ export class BankTransferTotalCancelCommand extends TransactionCommand<void> {
     await this.repository.order.update({
       order: order.id,
       data: {
+        paymentStatus: status.payment,
         orderStatus: status.order,
       },
     });

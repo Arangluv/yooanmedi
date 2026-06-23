@@ -4,9 +4,9 @@ import {
   BankTransferPartialCancelCommandForRequest,
 } from './bank-transfer';
 import { PGPartialCancelCommand } from './pg';
-import { PartialCancelOrderRequestDto } from '../../dto';
 import { getClientPartialCancelStrategy, getAdminPartialCancelStrategy } from '../libs';
-import { ClientCancelOrderServiceDependencies, AdminOrderServiceDependencies } from '../service';
+import { PartialCancelOrderRequestDto } from '../../dto';
+import { CancelOrderServiceDependencies } from '../../core';
 
 export class ClientPartialOrderCancelCommandFactory {
   static createCommand({
@@ -14,7 +14,7 @@ export class ClientPartialOrderCancelCommandFactory {
     dependencies,
   }: {
     dto: PartialCancelOrderRequestDto;
-    dependencies: ClientCancelOrderServiceDependencies;
+    dependencies: CancelOrderServiceDependencies;
   }) {
     const strategy = getClientPartialCancelStrategy(dto.order);
 
@@ -35,7 +35,7 @@ export class AdminOrderPartialCancelCommandFactory {
     dependencies,
   }: {
     dto: PartialCancelOrderRequestDto;
-    dependencies: AdminOrderServiceDependencies;
+    dependencies: CancelOrderServiceDependencies;
   }) {
     const strategy = getAdminPartialCancelStrategy(dto.order);
 
