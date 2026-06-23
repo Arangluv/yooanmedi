@@ -1,11 +1,4 @@
-import { BasePayload } from 'payload';
 import { BaseErrorManager, BaseError } from '@/shared';
-import { OrderRepository } from '@/entities/order';
-import { OrderProductRepository } from '@/entities/order-product';
-import { PointHistoryRepository } from '@/entities/point';
-import { UserRepository } from '@/entities/user';
-import { EasyPayRepository } from '@/entities/easypay';
-import { PaymentHistoryRepository } from '@/entities/payment';
 import { AdminCancelOrderUseCase } from '../../usecase';
 import { CancelOrderServiceDependencies } from '../../core';
 import { PartialCancelOrderRequestDto, TotalCancelOrderRequestDto } from '../../dto';
@@ -23,7 +16,7 @@ export const AdminCancelOrderService = (
         dto,
         dependencies,
       });
-      await cancelCommand.execute();
+      return await cancelCommand.execute();
     } catch (error) {
       const message = BaseErrorManager.resolveClientMessage(error);
       throw new BaseError({
@@ -42,6 +35,7 @@ export const AdminCancelOrderService = (
         });
         await cancelCommand.execute();
       }
+      return { message: `${dto.orders.length}개의 주문을 취소처리 했습니다` };
     } catch (error) {
       const message = BaseErrorManager.resolveClientMessage(error);
       throw new BaseError({

@@ -13,7 +13,7 @@ export const ClientCancelOrderService = (
         dto,
         dependencies,
       });
-      await cancelCommand.execute();
+      return await cancelCommand.execute();
     } catch (error) {
       const message = BaseErrorManager.resolveClientMessage(error);
       throw new BaseError({
