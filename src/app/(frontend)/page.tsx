@@ -47,10 +47,6 @@ function LeftContent() {
           <span className="text-lg font-bold">오픈 이벤트 3개월간 배송비 무료</span>
         </div>
       </div>
-      {/* 중단 이미지 */}
-      {/* <div className="h-[360px] w-full overflow-hidden rounded-md">
-        <Image src={MainBannerImage} alt="main banner" className="h-full w-full object-contain" />
-      </div> */}
       <CarouselBanner />
       {/* 하단 프로그레스*/}
       <div className="flex w-full gap-8">

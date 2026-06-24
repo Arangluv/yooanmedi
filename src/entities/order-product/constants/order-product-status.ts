@@ -17,4 +17,3 @@ export const ORDER_PRODUCT_STATUS_NAME = {
 } as const;
 
 export type OrderProductStatus = (typeof ORDER_PRODUCT_STATUS)[keyof typeof ORDER_PRODUCT_STATUS];
-export type OrderProductStatusKey = keyof typeof ORDER_PRODUCT_STATUS;

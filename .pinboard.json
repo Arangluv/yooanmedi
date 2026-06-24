@@ -1,61 +1,6 @@
 {
   "presets": [
     {
-      "name": "order-list",
-      "paths": [
-        {
-          "path": "src/features/order/order-list"
-        },
-        "src/views/admin/order-list",
-        "src/views/client/order-list",
-        "src/shared"
-      ]
-    },
-    {
-      "name": "order-cancel",
-      "paths": [
-        "src/features/order/order-cancel",
-        "src/features/order/order-list",
-        "src/views/admin/order-list",
-        "src/views/admin/order-detail",
-        "src/views/client/order-list"
-      ]
-    },
-    {
-      "name": "order-detail",
-      "paths": [
-        "src/features/order/order-cancel",
-        "src/features/order/order-list",
-        "src/features/order/order-detail",
-        "src/views/admin/order-detail"
-      ]
-    },
-    {
-      "name": "order-transition",
-      "paths": [
-        {
-          "path": "src/features/order/order-transition",
-          "alias": "features.order-transition"
-        },
-        {
-          "path": "src/features/order/order-cancel",
-          "alias": "features.order-cancel"
-        },
-        {
-          "path": "src/features/order/order-list",
-          "alias": "features.order-list"
-        },
-        {
-          "path": "src/views/admin/order-detail",
-          "alias": "views.order-detail"
-        },
-        {
-          "path": "src/views/admin/order-list",
-          "alias": "views.order-list"
-        }
-      ]
-    },
-    {
       "name": "refactor.user.entity",
       "paths": [
         {
@@ -65,6 +10,19 @@
         {
           "path": "src/entities/point",
           "alias": "entity.point"
+        }
+      ]
+    },
+    {
+      "name": "refactor-point",
+      "paths": [
+        {
+          "path": "src/entities/point",
+          "alias": "entity.point"
+        },
+        {
+          "path": "src/features/point",
+          "alias": "feature.point"
         }
       ]
     }

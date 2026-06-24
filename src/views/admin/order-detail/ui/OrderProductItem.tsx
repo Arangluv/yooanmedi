@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import { ImageIcon } from 'lucide-react';
 import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription } from '@/shared/ui/shadcn/item';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
-import { AdminOrderDetail, type OrderProduct } from '../model/order-detail.schema';
+import { formatNumberWithCommas } from '@/shared';
 import { PartialCancelDialogIconTrigger } from './dialogs';
 import { ORDER_PRODUCT_STATUS } from '@/entities/order-product';
+import { OrderDetailDto } from '@/features/order/order-detail';
 
 interface OrderProductItemProps {
-  order: AdminOrderDetail;
-  orderProduct: OrderProduct;
+  order: OrderDetailDto;
+  orderProduct: OrderDetailDto['orderProducts'][number];
   idx: number;
 }
 
@@ -70,7 +70,7 @@ const OrderProductItem = ({ order, orderProduct, idx }: OrderProductItemProps) =
         </div>
       </ItemContent>
       {orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.cancelled && (
-        <PartialCancelDialogIconTrigger order={order} targetOrderProductId={orderProduct.id} />
+        <PartialCancelDialogIconTrigger order={order} orderProductId={orderProduct.id} />
       )}
     </Item>
   );

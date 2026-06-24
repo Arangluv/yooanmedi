@@ -26,4 +26,3 @@ export const ORDER_STATUS_NAME = {
 } as const;
 
 export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
-export type OrderStatusKey = keyof typeof ORDER_STATUS;

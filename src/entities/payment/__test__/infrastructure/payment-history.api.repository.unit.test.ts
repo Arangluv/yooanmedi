@@ -1,0 +1,85 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { PaymentHistoryAdapter, PaymentHistoryApiRepository } from '../../infrastructure';
+import { MockPaymentHistoryAdapter } from '../mocks';
+import { CreatePaymentHistorRequestyDto } from '../../dto';
+import { PayloadAdapterResultManager } from '@/shared/server';
+import { createPaymentHistoryEntityFixture } from '../fixtures';
+import { BaseError, TestErrorHelper } from '@/shared';
+
+describe('Payment History Api Repository', () => {
+  let mockAdapter: ReturnType<typeof PaymentHistoryAdapter>;
+  let repository: PaymentHistoryApiRepository;
+
+  beforeEach(() => {
+    mockAdapter = MockPaymentHistoryAdapter();
+    repository = new PaymentHistoryApiRepository(mockAdapter);
+  });
+
+  describe('create', () => {
+    it('결제내역 생성에 성공한다', async () => {
+      // Given
+      const dto = {
+        pgCno: 'testCno',
+        order: 1,
+        amount: 1200,
+        paymentsMethod: 'creditCard',
+      } as CreatePaymentHistorRequestyDto;
+
+      vi.mocked(mockAdapter.createPaymentHistory).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createPaymentHistoryEntityFixture()),
+      );
+
+      // When
+      await repository.create(dto);
+
+      // Then
+      expect(mockAdapter.createPaymentHistory).toHaveBeenCalledTimes(1);
+      expect(mockAdapter.createPaymentHistory).toHaveBeenCalledWith(dto);
+    });
+
+    it('결제내역 생성실패 시 BaseError를 throw한다', async () => {
+      // Given
+      const dto = {
+        pgCno: 'testCno',
+        order: 1,
+        amount: 1200,
+        paymentsMethod: 'creditCard',
+      } as CreatePaymentHistorRequestyDto;
+
+      vi.mocked(mockAdapter.createPaymentHistory).mockResolvedValue(
+        PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+      );
+
+      // When & Then
+      await expect(() => repository.create(dto)).rejects.toThrow(BaseError);
+    });
+  });
+
+  describe('findByOrderId', () => {
+    it('결제내역 조회에 성공한다', async () => {
+      // Given
+      const targetOrderId = 3;
+      vi.mocked(mockAdapter.getPaymentHistoryByOrderId).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createPaymentHistoryEntityFixture()),
+      );
+
+      // When
+      await repository.findByOrderId(targetOrderId);
+
+      // Then
+      expect(mockAdapter.getPaymentHistoryByOrderId).toHaveBeenCalledTimes(1);
+      expect(mockAdapter.getPaymentHistoryByOrderId).toHaveBeenCalledWith(targetOrderId);
+    });
+
+    it('결제내역 조회에 실패시 BaseError를 throw한다', async () => {
+      // Given
+      const targetOrderId = 3;
+      vi.mocked(mockAdapter.getPaymentHistoryByOrderId).mockResolvedValue(
+        PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+      );
+
+      // When & Then
+      await expect(() => repository.findByOrderId(targetOrderId)).rejects.toThrow(BaseError);
+    });
+  });
+});

@@ -1,5 +1,5 @@
 import { Badge } from '@/shared/ui/shadcn/badge';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '../../constants/order-status';
 
 const OrderStatusBadge = ({

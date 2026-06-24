@@ -7,8 +7,9 @@ import {
   OrderCancelRequestInfoCard,
   OrderProgressInfoCard,
 } from './order-info-card';
-import { OrderDetailHydrationProvider } from '../model/providers/OrderDetailHydrationProvider';
-import { getOrderDetail } from '../api/order-detail.api';
+import { QueryHydrationProvider } from '@/shared';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { getOrderDetailApi } from '@/features/order/order-detail';
 
 interface AdminOrderDetailPageProps {
   doc: {
@@ -17,7 +18,7 @@ interface AdminOrderDetailPageProps {
 }
 
 const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
-  const result = await getOrderDetail(doc.id);
+  const result = await getOrderDetailApi({ order: doc.id });
 
   // todo :: 에러경계를 활용하여 분리해야합니다
   if (!result.isSuccess) {
@@ -25,7 +26,7 @@ const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
   }
 
   return (
-    <OrderDetailHydrationProvider orderId={doc.id} initialData={result}>
+    <QueryHydrationProvider queryKey={ORDER_QUERY_KEYS.detail(result.data.id)} initialData={result}>
       <AlertDialogProvider>
         <div className="bg-muted dark:bg-background h-full w-full px-[60px] py-[30px]">
           <div className="flex gap-12">
@@ -48,7 +49,7 @@ const AdminOrderDetailPage = async ({ doc }: AdminOrderDetailPageProps) => {
           </div>
         </div>
       </AlertDialogProvider>
-    </OrderDetailHydrationProvider>
+    </QueryHydrationProvider>
   );
 };
 

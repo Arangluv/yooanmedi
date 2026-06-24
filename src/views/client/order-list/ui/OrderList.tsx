@@ -4,30 +4,32 @@ import Image from 'next/image';
 import moment from 'moment';
 import { ImageIcon, Info } from 'lucide-react';
 import { Divider } from '@heroui/react';
-import { formatNumberWithCommas } from '@/shared';
-import { PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/entities/order';
+import { formatNumberWithCommas, PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/shared';
 import { ORDER_STATUS } from '@/entities/order';
 import { ORDER_PRODUCT_STATUS, ORDER_PRODUCT_STATUS_NAME } from '@/entities/order-product';
 import OrderListEmpty from './OrderListEmpty';
 import ExcelExportButton from './ExcelExportButton';
-import { ClientOrderListSearchParams, type ClientOrder } from '@/features/order/order-list';
 import { AlertDialogProvider } from '@/shared';
 import { OrderPartialCancelTrigger } from './dialogs';
-import useOrderListQuery from '../model/hooks/useOrderListQuery';
+import {
+  ClientOrderListSearchParams,
+  ClientOrderListItem,
+  useClientOrderList,
+} from '@/features/order/order-list';
 
 const OrderList = ({ searchParams }: { searchParams: ClientOrderListSearchParams }) => {
-  const orderList = useOrderListQuery({ searchParams });
+  const { orders } = useClientOrderList(searchParams);
 
   return (
     <AlertDialogProvider>
       <div className="flex w-full flex-col gap-4">
         <div className="flex items-center justify-between">
           <span className="text-xl font-bold">주문목록</span>
-          <ExcelExportButton data={orderList} />
+          <ExcelExportButton data={orders} />
         </div>
         <div className="flex w-full flex-col gap-4">
-          {orderList.length > 0 ? (
-            orderList.map((order) => <OrderItem key={order.id} order={order} />)
+          {orders.length > 0 ? (
+            orders.map((order) => <OrderItem key={order.id} order={order} />)
           ) : (
             <OrderListEmpty />
           )}
@@ -37,7 +39,7 @@ const OrderList = ({ searchParams }: { searchParams: ClientOrderListSearchParams
   );
 };
 
-const OrderItem = ({ order }: { order: ClientOrder }) => {
+const OrderItem = ({ order }: { order: ClientOrderListItem }) => {
   return (
     <div className="border-foreground-200 flex w-full flex-col gap-6 rounded-md border p-6">
       {/* 주문 overview */}
@@ -104,14 +106,15 @@ const BankTransferPendingAlert = () => {
 };
 
 interface OrderProductItemProps {
-  orderProduct: ClientOrder['orderProducts'][number];
-  order: ClientOrder;
+  orderProduct: ClientOrderListItem['orderProducts'][number];
+  order: ClientOrderListItem;
 }
 
 const OrderProductItem = ({ orderProduct, order }: OrderProductItemProps) => {
   const canPartialCancel =
     orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.pending ||
     orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.preparing;
+
   return (
     <div className="flex flex-col gap-2">
       <span className="font-bold">

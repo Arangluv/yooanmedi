@@ -1,54 +1,33 @@
 'use server';
 
-import { EndPointResult, okWithData, failure, normalizeError } from '@/shared';
-import { Order } from '@/entities/order';
-import { OrderTransitionCommandFactory } from '../model/order-transition-command-factory';
-import { Logger } from '@/shared/infrastructure';
+import { BaseErrorManager, EndPointResult, EndPointResultManager, LoggerV2 } from '@/shared';
+import { TransitionOrderListRequestDto, TransitionOrderRequestDto } from '../dto';
+import { createTransitionOrderService } from '../infrastructure';
 
-export interface TransitionOrderResult {
-  orderId: number;
-}
-
-export const transitionOrder = async (
-  order: Order,
-): Promise<EndPointResult<TransitionOrderResult>> => {
+export type TransitionOrderApiResponse = EndPointResult;
+export const transitionOrderApi = async (dto: TransitionOrderRequestDto) => {
   try {
-    const command = OrderTransitionCommandFactory.createCommand(order);
-    await command.execute();
-
-    return okWithData({
-      data: { orderId: order.id },
-    });
+    const { transitionOrder } = await createTransitionOrderService();
+    const result = await transitionOrder(dto);
+    return EndPointResultManager.ok(result.message);
   } catch (error) {
-    const { message } = normalizeError(error);
-    Logger.error(error);
-
-    return failure(message);
+    LoggerV2.error(error);
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(message ?? '주문상태를 변경하는데 문제가 발생했습니다');
   }
 };
 
-export interface TransitionOrderListResult {
-  totalCount: number;
-}
-
-export const transitionOrderList = async (
-  orders: Order[],
-): Promise<EndPointResult<TransitionOrderListResult>> => {
+export type TransitionOrderListApiResponse = EndPointResult;
+export const transitionOrderListApi = async (dto: TransitionOrderListRequestDto) => {
   try {
-    for (const order of orders) {
-      const command = OrderTransitionCommandFactory.createCommand(order);
-      await command.execute();
-    }
-
-    return okWithData({
-      data: {
-        totalCount: orders.length,
-      },
-    });
+    const { transitionOrderList } = await createTransitionOrderService();
+    const result = await transitionOrderList(dto);
+    return EndPointResultManager.ok(result.message);
   } catch (error) {
-    const { message } = normalizeError(error);
-    Logger.error(error);
-
-    return failure(message);
+    LoggerV2.error(error);
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(
+      message ?? '주문리스트 상태를 변경하는데 문제가 발생했습니다',
+    );
   }
 };

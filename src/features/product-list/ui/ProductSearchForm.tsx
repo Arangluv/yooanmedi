@@ -5,28 +5,22 @@ import { Form, Input, Select, SelectItem } from '@heroui/react';
 import clsx from 'clsx';
 import { Search } from 'lucide-react';
 import {
-  SEARCH_FIELD_KEY,
-  SEARCH_FIELD_LABEL,
-  type SearchFieldKey,
-} from '../constant/search-field';
-import { useSearchQueryState } from '../model/useSearchQueryState';
+  PRODUCT_LIST_SEARCH_FIELD,
+  PRODUCT_LIST_SEARCH_FIELD_LABEL,
+  ProductListSearchFieldKey,
+} from '../constants';
+import { useSearchQueryState } from '../hooks';
 
-const searchKeywordCondition = SEARCH_FIELD_KEY.map((key) => ({
-  key,
-  label: SEARCH_FIELD_LABEL[key],
-}));
-
-const ProductSearchForm = () => {
+export const ProductSearchForm = () => {
   const { filters, updateKeyword, resetFilters } = useSearchQueryState();
-
-  const [condition, setCondition] = useState<SearchFieldKey>(filters.condition);
+  const [condition, setCondition] = useState<ProductListSearchFieldKey>(filters.condition);
   const [keyword, setKeyword] = useState<string>(filters.keyword);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const condition = formData.get('condition') as SearchFieldKey;
+    const condition = formData.get('condition') as ProductListSearchFieldKey;
     const keyword = formData.get('keyword') as string;
 
     if (keyword.trim() === '') {
@@ -50,7 +44,7 @@ const ProductSearchForm = () => {
       <Select
         radius="sm"
         selectedKeys={[condition]}
-        onChange={(e) => setCondition(e.target.value as SearchFieldKey)}
+        onChange={(e) => setCondition(e.target.value as ProductListSearchFieldKey)}
         name="condition"
         variant="bordered"
         aria-label="검색 조건"
@@ -63,11 +57,24 @@ const ProductSearchForm = () => {
           return <span className="text-foreground-700 text-sm">{items[0].textValue}</span>;
         }}
       >
-        {searchKeywordCondition.map((item) => (
-          <SelectItem key={item.key} classNames={{ title: 'text-sm text-foreground-800' }}>
-            {item.label}
-          </SelectItem>
-        ))}
+        <SelectItem
+          key={PRODUCT_LIST_SEARCH_FIELD.productName}
+          classNames={{ title: 'text-sm text-foreground-800' }}
+        >
+          {PRODUCT_LIST_SEARCH_FIELD_LABEL[PRODUCT_LIST_SEARCH_FIELD.productName]}
+        </SelectItem>
+        <SelectItem
+          key={PRODUCT_LIST_SEARCH_FIELD.manufacturerName}
+          classNames={{ title: 'text-sm text-foreground-800' }}
+        >
+          {PRODUCT_LIST_SEARCH_FIELD_LABEL[PRODUCT_LIST_SEARCH_FIELD.manufacturerName]}
+        </SelectItem>
+        <SelectItem
+          key={PRODUCT_LIST_SEARCH_FIELD.ingredientName}
+          classNames={{ title: 'text-sm text-foreground-800' }}
+        >
+          {PRODUCT_LIST_SEARCH_FIELD_LABEL[PRODUCT_LIST_SEARCH_FIELD.ingredientName]}
+        </SelectItem>
       </Select>
       <Input
         radius="sm"
@@ -95,5 +102,3 @@ const ProductSearchForm = () => {
     </Form>
   );
 };
-
-export default ProductSearchForm;

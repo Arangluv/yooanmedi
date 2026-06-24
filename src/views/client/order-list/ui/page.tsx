@@ -1,20 +1,22 @@
-import type { SearchParams } from 'nuqs/server';
-import { generateSearchParam } from '@/features/order/order-list/infrastructure';
-import { Navbar } from '@/entities/order';
-import { getClientOrderList } from '@/features/order/order-list/infrastructure';
+import { type SearchParams } from 'nuqs/server';
 import { Divider } from '@heroui/react';
+import { QueryHydrationProvider } from '@/shared';
+import { Navbar } from '@/entities/order';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { getClientOrderListApi } from '@/features/order/order-list';
+import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
 import OrderListTitle from './OrderListTitle';
 import OrderListSearch from './OrderListSearch';
 import OrderList from './OrderList';
-import { ClientOrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
 };
 
 const ClientOrderListPage = async ({ searchParams }: PageProps) => {
-  const safeSearchParmas = await generateSearchParam(searchParams);
-  const result = await getClientOrderList(safeSearchParmas);
+  const safeSearchParmas =
+    await OrderListSearchParamsGenerator.getClientSafeSearchParams(searchParams);
+  const result = await getClientOrderListApi(safeSearchParmas);
 
   // TODO :: 보일러 플레이트 제거하기 -> Error 경계에서 해당 코드책임을 위임
   if (!result.isSuccess) {
@@ -22,7 +24,7 @@ const ClientOrderListPage = async ({ searchParams }: PageProps) => {
   }
 
   return (
-    <ClientOrderListHydrationProvider initialData={result} searchParams={safeSearchParmas}>
+    <QueryHydrationProvider initialData={result} queryKey={ORDER_QUERY_KEYS.list(safeSearchParmas)}>
       <div className="flex w-full flex-col">
         <Navbar />
         <div className="flex min-h-[calc(100vh-415px)] w-full justify-center">
@@ -34,7 +36,7 @@ const ClientOrderListPage = async ({ searchParams }: PageProps) => {
           </div>
         </div>
       </div>
-    </ClientOrderListHydrationProvider>
+    </QueryHydrationProvider>
   );
 };
 

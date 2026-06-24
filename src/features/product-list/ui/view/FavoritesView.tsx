@@ -1,12 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-
 import { EmptyProductList, Product } from '@/entities/product';
-
 import ProductList from '../ProductList';
-
-// TODO :: 잘못된 참조방식 -> 개선필요
 import useFavoritesProductStore from '@/features/favorites-product/model/useFavoritesProductStore';
 import { getFavoritesProductList } from '@/features/favorites-product/api/product-list';
 

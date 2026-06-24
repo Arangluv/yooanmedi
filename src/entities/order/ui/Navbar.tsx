@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { BrandLogo } from '@/shared';
 import OrderLink from './OrderLink';
-import { CartModalOpenTextButton } from '@/entities/cart';
+import { CartDetailModalOpenTextButton } from '@/features/cart-detail'; // todo :: 잘못된 참조
 
 const Navbar = () => {
   return (
@@ -12,7 +12,7 @@ const Navbar = () => {
           <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
         </Link>
         <div className="flex gap-2">
-          <CartModalOpenTextButton />
+          <CartDetailModalOpenTextButton />
           <OrderLink />
         </div>
       </div>

@@ -6,9 +6,10 @@ import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { ORDER_STATUS, OrderStatus } from '@/entities/order';
 import useOrderListSearch from '../model/useOrderListSearch';
 import { getCancelDialogConfig, getTransitionDialogConfig } from '../lib/get-dialog-config';
-import useOrderListTransition from '../model/hooks/useOrderListTransition';
-import { AdminOrderListItem } from '../model/admin-order-list.schema';
-import useOrderCancel from '../model/hooks/useOrderCancel';
+import { useAdminCancelOrder } from '@/features/order/order-cancel';
+import { AdminOrderListMapper } from '../mapper';
+import { AdminOrderListItem } from '@/features/order/order-list';
+import { useTransitionOrder } from '@/features/order/order-transition';
 
 interface TransitionTriggerProps {
   selectedRows: Row<AdminOrderListItem>[];
@@ -17,7 +18,7 @@ interface TransitionTriggerProps {
 export const TransitionDialogTrigger = ({ selectedRows }: TransitionTriggerProps) => {
   const { setDialogConfig, onOpen } = useAlertDialog();
   const { filters } = useOrderListSearch();
-  const { transitionOrder } = useOrderListTransition();
+  const { transitionOrderListMutate } = useTransitionOrder();
 
   if (
     filters.orderStatus === ORDER_STATUS.delivered ||
@@ -41,7 +42,8 @@ export const TransitionDialogTrigger = ({ selectedRows }: TransitionTriggerProps
               ...dialogConfig,
               action: {
                 ...dialogConfig.action,
-                onClick: () => transitionOrder(orders),
+                onClick: () =>
+                  transitionOrderListMutate(AdminOrderListMapper.toTransitionOrderListDto(orders)),
               },
             };
           });
@@ -57,7 +59,7 @@ export const TransitionDialogTrigger = ({ selectedRows }: TransitionTriggerProps
 export const CancelDialogTrigger = ({ selectedRows }: TransitionTriggerProps) => {
   const { setDialogConfig, onOpen } = useAlertDialog();
   const { filters } = useOrderListSearch();
-  const { totalCancelOrder } = useOrderCancel();
+  const { totalCancelOrder } = useAdminCancelOrder();
 
   if (filters.orderStatus === ORDER_STATUS.cancel_request) {
     return null;
@@ -78,7 +80,8 @@ export const CancelDialogTrigger = ({ selectedRows }: TransitionTriggerProps) =>
               ...dialogConfig,
               action: {
                 ...dialogConfig.action,
-                onClick: () => totalCancelOrder(orders),
+                onClick: () =>
+                  totalCancelOrder(AdminOrderListMapper.toTotalCancelRequestDto(orders)),
               },
             };
           });

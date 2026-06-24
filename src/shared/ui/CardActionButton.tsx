@@ -1,7 +1,7 @@
 'use client';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/shadcn/tooltip';
-import { cn } from '../lib/utils';
+import { cn } from '@/shared';
 
 const CardActionButton = ({
   id,

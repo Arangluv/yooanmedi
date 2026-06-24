@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@payload-config';
 import { APIError } from 'payload';
-import { CartService } from '@/entities/cart/infrastructure';
+import { getPayload } from '@/shared/server';
+import { CartAdapter, CartApiRepository } from '@/entities/cart/infrastructure';
 
 export async function POST(request: Request) {
-  const payload = await getPayload({ config });
-  const cartService = new CartService();
+  const cartRepository = new CartApiRepository(CartAdapter());
 
   try {
+    const payload = await getPayload();
     const formData = await request.formData();
 
     const id = formData.get('id') as string;
@@ -32,7 +31,6 @@ export async function POST(request: Request) {
       .getAll('fileList')
       .filter((file): file is File => file instanceof File);
 
-    console.log(fileEntries);
     // 파일 업로드
     for (const file of fileEntries) {
       if (!file.size || !file.name) continue;
@@ -74,7 +72,7 @@ export async function POST(request: Request) {
       },
     });
 
-    await cartService.createCart(user.id);
+    await cartRepository.create({ user: user.id });
 
     return NextResponse.json({
       success: true,

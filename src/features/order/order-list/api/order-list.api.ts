@@ -1,23 +1,30 @@
 'use server';
 
-import { okWithData, failure, type EndPointResult, normalizeError } from '@/shared';
-import { ClientOrderListSearchParams } from '../lib/generate-search-param';
-import { OrderListService } from '../model/order-list.service';
-import { ClientOrder } from '../model/order-list.schema';
+import { EndPointResult, EndPointResultManager, LoggerV2 } from '@/shared';
+import { GetAdminOrderListRequestDto, GetClientOrderListRequestDto } from '../dto';
+import { createOrderListUsecase } from '../infrastructure';
+import { AdminOrderListResult, ClientOrderListResult } from '../types';
 
-export const getClientOrderList = async (
-  searchParams: ClientOrderListSearchParams,
-): Promise<EndPointResult<ClientOrder[]>> => {
+export type GetAdminOrderListApiResponse = EndPointResult<AdminOrderListResult>;
+export const getAdminOrderListApi = async (dto: GetAdminOrderListRequestDto) => {
   try {
-    const orderListService = new OrderListService();
-    const orders = await orderListService.getClientOrderList(searchParams);
-
-    return okWithData({
-      data: orders,
-    });
+    const { getAdminOrderList } = createOrderListUsecase();
+    const result = await getAdminOrderList(dto);
+    return EndPointResultManager.okWithData({ data: result });
   } catch (error) {
-    const { message } = normalizeError(error);
+    LoggerV2.error(error);
+    return EndPointResultManager.fail('주문리스트를 불러오는데 문제가 발생했습니다');
+  }
+};
 
-    return failure(message);
+export type GetClientOrderListApiResponse = EndPointResult<ClientOrderListResult>;
+export const getClientOrderListApi = async (dto: GetClientOrderListRequestDto) => {
+  try {
+    const { getClientOrderList } = createOrderListUsecase();
+    const result = await getClientOrderList(dto);
+    return EndPointResultManager.okWithData({ data: result });
+  } catch (error) {
+    LoggerV2.error(error);
+    return EndPointResultManager.fail('주문리스트를 불러오는데 문제가 발생했습니다');
   }
 };

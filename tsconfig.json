@@ -20,8 +20,6 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@ui/*": ["./src/components/ui/*"],
       "@components/*": ["./src/components/*"],
       "@payload-config": ["./src/payload.config.ts"],
       "@public/*": ["./public/*"],
@@ -37,8 +35,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/entities/recent-purchased-history",
+    "src/entities/purchased-history",
     "src/features/payments/model/schemas/payments-context/pg.schema.ts"
-  ],
+, "src/shared/core/libs/payload-adapter-result"  ],
   "exclude": ["node_modules"]
 }

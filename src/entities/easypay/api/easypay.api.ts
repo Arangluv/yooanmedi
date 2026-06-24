@@ -1,31 +1,17 @@
 'use server';
 
-import { EndPointResult, failure, okWithData } from '@/shared/lib/end-point-result';
-import { normalizeError } from '@/shared/model/errors/normalize-error';
-import { Logger } from '@/shared/model/logger/logger';
-import { EasyPayService } from '../model/easypay.service';
-import { type RegisterTransactionRequestDto } from '../model/schemas/easypay.register-transaction.schema';
+import { EasyPayAdapter, EasyPayApiRepository } from '../infrastructure';
+import { EasyPayRegisterTransactionRequestDto } from '../dto';
+import { BaseErrorManager, EndPointResultManager, LoggerV2 } from '@/shared';
 
-export interface RegisterTransactionResponse {
-  authPageUrl: string;
-}
-
-export const registerTransaction = async (
-  dto: RegisterTransactionRequestDto,
-): Promise<EndPointResult<RegisterTransactionResponse>> => {
+export const registerTransactionApi = async (dto: EasyPayRegisterTransactionRequestDto) => {
   try {
-    const easypayService = new EasyPayService();
-    const result = await easypayService.registerTransaction(dto);
-
-    return okWithData({
-      data: {
-        authPageUrl: result.authPageUrl,
-      },
-    });
+    const easyPayRepository = new EasyPayApiRepository(EasyPayAdapter());
+    const result = await easyPayRepository.registerTransaction(dto);
+    return EndPointResultManager.okWithData({ data: result });
   } catch (error) {
-    const normalizedError = normalizeError(error);
-    Logger.error(error);
-
-    return failure(normalizedError.message);
+    LoggerV2.error(error);
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(message ?? '결제창을 불러오는데 문제가 발생했습니다');
   }
 };

@@ -1,4 +1,5 @@
-import type { Favorite as PayloadFavorite } from '@/payload-types';
+// todo :: will remove
+import type { Favorite as PayloadFavorite } from '@/shared/types';
 
 export type FavoritesProduct = PayloadFavorite;
 

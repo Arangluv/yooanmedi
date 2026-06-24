@@ -2,7 +2,7 @@
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
 import type { Metadata } from 'next';
 
-import config from '@payload-config';
+import { payloadConfig } from '@/shared/server';
 import { RootPage, generatePageMetadata } from '@payloadcms/next/views';
 import { importMap } from '../importMap';
 
@@ -16,10 +16,10 @@ type Args = {
 };
 
 export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
-  generatePageMetadata({ config, params, searchParams });
+  generatePageMetadata({ config: payloadConfig, params, searchParams });
 
 const Page = ({ params, searchParams }: Args) => {
-  return RootPage({ config, params, searchParams, importMap });
+  return RootPage({ config: payloadConfig, params, searchParams, importMap });
 };
 
 export default Page;

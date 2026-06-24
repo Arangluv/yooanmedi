@@ -3,13 +3,12 @@
 import Link from 'next/link';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
-import { PAYMENT_STATUS_NAME } from '@/entities/order/constants/payment-status';
-import { PAYMENTS_METHOD_NAME } from '@/entities/order/constants/payments-method';
+import { PAYMENT_STATUS_NAME, PaymentStatus } from '@/entities/order';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
-import { formatNumberWithCommas } from '@/shared/lib/fomatters';
+import { formatNumberWithCommas, PAYMENTS_METHOD_NAME } from '@/shared';
 import { Checkbox } from '@/shared/ui/shadcn/checkbox';
 import FlgStatusBadge from '../ui/badge/FlgStatusBadge';
-import { type AdminOrderListItem } from '@/views/admin/order-list';
+import { type AdminOrderListItem } from '@/features/order/order-list';
 
 export const columns: ColumnDef<AdminOrderListItem>[] = [
   {
@@ -64,7 +63,8 @@ export const columns: ColumnDef<AdminOrderListItem>[] = [
     accessorKey: 'paymentStatus',
     header: '결제상태',
     cell: ({ row }) => {
-      return <div>{PAYMENT_STATUS_NAME[row.original.paymentStatus]}</div>;
+      const paymentStatus = row.original.paymentStatus as PaymentStatus;
+      return <div>{PAYMENT_STATUS_NAME[paymentStatus]}</div>;
     },
   },
   {

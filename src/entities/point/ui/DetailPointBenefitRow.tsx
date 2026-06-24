@@ -1,9 +1,15 @@
-import { getPointWhenUsingBankTransfer, getPointWhenUsingCard } from '../lib/calculator';
-import type { CartItem } from '@/entities/cart/@x/point';
+import { CartItem } from '@/entities/cart-item/@x/point';
+import { PointCalculator } from '@/entities/point';
+import { PointHistoryMapper } from '../mapper';
 
 const DetailPointBenefitRow = ({ product }: Pick<CartItem, 'product'>) => {
-  const willEarnPointForCard = getPointWhenUsingCard(product);
-  const willEarnPointForBankTransfer = getPointWhenUsingBankTransfer(product);
+  const SINGLE_PRODUCT_QUANTITY = 1;
+  const willEarnPointForCard = PointCalculator.forCard(
+    PointHistoryMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
+  );
+  const willEarnPointForBankTransfer = PointCalculator.forBank(
+    PointHistoryMapper.productToPointItem(product, SINGLE_PRODUCT_QUANTITY),
+  );
 
   if (willEarnPointForCard === 0 && willEarnPointForBankTransfer === 0) {
     return null;
@@ -13,12 +19,12 @@ const DetailPointBenefitRow = ({ product }: Pick<CartItem, 'product'>) => {
     <div className="text-foreground-600 flex items-start gap-2 text-sm">
       <span className="text-foreground-700 block w-[100px] flex-shrink-0">결제혜택</span>
       <div className="flex flex-col gap-1">
-        {Number(willEarnPointForCard) > 0 && (
+        {willEarnPointForCard > 0 && (
           <span className="text-brandWeek">
             카드 결제시 <span className="font-bold">{willEarnPointForCard}원</span> 적립
           </span>
         )}
-        {Number(willEarnPointForBankTransfer) > 0 && (
+        {willEarnPointForBankTransfer > 0 && (
           <span className="text-brandWeek">
             무통장 입금시 <span className="font-bold">{willEarnPointForBankTransfer}원</span> 적립
           </span>

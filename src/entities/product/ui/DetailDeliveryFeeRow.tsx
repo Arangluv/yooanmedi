@@ -1,4 +1,4 @@
-import type { Product } from '../model/schemas/product.schema';
+import { Product } from '@/entities/product';
 
 type DetailDeliveryFeeRowProps = {
   label: string;

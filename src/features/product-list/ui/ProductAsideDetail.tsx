@@ -1,19 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-
 import { Image as ImageIcon } from 'lucide-react';
 import { Divider } from '@heroui/react';
-
-import { EmptyProductDetail, DetailDefaultRow, DetailDeliveryFeeRow } from '@/entities/product';
-import { DetailPointBenefitRow } from '@/entities/point';
-import { useAuthStore } from '@/entities/user';
-import { RecentPurchasesTable } from '@/entities/recent-purchased-history';
 import { formatNumberWithCommas } from '@/shared';
-import useProductDetailStore from '../model/useProductDetailStore';
-import { AddToCartInput } from '@/entities/cart';
+import { EmptyProductDetail, DetailDefaultRow, DetailDeliveryFeeRow } from '@/entities/product';
+import { useAuthStore } from '@/entities/user';
+import { RecentPurchasesTable } from '@/entities/purchased-history';
+import { DetailPointBenefitRow } from '@/entities/point';
+import { AddToCartInput } from '@/features/cart-detail';
+import { useProductDetailStore } from '../hooks';
 
-const ProductAsideDetail = () => {
+export const ProductAsideDetail = () => {
   const { clieckedProduct } = useProductDetailStore();
   const user = useAuthStore((state) => state.user);
 
@@ -72,7 +70,7 @@ const ProductAsideDetail = () => {
             isAccent={clieckedProduct.returnable ? true : false}
             variant={clieckedProduct.returnable ? 'brand' : 'default'}
           />
-          <RecentPurchasesTable product={clieckedProduct} user={user} />
+          <RecentPurchasesTable product={clieckedProduct.id} user={user.id} />
           <Divider className="my-2" />
           <DetailPointBenefitRow product={clieckedProduct} />
           <AddToCartInput productId={clieckedProduct.id} />
@@ -81,5 +79,3 @@ const ProductAsideDetail = () => {
     </div>
   );
 };
-
-export default ProductAsideDetail;

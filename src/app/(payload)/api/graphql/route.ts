@@ -1,10 +1,10 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
-import config from '@payload-config'
-import { GRAPHQL_POST } from '@payloadcms/next/routes'
-import { NextRequest, NextResponse } from 'next/server'
+import { payloadConfig } from '@/shared/server';
+import { GRAPHQL_POST } from '@payloadcms/next/routes';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const POST = GRAPHQL_POST(config)
+export const POST = GRAPHQL_POST(payloadConfig);
 
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
@@ -14,5 +14,5 @@ export async function OPTIONS(request: NextRequest) {
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
-  })
+  });
 }

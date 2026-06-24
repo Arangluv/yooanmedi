@@ -1,38 +1,34 @@
 'use server';
 
-import { SearchParams } from 'nuqs';
-import { EndPointResult, normalizeError, okWithData, failure } from '@/shared';
-import { Logger } from '@/shared/infrastructure';
-import { Product } from '@/entities/product';
-import { ProductListService } from '../infrastructure';
-import { type ProductList } from '../model/product-list.schema';
+import { BaseErrorManager, EndPointResult, EndPointResultManager, LoggerV2 } from '@/shared';
+import { createProductListUsecase } from '../infrastructure';
+import { GetProductListRequestDto } from '../infrastructure/dto';
+import { ProductListResult } from '../types';
 
-export const getProductList = async (
-  searchParams: Promise<SearchParams>,
-): Promise<EndPointResult<ProductList>> => {
+export type GetProductListApiResponse = EndPointResult<ProductListResult>;
+export const getProductListApi = async (dto: GetProductListRequestDto) => {
   try {
-    const productListService = new ProductListService();
-    const productList = await productListService.getProductListAppliedCustomPrice(searchParams);
-
-    return okWithData({ data: productList });
+    const { getProductList } = createProductListUsecase();
+    const data = await getProductList(dto);
+    return EndPointResultManager.okWithData({ data });
   } catch (error) {
-    const nomalizedError = normalizeError(error);
-    Logger.error(error);
-
-    return failure(nomalizedError.message);
+    LoggerV2.error(error);
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(message ?? '상품리스트를 불러오는데 문제가 발생했습니다');
   }
 };
 
-export const getProductRankingList = async (): Promise<EndPointResult<Product[]>> => {
+export type GetRankingProductListApiResponse = EndPointResult<
+  Omit<ProductListResult, 'totalCount'>
+>;
+export const getRankingProductListApi = async () => {
   try {
-    const productListService = new ProductListService();
-    const products = await productListService.getRankingProductList();
-
-    return okWithData({ data: products });
+    const { getRankingProductList } = createProductListUsecase();
+    const data = await getRankingProductList();
+    return EndPointResultManager.okWithData({ data });
   } catch (error) {
-    const nomalizedError = normalizeError(error);
-    Logger.error(error);
-
-    return failure(nomalizedError.message);
+    LoggerV2.error(error);
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(message ?? '상품리스트를 불러오는데 문제가 발생했습니다');
   }
 };

@@ -1,10 +1,10 @@
 'use client';
 
 import { Pagination } from '@heroui/react';
-import { PAGE_SIZE } from '../config/product-list.config';
-import { useSearchQueryState } from '../model/useSearchQueryState';
+import { useSearchQueryState } from '../hooks';
 
 export default function ProductListPagination({ totalCount }: { totalCount: number }) {
+  const PAGE_SIZE = 12;
   const { filters, updatePage } = useSearchQueryState();
 
   return (

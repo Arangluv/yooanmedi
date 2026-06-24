@@ -1,23 +1,20 @@
-import { generateSearchParams } from '../lib/generate-search-params';
+import { SearchParams } from 'nuqs';
+import { QueryHydrationProvider, AlertDialogProvider } from '@/shared';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { getAdminOrderListApi } from '@/features/order/order-list';
+import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
 import OrderStatusTab from './OrderStatusTab';
 import OrderListTableSection from './table/OrderListTableSection';
-import { AlertDialogProvider } from '@/shared';
-import { SearchParams } from 'nuqs';
-import { getOrderList } from '../api/order-list.api';
-import { OrderListHydrationProvider } from '../model/providers/OrderListHydrationProvider';
 
 const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
-  const safeSearchParam = await generateSearchParams(searchParams);
-  const orderList = await getOrderList({
-    page: safeSearchParam.page,
-    orderStatus: safeSearchParam.orderStatus,
-  });
+  const safeSearchParam =
+    await OrderListSearchParamsGenerator.getAdminSafeSearchParams(searchParams);
+  const orderList = await getAdminOrderListApi(safeSearchParam);
 
   return (
-    <OrderListHydrationProvider
+    <QueryHydrationProvider
       initialData={orderList}
-      page={safeSearchParam.page}
-      orderStatus={safeSearchParam.orderStatus}
+      queryKey={ORDER_QUERY_KEYS.list(safeSearchParam)}
     >
       <AlertDialogProvider>
         <div className="bg-muted flex h-[calc(100vh-var(--app-header-height))] flex-col gap-8 overflow-hidden px-[60px] py-[30px]">
@@ -29,7 +26,7 @@ const AdminOrderListPage = async ({ searchParams }: { searchParams: Promise<Sear
           <OrderListTableSection searchParams={safeSearchParam} />
         </div>
       </AlertDialogProvider>
-    </OrderListHydrationProvider>
+    </QueryHydrationProvider>
   );
 };
 

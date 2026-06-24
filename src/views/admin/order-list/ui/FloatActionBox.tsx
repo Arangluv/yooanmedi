@@ -4,7 +4,7 @@ import { Row } from '@tanstack/react-table';
 import useOrderListSearch from '../model/useOrderListSearch';
 import { ORDER_STATUS } from '@/entities/order/constants/order-status';
 import { TransitionDialogTrigger, CancelDialogTrigger } from './dialogs';
-import { AdminOrderListItem } from '../model/admin-order-list.schema';
+import { AdminOrderListItem } from '@/features/order/order-list';
 
 const FloatActionBox = ({ selectedRows }: { selectedRows: Row<AdminOrderListItem>[] }) => {
   const { filters } = useOrderListSearch();

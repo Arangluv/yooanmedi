@@ -1,8 +1,6 @@
-import { DefaultServerCellComponentProps } from 'payload';
-
 import { FLG_STATUS, FLG_STATUS_NAME, type FlgStatus } from '@/entities/order/constants/flg-status';
 import { Badge } from '@/shared/ui/shadcn/badge';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared';
 
 const FlgStatusCell = ({ flgStatus }: { flgStatus: FlgStatus }) => {
   const colorMapper = {

@@ -19,7 +19,6 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import clsx from 'clsx';
 import { useMutation } from '@tanstack/react-query';
-import { join } from '../actions';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Image from 'next/image';

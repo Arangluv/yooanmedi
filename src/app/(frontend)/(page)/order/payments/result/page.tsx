@@ -1,13 +1,7 @@
-import { PaymentsResultOverview } from '@/features/payments';
-import { Navbar } from '@/entities/order';
+import { PaymentsResultPage } from '@/views/client/payments';
 
-const PaymentsResultPage = () => {
-  return (
-    <div className="flex w-full flex-col">
-      <Navbar />
-      <PaymentsResultOverview />
-    </div>
-  );
+const ResultPage = () => {
+  return <PaymentsResultPage />;
 };
 
-export default PaymentsResultPage;
+export default ResultPage;

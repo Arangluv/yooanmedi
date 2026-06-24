@@ -1,1 +1,1 @@
-export { type OrderProductStatus, ORDER_PRODUCT_STATUS } from '../constants/order-product-status';
+export { type OrderProductStatus, ORDER_PRODUCT_STATUS } from '../constants';

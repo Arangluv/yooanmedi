@@ -1,22 +1,20 @@
-'use client';
-
 import { Button, useAlertDialog } from '@/shared';
-import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { PackageX } from 'lucide-react';
-import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';
-import useOrderDetailTransition from '../model/hooks/useOrderDetailTransition';
-import { type AdminOrderDetail } from '../model/order-detail.schema';
-import useOrderCancel from '../model/hooks/useOrderCancel';
-import { AdminPartialOrderCancelRequestDto } from '../api/order-detail.api';
+import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { OrderStatus } from '@/entities/order';
+import { useAdminCancelOrder } from '@/features/order/order-cancel';
+import { OrderDetailDto } from '@/features/order/order-detail';
+import { useTransitionOrder } from '@/features/order/order-transition';
+import { AdminOrderDetailMapper } from '../mapper';
+import { TRANSITION_DIALOG_CONFIG, CANCEL_DIALOG_CONFIG } from '../config/dialog.config';
 
 interface TransitionTriggerProps {
-  order: AdminOrderDetail;
+  order: OrderDetailDto;
   status: OrderStatus | null;
 }
 
 export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProps) => {
-  const { transitionOrder } = useOrderDetailTransition();
+  const { transitionOrderMutate } = useTransitionOrder();
   const { setDialogConfig, onOpen } = useAlertDialog();
 
   if (status === null) {
@@ -34,7 +32,8 @@ export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProp
               ...baseConfig,
               action: {
                 ...baseConfig.action,
-                onClick: () => transitionOrder(order),
+                onClick: () =>
+                  transitionOrderMutate(AdminOrderDetailMapper.toTransitionOrderDto(order)),
               },
             };
           });
@@ -47,8 +46,14 @@ export const TransitionDialogTrigger = ({ order, status }: TransitionTriggerProp
   );
 };
 
-export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelRequestDto) => {
-  const { partialCancelOrder } = useOrderCancel();
+export const PartialCancelDialogIconTrigger = ({
+  order,
+  orderProductId,
+}: {
+  order: OrderDetailDto;
+  orderProductId: number;
+}) => {
+  const { partialCancelOrder } = useAdminCancelOrder();
   const { setDialogConfig, onOpen } = useAlertDialog();
 
   return (
@@ -63,7 +68,10 @@ export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelReque
               ...dialogConfig,
               action: {
                 ...dialogConfig.action,
-                onClick: () => partialCancelOrder(dto),
+                onClick: () =>
+                  partialCancelOrder(
+                    AdminOrderDetailMapper.toPartialCancelOrderDto(order, orderProductId),
+                  ),
               },
             };
           });
@@ -75,61 +83,3 @@ export const PartialCancelDialogIconTrigger = (dto: AdminPartialOrderCancelReque
     </AlertDialogTrigger>
   );
 };
-
-// export const PartialCancelDialogTrigger = (dto: AdminPartialOrderCancelRequestDto) => {
-//   const { partialCancelOrder } = useOrderCancel();
-//   const { setDialogConfig, onOpen } = useAlertDialog();
-
-//   return (
-//     <AlertDialogTrigger asChild>
-//       <Button
-//         variant="destructive"
-//         onClick={() => {
-//           setDialogConfig(() => {
-//             const config = CANCEL_DIALOG_CONFIG.partial;
-
-//             return {
-//               ...config,
-//               action: {
-//                 ...config.action,
-//                 onClick: () => partialCancelOrder(dto),
-//               },
-//             };
-//           });
-//           onOpen();
-//         }}
-//       >
-//         취소처리
-//       </Button>
-//     </AlertDialogTrigger>
-//   );
-// };
-
-// export const TotalCancelDialogTrigger = ({ order }: { order: AdminOrderDetail }) => {
-//   const { totalCancelOrder } = useOrderCancel();
-//   const { setDialogConfig, onOpen } = useAlertDialog();
-
-//   return (
-//     <AlertDialogTrigger asChild>
-//       <Button
-//         variant="destructive"
-//         onClick={() => {
-//           setDialogConfig(() => {
-//             const config = CANCEL_DIALOG_CONFIG.total;
-
-//             return {
-//               ...config,
-//               action: {
-//                 ...config.action,
-//                 onClick: () => totalCancelOrder(order),
-//               },
-//             };
-//           });
-//           onOpen();
-//         }}
-//       >
-//         취소처리
-//       </Button>
-//     </AlertDialogTrigger>
-//   );
-// };

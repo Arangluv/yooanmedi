@@ -11,4 +11,3 @@ export const FLG_STATUS_NAME = {
 } as const;
 
 export type FlgStatus = (typeof FLG_STATUS)[keyof typeof FLG_STATUS];
-export type FlgStatusKey = keyof typeof FLG_STATUS;

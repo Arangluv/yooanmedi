@@ -1,2 +1,2 @@
-export { type User, userSchema } from '../model/schemas/user.schema';
-export { baseUserFixture } from '../__test__/user.fixture';
+export { type User } from '../types';
+export { userSchema } from '../schemas';

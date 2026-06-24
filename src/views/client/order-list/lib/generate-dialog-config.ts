@@ -41,7 +41,7 @@ export const getDialogConfig = (
   ) {
     return {
       triggerText: '주문취소',
-      headerTitle: '해당 상품주문을을 취소하시겠습니까?',
+      headerTitle: '해당 상품주문을 취소하시겠습니까?',
       description: '선택하신 상품의 주문이 취소처리 됩니다',
       action: {
         text: '주문취소',

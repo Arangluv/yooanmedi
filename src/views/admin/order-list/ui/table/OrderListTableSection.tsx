@@ -3,11 +3,10 @@
 import TableHeader from './TableHeader';
 import OrderListDataTable from './OrderListDataTable';
 import { columns } from '../../model/table-columns';
-import useOrderListQuery from '../../model/hooks/useOrderListQuery';
-import { type AdminOrderListSearchParams } from '../../lib/generate-search-params';
+import { AdminOrderListSearchParams, useAdminOrderList } from '@/features/order/order-list';
 
 const OrderListTableSection = ({ searchParams }: { searchParams: AdminOrderListSearchParams }) => {
-  const { orders, totalCount } = useOrderListQuery(searchParams);
+  const { orders, totalCount } = useAdminOrderList(searchParams);
 
   return (
     <div className="bg-background flex min-h-0 flex-1 flex-col gap-8 rounded-lg p-4">

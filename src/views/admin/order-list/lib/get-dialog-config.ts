@@ -1,6 +1,5 @@
 import { type AlertDialogConfig } from '@/shared';
 import { ORDER_STATUS, ORDER_STATUS_NAME, type OrderStatus } from '@/entities/order';
-import { DialogActionConfig } from '@/shared/model/alert-dialog';
 
 export const getTransitionDialogConfig = (
   currentStatus: OrderStatus,

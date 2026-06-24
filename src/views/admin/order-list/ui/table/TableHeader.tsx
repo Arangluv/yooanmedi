@@ -1,13 +1,13 @@
 'use client';
 
 import { Sheet } from 'lucide-react';
-import { ORDER_STATUS_NAME } from '@/entities/order/constants/order-status';
 import { Button } from '@/shared/ui/shadcn/button';
-import { Collapsible, CollapsibleContent } from '@/shared/ui/shadcn/collapsible';
+import { Collapsible } from '@/shared/ui/shadcn/collapsible';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/shared/ui/shadcn/tooltip';
+import { ORDER_STATUS_NAME } from '@/entities/order';
 import useOrderListSearch from '../../model/useOrderListSearch';
-import { ExportExcel } from '../../lib/excel-export';
-import { AdminOrderListResult } from '../../model/admin-order-list.schema';
+import { exportExcel } from '../../lib/excel-export';
+import { AdminOrderListResult } from '@/features/order/order-list';
 
 const TableHeader = ({
   totalCount,
@@ -45,7 +45,6 @@ const TabTitle = ({ totalCount }: { totalCount: number }) => {
 const TableAction = ({ orders }: { orders: AdminOrderListResult['orders'] }) => {
   return (
     <div className="flex items-center gap-3">
-      {/* <FilterButton /> */}
       <ExcelExportButton orders={orders} />
     </div>
   );
@@ -55,7 +54,7 @@ const ExcelExportButton = ({ orders }: { orders: AdminOrderListResult['orders'] 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button variant="ghost" size="icon-lg" onClick={async () => await ExportExcel(orders)}>
+        <Button variant="ghost" size="icon-lg" onClick={async () => await exportExcel(orders)}>
           <Sheet className="text-muted-foreground !h-5 !w-5" />
         </Button>
       </TooltipTrigger>

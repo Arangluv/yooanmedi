@@ -1,0 +1,1 @@
+export { ProductListHydrator } from './ProductListHydrator';

@@ -1,20 +1,22 @@
 'use server';
 
-import { ProductRepository } from './repository';
-import { okWithData, failure, normalizeError, EndPointResult } from '@/shared';
-import { Logger } from '@/shared/infrastructure';
-import { ProductCategory } from '../model/schemas/product-category';
+import { EndPointResultManager, EndPointResult, BaseErrorManager } from '@/shared';
+import { LoggerV2 } from '@/shared';
+import { ProductCategory } from '../types';
+import { ProductAdapter, ProductApiRepository } from '../infrastructure';
+import { PRODUCT_ERROR_MESSAGE } from '../constants';
 
-export const getProductCategories = async (): Promise<EndPointResult<ProductCategory[]>> => {
+export type GetProductCategoriesApiResponse = EndPointResult<ProductCategory[]>;
+export const getProductCategoriesApi = async (): Promise<GetProductCategoriesApiResponse> => {
   try {
-    const categories = await ProductRepository.findAllCategories();
-    return okWithData({
+    const productApiRepository = new ProductApiRepository(ProductAdapter());
+    const categories = await productApiRepository.getAllCategories();
+    return EndPointResultManager.okWithData({
       data: categories,
     });
   } catch (error) {
-    const nomalizedError = normalizeError(error);
-    Logger.error(error);
-
-    return failure(nomalizedError.message);
+    LoggerV2.error(error);
+    const message = BaseErrorManager.resolveClientMessage(error);
+    return EndPointResultManager.fail(message ?? PRODUCT_ERROR_MESSAGE.categoryFetchFail);
   }
 };

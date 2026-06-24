@@ -1,7 +1,8 @@
 import * as XLSX from 'xlsx-js-style';
 import { getExcelExportData } from './get-excel-export-data';
 import moment from 'moment';
-import { ORDER_STATUS_NAME, PAYMENTS_METHOD_NAME } from '@/entities/order';
+import { ORDER_STATUS_NAME } from '@/entities/order';
+import { PAYMENTS_METHOD_NAME } from '@/shared';
 
 type ExcelExportData = {
   번호: number;
@@ -18,7 +19,7 @@ type ExcelExportData = {
   결제상태: string;
 };
 
-export const ExportExcel = async (orders: any) => {
+export const exportExcel = async (orders: any) => {
   const workbook = XLSX.utils.book_new();
   const exportData: ExcelExportData[] = orders.map((item: any, index: number) => {
     return {

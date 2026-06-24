@@ -20,10 +20,7 @@ export class CustomPriceService {
     return customPriceMap;
   }
 
-  public applyCustomPriceListToProducts(params: {
-    products: Product[];
-    customPrices: CustomPrice[];
-  }) {
+  public applyCustomPriceListToProducts(params: { products: Product[]; customPrices: CustomPrice[] }) {
     const { products } = params;
     const customPriceMap = this.getCustomPriceMap(params.customPrices);
 
