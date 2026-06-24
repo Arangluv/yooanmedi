@@ -43,6 +43,7 @@ export const PointHistoryAdapter = () => ({
       const { docs: pointTransaction } = await payload.find({
         collection: 'point-transaction',
         ...option,
+        depth: 0,
         limit: 1,
         req,
       });

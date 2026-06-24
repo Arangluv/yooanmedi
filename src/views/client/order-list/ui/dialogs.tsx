@@ -1,3 +1,5 @@
+'use client';
+
 import { AlertDialogTrigger } from '@/shared/ui/shadcn/alert-dialog';
 import { Button, useAlertDialog } from '@/shared';
 import { getDialogConfig } from '../lib/generate-dialog-config';

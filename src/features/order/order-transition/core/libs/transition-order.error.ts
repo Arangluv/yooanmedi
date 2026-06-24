@@ -11,7 +11,7 @@ export class TransitionOrderError extends BaseError {
 
   static cancelRequestExists() {
     throw new TransitionOrderError({
-      clientMsg: '주문 상태를 변경하는데 문제가 발생했습니다 - 주문취소요청 사항이 있습니다',
+      clientMsg: '주문취소요청 사항이 있습니다. 취소요청 사항을 먼저 처리한 후 다시 시도해주세요',
       errorName: 'TransitionNotSupportError',
     });
   }

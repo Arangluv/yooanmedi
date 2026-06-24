@@ -28,6 +28,7 @@ export const createAdminCancelOrderUseCase = async () => {
       paymentHistory: new PaymentHistoryApiRepository(PaymentHistoryAdapter()),
     },
   } as CancelOrderServiceDependencies;
+
   return AdminCancelOrderService(dependencies);
 };
 
@@ -44,5 +45,6 @@ export const createClientCancelOrderUseCase = async () => {
       paymentHistory: new PaymentHistoryApiRepository(PaymentHistoryAdapter()),
     },
   } as CancelOrderServiceDependencies;
+
   return ClientCancelOrderService(dependencies);
 };

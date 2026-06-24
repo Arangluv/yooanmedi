@@ -34,7 +34,6 @@ export class PointHistoryApiRepository implements PointHistoryRepository {
     if (!result.ok) {
       throw result.error;
     }
-
     return PointHistoryMapper.entityToDomain(result.data);
   }
 

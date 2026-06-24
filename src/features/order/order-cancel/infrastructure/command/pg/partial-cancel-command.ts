@@ -1,4 +1,4 @@
-import { TransactionCommand } from '@/shared/infrastructure';
+import { TransactionCommand } from '@/shared/server';
 import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
 import { OrderProduct, OrderProductStatus } from '@/entities/order-product';
 import { PointCalculator } from '@/entities/point';
@@ -139,9 +139,12 @@ export class PGPartialCancelCommand extends TransactionCommand<CancelOrderComman
     const orderProduct = await this.repository.orderProduct.findById(orderProductId);
     const { pgCno } = await this.repository.paymentHistory.findByOrderId(order.id);
 
-    await this.repository.easyPay.partialCancel({
-      amount: orderProduct.totalAmount,
-      pgCno,
-    });
+    // 0원 부분취소 시 Easypay에서 error를 반환
+    if (orderProduct.totalAmount > 0) {
+      await this.repository.easyPay.partialCancel({
+        amount: orderProduct.totalAmount,
+        pgCno,
+      });
+    }
   }
 }

@@ -2,22 +2,26 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { EndPointResult, useAlertDialog } from '@/shared';
+import { useAlertDialog } from '@/shared';
 import { ORDER_QUERY_KEYS } from '@/entities/order';
-import { adminPartialCancelOrderApi, adminTotalCancelOrderApi } from '../api';
+import {
+  adminPartialCancelOrderApi,
+  adminTotalCancelOrderApi,
+  CancelOrderApiResponse,
+} from '../api';
 
 export const useAdminCancelOrder = () => {
   const queryClient = useQueryClient();
   const { setActionDiabled, onClose } = useAlertDialog();
 
-  const onMutationSuccess = (result: EndPointResult) => {
-    if (result.isSuccess) {
-      toast.success(result.message);
+  const onMutationSuccess = (response: CancelOrderApiResponse) => {
+    if (response.isSuccess) {
+      toast.success(response.message);
       queryClient.invalidateQueries({
         queryKey: ORDER_QUERY_KEYS.all(),
       });
     } else {
-      toast.error(result.message);
+      toast.error(response.message);
     }
 
     setActionDiabled(false);

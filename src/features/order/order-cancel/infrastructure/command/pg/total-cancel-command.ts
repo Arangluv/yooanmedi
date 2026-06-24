@@ -1,4 +1,4 @@
-import { TransactionCommand } from '@/shared/infrastructure';
+import { TransactionCommand } from '@/shared/server';
 import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
 import { OrderProductStatus } from '@/entities/order-product';
 import { ORDER_PRODUCT_STATUS, OrderProduct } from '@/entities/order-product';
@@ -51,7 +51,10 @@ export class PGTotalCancelCommand extends TransactionCommand<CancelOrderCommandR
       },
     });
 
-    await this.cancelRequestToEasypay(cancelPlan);
+    // EasyPay는 결제취소에 0원이 들어가면 에러를 반환한다 -> todo:: entity에서 처리하도록 위임
+    if (cancelPlan.amount > 0) {
+      await this.cancelRequestToEasypay(cancelPlan);
+    }
 
     return { message: '주문이 취소처리 되었습니다' };
   }

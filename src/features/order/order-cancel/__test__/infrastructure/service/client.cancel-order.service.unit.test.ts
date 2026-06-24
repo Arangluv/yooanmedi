@@ -40,7 +40,6 @@ describe('Client CancelOrder Service', () => {
 
       // When
       const result = await partialCancel(dto);
-      console.log(result);
       // Then
       expect(result).toBeDefined();
       expect(result.message).toBe('주문이 취소처리 되었습니다');

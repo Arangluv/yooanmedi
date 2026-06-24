@@ -1,4 +1,4 @@
-import { TransactionCommand } from '@/shared/infrastructure';
+import { TransactionCommand } from '@/shared/server';
 import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
 import { OrderProductStatus } from '@/entities/order-product';
 import { OrderProduct } from '@/entities/order-product';

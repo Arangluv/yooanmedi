@@ -43,7 +43,7 @@ export const getClientPartialCancelStrategy = (order: Order): ClientPartialCance
     return PartialCancelStrategy.banktransfer_immediate;
   }
 
-  if (order.paymentsMethod === PAYMENTS_METHOD.bank_transfer && order.orderStatus === 'preparing') {
+  if (order.paymentsMethod === PAYMENTS_METHOD.bank_transfer) {
     return PartialCancelStrategy.banktransfer_cancel_request;
   }
 
