@@ -1,28 +1,15 @@
-import { runWithTransaction } from '@/shared/infrastructure';
-import { Order, ORDER_STATUS, OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
-import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
-import { OrderProductRepository } from '@/entities/order-product';
-import {
-  OrderProductAdapter,
-  OrderProductApiRepository,
-} from '@/entities/order-product/infrastructure';
-import {
-  ORDER_PRODUCT_STATUS,
-  OrderProduct,
-  OrderProductFindOption,
-} from '@/entities/order-product';
-import { EasyPayRepository } from '@/entities/easypay';
-import { EasyPayAdapter, EasyPayApiRepository } from '@/entities/easypay/infrastructure';
-import { UserRepository } from '@/entities/user';
-import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
-import { PointCalculator, PointHistoryRepository } from '@/entities/point';
-import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
-import {
-  PaymentHistoryAdapter,
-  PaymentHistoryApiRepository,
-} from '@/entities/payment/infrastructure';
-import { ITotalCancelCommand } from '../../../core';
+import { TransactionCommand } from '@/shared/infrastructure';
+import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
+import { OrderProductStatus } from '@/entities/order-product';
+import { ORDER_PRODUCT_STATUS, OrderProduct } from '@/entities/order-product';
+import { PointCalculator } from '@/entities/point';
 import { POINT_ACTION } from '@/entities/point';
+import {
+  CancelOrderFindOption,
+  CancelOrderStatusResolver,
+  CancelOrderCommandResult,
+  CancelOrderServiceDependencies,
+} from '../../../core';
 
 type CancelStrategy = 'partial' | 'total';
 
@@ -31,104 +18,82 @@ interface CancelPlan {
   amount: number;
 }
 
-export class PGTotalCancelCommand implements ITotalCancelCommand {
-  private readonly order: Order;
-  private readonly orderRepository: OrderRepository;
-  private readonly orderProductRepository: OrderProductRepository;
-  private readonly easyPayRepository: EasyPayRepository;
-  private readonly pointHistoryRepository: PointHistoryRepository;
-  private readonly userRepository: UserRepository;
+export interface PGTotalCancelCommandDto {
+  order: Order;
+}
 
-  constructor(order: Order) {
-    this.order = order;
-    this.orderRepository = new OrderApiRepository(OrderAdapter());
-    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-    this.easyPayRepository = new EasyPayApiRepository(EasyPayAdapter());
-    this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
-    this.userRepository = new UserApiRepository(UserAdapter());
+export class PGTotalCancelCommand extends TransactionCommand<CancelOrderCommandResult> {
+  protected readonly repository: CancelOrderServiceDependencies['repository'];
+  protected readonly commandDto: PGTotalCancelCommandDto;
+
+  constructor(dependencies: CancelOrderServiceDependencies, commandDto: PGTotalCancelCommandDto) {
+    super(dependencies.payload);
+    this.repository = dependencies.repository;
+    this.commandDto = commandDto;
   }
 
   public async run() {
-    const option = OrderProductFindOption.totalCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductRepository.findMany(option);
+    const orderProducts = await this.getOrderProducts();
     const cancelPlan = this.resolveCancelPlan(orderProducts);
 
-    // orderProduct update, user point action rollback
     await Promise.all(
       orderProducts.map(async (orderProduct) => {
-        await this.updateOrderProductToCancelled(orderProduct.id);
+        await this.updateOrderProduct(orderProduct, 'cancelled');
         await this.rollbackEarnPoint(orderProduct);
         await this.rollbackUsePoint(orderProduct);
       }),
     );
 
-    // user point update by created histories
-    // todo :: promise.all이 histories를 반환하도록 refactor
-    // await cancelEarnPointService.updateUserPoint(this.order.user);
-    // await cancelUsePointService.updateUserPoint(this.order.user);
-
-    // order update
-    await this.updateOrderStatus();
+    await this.updateOrderStatus({
+      status: {
+        order: 'cancelled',
+        payment: 'TOTAL_CANCEL',
+      },
+    });
 
     await this.cancelRequestToEasypay(cancelPlan);
+
+    return { message: '주문이 취소처리 되었습니다' };
   }
 
-  public async execute() {
-    return await runWithTransaction(this);
-  }
-
-  private async updateOrderProductToCancelled(orderProductId: number) {
-    await this.orderProductRepository.update({
-      orderProductId,
+  // 주문상품 상태 업데이트
+  protected async updateOrderProduct(
+    orderProduct: OrderProduct,
+    status: Extract<OrderProductStatus, 'cancel_request' | 'cancelled'>,
+  ) {
+    await this.repository.orderProduct.update({
+      orderProductId: orderProduct.id,
       data: {
-        orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+        orderProductStatus: status,
       },
     });
   }
 
-  private async updateOrderStatus() {
-    const dto = {
-      order: this.order.id,
+  // 주문 상태 업데이트
+  protected async updateOrderStatus({
+    status,
+  }: {
+    status: { order: OrderStatus; payment: PaymentStatus };
+  }) {
+    const { order } = this.commandDto;
+    await this.repository.order.update({
+      order: order.id,
       data: {
-        orderStatus: ORDER_STATUS.cancelled,
+        paymentStatus: status.payment,
+        orderStatus: status.order,
       },
-    } as UpdateOrderRequestDto;
-    await this.orderRepository.update(dto);
+    });
   }
 
-  private async rollbackEarnPoint(orderProduct: OrderProduct) {
-    const canRollback = orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.pending;
-    const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
-
-    if (canRollback && !isAlreayRollback) {
-      const user = await this.userRepository.findById(this.order.user);
-      const history = await this.pointHistoryRepository.createRollbackHistory({
-        user: this.order.user,
-        orderProduct: orderProduct.id,
-        type: POINT_ACTION.cancel_earn,
-      });
-      const updatedPoint = PointCalculator.getUpdatePoint({
-        current: user.point,
-        delta: PointCalculator.getDeltaPointByHistory(history),
-        action: POINT_ACTION.cancel_earn,
-      });
-
-      await this.userRepository.update({
-        user: this.order.user,
-        data: {
-          point: updatedPoint,
-        },
-      });
-    }
-  }
-
-  private async rollbackUsePoint(orderProduct: OrderProduct) {
-    const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
+  // 사용 포인트 환불
+  protected async rollbackUsePoint(orderProduct: OrderProduct) {
+    const isAlreayRollback = orderProduct.orderProductStatus === 'cancelled';
 
     if (!isAlreayRollback) {
-      const user = await this.userRepository.findById(this.order.user);
-      const history = await this.pointHistoryRepository.createRollbackHistory({
-        user: this.order.user,
+      const { order } = this.commandDto;
+      const user = await this.repository.user.findById(order.user);
+      const history = await this.repository.pointHistory.createRollbackHistory({
+        user: order.user,
         orderProduct: orderProduct.id,
         type: POINT_ACTION.cancel_use,
       });
@@ -138,8 +103,36 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
         action: POINT_ACTION.cancel_use,
       });
 
-      await this.userRepository.update({
-        user: this.order.user,
+      await this.repository.user.update({
+        user: order.user,
+        data: {
+          point: updatedPoint,
+        },
+      });
+    }
+  }
+
+  // 적립 포인트 회수
+  protected async rollbackEarnPoint(orderProduct: OrderProduct) {
+    const canRollback = orderProduct.orderProductStatus !== 'pending';
+    const isAlreayRollback = orderProduct.orderProductStatus === 'cancelled';
+
+    if (canRollback && !isAlreayRollback) {
+      const { order } = this.commandDto;
+      const user = await this.repository.user.findById(order.user);
+      const history = await this.repository.pointHistory.createRollbackHistory({
+        user: order.user,
+        orderProduct: orderProduct.id,
+        type: POINT_ACTION.cancel_earn,
+      });
+      const updatedPoint = PointCalculator.getUpdatePoint({
+        current: user.point,
+        delta: PointCalculator.getDeltaPointByHistory(history),
+        action: POINT_ACTION.cancel_earn,
+      });
+
+      await this.repository.user.update({
+        user: order.user,
         data: {
           point: updatedPoint,
         },
@@ -148,21 +141,17 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
   }
 
   private async cancelRequestToEasypay({ strategy, amount }: CancelPlan) {
-    const paymentHistoryRepository = new PaymentHistoryApiRepository(PaymentHistoryAdapter());
-    const paymentHistory = await paymentHistoryRepository.findByOrderId(this.order.id);
+    const { order } = this.commandDto;
+    const paymentHistory = await this.repository.paymentHistory.findByOrderId(order.id);
 
     if (strategy === 'total') {
-      await this.easyPayRepository.totalCancel({ amount, pgCno: paymentHistory.pgCno });
+      await this.repository.easyPay.totalCancel({ amount, pgCno: paymentHistory.pgCno });
     } else {
-      await this.easyPayRepository.partialCancel({ amount, pgCno: paymentHistory.pgCno });
+      await this.repository.easyPay.partialCancel({ amount, pgCno: paymentHistory.pgCno });
     }
   }
 
   private resolveCancelPlan(orderProducts: OrderProduct[]): CancelPlan {
-    const isExistAlreadyCancelledItem = orderProducts.some(
-      (orderProduct) => orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled,
-    );
-
     let cancelAmount = 0;
     orderProducts.forEach((orderProduct) => {
       if (orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.cancelled) {
@@ -170,10 +159,18 @@ export class PGTotalCancelCommand implements ITotalCancelCommand {
       }
     });
 
-    if (isExistAlreadyCancelledItem) {
+    if (CancelOrderStatusResolver.hasOrderProductsCancelled(orderProducts)) {
       return { strategy: 'partial', amount: cancelAmount };
     } else {
       return { strategy: 'total', amount: cancelAmount };
     }
+  }
+
+  // 전체 주문상품 불러오기
+  protected async getOrderProducts(): Promise<OrderProduct[]> {
+    const { order } = this.commandDto;
+    const option = CancelOrderFindOption.orderProduct.findMany(order.id);
+    const orderProducts = await this.repository.orderProduct.findMany(option);
+    return orderProducts;
   }
 }

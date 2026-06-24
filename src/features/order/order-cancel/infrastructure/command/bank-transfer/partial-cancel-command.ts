@@ -1,101 +1,42 @@
-import { runWithTransaction } from '@/shared/infrastructure';
-import { Order, ORDER_STATUS } from '@/entities/order';
-import { ORDER_PRODUCT_STATUS, OrderProductFindOption } from '@/entities/order-product';
-import { OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
-import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
-import { PointCalculator, PointHistoryRepository } from '@/entities/point';
-import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
-import { OrderProductRepository } from '@/entities/order-product';
-import {
-  OrderProductApiRepository,
-  OrderProductAdapter,
-} from '@/entities/order-product/infrastructure';
-import { isFullyCancelRequest, isFullyCancelled } from '../../../lib/status-helper';
-import { IPartialCancelCommand } from '../../../core';
+import { TransactionCommand } from '@/shared/server';
+import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
+import { OrderProduct, OrderProductStatus } from '@/entities/order-product';
+import { PointCalculator } from '@/entities/point';
 import { POINT_ACTION } from '@/entities/point';
-import { UserRepository } from '@/entities/user';
-import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
+import {
+  CancelOrderFindOption,
+  CancelOrderStatusResolver,
+  CancelOrderCommandResult,
+  CancelOrderServiceDependencies,
+} from '../../../core';
 
-export class BankTransferPartialCancelImmediateCommand implements IPartialCancelCommand {
-  private readonly order: Order;
-  private readonly targetOrderProductId: number;
-  private readonly orderRepository: OrderRepository;
-  private readonly orderProductRepository: OrderProductRepository;
-  private readonly pointHistoryRepository: PointHistoryRepository;
-  private readonly userRepository: UserRepository;
+export interface BankTransferPartialCancelCommandDto {
+  order: Order;
+  orderProductId: number;
+}
 
-  constructor(order: Order, orderProductId: number) {
-    this.order = order;
-    this.targetOrderProductId = orderProductId;
-    this.orderRepository = new OrderApiRepository(OrderAdapter());
-    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-    this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
-    this.userRepository = new UserApiRepository(UserAdapter());
+export abstract class BankTransferPartialCancelCommand extends TransactionCommand<CancelOrderCommandResult> {
+  protected readonly repository: CancelOrderServiceDependencies['repository'];
+  protected readonly commandDto: BankTransferPartialCancelCommandDto;
+
+  constructor(
+    dependencies: CancelOrderServiceDependencies,
+    commandDto: BankTransferPartialCancelCommandDto,
+  ) {
+    super(dependencies.payload);
+    this.repository = dependencies.repository;
+    this.commandDto = commandDto;
   }
 
-  public async run() {
-    // [step] 주문상품 상태 바꾸기 (주문취소)
-    await this.updateOrderProductToCancelled();
+  protected abstract run(): Promise<CancelOrderCommandResult>;
 
-    // [step] 사용포인트 환불
-    await this.rollbackUsePoint();
-    // [step] 적립 포인트 롤백
-    await this.rollbackEarnPoint();
-
-    // [step] 주문상태 바꾸기
-    await this.updateOrderStatus();
-  }
-
-  public async execute() {
-    return await runWithTransaction(this);
-  }
-
-  private async updateOrderProductToCancelled() {
-    await this.orderProductRepository.update({
-      orderProductId: this.targetOrderProductId,
-      data: { orderProductStatus: ORDER_PRODUCT_STATUS.cancelled },
-    });
-  }
-
-  private async updateOrderStatus() {
-    const orderOnGoingStatus = await this.getOrderOnGoingStatus();
-    const dto = {
-      order: this.order.id,
-      data: {
-        orderStatus: orderOnGoingStatus,
-      },
-    } as UpdateOrderRequestDto;
-    await this.orderRepository.update(dto);
-  }
-
-  private async rollbackEarnPoint() {
-    if (this.order.orderStatus !== ORDER_STATUS.pending) {
-      const user = await this.userRepository.findById(this.order.user);
-      const history = await this.pointHistoryRepository.createRollbackHistory({
-        user: this.order.user,
-        orderProduct: this.targetOrderProductId,
-        type: POINT_ACTION.cancel_earn,
-      });
-      const updatedPoint = PointCalculator.getUpdatePoint({
-        current: user.point,
-        delta: PointCalculator.getDeltaPointByHistory(history),
-        action: POINT_ACTION.cancel_earn,
-      });
-
-      await this.userRepository.update({
-        user: this.order.user,
-        data: {
-          point: updatedPoint,
-        },
-      });
-    }
-  }
-
-  private async rollbackUsePoint() {
-    const user = await this.userRepository.findById(this.order.user);
-    const history = await this.pointHistoryRepository.createRollbackHistory({
-      user: this.order.user,
-      orderProduct: this.targetOrderProductId,
+  // 사용 포인트 환불
+  protected async rollbackUsePoint() {
+    const { order, orderProductId } = this.commandDto;
+    const user = await this.repository.user.findById(order.user);
+    const history = await this.repository.pointHistory.createRollbackHistory({
+      user: order.user,
+      orderProduct: orderProductId,
       type: POINT_ACTION.cancel_use,
     });
     const updatedPoint = PointCalculator.getUpdatePoint({
@@ -104,207 +45,169 @@ export class BankTransferPartialCancelImmediateCommand implements IPartialCancel
       action: POINT_ACTION.cancel_use,
     });
 
-    await this.userRepository.update({
-      user: this.order.user,
+    await this.repository.user.update({
+      user: order.user,
       data: {
         point: updatedPoint,
       },
     });
   }
 
-  private async getOrderOnGoingStatus() {
-    const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductRepository.findMany(option);
-    const orderProductStatuses = orderProducts.map(
-      (orderProduct) => orderProduct.orderProductStatus,
-    );
-
-    if (isFullyCancelRequest(orderProductStatuses)) {
-      return ORDER_STATUS.cancel_request;
-    }
-
-    if (isFullyCancelled(orderProductStatuses)) {
-      return ORDER_STATUS.cancelled;
-    }
-
-    return this.order.orderStatus;
-  }
-}
-
-export class BankTransferPartialCancelRequestCommand implements IPartialCancelCommand {
-  private readonly order: Order;
-  private readonly targetOrderProductId: number;
-  private readonly orderRepository: OrderRepository;
-  private readonly orderProductRepository: OrderProductRepository;
-
-  constructor(order: Order, orderProductId: number) {
-    this.order = order;
-    this.targetOrderProductId = orderProductId;
-    this.orderRepository = new OrderApiRepository(OrderAdapter());
-    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-  }
-
-  public async run() {
-    await this.updateOrderProductToCancelled();
-    await this.updateOrderStatus();
-  }
-
-  private async updateOrderProductToCancelled() {
-    await this.orderProductRepository.update({
-      orderProductId: this.targetOrderProductId,
-      data: {
-        orderProductStatus: ORDER_PRODUCT_STATUS.cancel_request,
-      },
-    });
-  }
-
-  private async updateOrderStatus() {
-    const orderOnGoingStatus = await this.getOrderOnGoingStatus();
-    const dto = {
-      order: this.order.id,
-      data: {
-        orderStatus: orderOnGoingStatus,
-      },
-    } as UpdateOrderRequestDto;
-    await this.orderRepository.update(dto);
-  }
-
-  private async getOrderOnGoingStatus() {
-    const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductRepository.findMany(option);
-    const orderProductStatuses = orderProducts.map(
-      (orderProduct) => orderProduct.orderProductStatus,
-    );
-
-    if (isFullyCancelRequest(orderProductStatuses)) {
-      return ORDER_STATUS.cancel_request;
-    }
-
-    if (isFullyCancelled(orderProductStatuses)) {
-      return ORDER_STATUS.cancelled;
-    }
-
-    return this.order.orderStatus;
-  }
-
-  public async execute() {
-    return await runWithTransaction(this);
-  }
-}
-
-export class AdminBankTransferPartialCancel implements IPartialCancelCommand {
-  private readonly order: Order;
-  private readonly targetOrderProductId: number;
-  private readonly orderRepository: OrderRepository;
-  private readonly orderProductRepository: OrderProductRepository;
-  private readonly pointHistoryRepository: PointHistoryRepository;
-  private readonly userRepository: UserRepository;
-
-  constructor(order: Order, orderProductId: number) {
-    this.order = order;
-    this.targetOrderProductId = orderProductId;
-    this.orderRepository = new OrderApiRepository(OrderAdapter());
-    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-    this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
-    this.userRepository = new UserApiRepository(UserAdapter());
-  }
-
-  public async run() {
-    // [step] 주문상품 상태 바꾸기 (주문취소)
-    await this.updateOrderProductToCancelled();
-
-    // [step] 사용포인트 환불
-    await this.rollbackUsePoint();
-    // [step] 적립 포인트 롤백
-    await this.rollbackEarnPoint();
-
-    // [step] 주문상태 바꾸기
-    await this.updateOrderStatus();
-  }
-
-  public async execute() {
-    return await runWithTransaction(this);
-  }
-
-  private async updateOrderProductToCancelled() {
-    await this.orderProductRepository.update({
-      orderProductId: this.targetOrderProductId,
-      data: {
-        orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
-      },
-    });
-  }
-
-  private async updateOrderStatus() {
-    const orderOnGoingStatus = await this.getOrderOnGoingStatus();
-    const dto = {
-      order: this.order.id,
-      data: {
-        orderStatus: orderOnGoingStatus,
-      },
-    } as UpdateOrderRequestDto;
-    await this.orderRepository.update(dto);
-  }
-
-  private async rollbackEarnPoint() {
-    if (this.order.orderStatus !== ORDER_STATUS.pending) {
-      const user = await this.userRepository.findById(this.order.user);
-      const history = await this.pointHistoryRepository.createRollbackHistory({
-        user: this.order.user,
-        orderProduct: this.targetOrderProductId,
-        type: POINT_ACTION.cancel_earn,
-      });
-      const updatedPoint = PointCalculator.getUpdatePoint({
-        current: user.point,
-        delta: PointCalculator.getDeltaPointByHistory(history),
-        action: POINT_ACTION.cancel_earn,
-      });
-
-      await this.userRepository.update({
-        user: this.order.user,
-        data: {
-          point: updatedPoint,
-        },
-      });
-    }
-  }
-
-  private async rollbackUsePoint() {
-    const user = await this.userRepository.findById(this.order.user);
-    const history = await this.pointHistoryRepository.createRollbackHistory({
-      user: this.order.user,
-      orderProduct: this.targetOrderProductId,
-      type: POINT_ACTION.cancel_use,
+  // 적립 포인트 회수
+  protected async rollbackEarnPoint() {
+    const { order, orderProductId } = this.commandDto;
+    const user = await this.repository.user.findById(order.user);
+    const history = await this.repository.pointHistory.createRollbackHistory({
+      user: order.user,
+      orderProduct: orderProductId,
+      type: POINT_ACTION.cancel_earn,
     });
     const updatedPoint = PointCalculator.getUpdatePoint({
       current: user.point,
       delta: PointCalculator.getDeltaPointByHistory(history),
-      action: POINT_ACTION.cancel_use,
+      action: POINT_ACTION.cancel_earn,
     });
 
-    await this.userRepository.update({
-      user: this.order.user,
+    await this.repository.user.update({
+      user: order.user,
       data: {
         point: updatedPoint,
       },
     });
   }
 
-  private async getOrderOnGoingStatus() {
-    const option = OrderProductFindOption.partialCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductRepository.findMany(option);
-    const orderProductStatuses = orderProducts.map(
-      (orderProduct) => orderProduct.orderProductStatus,
+  // 주문 상태 업데이트
+  protected async updateOrderStatus({
+    status,
+  }: {
+    status: { order: OrderStatus; payment: PaymentStatus };
+  }) {
+    const { order } = this.commandDto;
+    await this.repository.order.update({
+      order: order.id,
+      data: {
+        paymentStatus: status.payment,
+        orderStatus: status.order,
+      },
+    });
+  }
+
+  // 주문상품 상태 업데이트
+  protected async updateOrderProduct(
+    status: Extract<OrderProductStatus, 'cancel_request' | 'cancelled'>,
+  ) {
+    const { orderProductId } = this.commandDto;
+    await this.repository.orderProduct.update({
+      orderProductId: orderProductId,
+      data: {
+        orderProductStatus: status,
+      },
+    });
+  }
+
+  // 전체 주문상품 불러오기
+  protected async getOrderProducts(): Promise<OrderProduct[]> {
+    const { order } = this.commandDto;
+    const option = CancelOrderFindOption.orderProduct.findMany(order.id);
+    const orderProducts = await this.repository.orderProduct.findMany(option);
+    return orderProducts;
+  }
+}
+
+/** 입금 확인중 상태에서 사용되는 부분취소 커맨드 - 즉시 주문취소시킨다 */
+export class BankTransferPartialCancelCommandForImmediate extends BankTransferPartialCancelCommand {
+  constructor(
+    dependencies: CancelOrderServiceDependencies,
+    commandDto: BankTransferPartialCancelCommandDto,
+  ) {
+    super(dependencies, commandDto);
+  }
+
+  protected async run() {
+    // step 1. 주문 취소상태로 업데이트
+    await this.updateOrderProduct('cancelled');
+
+    // step 2. 사용포인트 환불 내역 생성 / 유저 포인트 환불
+    await this.rollbackUsePoint();
+
+    // step 3. 주문 상태 업데이트
+    const { order } = this.commandDto;
+    const orderProducts = await this.getOrderProducts();
+    const isFullyCancelled = CancelOrderStatusResolver.isOrderProductFullyCancelled(orderProducts);
+    await this.updateOrderStatus(
+      isFullyCancelled
+        ? { status: { order: 'cancelled', payment: 'TOTAL_CANCEL' } }
+        : { status: { order: order.orderStatus, payment: 'PARTIAL_CANCEL' } },
     );
 
-    if (isFullyCancelRequest(orderProductStatuses)) {
-      return ORDER_STATUS.cancel_request;
+    return { message: '주문이 취소처리 되었습니다' };
+  }
+}
+
+/** 결제가 완료된 상태에서 사용되는 부분취소 커맨드 */
+export class BankTransferPartialCancelCommandForPaied extends BankTransferPartialCancelCommand {
+  constructor(
+    dependencies: CancelOrderServiceDependencies,
+    commandDto: BankTransferPartialCancelCommandDto,
+  ) {
+    super(dependencies, commandDto);
+  }
+
+  protected async run() {
+    // step 1. 주문 취소상태로 업데이트
+    await this.updateOrderProduct('cancelled');
+
+    // step 2. 사용포인트 환불 내역 생성 / 유저 포인트 환불
+    await this.rollbackUsePoint();
+
+    // step 3. 적립포인트 환수 내역 생성 / 유저 포인트 환수처리
+    await this.rollbackEarnPoint();
+
+    // step 4. 주문 상태 업데이트
+    const { order } = this.commandDto;
+    const orderProducts = await this.getOrderProducts();
+
+    if (CancelOrderStatusResolver.isOrderProductFullyCancelled(orderProducts)) {
+      await this.updateOrderStatus({ status: { order: 'cancelled', payment: 'TOTAL_CANCEL' } });
+    } else if (CancelOrderStatusResolver.hasCancelRequestInOrderProducts(orderProducts)) {
+      await this.updateOrderStatus({
+        status: { order: 'cancel_request', payment: 'PARTIAL_CANCEL' },
+      });
+    } else {
+      await this.updateOrderStatus({
+        status: { order: order.orderStatus, payment: 'PARTIAL_CANCEL' },
+      });
     }
 
-    if (isFullyCancelled(orderProductStatuses)) {
-      return ORDER_STATUS.cancelled;
-    }
+    return { message: '주문이 취소처리 되었습니다' };
+  }
+}
 
-    return this.order.orderStatus;
+/** 결제취소 요청을 보내는 부분취소 커맨드 */
+export class BankTransferPartialCancelCommandForRequest extends BankTransferPartialCancelCommand {
+  constructor(
+    dependencies: CancelOrderServiceDependencies,
+    commandDto: BankTransferPartialCancelCommandDto,
+  ) {
+    super(dependencies, commandDto);
+  }
+
+  protected async run() {
+    // step 1. 주문 취소상태로 업데이트
+    await this.updateOrderProduct('cancel_request');
+
+    // step 2. 적립포인트 환수 내역 생성 / 유저 포인트 환수처리
+    await this.rollbackUsePoint();
+
+    // step 4. 주문 상태 업데이트
+    const orderProducts = await this.getOrderProducts();
+    const isFullyCancelled = CancelOrderStatusResolver.isOrderProductFullyCancelled(orderProducts);
+    await this.updateOrderStatus(
+      isFullyCancelled
+        ? { status: { order: 'cancel_request', payment: 'TOTAL_CANCEL' } }
+        : { status: { order: 'cancel_request', payment: 'PARTIAL_CANCEL' } },
+    );
+
+    return { message: '주문이 취소요청 처리되었습니다' };
   }
 }

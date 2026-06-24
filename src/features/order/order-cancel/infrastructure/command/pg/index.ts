@@ -1,2 +1,2 @@
-export { PGPartialCancelCommand } from './partial-cancel-command';
-export { PGTotalCancelCommand } from './total-cancel-command';
+export { PGPartialCancelCommand, type PGPartialCancelCommandDto } from './partial-cancel-command';
+export { PGTotalCancelCommand, type PGTotalCancelCommandDto } from './total-cancel-command';

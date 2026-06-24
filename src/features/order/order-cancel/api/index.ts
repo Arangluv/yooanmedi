@@ -1,5 +1,8 @@
 export {
-  adminCancelPartialOrderApi,
-  adminCancelTotalOrderApi,
-  clientCancelPartialOrderApi,
+  adminPartialCancelOrderApi,
+  adminTotalCancelOrderApi,
+  clientPartialCancelOrderApi,
+  type AdminPartialCancelOrderApiResponse,
+  type AdminTotalCancelOrderApiResponse,
+  type ClientPartialCancelOrderApiResponse,
 } from './order-cancel.api';

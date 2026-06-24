@@ -1,20 +1,28 @@
-import { BusinessLogicError, PAYMENTS_METHOD } from '@/shared';
+import { BaseError } from '@/shared';
 import { Order } from '@/entities/order';
 import { PGTotalCancelCommand } from './pg';
 import { BankTransferTotalCancelCommand } from './bank-transfer';
-import { ITotalCancelCommand } from '../../core';
+import { CancelOrderServiceDependencies } from '../../core';
 
 export class AdminOrderTotalCancelCommandFactory {
-  public static createCommand(order: Order): ITotalCancelCommand {
+  public static createCommand({
+    order,
+    dependencies,
+  }: {
+    order: Order;
+    dependencies: CancelOrderServiceDependencies;
+  }) {
     switch (order.paymentsMethod) {
-      case PAYMENTS_METHOD.credit_card:
-        return new PGTotalCancelCommand(order);
-      case PAYMENTS_METHOD.bank_transfer:
-        return new BankTransferTotalCancelCommand(order);
+      case 'creditCard':
+        return new PGTotalCancelCommand(dependencies, { order });
+      case 'bankTransfer':
+        return new BankTransferTotalCancelCommand(dependencies, { order });
       default:
-        const error = new BusinessLogicError('주문상품을 취소하는데 문제가 발생했습니다');
-        error.setDevMessage('올바르지 않은 취소 strategy 입니다');
-        throw error;
+        throw new BaseError({
+          clientMsg: '결제취소를 처리하는 과정에서 문제가 발생했습니다',
+          devMsg: `잘못된 order 데이터입니다. ${order}`,
+          errorName: 'CancelOrderError',
+        });
     }
   }
 }

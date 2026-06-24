@@ -1,4 +1,2 @@
-import { createUseAdminCancelOrder, createUseClientCancelOrder } from './useCancelOrder';
-
-export const useAdminCancelOrder = createUseAdminCancelOrder();
-export const useClientCancelOrder = createUseClientCancelOrder();
+export { useAdminCancelOrder } from './useAdminCancelOrder';
+export { useClientCancelOrder } from './useClientCancelOrder';

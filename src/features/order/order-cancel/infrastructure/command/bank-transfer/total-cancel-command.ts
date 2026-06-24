@@ -1,116 +1,62 @@
-import { runWithTransaction } from '@/shared/infrastructure';
-import { Order, ORDER_STATUS, OrderRepository, UpdateOrderRequestDto } from '@/entities/order';
-import { OrderAdapter, OrderApiRepository } from '@/entities/order/infrastructure';
-import { OrderProductRepository } from '@/entities/order-product';
-import {
-  OrderProductApiRepository,
-  OrderProductAdapter,
-} from '@/entities/order-product/infrastructure';
-import {
-  ORDER_PRODUCT_STATUS,
-  OrderProduct,
-  OrderProductFindOption,
-} from '@/entities/order-product';
-import { PointCalculator, PointHistoryRepository } from '@/entities/point';
-import { PointHistoryAdapter, PointHistoryApiRepository } from '@/entities/point/infrastructure';
-import { UserRepository } from '@/entities/user';
-import { UserAdapter, UserApiRepository } from '@/entities/user/infrastructure';
-import { ITotalCancelCommand } from '../../../core';
+import { TransactionCommand } from '@/shared/infrastructure';
+import { Order, OrderStatus, PaymentStatus } from '@/entities/order';
+import { OrderProductStatus } from '@/entities/order-product';
+import { OrderProduct } from '@/entities/order-product';
+import { PointCalculator } from '@/entities/point';
 import { POINT_ACTION } from '@/entities/point';
+import {
+  CancelOrderFindOption,
+  CancelOrderCommandResult,
+  CancelOrderServiceDependencies,
+} from '../../../core';
 
-export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
-  private readonly order: Order;
-  private readonly orderRepository: OrderRepository;
-  private readonly orderProductRepository: OrderProductRepository;
-  private readonly pointHistoryRepository: PointHistoryRepository;
-  private readonly userRepository: UserRepository;
+export interface BankTransferTotalCancelCommandDto {
+  order: Order;
+}
 
-  constructor(order: Order) {
-    this.order = order;
-    this.orderRepository = new OrderApiRepository(OrderAdapter());
-    this.orderProductRepository = new OrderProductApiRepository(OrderProductAdapter());
-    this.pointHistoryRepository = new PointHistoryApiRepository(PointHistoryAdapter());
-    this.userRepository = new UserApiRepository(UserAdapter());
+export class BankTransferTotalCancelCommand extends TransactionCommand<CancelOrderCommandResult> {
+  protected readonly repository: CancelOrderServiceDependencies['repository'];
+  protected readonly commandDto: BankTransferTotalCancelCommandDto;
+
+  constructor(
+    dependencies: CancelOrderServiceDependencies,
+    commandDto: BankTransferTotalCancelCommandDto,
+  ) {
+    super(dependencies.payload);
+    this.repository = dependencies.repository;
+    this.commandDto = commandDto;
   }
 
-  public async run() {
-    const option = OrderProductFindOption.totalCancelOrder.build(this.order.id);
-    const orderProducts = await this.orderProductRepository.findMany(option);
+  protected async run() {
+    const orderProducts = await this.getOrderProducts();
 
-    // orderProduct update, user point action rollback
     await Promise.all(
       orderProducts.map(async (orderProduct) => {
-        await this.updateOrderProductToCancelled(orderProduct.id);
+        await this.updateOrderProduct(orderProduct, 'cancelled');
         await this.rollbackEarnPoint(orderProduct);
         await this.rollbackUsePoint(orderProduct);
       }),
     );
 
-    // user point update by created histories
-    // todo :: Promise All이 histories를 각각 반환하도록
-    // await cancelEarnPointService.updateUserPoint(this.order.user);
-    // await cancelUsePointService.updateUserPoint(this.order.user);
-
-    // order update
-    await this.updateOrderStatus();
-  }
-
-  public async execute() {
-    return await runWithTransaction(this);
-  }
-
-  private async updateOrderProductToCancelled(orderProductId: number) {
-    await this.orderProductRepository.update({
-      orderProductId,
-      data: {
-        orderProductStatus: ORDER_PRODUCT_STATUS.cancelled,
+    await this.updateOrderStatus({
+      status: {
+        order: 'cancelled',
+        payment: 'TOTAL_CANCEL',
       },
     });
+
+    return { message: '주문이 취소처리 되었습니다' };
   }
 
-  private async updateOrderStatus() {
-    const dto = {
-      order: this.order.id,
-      data: {
-        orderStatus: ORDER_STATUS.cancelled,
-      },
-    } as UpdateOrderRequestDto;
-    await this.orderRepository.update(dto);
-  }
-
-  private async rollbackEarnPoint(orderProduct: OrderProduct) {
-    const canRollback = orderProduct.orderProductStatus !== ORDER_PRODUCT_STATUS.pending;
-    const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
-
-    if (canRollback && !isAlreayRollback) {
-      const user = await this.userRepository.findById(this.order.user);
-      const history = await this.pointHistoryRepository.createRollbackHistory({
-        user: this.order.user,
-        orderProduct: orderProduct.id,
-        type: POINT_ACTION.cancel_earn,
-      });
-      const updatedPoint = PointCalculator.getUpdatePoint({
-        current: user.point,
-        delta: PointCalculator.getDeltaPointByHistory(history),
-        action: POINT_ACTION.cancel_earn,
-      });
-
-      await this.userRepository.update({
-        user: this.order.user,
-        data: {
-          point: updatedPoint,
-        },
-      });
-    }
-  }
-
-  private async rollbackUsePoint(orderProduct: OrderProduct) {
-    const isAlreayRollback = orderProduct.orderProductStatus === ORDER_PRODUCT_STATUS.cancelled;
+  // 사용 포인트 환불
+  protected async rollbackUsePoint(orderProduct: OrderProduct) {
+    const isAlreayRollback = orderProduct.orderProductStatus === 'cancelled';
 
     if (!isAlreayRollback) {
-      const user = await this.userRepository.findById(this.order.user);
-      const history = await this.pointHistoryRepository.createRollbackHistory({
-        user: this.order.user,
+      const { order } = this.commandDto;
+      const user = await this.repository.user.findById(order.user);
+      const history = await this.repository.pointHistory.createRollbackHistory({
+        user: order.user,
         orderProduct: orderProduct.id,
         type: POINT_ACTION.cancel_use,
       });
@@ -120,12 +66,77 @@ export class BankTransferTotalCancelCommand implements ITotalCancelCommand {
         action: POINT_ACTION.cancel_use,
       });
 
-      await this.userRepository.update({
-        user: this.order.user,
+      await this.repository.user.update({
+        user: order.user,
         data: {
           point: updatedPoint,
         },
       });
     }
+  }
+
+  // 적립 포인트 회수
+  protected async rollbackEarnPoint(orderProduct: OrderProduct) {
+    const canRollback = orderProduct.orderProductStatus !== 'pending';
+    const isAlreayRollback = orderProduct.orderProductStatus === 'cancelled';
+
+    if (canRollback && !isAlreayRollback) {
+      const { order } = this.commandDto;
+      const user = await this.repository.user.findById(order.user);
+      const history = await this.repository.pointHistory.createRollbackHistory({
+        user: order.user,
+        orderProduct: orderProduct.id,
+        type: POINT_ACTION.cancel_earn,
+      });
+      const updatedPoint = PointCalculator.getUpdatePoint({
+        current: user.point,
+        delta: PointCalculator.getDeltaPointByHistory(history),
+        action: POINT_ACTION.cancel_earn,
+      });
+
+      await this.repository.user.update({
+        user: order.user,
+        data: {
+          point: updatedPoint,
+        },
+      });
+    }
+  }
+
+  // 주문 상태 업데이트
+  protected async updateOrderStatus({
+    status,
+  }: {
+    status: { order: OrderStatus; payment: PaymentStatus };
+  }) {
+    const { order } = this.commandDto;
+    await this.repository.order.update({
+      order: order.id,
+      data: {
+        paymentStatus: status.payment,
+        orderStatus: status.order,
+      },
+    });
+  }
+
+  // 주문상품 상태 업데이트
+  protected async updateOrderProduct(
+    orderProduct: OrderProduct,
+    status: Extract<OrderProductStatus, 'cancel_request' | 'cancelled'>,
+  ) {
+    await this.repository.orderProduct.update({
+      orderProductId: orderProduct.id,
+      data: {
+        orderProductStatus: status,
+      },
+    });
+  }
+
+  // 전체 주문상품 불러오기
+  protected async getOrderProducts(): Promise<OrderProduct[]> {
+    const { order } = this.commandDto;
+    const option = CancelOrderFindOption.orderProduct.findMany(order.id);
+    const orderProducts = await this.repository.orderProduct.findMany(option);
+    return orderProducts;
   }
 }

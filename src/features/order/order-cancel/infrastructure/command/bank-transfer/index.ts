@@ -1,6 +1,11 @@
 export {
-  BankTransferPartialCancelImmediateCommand,
-  BankTransferPartialCancelRequestCommand,
-  AdminBankTransferPartialCancel,
+  BankTransferPartialCancelCommandForImmediate,
+  BankTransferPartialCancelCommandForPaied,
+  BankTransferPartialCancelCommandForRequest,
+  type BankTransferPartialCancelCommandDto,
 } from './partial-cancel-command';
-export { BankTransferTotalCancelCommand } from './total-cancel-command';
+
+export {
+  BankTransferTotalCancelCommand,
+  type BankTransferTotalCancelCommandDto,
+} from './total-cancel-command';
