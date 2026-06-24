@@ -36,8 +36,8 @@ const ORDER_TRANSITION_SCENARIO: TransitionScenario = {
       to: PAYMENT_STATUS.complete,
     },
     messages: {
-      success: '배송준비 상태로 변경되었습니다',
-      error: '배송준비 상태로 변경하는데 문제가 발생했습니다',
+      success: '상품준비 상태로 변경되었습니다',
+      error: '상품준비 상태로 변경하는데 문제가 발생했습니다',
     },
   },
   [ORDER_STATUS.preparing]: {
@@ -53,8 +53,8 @@ const ORDER_TRANSITION_SCENARIO: TransitionScenario = {
       to: PAYMENT_STATUS.complete,
     },
     messages: {
-      success: '배송중 상태로 변경되었습니다',
-      error: '배송중 상태로 변경하는데 문제가 발생했습니다',
+      success: '배송시작 상태로 변경되었습니다',
+      error: '배송시작 상태로 변경하는데 문제가 발생했습니다',
     },
   },
   [ORDER_STATUS.shipping]: {
@@ -89,7 +89,12 @@ export class TransitionOrderScenarioResolver {
     }
 
     if (order.paymentStatus === PAYMENT_STATUS.partial_cancel) {
-      transitionScenario.paymentStatus.to = order.paymentStatus;
+      return {
+        ...transitionScenario,
+        paymentStatus: {
+          to: PAYMENT_STATUS.partial_cancel,
+        },
+      };
     }
 
     return transitionScenario;
@@ -107,7 +112,12 @@ export class TransitionOrderScenarioResolver {
     }
 
     if (order.paymentStatus === PAYMENT_STATUS.partial_cancel) {
-      transitionScenario.paymentStatus.to = order.paymentStatus;
+      return {
+        ...transitionScenario,
+        paymentStatus: {
+          to: PAYMENT_STATUS.partial_cancel,
+        },
+      };
     }
 
     return transitionScenario;

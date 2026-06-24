@@ -1,7 +1,6 @@
 import { FindOption } from '@/shared';
 import {
   getPayload,
-  getTransactionContextFromStore,
   PayloadAdapterResultManager,
   PayloadCmsErrorTranslator,
 } from '@/shared/server';
@@ -11,7 +10,6 @@ export const OrderListAdapter = () => ({
   getAdminOrderList: async (option: FindOption): Promise<GetAdminOrderListReponse> => {
     try {
       const payload = await getPayload();
-      const req = getTransactionContextFromStore();
       const response = await payload.find({
         collection: 'order',
         ...option,
@@ -20,7 +18,6 @@ export const OrderListAdapter = () => ({
             orderProductStatus: true,
           },
         },
-        req,
       });
       return PayloadAdapterResultManager.okWithPaginated(response);
     } catch (error) {
@@ -35,8 +32,6 @@ export const OrderListAdapter = () => ({
   getClientOrderList: async (option: FindOption): Promise<GetClientOrderListResponse> => {
     try {
       const payload = await getPayload();
-      const req = getTransactionContextFromStore();
-
       const { docs: orderDocs } = await payload.find({
         collection: 'order',
         ...option,
@@ -55,7 +50,6 @@ export const OrderListAdapter = () => ({
             image: true,
           },
         },
-        req,
       });
 
       return PayloadAdapterResultManager.ok(orderDocs);

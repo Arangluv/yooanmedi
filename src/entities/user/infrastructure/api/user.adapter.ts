@@ -78,6 +78,7 @@ export const UserAdapter = () => ({
         data: dto.data,
         req,
       });
+
       return PayloadAdapterResultManager.ok(user);
     } catch (error) {
       LoggerV2.error(error);

@@ -3,9 +3,7 @@ export {
   adminPartialCancelOrderApi,
   adminTotalCancelOrderApi,
   clientPartialCancelOrderApi,
-  type AdminPartialCancelOrderApiResponse,
-  type AdminTotalCancelOrderApiResponse,
-  type ClientPartialCancelOrderApiResponse,
+  type CancelOrderApiResponse,
 } from './api';
 
 // dto

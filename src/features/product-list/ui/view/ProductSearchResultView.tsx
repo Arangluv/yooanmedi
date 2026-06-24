@@ -40,7 +40,7 @@ const ProductSearchResultView = ({
         <div className="flex items-center gap-1">
           <div className="flex items-center">
             <span className="text-brandWeek font-bold">
-              {condition === 'pn' ? '상품명' : '제약사명'}
+              {condition === 'pn' ? '상품명' : condition === 'cn' ? '제약사명' : '성분명'}
             </span>
             <span>으로 검색한</span>
           </div>

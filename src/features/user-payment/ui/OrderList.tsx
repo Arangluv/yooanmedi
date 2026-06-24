@@ -11,7 +11,6 @@ import { useCart } from '@/features/cart-detail';
 
 const OrderList = () => {
   const { cart } = useCart();
-
   const { minOrderPrice } = useSiteMetaStore();
   const { discountFlg } = usePrice({ cartItems: cart.cartItems, minOrderPrice }); // 최소주문금액 만족 여부 확인
 

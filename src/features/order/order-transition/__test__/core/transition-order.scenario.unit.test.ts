@@ -33,7 +33,7 @@ describe('TransitionOrderScenarioResolver', () => {
           orderStatus: ORDER_STATUS.preparing,
           paymentStatus: PAYMENT_STATUS.complete,
         }),
-        caseName: '상품준비중 -> 배송중',
+        caseName: '상품준비중 -> 배송시작',
         expectd: {
           orderStatus: {
             from: ORDER_STATUS.preparing,
@@ -53,7 +53,7 @@ describe('TransitionOrderScenarioResolver', () => {
           orderStatus: ORDER_STATUS.shipping,
           paymentStatus: PAYMENT_STATUS.complete,
         }),
-        caseName: '배송중 -> 배송완료',
+        caseName: '배송시작 -> 배송완료',
         expectd: {
           orderStatus: {
             from: ORDER_STATUS.shipping,
@@ -115,7 +115,7 @@ describe('TransitionOrderScenarioResolver', () => {
     it.each([
       {
         order: createOrderFixture({ orderStatus: ORDER_STATUS.preparing }),
-        caseName: '상품준비중 -> 배송중',
+        caseName: '상품준비중 -> 배송시작',
         expectd: {
           orderStatus: {
             from: ORDER_STATUS.preparing,
@@ -129,7 +129,7 @@ describe('TransitionOrderScenarioResolver', () => {
       },
       {
         order: createOrderFixture({ orderStatus: ORDER_STATUS.shipping }),
-        caseName: '배송중 -> 배송완료',
+        caseName: '배송시작 -> 배송완료',
         expectd: {
           orderStatus: {
             from: ORDER_STATUS.shipping,
