@@ -1,3 +1,5 @@
+// will remove --> widget으로 이동
+
 import Link from 'next/link';
 import { BrandLogo } from '@/shared';
 import { Landmark } from 'lucide-react';

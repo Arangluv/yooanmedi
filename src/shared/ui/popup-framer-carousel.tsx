@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, animate } from 'motion/react';
-import { ContentRenderer } from './content-renderer';
+import { PayloadRichTextRenderer } from './payload';
+import { Term } from '../types';
 
 export function PopupFramerCarousel({ popup }: { popup: any }) {
   const [index, setIndex] = useState(0);
@@ -82,10 +83,10 @@ export function PopupFramerCarousel({ popup }: { popup: any }) {
   );
 }
 
-function RichTextContent({ content }: { content: any }) {
+function RichTextContent({ content }: { content: Term['content'] }) {
   return (
     <div className="flex h-full w-full items-center justify-center px-12 py-8">
-      <ContentRenderer content={content} />
+      <PayloadRichTextRenderer content={content} />
     </div>
   );
 }

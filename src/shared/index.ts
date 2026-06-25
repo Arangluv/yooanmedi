@@ -92,6 +92,6 @@ export {
 export { Button } from './ui/shadcn/button';
 export { default as TextWithIconAlignVertical } from './ui/TextWithIconAlignVertical';
 export { default as CardActionButton } from './ui/CardActionButton';
-export { ContentRenderer } from './ui/content-renderer';
 export { FramerCarousel } from './ui/framer-carousel';
 export { PopupFramerCarousel } from './ui/popup-framer-carousel';
+export { PayloadRichTextRenderer } from './ui/payload';
