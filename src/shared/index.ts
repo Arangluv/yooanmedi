@@ -75,6 +75,7 @@ export type {
   Cart as PayloadCart,
   CartItem as PayloadCartItem,
   Favorite as PayloadFavoriteProduct,
+  Term as PayloadTerms,
 } from './types';
 
 // ui
