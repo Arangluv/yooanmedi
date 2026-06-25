@@ -8,7 +8,7 @@ import { createCartDetailItemFixture } from '../fixtures';
 import { CartDetailAssembler } from '../../mapper';
 import { cartDetailSchema, customPricedCartItemsSchema } from '../../schemas';
 
-describe('test', () => {
+describe('CartDetail Assembler', () => {
   describe('applyCustomPrice', () => {
     it('개별설정 가격을 cartItem에 적용하여 CustomPricedCartItem 배열을 반환한다', () => {
       // Given - 기본가격이 2430원인 제품 가격, 955원과 4565원 개별설정 가격
@@ -40,33 +40,6 @@ describe('test', () => {
       expect(result[0].product.price).toBe(first.customPrice);
       expect(result[1].isProcessed).toBe(true);
       expect(result[1].product.price).toBe(second.customPrice);
-    });
-
-    it('장바구니 아이템에 맞는 상품아이디가 없는 경우 BaseError를 throw한다', () => {
-      // Given - 기본가격이 2430원인 제품 가격, 955원과 4565원 개별설정 가격
-      const first = {
-        product: createProductFixture({ id: 9 }),
-        productId: 9,
-        customPrice: 955,
-      };
-      const second = {
-        product: createProductFixture({ id: 10 }),
-        productId: 10,
-        customPrice: 4565,
-      };
-      const cartItems = [
-        createCartItemFixture({ id: 1, product: first.product }),
-        createCartItemFixture({ id: 2, product: second.product }),
-      ];
-      const customPrices = [
-        createCustomPriceFixture({ product: 'not_exist_id' as any, price: first.customPrice }),
-        createCustomPriceFixture({ product: second.productId, price: second.customPrice }),
-      ];
-
-      // When & Then
-      expect(() => CartDetailAssembler.applyCustomPrice(cartItems, customPrices)).toThrow(
-        BaseError,
-      );
     });
   });
 

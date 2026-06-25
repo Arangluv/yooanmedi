@@ -8,9 +8,6 @@ export async function POST(request: NextRequest) {
 
     const url = request.nextUrl.clone();
 
-    console.log('결제창 닫을때 result');
-    console.log(result);
-
     if (!result.isSuccess) {
       url.pathname = '/order/payments/popup-callback';
       url.searchParams.set('status', USER_PAYMENT_CONSTANTS.status.fail);

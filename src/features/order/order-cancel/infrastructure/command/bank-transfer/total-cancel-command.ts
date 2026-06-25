@@ -32,9 +32,9 @@ export class BankTransferTotalCancelCommand extends TransactionCommand<CancelOrd
 
     await Promise.all(
       orderProducts.map(async (orderProduct) => {
-        await this.updateOrderProduct(orderProduct, 'cancelled');
-        await this.rollbackEarnPoint(orderProduct);
-        await this.rollbackUsePoint(orderProduct);
+        this.updateOrderProduct(orderProduct, 'cancelled');
+        this.rollbackEarnPoint(orderProduct);
+        this.rollbackUsePoint(orderProduct);
       }),
     );
 

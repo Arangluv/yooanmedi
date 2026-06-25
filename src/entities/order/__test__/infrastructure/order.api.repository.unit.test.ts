@@ -2,7 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BaseError, TestErrorHelper } from '@/shared';
 import { PayloadAdapterResultManager } from '@/shared/server';
 import { MockOrderAdapter } from '../mocks';
-import { createOrderEntityFixture, OrderEntityFixtures } from '../fixtures';
+import {
+  createOrderEntityFixture,
+  OrderEntityFixtures,
+  createCreatedOrderFixture,
+} from '../fixtures';
 import {
   CreateOrderRequestForBankTransferDto,
   CreateOrderRequestForPgDto,
@@ -107,7 +111,7 @@ describe('Order Api Repository', () => {
         },
       } as UpdateOrderRequestDto;
       vi.mocked(mockAdapter.updateOrder).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createOrderEntityFixture()),
+        PayloadAdapterResultManager.ok(createCreatedOrderFixture()),
       );
 
       // When
