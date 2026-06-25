@@ -36,14 +36,43 @@ export class PGTotalCancelCommand extends TransactionCommand<CancelOrderCommandR
     const orderProducts = await this.getOrderProducts();
     const cancelPlan = this.resolveCancelPlan(orderProducts);
 
-    await Promise.all(
+    const results = await Promise.all(
       orderProducts.map(async (orderProduct) => {
         await this.updateOrderProduct(orderProduct, 'cancelled');
-        await this.rollbackEarnPoint(orderProduct);
-        await this.rollbackUsePoint(orderProduct);
+        const rollbackEarnPointHistory = await this.createRollbackEarnPointHistory(orderProduct);
+        const rollbackUsePointHistory = await this.createRollbackUsePointHistory(orderProduct);
+
+        return { rollbackEarnPointHistory, rollbackUsePointHistory };
       }),
     );
 
+    // 유저 포인트 업데이트
+    const { order } = this.commandDto;
+    const user = await this.repository.user.findById(order.user);
+    const histories = results.flatMap(({ rollbackEarnPointHistory, rollbackUsePointHistory }) => [
+      rollbackEarnPointHistory,
+      rollbackUsePointHistory,
+    ]);
+    const historiesRemovedUndefined = histories.filter((history) => history !== undefined);
+
+    const rollbackUsePointHistories = historiesRemovedUndefined.filter(
+      (history) => history.type === 'CANCEL_USE',
+    );
+    const rollbackEarnPointHistories = historiesRemovedUndefined.filter(
+      (history) => history.type === 'CANCEL_EARN',
+    );
+
+    const rollbackUsePoint = PointCalculator.getDeltaPointByHistories(rollbackUsePointHistories);
+    const rollbackEarnPoint = PointCalculator.getDeltaPointByHistories(rollbackEarnPointHistories);
+    const updatedPoint = user.point + rollbackUsePoint - rollbackEarnPoint;
+    await this.repository.user.update({
+      user: order.user,
+      data: {
+        point: updatedPoint,
+      },
+    });
+
+    // 주문 상태 업데이트
     await this.updateOrderStatus({
       status: {
         order: 'cancelled',
@@ -89,56 +118,30 @@ export class PGTotalCancelCommand extends TransactionCommand<CancelOrderCommandR
   }
 
   // 사용 포인트 환불
-  protected async rollbackUsePoint(orderProduct: OrderProduct) {
+  protected async createRollbackUsePointHistory(orderProduct: OrderProduct) {
     const isAlreayRollback = orderProduct.orderProductStatus === 'cancelled';
 
     if (!isAlreayRollback) {
       const { order } = this.commandDto;
-      const user = await this.repository.user.findById(order.user);
-      const history = await this.repository.pointHistory.createRollbackHistory({
+      return await this.repository.pointHistory.createRollbackHistory({
         user: order.user,
         orderProduct: orderProduct.id,
         type: POINT_ACTION.cancel_use,
-      });
-      const updatedPoint = PointCalculator.getUpdatePoint({
-        current: user.point,
-        delta: PointCalculator.getDeltaPointByHistory(history),
-        action: POINT_ACTION.cancel_use,
-      });
-
-      await this.repository.user.update({
-        user: order.user,
-        data: {
-          point: updatedPoint,
-        },
       });
     }
   }
 
   // 적립 포인트 회수
-  protected async rollbackEarnPoint(orderProduct: OrderProduct) {
+  protected async createRollbackEarnPointHistory(orderProduct: OrderProduct) {
     const canRollback = orderProduct.orderProductStatus !== 'pending';
     const isAlreayRollback = orderProduct.orderProductStatus === 'cancelled';
 
     if (canRollback && !isAlreayRollback) {
       const { order } = this.commandDto;
-      const user = await this.repository.user.findById(order.user);
-      const history = await this.repository.pointHistory.createRollbackHistory({
+      return await this.repository.pointHistory.createRollbackHistory({
         user: order.user,
         orderProduct: orderProduct.id,
         type: POINT_ACTION.cancel_earn,
-      });
-      const updatedPoint = PointCalculator.getUpdatePoint({
-        current: user.point,
-        delta: PointCalculator.getDeltaPointByHistory(history),
-        action: POINT_ACTION.cancel_earn,
-      });
-
-      await this.repository.user.update({
-        user: order.user,
-        data: {
-          point: updatedPoint,
-        },
       });
     }
   }

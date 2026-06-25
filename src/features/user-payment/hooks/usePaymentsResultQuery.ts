@@ -31,9 +31,6 @@ export const usePaymentsResultQuery = () => {
     });
   }
 
-  console.log('queries');
-  console.log(queries);
-
   return ZodSchemaParser.safeParseOrThrow(PaymentResultSearchParamSchemas.fail, {
     data: {
       status: queries.status,
