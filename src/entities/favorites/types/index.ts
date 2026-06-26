@@ -1,6 +1,6 @@
-export type { FavoriteProduct, FavoriteProductEntity } from './favorites.type';
+export type { Favorite, FavoriteEntity } from './favorites.type';
 export type {
-  GetFavoriteProductsReponse,
-  CreateFavoriteProductReponse,
-  DeleteFavoriteProductReponse,
+  GetFavoritesReponse,
+  CreateFavoriteReponse,
+  DeleteFavoriteReponse,
 } from './favorites.response.type';

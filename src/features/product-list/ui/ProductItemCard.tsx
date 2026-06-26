@@ -4,7 +4,7 @@ import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { formatNumberWithCommas } from '@/shared';
 import type { Product } from '@/entities/product';
-import FavoriteButton from '@/features/favorites-product/ui/FavoriteButton';
+import { FavoriteButton } from '@/features/favorites';
 import { AddToCartButton } from '@/features/cart-detail';
 import { PointCalculator, PointHistoryMapper } from '@/entities/point';
 import { useProductDetailStore } from '../hooks';

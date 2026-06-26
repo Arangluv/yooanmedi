@@ -1,6 +1,6 @@
 import { Product } from '@/entities/product';
 import ProductDefaultView from './ProductDefaultView';
-import FavoritesView from './FavoritesView';
+import { FavoritesView } from './FavoritesView';
 import ProductSearchResultView from './ProductSearchResultView';
 import { ProductListSearchFieldKey } from '../../constants';
 

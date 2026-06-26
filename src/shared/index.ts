@@ -74,7 +74,7 @@ export type {
   ProductPrice as PayloadCustomPrice,
   Cart as PayloadCart,
   CartItem as PayloadCartItem,
-  Favorite as PayloadFavoriteProduct,
+  Favorite as PayloadFavorite,
   Term as PayloadTerms,
   PayloadRichTextContent,
   Popup as PayloadPopup,

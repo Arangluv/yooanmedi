@@ -1,1 +1,1 @@
-export { FavoriteProductMapper } from './favorite.mapper';
+export { FavoriteMapper } from './favorite.mapper';

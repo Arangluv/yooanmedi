@@ -1,6 +1,6 @@
-import { favoriteProductSchema } from './favorites.schema';
+import { favoriteSchema } from './favorites.schema';
 
-export const createFavoriteProductSchema = favoriteProductSchema.pick({
+export const createFavoriteSchema = favoriteSchema.pick({
   user: true,
   product: true,
 });

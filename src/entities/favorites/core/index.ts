@@ -1,1 +1,1 @@
-export { type FavoriteProductRepository } from './favorites.repository';
+export { type FavoriteRepository } from './favorites.repository';

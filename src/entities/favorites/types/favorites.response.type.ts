@@ -1,6 +1,6 @@
 import { PayloadAdapterResult } from '@/shared';
-import { FavoriteProductEntity } from './favorites.type';
+import { FavoriteEntity } from './favorites.type';
 
-export type GetFavoriteProductsReponse = PayloadAdapterResult<FavoriteProductEntity[]>;
-export type CreateFavoriteProductReponse = PayloadAdapterResult<FavoriteProductEntity>;
-export type DeleteFavoriteProductReponse = PayloadAdapterResult<FavoriteProductEntity>;
+export type GetFavoritesReponse = PayloadAdapterResult<FavoriteEntity[]>;
+export type CreateFavoriteReponse = PayloadAdapterResult<FavoriteEntity>;
+export type DeleteFavoriteReponse = PayloadAdapterResult<FavoriteEntity>;

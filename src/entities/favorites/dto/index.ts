@@ -1,1 +1,1 @@
-export { type CreateFavoriteProductDto } from './favorites.dto';
+export { type CreateFavoriteDto } from './favorites.dto';

@@ -1,24 +1,24 @@
 import { ZodSchemaParser, SchemaParserDto } from '@/shared';
-import { FavoriteProduct, FavoriteProductEntity } from '../types';
-import { favoriteProductSchema, favoriteProductsSchema } from '../schemas';
+import { Favorite, FavoriteEntity } from '../types';
+import { favoriteSchema, favoritesSchema } from '../schemas';
 import { FAVORITES_ERROR_MESSAGE } from '../constants';
 
-export class FavoriteProductMapper {
-  static entityToDomain(data: FavoriteProductEntity): FavoriteProduct {
+export class FavoriteMapper {
+  static entityToDomain(data: FavoriteEntity): Favorite {
     const dto = {
       data,
       errorMsg: FAVORITES_ERROR_MESSAGE.invalidData,
     } as SchemaParserDto;
 
-    return ZodSchemaParser.safeParseOrThrow(favoriteProductSchema, dto);
+    return ZodSchemaParser.safeParseOrThrow(favoriteSchema, dto);
   }
 
-  static entitiesToDomainList(data: FavoriteProductEntity[]): FavoriteProduct[] {
+  static entitiesToDomainList(data: FavoriteEntity[]): Favorite[] {
     const dto = {
       data,
       errorMsg: FAVORITES_ERROR_MESSAGE.invalidData,
     } as SchemaParserDto;
 
-    return ZodSchemaParser.safeParseOrThrow(favoriteProductsSchema, dto);
+    return ZodSchemaParser.safeParseOrThrow(favoritesSchema, dto);
   }
 }

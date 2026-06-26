@@ -1,2 +1,2 @@
-export { FavoriteProductAdapter } from './api';
-export { FavoriteProductApiRepository } from './repository';
+export { FavoriteAdapter } from './api';
+export { FavoriteApiRepository } from './repository';

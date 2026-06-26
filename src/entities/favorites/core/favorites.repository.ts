@@ -1,9 +1,9 @@
 import { FindOption } from '@/shared';
-import { CreateFavoriteProductDto } from '../dto';
-import { FavoriteProduct } from '../types';
+import { CreateFavoriteDto } from '../dto';
+import { Favorite } from '../types';
 
-export interface FavoriteProductRepository {
-  create: (dto: CreateFavoriteProductDto) => Promise<FavoriteProduct>;
-  findMany: (option: FindOption) => Promise<FavoriteProduct[]>;
-  delete: (id: number) => Promise<FavoriteProduct>;
+export interface FavoriteRepository {
+  create: (dto: CreateFavoriteDto) => Promise<Favorite>;
+  findMany: (option: FindOption) => Promise<Favorite[]>;
+  delete: (id: number) => Promise<Favorite>;
 }

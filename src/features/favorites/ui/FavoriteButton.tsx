@@ -3,25 +3,25 @@
 import { Heart } from 'lucide-react';
 import type { Product } from '@/entities/product';
 import CardActionButton from '@/shared/ui/CardActionButton';
-import useFavoritesProductAction from '../model/useFavoritesProductAction';
-import useFavoritesProductStore from '../model/useFavoritesProductStore';
+import { useFavorites, useFavoritesMutation } from '../hooks';
 
-const FavoriteButton = ({ product }: { product: Product }) => {
-  const favoritesList = useFavoritesProductStore((state) => state.favoritesList);
+export const FavoriteButton = ({ product }: { product: Product }) => {
+  const favoriteMap = useFavorites();
+  const favorite = favoriteMap.get(product.id);
 
-  const { createMutation, deleteMutation, isCreating, isDeleting } = useFavoritesProductAction({
-    product,
-  });
+  const { addFavorite, isAddFavoritePending, removeFavorite, isRemoveFavoritePending } =
+    useFavoritesMutation(product);
 
-  if (favoritesList.has(product.id)) {
+  if (favorite && favoriteMap.has(product.id)) {
+    const { id } = favorite;
     return (
       <CardActionButton
         id={`favorite-button-${product.id}`}
         icon={<Heart className="h-4 w-4 text-white" strokeWidth={1.5} />}
         description="관심상품 삭제"
-        onClick={deleteMutation}
+        onClick={() => removeFavorite(id)}
         className="bg-red-400"
-        isLoading={isDeleting}
+        isLoading={isRemoveFavoritePending}
       />
     );
   }
@@ -31,10 +31,8 @@ const FavoriteButton = ({ product }: { product: Product }) => {
       id={`favorite-button-${product.id}`}
       icon={<Heart className="h-4 w-4 text-white" strokeWidth={1.5} />}
       description="관심상품 추가"
-      onClick={createMutation}
-      isLoading={isCreating}
+      onClick={addFavorite}
+      isLoading={isAddFavoritePending}
     />
   );
 };
-
-export default FavoriteButton;

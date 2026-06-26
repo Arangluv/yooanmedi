@@ -1,1 +1,1 @@
-export { FavoriteProductAdapter } from './favorites.adapter';
+export { FavoriteAdapter } from './favorites.adapter';
