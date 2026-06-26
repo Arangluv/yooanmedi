@@ -2,11 +2,72 @@
 
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
-import { PayloadRichTextRenderer } from './payload';
 import { motion, useMotionValue, animate } from 'motion/react';
-import { PayloadRichTextContent } from '../types';
+import clsx from 'clsx';
+import { PayloadRichTextContent, PayloadRichTextRenderer } from '@/shared';
+import { GetPopupApiResponse } from '../api';
 
-export function PopupFramerCarousel({ popup }: { popup: any }) {
+export const PopupModal = (popupResponse: GetPopupApiResponse) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // 오늘 날짜 확인
+    const today = new Date().toDateString();
+    const hideUntil = localStorage.getItem('popup-hide-until');
+
+    // 저장된 날짜가 오늘과 다르면 팝업 표시
+    if (hideUntil !== today) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+
+    setIsLoaded(true); // 로딩 완료
+  }, []);
+
+  const handleHideToday = () => {
+    const today = new Date().toDateString();
+    localStorage.setItem('popup-hide-until', today);
+    setIsOpen(false);
+  };
+
+  if (!popupResponse.isSuccess) {
+    return <span>{popupResponse.message}</span>;
+  }
+
+  if (!isOpen || !isLoaded || !popupResponse.data.popupItems.length) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex h-full w-full flex-col items-center justify-center bg-black/20">
+      <div className="h-[520px] w-[400px] bg-white">
+        <ContentCarousel popup={popupResponse.data} />
+      </div>
+      <div className="bg-brand flex w-[400px] justify-between">
+        <button
+          className={clsx(
+            'flex w-1/2 items-center justify-center border-r border-white/20 py-4 text-[14px] font-bold text-white',
+            'hover:bg-brandWeek cursor-pointer transition-colors duration-300',
+          )}
+          onClick={handleHideToday}
+        >
+          오늘하루 보지 않기
+        </button>
+        <button
+          className={clsx(
+            'flex w-1/2 items-center justify-center py-4 text-[14px] font-bold text-white',
+            'hover:bg-brandWeek cursor-pointer transition-colors duration-300',
+          )}
+          onClick={() => setIsOpen(false)}
+        >
+          닫기
+        </button>
+      </div>
+    </div>
+  );
+};
+
+function ContentCarousel({ popup }: { popup: any }) {
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 

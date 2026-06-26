@@ -1,18 +1,17 @@
 import React from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import '../globals.css';
-import { Providers } from './providers';
 import { Metadata, Viewport } from 'next';
-import clsx from 'clsx';
-import { getPayload } from '@/shared/server';
 import localFont from 'next/font/local';
-import Footer from './_components/Footer';
+import clsx from 'clsx';
 import { Toaster } from 'sonner';
 import { Check, Info } from 'lucide-react';
-import Popup from './_components/Popup';
+import { Footer } from '@/widget/Footer';
+import { getPopup, PopupModal } from '@/entities/popup';
+import { siteConfig } from '@/shared';
+import { Providers } from './providers';
 import QueryProvider from './query-provider';
 import { TooltipProvider } from '@/shared/ui/shadcn/tooltip';
-import { siteConfig } from '@/shared';
 
 const { title, description, naverSiteVerification } = siteConfig;
 
@@ -47,8 +46,7 @@ const pretendard = localFont({
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
-  const payload = await getPayload();
-  const [popup] = await Promise.all([payload.findGlobal({ slug: 'popup' })]);
+  const popupResponse = await getPopup();
 
   return (
     <html lang="ko" className={pretendard.className}>
@@ -72,7 +70,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
                   info: <Info className="text-primary size-4" />,
                 }}
               />
-              <Popup popup={popup} />
+              <PopupModal {...popupResponse} />
               <main>{children}</main>
               <Footer />
               <ReactQueryDevtools />
