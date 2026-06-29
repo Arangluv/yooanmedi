@@ -22,14 +22,9 @@ export const FavoritesService = ({
   getFavoriteProducts: async (dto: GetFavoriteProductRequestDto) => {
     const favoritesFindOption = FavoritesFindOption.favorites.findMany(dto.user);
     const favorites = await repository.favorite.findMany(favoritesFindOption);
-    console.log('favorites');
-    console.log(favorites);
 
     const productFindOption = FavoritesFindOption.product.findMany(favorites);
     const { products } = await repository.product.findMany(productFindOption);
-
-    console.log('products');
-    console.log(products);
 
     return products;
   },

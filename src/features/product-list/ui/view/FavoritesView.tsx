@@ -6,8 +6,6 @@ import ProductList from '../ProductList';
 
 export const FavoritesView = () => {
   const favoriteProducts = useFavoriteProducts();
-  console.log('front에서 favoriteProducts');
-  console.log(favoriteProducts);
 
   return (
     <section className="mt-16 flex w-5xl flex-shrink-0 flex-col gap-16">
