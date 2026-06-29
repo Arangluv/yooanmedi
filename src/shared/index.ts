@@ -78,6 +78,7 @@ export type {
   Term as PayloadTerms,
   PayloadRichTextContent,
   Popup as PayloadPopup,
+  Banner as PayloadBanner,
 } from './types';
 
 // ui
