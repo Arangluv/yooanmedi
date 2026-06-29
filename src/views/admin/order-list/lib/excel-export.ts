@@ -1,31 +1,16 @@
 import * as XLSX from 'xlsx-js-style';
-import { getExcelExportData } from './get-excel-export-data';
 import moment from 'moment';
 import { ORDER_STATUS_NAME } from '@/entities/order';
 import { PAYMENTS_METHOD_NAME } from '@/shared';
+import { AdminOrderListResult } from '@/features/order/order-list';
 
-type ExcelExportData = {
-  번호: number;
-  주문번호: string;
-  주문일시: string;
-  상호명: string;
-  제조사: string;
-  상품명: string;
-  보험코드: string;
-  가격: number;
-  주문수량: number;
-  총금액: number;
-  결제방법: string;
-  결제상태: string;
-};
-
-export const exportExcel = async (orders: any) => {
+export const exportExcel = async (orders: AdminOrderListResult['orders']) => {
   const workbook = XLSX.utils.book_new();
-  const exportData: ExcelExportData[] = orders.map((item: any, index: number) => {
+  const exportData = orders.map((item, index: number) => {
     return {
       번호: index + 1,
       주문번호: item.orderNo,
-      주문일시: moment(item.orderDate).format('YYYY-MM-DD'),
+      주문일시: moment(item.createdAt).format('YYYY-MM-DD'),
       상호명: item.user.hospitalName,
       총금액: item.finalPrice,
       // @ts-ignore
