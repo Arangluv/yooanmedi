@@ -77,6 +77,7 @@ export type {
   PayloadRichTextContent,
   Popup as PayloadPopup,
   Banner as PayloadBanner,
+  MetaSetting as PayloadMetaSetting,
 } from './types';
 
 // ui
