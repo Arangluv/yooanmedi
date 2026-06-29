@@ -5,14 +5,17 @@ import MainIcon3 from '@public/main_icon_3.png';
 import BgImage from '@public/v1_logo_small.png';
 import MainForm from './_components/MainForm';
 import CarouselBanner from '@/shared/ui/CarouselBanner';
+import { getBannerApi, GetBannerApiResponse } from '@/entities/banner';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const bannerResponse = await getBannerApi(); // todo :: refactor
+
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className="flex h-full w-full max-w-7xl items-center gap-8">
         {/* 왼쪽 컨텐츠 */}
         <div className="flex w-[75%] items-center">
-          <LeftContent />
+          <LeftContent bannerResponse={bannerResponse} />
         </div>
         {/* 로그인 영역 */}
         <div className="flex h-full w-[35%] items-center pt-8">
@@ -28,7 +31,7 @@ export default function HomePage() {
   );
 }
 
-function LeftContent() {
+function LeftContent({ bannerResponse }: { bannerResponse: GetBannerApiResponse }) {
   return (
     <div className="relative flex h-[80vh] w-full flex-col justify-center gap-8">
       {/* 제목 영역 */}
@@ -43,11 +46,8 @@ function LeftContent() {
         <p className="text-foreground-600 text-lg">
           유안메디팜은 병의원에 필수제품을 판매하는 온라인 쇼핑몰입니다.
         </p>
-        <div className="flex justify-end">
-          <span className="text-lg font-bold">오픈 이벤트 3개월간 배송비 무료</span>
-        </div>
       </div>
-      <CarouselBanner />
+      <CarouselBanner bannerResponse={bannerResponse} />
       {/* 하단 프로그레스*/}
       <div className="flex w-full gap-8">
         <ProgressItem

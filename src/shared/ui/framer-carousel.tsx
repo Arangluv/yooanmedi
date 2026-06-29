@@ -1,16 +1,11 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, animate } from 'motion/react';
-import Image from 'next/image';
-import { Empty, EmptyTitle, EmptyDescription } from '@/shared';
+import { Empty, EmptyTitle, EmptyDescription, PayloadImage } from '@/shared';
 
-interface CarouselImage {
-  id: string;
-  url: string | null;
-}
-
-export function FramerCarousel({ items }: { items: CarouselImage[] }) {
+export function FramerCarousel({ images }: { images: PayloadImage[] }) {
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const swipeThreshold = 50;
@@ -34,7 +29,7 @@ export function FramerCarousel({ items }: { items: CarouselImage[] }) {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((i) => {
-        const isLastIndex = i === items.length - 1;
+        const isLastIndex = i === images.length - 1;
         return isLastIndex ? 0 : i + 1;
       });
 
@@ -53,7 +48,7 @@ export function FramerCarousel({ items }: { items: CarouselImage[] }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="relative overflow-hidden rounded-lg" ref={containerRef}>
-        {items.length === 0 ? (
+        {images.length === 0 ? (
           <EmptyBanner />
         ) : (
           <motion.div
@@ -62,7 +57,7 @@ export function FramerCarousel({ items }: { items: CarouselImage[] }) {
             drag="x"
             dragConstraints={{
               left: containerRef.current
-                ? -((items.length - 1) * containerRef.current.offsetWidth)
+                ? -((images.length - 1) * containerRef.current.offsetWidth)
                 : 0,
               right: 0,
             }}
@@ -78,14 +73,14 @@ export function FramerCarousel({ items }: { items: CarouselImage[] }) {
               }
 
               if (offsetX < -swipeThreshold || velocityX < -velocityThreshold) {
-                setIndex((i) => Math.min(items.length - 1, i + 1));
+                setIndex((i) => Math.min(images.length - 1, i + 1));
                 return;
               }
 
               if (containerRef.current) {
                 const containerWidth = containerRef.current.offsetWidth || 1;
                 const draggedIndex = Math.round(Math.abs(x.get()) / containerWidth);
-                const targetIndex = Math.min(items.length - 1, Math.max(0, draggedIndex));
+                const targetIndex = Math.min(images.length - 1, Math.max(0, draggedIndex));
                 const targetX = -targetIndex * containerWidth;
 
                 setIndex(targetIndex);
@@ -97,7 +92,7 @@ export function FramerCarousel({ items }: { items: CarouselImage[] }) {
               }
             }}
           >
-            {items.map((item, idx) => (
+            {images.map((item, idx) => (
               <div key={item.id} className="h-[360px] w-full shrink-0">
                 <Image
                   src={item.url ?? ''}
@@ -116,7 +111,7 @@ export function FramerCarousel({ items }: { items: CarouselImage[] }) {
         {/* <PrevButton index={index} setIndex={setIndex} />
         <NextButton index={index} setIndex={setIndex} /> */}
 
-        <ProgressIndicator index={index} items={items} setIndex={setIndex} />
+        <ProgressIndicator index={index} images={images} setIndex={setIndex} />
       </div>
     </div>
   );
@@ -133,20 +128,20 @@ function EmptyBanner() {
 
 function ProgressIndicator({
   index,
-  items,
+  images,
   setIndex,
 }: {
   index: number;
-  items: CarouselImage[];
+  images: PayloadImage[];
   setIndex: (index: number) => void;
 }) {
-  if (items.length <= 1) {
+  if (images.length <= 1) {
     return null;
   }
 
   return (
     <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-xl border border-white/30 bg-white/20 p-2">
-      {items.map((_, i) => (
+      {images.map((_, i) => (
         <button
           key={i}
           onClick={() => setIndex(i)}
@@ -180,18 +175,18 @@ function PrevButton({ index, setIndex }: { index: number; setIndex: (index: numb
 function NextButton({
   index,
   setIndex,
-  items,
+  images,
 }: {
   index: number;
   setIndex: (index: number) => void;
-  items: CarouselImage[];
+  images: PayloadImage[];
 }) {
   return (
     <motion.button
-      disabled={index === items.length - 1}
-      onClick={() => setIndex(Math.min(items.length - 1, index + 1))}
+      disabled={index === images.length - 1}
+      onClick={() => setIndex(Math.min(images.length - 1, index + 1))}
       className={`absolute top-1/2 right-4 z-10 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full shadow-lg transition-transform ${
-        index === items.length - 1
+        index === images.length - 1
           ? 'cursor-not-allowed opacity-40'
           : 'bg-white opacity-70 hover:scale-110 hover:opacity-100'
       }`}

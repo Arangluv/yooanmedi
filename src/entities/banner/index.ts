@@ -1,5 +1,5 @@
 // api
-export { getBannerApi } from './api';
+export { getBannerApi, type GetBannerApiResponse } from './api';
 
 // core
 export type { BannerRepository } from './core';

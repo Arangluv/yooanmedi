@@ -1,1 +1,1 @@
-export { getBannerApi } from './banner.api';
+export { getBannerApi, type GetBannerApiResponse } from './banner.api';

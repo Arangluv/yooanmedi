@@ -1,6 +1,8 @@
-import { EndPointResultManager, LoggerV2 } from '@/shared';
+import { EndPointResult, EndPointResultManager, LoggerV2 } from '@/shared';
 import { BannerAdapter, BannerApiRepository } from '../infrastructure';
+import { Banner } from '../types';
 
+export type GetBannerApiResponse = EndPointResult<Banner>;
 export const getBannerApi = async () => {
   try {
     const repository = new BannerApiRepository(BannerAdapter());

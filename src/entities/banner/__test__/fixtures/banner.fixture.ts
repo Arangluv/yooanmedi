@@ -1,3 +1,5 @@
+import { Banner, BannerEntity } from '../../types';
+
 const baseBannerFixture = {
   id: 1,
   items: [
@@ -41,5 +43,17 @@ const baseBannerFixture = {
   globalType: 'banner',
 };
 
-export const createBannerEntityFixture = () => {};
-export const createBannerFixture = () => {};
+export const createBannerEntityFixture = (override?: Partial<BannerEntity>): BannerEntity => {
+  return {
+    ...baseBannerFixture,
+    ...override,
+  };
+};
+
+export const createBannerFixture = (override?: Partial<Banner>): Banner => {
+  return {
+    id: baseBannerFixture.id,
+    items: baseBannerFixture.items,
+    ...override,
+  };
+};
