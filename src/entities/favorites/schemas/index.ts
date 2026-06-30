@@ -1,2 +1,2 @@
-export { favoriteProductSchema, favoriteProductsSchema } from './favorites.schema';
-export { createFavoriteProductSchema } from './favorites.request.schema';
+export { favoriteSchema, favoritesSchema } from './favorites.schema';
+export { createFavoriteSchema } from './favorites.request.schema';

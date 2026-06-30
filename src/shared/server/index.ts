@@ -1,4 +1,4 @@
-export { getPayload, getMainBanners, getSiteMetadata, PayloadCms } from './api';
+export { getPayload, PayloadCms } from './api';
 
 export {
   runWithTransaction, // todo:: will remove

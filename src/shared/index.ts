@@ -29,7 +29,6 @@ export {
   EndPointResultManager,
   zodSafeParse,
   ZodSchemaParser,
-  bannerSchema,
   BaseSchema,
   PaymentsBaseSchema,
   cn,
@@ -47,7 +46,6 @@ export type {
   FindOption,
   SchemaParserDto,
   PayloadImage,
-  Banner,
   PayloadAdapterSuccessResult,
   PayloadAdapterPaginatedSuccessResult,
   PayloadAdapterFailureResult,
@@ -74,7 +72,12 @@ export type {
   ProductPrice as PayloadCustomPrice,
   Cart as PayloadCart,
   CartItem as PayloadCartItem,
-  Favorite as PayloadFavoriteProduct,
+  Favorite as PayloadFavorite,
+  Term as PayloadTerms,
+  PayloadRichTextContent,
+  Popup as PayloadPopup,
+  Banner as PayloadBanner,
+  MetaSetting as PayloadMetaSetting,
 } from './types';
 
 // ui
@@ -91,6 +94,6 @@ export {
 export { Button } from './ui/shadcn/button';
 export { default as TextWithIconAlignVertical } from './ui/TextWithIconAlignVertical';
 export { default as CardActionButton } from './ui/CardActionButton';
-export { ContentRenderer } from './ui/content-renderer';
 export { FramerCarousel } from './ui/framer-carousel';
 export { PopupFramerCarousel } from './ui/popup-framer-carousel';
+export { PayloadRichTextRenderer } from './ui/payload';

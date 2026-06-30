@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { favoriteProductSchema } from '../schemas';
-import { PayloadFavoriteProduct } from '@/shared';
+import { favoriteSchema } from '../schemas';
+import { PayloadFavorite } from '@/shared';
 
-export type FavoriteProduct = z.infer<typeof favoriteProductSchema>;
-export type FavoriteProductEntity = PayloadFavoriteProduct;
+export type Favorite = z.infer<typeof favoriteSchema>;
+export type FavoriteEntity = PayloadFavorite;

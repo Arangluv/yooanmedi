@@ -46,7 +46,7 @@ export type {
   PriceItemDto,
 } from './libs';
 
-export { bannerSchema, BaseSchema, PaymentsBaseSchema } from './schemas';
-export type { PayloadImage, Banner } from './schemas';
+export { BaseSchema, PaymentsBaseSchema } from './schemas';
+export type { PayloadImage } from './schemas';
 
 export { cn } from './utils';

@@ -1,11 +1,11 @@
 // dto
-export { type CreateFavoriteProductDto } from './dto';
+export { type CreateFavoriteDto } from './dto';
 
 // core
-export { type FavoriteProductRepository } from './core';
+export { type FavoriteRepository } from './core';
 
-//schema
-export { favoriteProductSchema, favoriteProductsSchema } from './schemas';
+// schema
+export { favoriteSchema, favoritesSchema } from './schemas';
 
-//types
-export { type FavoriteProduct, type FavoriteProductEntity } from './types';
+// types
+export { type Favorite, type FavoriteEntity } from './types';

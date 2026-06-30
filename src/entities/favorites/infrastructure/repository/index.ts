@@ -1,1 +1,1 @@
-export { FavoriteProductApiRepository } from './favorites.api.repository';
+export { FavoriteApiRepository } from './favorites.api.repository';

@@ -4,16 +4,12 @@ import {
   PayloadCmsErrorTranslator,
   getPayload,
 } from '@/shared/server';
-import { CreateFavoriteProductDto } from '../../dto';
+import { CreateFavoriteDto } from '../../dto';
 import { FAVORITES_ERROR_MESSAGE } from '../../constants';
-import {
-  GetFavoriteProductsReponse,
-  CreateFavoriteProductReponse,
-  DeleteFavoriteProductReponse,
-} from '../../types';
+import { GetFavoritesReponse, CreateFavoriteReponse, DeleteFavoriteReponse } from '../../types';
 
-export const FavoriteProductAdapter = () => ({
-  getFavoriteProducts: async (option: FindOption): Promise<GetFavoriteProductsReponse> => {
+export const FavoriteAdapter = () => ({
+  getFavorites: async (option: FindOption): Promise<GetFavoritesReponse> => {
     try {
       const payload = await getPayload();
       const { docs: favoriteProducts } = await payload.find({
@@ -32,9 +28,7 @@ export const FavoriteProductAdapter = () => ({
     }
   },
 
-  createFavoriteProduct: async (
-    dto: CreateFavoriteProductDto,
-  ): Promise<CreateFavoriteProductReponse> => {
+  createFavorite: async (dto: CreateFavoriteDto): Promise<CreateFavoriteReponse> => {
     try {
       const payload = await getPayload();
       const favoriteProduct = await payload.create({
@@ -53,7 +47,7 @@ export const FavoriteProductAdapter = () => ({
     }
   },
 
-  deleteFavoriteProduct: async (id: number): Promise<DeleteFavoriteProductReponse> => {
+  deleteFavorite: async (id: number): Promise<DeleteFavoriteReponse> => {
     try {
       const payload = await getPayload();
       const favoriteProduct = await payload.delete({

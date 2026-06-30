@@ -1,4 +1,4 @@
 import { z } from 'zod';
-import { createFavoriteProductSchema } from '../schemas';
+import { createFavoriteSchema } from '../schemas';
 
-export type CreateFavoriteProductDto = z.infer<typeof createFavoriteProductSchema>;
+export type CreateFavoriteDto = z.infer<typeof createFavoriteSchema>;

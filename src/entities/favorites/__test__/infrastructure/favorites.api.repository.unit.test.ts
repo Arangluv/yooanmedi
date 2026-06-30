@@ -2,38 +2,38 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BaseError, FindOption, TestErrorHelper } from '@/shared';
 import { PayloadAdapterResultManager } from '@/shared/server';
 import { MockFavoriteProductAdapter } from '../mocks';
-import { createFavoriteProductEntityFixture } from '../fixtures';
-import { FavoriteProductAdapter, FavoriteProductApiRepository } from '../../infrastructure';
-import { CreateFavoriteProductDto } from '../../dto';
+import { createFavoriteEntityFixture } from '../fixtures';
+import { FavoriteAdapter, FavoriteApiRepository } from '../../infrastructure';
+import { CreateFavoriteDto } from '../../dto';
 
-describe('FavoriteProduct Api Repository', () => {
-  let mockAdapter: ReturnType<typeof FavoriteProductAdapter>;
-  let repository: FavoriteProductApiRepository;
+describe('Favorite Api Repository', () => {
+  let mockAdapter: ReturnType<typeof FavoriteAdapter>;
+  let repository: FavoriteApiRepository;
 
   beforeEach(() => {
     mockAdapter = MockFavoriteProductAdapter();
-    repository = new FavoriteProductApiRepository(mockAdapter);
+    repository = new FavoriteApiRepository(mockAdapter);
   });
   describe('create', () => {
     it('관심상품 생성에 성공한다', async () => {
       // Given
-      const dto = { user: 1, product: 3 } as CreateFavoriteProductDto;
-      vi.mocked(mockAdapter.createFavoriteProduct).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createFavoriteProductEntityFixture()),
+      const dto = { user: 1, product: 3 } as CreateFavoriteDto;
+      vi.mocked(mockAdapter.createFavorite).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createFavoriteEntityFixture()),
       );
 
       // When
       await repository.create(dto);
 
       // Then
-      expect(mockAdapter.createFavoriteProduct).toHaveBeenCalledTimes(1);
-      expect(mockAdapter.createFavoriteProduct).toHaveBeenCalledWith(dto);
+      expect(mockAdapter.createFavorite).toHaveBeenCalledTimes(1);
+      expect(mockAdapter.createFavorite).toHaveBeenCalledWith(dto);
     });
 
     it('관심상품 생성에 실패 시 BaseError를 throw한다', async () => {
       // Given
-      const dto = { user: 1, product: 3 } as CreateFavoriteProductDto;
-      vi.mocked(mockAdapter.createFavoriteProduct).mockResolvedValue(
+      const dto = { user: 1, product: 3 } as CreateFavoriteDto;
+      vi.mocked(mockAdapter.createFavorite).mockResolvedValue(
         PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
       );
 
@@ -46,11 +46,11 @@ describe('FavoriteProduct Api Repository', () => {
     it('관심상품 조회에 성공한다', async () => {
       // Given
       const option = { pagination: false, limit: 3 } as FindOption;
-      vi.mocked(mockAdapter.getFavoriteProducts).mockResolvedValue(
+      vi.mocked(mockAdapter.getFavorites).mockResolvedValue(
         PayloadAdapterResultManager.ok([
-          createFavoriteProductEntityFixture({ id: 1 }),
-          createFavoriteProductEntityFixture({ id: 2 }),
-          createFavoriteProductEntityFixture({ id: 3 }),
+          createFavoriteEntityFixture({ id: 1 }),
+          createFavoriteEntityFixture({ id: 2 }),
+          createFavoriteEntityFixture({ id: 3 }),
         ]),
       );
 
@@ -59,14 +59,14 @@ describe('FavoriteProduct Api Repository', () => {
 
       // Then
       expect(result.length).toBe(3);
-      expect(mockAdapter.getFavoriteProducts).toHaveBeenCalledTimes(1);
-      expect(mockAdapter.getFavoriteProducts).toHaveBeenCalledWith(option);
+      expect(mockAdapter.getFavorites).toHaveBeenCalledTimes(1);
+      expect(mockAdapter.getFavorites).toHaveBeenCalledWith(option);
     });
 
     it('관심상품 조회 실패 시 BaseError를 throw한다', async () => {
       // Given
       const option = { pagination: false, limit: 3 } as FindOption;
-      vi.mocked(mockAdapter.getFavoriteProducts).mockResolvedValue(
+      vi.mocked(mockAdapter.getFavorites).mockResolvedValue(
         PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
       );
 
@@ -79,22 +79,22 @@ describe('FavoriteProduct Api Repository', () => {
     it('관심상품 삭제에 성공한다', async () => {
       // Given
       const targetId = 3;
-      vi.mocked(mockAdapter.deleteFavoriteProduct).mockResolvedValue(
-        PayloadAdapterResultManager.ok(createFavoriteProductEntityFixture()),
+      vi.mocked(mockAdapter.deleteFavorite).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createFavoriteEntityFixture()),
       );
 
       // When
       await repository.delete(targetId);
 
       // Then
-      expect(mockAdapter.deleteFavoriteProduct).toHaveBeenCalledTimes(1);
-      expect(mockAdapter.deleteFavoriteProduct).toHaveBeenCalledWith(targetId);
+      expect(mockAdapter.deleteFavorite).toHaveBeenCalledTimes(1);
+      expect(mockAdapter.deleteFavorite).toHaveBeenCalledWith(targetId);
     });
 
     it('관심상품 삭제 실패 시 BaseError를 throw한다', async () => {
       // Given
       const targetId = 3;
-      vi.mocked(mockAdapter.deleteFavoriteProduct).mockResolvedValue(
+      vi.mocked(mockAdapter.deleteFavorite).mockResolvedValue(
         PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
       );
 

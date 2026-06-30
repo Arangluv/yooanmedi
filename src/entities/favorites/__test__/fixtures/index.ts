@@ -1,1 +1,1 @@
-export { createFavoriteProductEntityFixture, createFavoriteProductFixture } from './favorites.fixture';
+export { createFavoriteEntityFixture, createFavoriteFixture } from './favorites.fixture';
