@@ -7,6 +7,8 @@ import MainForm from './_components/MainForm';
 import CarouselBanner from '@/shared/ui/CarouselBanner';
 import { getBannerApi, GetBannerApiResponse } from '@/entities/banner';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const bannerResponse = await getBannerApi(); // todo :: refactor
 
