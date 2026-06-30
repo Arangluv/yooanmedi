@@ -1,25 +1,31 @@
 'use client';
 
 import { useEffect } from 'react';
-
 import { useSiteMetaStore } from './useSiteMetaStore';
+import { GetSiteMetaSettingApiResponse } from '@/entities/meta-setting';
+import { BaseError } from '../core';
 
-type SiteMetadata = {
-  minOrderPrice: number;
-};
-
+// todo :: refactor
 export const SiteMetadataSetter = ({
-  matadata,
+  mataSettingResponse,
   children,
 }: {
-  matadata: SiteMetadata;
+  mataSettingResponse: GetSiteMetaSettingApiResponse;
   children: React.ReactNode;
 }) => {
   const { setMinOrderPrice } = useSiteMetaStore();
 
+  if (!mataSettingResponse.isSuccess) {
+    throw new BaseError({
+      clientMsg: '사이트 설정을 불러오는데 문제가 발생했습니다',
+      errorName: 'SiteMetaSetterError',
+    });
+  }
+
   useEffect(() => {
-    setMinOrderPrice(matadata.minOrderPrice);
-  }, [matadata]);
+    const { data } = mataSettingResponse;
+    setMinOrderPrice(data.minOrderPrice);
+  }, [mataSettingResponse]);
 
   return children;
 };
