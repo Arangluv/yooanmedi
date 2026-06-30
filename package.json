@@ -15,7 +15,9 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:unit": "vitest --ui --config vitest.unit.config.ts",
-    "test:integration": "vitest --ui --config vitest.integration.config.ts"
+    "test:integration": "vitest --ui --config vitest.integration.config.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@heroui/checkbox": "^2.3.27",
@@ -96,7 +98,18 @@
     "tailwind-variants": "2.0.1",
     "tailwindcss": "4.1.11",
     "typescript": "5.7.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "storybook": "^10.4.6",
+    "@storybook/nextjs-vite": "^10.4.6",
+    "@chromatic-com/storybook": "^5.2.1",
+    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-onboarding": "^10.4.6",
+    "vite": "^8.1.0",
+    "eslint-plugin-storybook": "^10.4.6",
+    "playwright": "^1.61.1",
+    "@vitest/browser-playwright": "4.0.18"
   },
   "engines": {
     "node": "^18.20.2 || >=20.9.0",
