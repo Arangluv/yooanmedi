@@ -12,7 +12,6 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { Button as ShadcnButton } from '@/shared/ui/shadcn/button';
-
 import { Checkbox } from '@heroui/checkbox';
 import { ChevronRight, Info, Upload, FileText, Image as ImageIcon, Trash } from 'lucide-react';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';

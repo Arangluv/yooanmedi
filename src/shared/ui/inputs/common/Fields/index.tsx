@@ -35,28 +35,32 @@ export const FieldSetWrapper = ({
   );
 };
 
-type FieldWrapperProps = React.ComponentProps<'div'> & {
+export type FieldWrapperProps = React.ComponentProps<'div'> & {
   label: string;
+  inputId: string;
   description?: string;
   isRequired?: boolean;
+  error: any;
 } & VariantProps<typeof fieldVariants>;
 
 export const FieldWrapper = ({
   label,
+  inputId,
   description,
   children,
+  error,
   isRequired = false,
   ...restProps
 }: FieldWrapperProps) => {
   return (
     <Field {...restProps}>
-      <FieldLabel aria-required={isRequired}>
+      <FieldLabel aria-required={isRequired} htmlFor={inputId}>
         {label}
         {isRequired && <span className="text-destructive">*</span>}
       </FieldLabel>
       {children}
       {description && <FieldDescription>{description}</FieldDescription>}
-      {/* <FieldError>Error Message!</FieldError> */}
+      <FieldError errors={[error]} />
     </Field>
   );
 };
