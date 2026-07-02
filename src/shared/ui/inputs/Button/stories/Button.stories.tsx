@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Search } from 'lucide-react';
-import { Button } from './index';
+import { Button } from '../index';
 
 const meta: Meta<typeof Button> = {
   title: 'shared/ui/inputs/Button',

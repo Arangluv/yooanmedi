@@ -2,16 +2,9 @@
 
 import Link from 'next/link';
 import { BrandLogo } from '@/shared';
-import {
-  FieldGroupWrapper,
-  FieldSetWrapper,
-  FieldWrapper,
-  FieldSeparator,
-  Input,
-} from '@/shared/ui/inputs';
+import { FieldGroupWrapper, FieldSeparator, FieldSetWrapper, Input } from '@/shared/ui/inputs';
 import { useForm } from '@/shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { JoinForm as JoinFormType } from './types';
 import { joinFormValidation } from './form-validation';
 
@@ -56,48 +49,38 @@ const JoinPage = () => {
               />
             </FieldSetWrapper>
             {/* Separator */}
-            {/* <FieldSeparator /> */}
+            <FieldSeparator />
             {/* 유저 정보 FieldSet */}
-            {/* <FieldSetWrapper title="회원 정보" description="상품구매, 주문관리 등을 위한 회원정보">
+            <FieldSetWrapper title="회원 정보" description="상품구매, 주문관리 등을 위한 회원정보">
               <FieldGroupWrapper className="flex-row">
-                <FieldWrapper label="상호명" isRequired={true}>
-                  <Input placeholder="ex. 00병원, 00약국" />
-                </FieldWrapper>
-                <FieldWrapper label="대표자명" isRequired={true}>
-                  <Input type={'password'} />
-                </FieldWrapper>
+                <Input label="상호명" placeholder="ex. 00병원, 00약국" isRequired={true} />
+                <Input label="대표자명" isRequired={true} type={'password'} />
               </FieldGroupWrapper>
               <FieldGroupWrapper className="flex-row">
-                <FieldWrapper
+                <Input
                   label="사업자등록번호"
                   description="10자리 숫자로 입력해주세요"
                   isRequired={true}
-                >
-                  <Input type={'number'} />
-                </FieldWrapper>
-                <FieldWrapper
+                  type={'number'}
+                />
+                <Input
                   label="요양기관번호"
                   description="8자리 숫자로 입력해주세요"
                   isRequired={true}
-                >
-                  <Input type={'number'} />
-                </FieldWrapper>
+                  type={'number'}
+                />
               </FieldGroupWrapper>
-              <FieldWrapper label="의사면허번호" description="병원인 경우 작성해주세요">
-                <Input type={'password'} />
-              </FieldWrapper>
-              <FieldWrapper label="전화번호" isRequired={true}>
-                <Input type={'password'} />
-              </FieldWrapper>
+              <Input
+                label="의사면허번호"
+                description="병원인 경우 작성해주세요"
+                type={'password'}
+              />
+              <Input label="전화번호" isRequired={true} type={'password'} disabled={true} />
               <FieldGroupWrapper className="flex-row">
-                <FieldWrapper label="실무자 연락처">
-                  <Input type={'number'} />
-                </FieldWrapper>
-                <FieldWrapper label="FAX번호">
-                  <Input type={'number'} />
-                </FieldWrapper>
+                <Input label="실무자 연락처" type={'number'} />
+                <Input label="FAX번호" type={'number'} />
               </FieldGroupWrapper>
-            </FieldSetWrapper> */}
+            </FieldSetWrapper>
             {/* Separator */}
             {/* <FieldSeparator />
             <FieldSetWrapper title="배송지" description="구매하신 상품을 전달받으실 주소">

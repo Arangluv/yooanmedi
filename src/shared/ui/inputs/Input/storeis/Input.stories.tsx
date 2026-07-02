@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Input } from './index';
+import { Input } from '../index';
 import { Search } from 'lucide-react';
 
 const meta: Meta<typeof Input> = {
@@ -13,8 +13,7 @@ export default meta;
 type Story = StoryObj<typeof Input>;
 
 const COMMON_PROPS: Story['args'] = {
-  type: 'text',
-  placeholder: '입력해주세요',
+  label: { text: '라벨텍스트' },
 };
 
 export const Default: Story = {
@@ -23,10 +22,12 @@ export const Default: Story = {
   },
 };
 
-export const Password: Story = {
+export const WithDescription: Story = {
   args: {
     ...COMMON_PROPS,
-    type: 'password',
+    description: {
+      text: 'input 설명',
+    },
   },
 };
 
@@ -34,48 +35,61 @@ export const WithDisabled: Story = {
   args: {
     ...COMMON_PROPS,
     disabled: true,
+    value: 'input value',
   },
 };
 
-export const WithInlineStartContent: Story = {
+export const WithReadOnly: Story = {
   args: {
     ...COMMON_PROPS,
+    readOnly: true,
+    value: 'input value',
+  },
+};
+
+export const WithInlineStartIcon: Story = {
+  args: {
+    ...COMMON_PROPS,
+    value: 'input value',
     groupContents: {
       inlineStart: <Search />,
     },
   },
 };
 
-export const WithInlineEndContent: Story = {
+export const WithInlineEndIcon: Story = {
   args: {
     ...COMMON_PROPS,
+    value: 'input value',
     groupContents: {
       inlineEnd: <Search />,
     },
   },
 };
 
-export const WithBlockStartContent: Story = {
+export const WithBlockStart: Story = {
   args: {
     ...COMMON_PROPS,
+    value: 'input value',
     groupContents: {
       blockStart: (
         <div className="flex items-center gap-2">
-          <Search className="text-foreground/30 size-4" />
-          <span className="text-foreground/30 text-sm">result</span>
+          <Search className="size-4" />
+          <span>검색하기</span>
         </div>
       ),
     },
   },
 };
 
-export const WithBlockEndContent: Story = {
+export const WithBlockEnd: Story = {
   args: {
     ...COMMON_PROPS,
+    value: 'input value',
     groupContents: {
       blockEnd: (
         <div className="flex items-center gap-2">
-          <span className="text-foreground/30 text-sm">0 / 200</span>
+          <span>0 / 120</span>
         </div>
       ),
     },
