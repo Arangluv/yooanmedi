@@ -780,6 +780,7 @@ function FileUploadInput({
       </div>
     );
   };
+
   return (
     <div className="flex flex-col gap-4">
       <span className="after:text-danger text-[14px] font-medium after:ml-[2px] after:content-['*']">

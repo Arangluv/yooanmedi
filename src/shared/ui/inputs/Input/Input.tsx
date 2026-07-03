@@ -12,14 +12,20 @@ export type InputProps = React.ComponentProps<'input'> & {
 } & Omit<FieldWrapperProps, 'inputId' | 'children'>;
 
 export const Input = (props: InputProps) => {
-  const { id, isRequired = false, groupContents, ...restProps } = props;
+  const { id, isRequired = false, label, fieldError, groupContents, ...restProps } = props;
   const generatedId = useId();
   const inputId = id ?? generatedId;
 
   return (
-    <FieldWrapper inputId={inputId} isRequired={isRequired} {...restProps}>
+    <FieldWrapper
+      inputId={inputId}
+      isRequired={isRequired}
+      label={label}
+      fieldError={fieldError}
+      {...restProps}
+    >
       <InputGroup>
-        <InputGroupInput id={inputId} {...restProps} />
+        <InputGroupInput id={inputId} className="no-number-spinner" {...restProps} />
         {groupContents?.inlineStart && (
           <InputGroupAddon align="inline-start">{groupContents.inlineStart}</InputGroupAddon>
         )}

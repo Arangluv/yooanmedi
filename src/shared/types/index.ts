@@ -1,4 +1,5 @@
 export * from './payload-types';
+export * from './form';
 
 export type PayloadRichTextContent = {
   root: {

@@ -4,17 +4,21 @@ import {
   Field,
   FieldLabel,
   FieldDescription,
-  FieldError,
+  FieldError as ShadcnFieldError,
   fieldVariants,
   Label,
 } from '@/shared/ui/shadcn';
 
 export interface FieldWrapperProps {
-  field?: React.ComponentProps<'div'> & VariantProps<typeof fieldVariants>;
-  label: React.ComponentProps<typeof Label> & {
-    text: string;
+  label: {
+    content: React.ReactNode;
+    props?: React.ComponentProps<typeof Label>;
   };
-  description?: React.ComponentProps<'p'> & { text: string };
+  description?: {
+    content: React.ReactNode;
+    props?: React.ComponentProps<'p'>;
+  };
+  field?: React.ComponentProps<'div'> & VariantProps<typeof fieldVariants>;
   fieldError?: React.ComponentProps<'div'> & { errors?: Array<{ message?: string }> | undefined };
   isRequired?: boolean;
   inputId: string;
@@ -22,19 +26,27 @@ export interface FieldWrapperProps {
 }
 
 export const FieldWrapper = (props: FieldWrapperProps) => {
-  const { field, label, description, fieldError, inputId, isRequired, children } = props;
-
-  const { text: labelText } = label;
+  const {
+    field,
+    label: { content: labelContent, props: labelProps },
+    description,
+    fieldError,
+    inputId,
+    isRequired,
+    children,
+  } = props;
 
   return (
     <Field {...field}>
-      <FieldLabel aria-required={isRequired} htmlFor={inputId}>
-        {labelText}
+      <FieldLabel aria-required={isRequired} htmlFor={inputId} {...labelProps}>
+        {labelContent}
         {isRequired && <span className="text-destructive">*</span>}
       </FieldLabel>
       {children}
-      {description && <FieldDescription {...description}>{description.text}</FieldDescription>}
-      <FieldError {...fieldError} />
+      {description && (
+        <FieldDescription {...description.props}>{description.content}</FieldDescription>
+      )}
+      <ShadcnFieldError {...fieldError} />
     </Field>
   );
 };

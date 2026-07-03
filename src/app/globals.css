@@ -176,5 +176,18 @@
   body {
     @apply bg-background text-foreground;
   }
+}
 
+@layer utilities {
+  /* Chrome, Safari, Edge, Opera */
+  .no-number-spinner::-webkit-outer-spin-button,
+  .no-number-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  .no-number-spinner {
+    -moz-appearance: textfield;
+  }
 }

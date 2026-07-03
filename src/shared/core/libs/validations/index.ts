@@ -1,2 +1,1 @@
-export * from './user-id.validation';
-export * from './password.validation';
+export * from './user.validation';

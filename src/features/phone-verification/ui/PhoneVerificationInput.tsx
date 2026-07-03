@@ -7,7 +7,7 @@ import { USAGE_CODE } from '../constants/usage-code';
 import { payloadDecode } from '../lib/payload-decode';
 import { BaseError } from '@/shared';
 import { InputProps } from '@/shared/ui/inputs/Input';
-
+import { InputGroupButton } from '@/shared/ui/shadcn';
 declare global {
   interface Window {
     MOBILEOK: {
@@ -19,6 +19,7 @@ declare global {
 
 export type PhoneVerificationInputProps = Omit<InputProps, 'onChange'> & {
   usageCode: (typeof USAGE_CODE)[keyof typeof USAGE_CODE];
+  onChange?: (value: string) => void;
 };
 
 type PhoneVerificationApprovalPayload = {
@@ -29,8 +30,8 @@ type PhoneVerificationApprovalPayload = {
 };
 
 export const PhoneNumberVerificationInput = (props: PhoneVerificationInputProps) => {
-  const { usageCode, ref, ...restProps } = props;
-  const [scriptLoad, setScriptLoad] = useState(false);
+  const { usageCode, onChange, ref, ...restProps } = props;
+  const [isScriptLoad, setIsScriptLoad] = useState(false);
 
   const handlePhoneVerification = async () => {
     if (!window.MOBILEOK) {
@@ -52,9 +53,9 @@ export const PhoneNumberVerificationInput = (props: PhoneVerificationInputProps)
             errorName: 'PhoneVerificationError',
           });
         }
+        onChange?.(decoded.userPhone);
       } catch (error) {
         alert('휴대폰 인증 결과를 불러오는데 실패했습니다');
-        console.error(error);
       }
     };
   }, []);
@@ -62,19 +63,31 @@ export const PhoneNumberVerificationInput = (props: PhoneVerificationInputProps)
   return (
     <Fragment>
       <Script src={process.env.NEXT_PUBLIC_MOK_URL} strategy="afterInteractive" />
-      <FieldGroupWrapper className="flex-row">
-        <Input ref={ref} placeholder="전화번호 인증을 진행해주세요" readOnly {...restProps} />
-        <Button
-          disabled={scriptLoad || isDisabled}
-          onClick={async (e) => {
-            e.preventDefault();
-            handlePhoneVerification();
+      <FieldGroupWrapper className="flex-row items-end">
+        <Input
+          ref={ref}
+          placeholder="전화번호 인증을 진행해주세요"
+          isRequired
+          readOnly
+          disabled
+          groupContents={{
+            inlineEnd: (
+              <InputGroupButton
+                disabled={isScriptLoad}
+                variant="default"
+                className="rounded-md"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  handlePhoneVerification();
+                }}
+                onLoad={() => setIsScriptLoad(true)}
+              >
+                휴대폰 인증
+              </InputGroupButton>
+            ),
           }}
-          onLoad={() => setScriptLoad(true)}
-          {...props}
-        >
-          휴대폰 인증
-        </Button>
+          {...restProps}
+        />
       </FieldGroupWrapper>
     </Fragment>
   );

@@ -1,4 +1,5 @@
 import { useForm as useBaseForm, UseFormProps, FieldValues } from 'react-hook-form';
+import { useFieldErrors } from './useFieldErrors';
 
 export type FormSubmitHandler<FormData extends FieldValues> = (
   data: FormData,
@@ -13,6 +14,7 @@ export function useForm<Form extends FieldValues>(parameters: Parameters<Form>) 
   const baseForm = useBaseForm<Form>(parameters);
   const { formState, reset, setError, handleSubmit, ...restProps } = baseForm;
   const { errors } = formState;
+  const getFieldError = useFieldErrors<Form>(errors);
 
   return {
     ...restProps,
@@ -21,6 +23,7 @@ export function useForm<Form extends FieldValues>(parameters: Parameters<Form>) 
     errors,
     setError,
     handleSubmit,
+    getFieldError,
     onSubmit: handleSubmit((data) => onSubmit(data)),
   };
 }

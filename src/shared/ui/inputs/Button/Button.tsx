@@ -19,8 +19,8 @@ export const Button = (props: ButtonProps) => {
   return (
     <ShadcnButton
       disabled={isLoading || disabled}
-      {...restProps}
       className={cn(className, 'cursor-pointer')}
+      {...restProps}
     >
       {isLoading && <LoadingSpinner />}
       {!isLoading && startIcon && <span>{startIcon}</span>}
