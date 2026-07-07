@@ -21,7 +21,9 @@ describe('Cart Api Repository', () => {
       const dto = {
         user: 3,
       } as CreateCartDto;
-      vi.mocked(mockAdapter.createCart).mockResolvedValue(PayloadAdapterResultManager.ok(createCartEntityFixture()));
+      vi.mocked(mockAdapter.createCart).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createCartEntityFixture({ cartItems: undefined })),
+      );
 
       // When
       await repository.create(dto);

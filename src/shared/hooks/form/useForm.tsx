@@ -1,3 +1,5 @@
+'use client';
+
 import { useForm as useBaseForm, UseFormProps, FieldValues } from 'react-hook-form';
 import { useFieldErrors } from './useFieldErrors';
 

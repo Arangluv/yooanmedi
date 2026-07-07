@@ -12,6 +12,7 @@ export type FileUploadInputProps = {
   isRequired: boolean;
   onChange: (value: File | null) => void;
   value: File | null | undefined;
+  disabled: boolean;
   fieldError?: React.ComponentProps<'div'> & { errors?: Array<{ message?: string }> | undefined };
   fieldLabel: {
     content: string;
@@ -24,7 +25,15 @@ export type FileUploadInputProps = {
 };
 
 export const FileUploadInput = (props: FileUploadInputProps) => {
-  const { value, onChange, isRequired = false, fieldError, fieldLabel, description } = props;
+  const {
+    value,
+    onChange,
+    isRequired = false,
+    disabled,
+    fieldError,
+    fieldLabel,
+    description,
+  } = props;
   const inputId = useId();
 
   const onDelete = () => {
@@ -55,6 +64,7 @@ export const FileUploadInput = (props: FileUploadInputProps) => {
         id={inputId}
         type="file"
         className="hidden"
+        disabled={disabled}
         onChange={(e) => {
           const file = e.target.files?.[0];
           onChange?.(file!);

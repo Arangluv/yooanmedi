@@ -15,7 +15,7 @@ export class CartApiRepository implements CartRepository {
     if (!response.ok) {
       throw response.error;
     }
-    return CartMapper.entityToDomin(response.data);
+    return CartMapper.toOperatorResult(response.data);
   }
 
   async findOneByUserId(userId: number) {

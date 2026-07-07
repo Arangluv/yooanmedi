@@ -1,6 +1,1 @@
-export {
-  UserFixtures,
-  baseUserResponseFixture,
-  createUserFixture,
-  createUserResponseFixture,
-} from './user.fixture';
+export { createUserFixture, createUserEntityFixture } from './user.fixture';

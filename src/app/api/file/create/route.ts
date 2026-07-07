@@ -1,16 +1,26 @@
-import { LoggerV2 } from '@/shared';
+import { EndPointResultManager, LoggerV2 } from '@/shared';
+import { getPayload } from '@/shared/server';
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    console.log(formData);
+    const payload = await getPayload();
+    const file = (await request.formData()).get('file') as File;
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    return Response.json({ ok: true, id: 123 });
+    const uploadedFile = await payload.create({
+      collection: 'files',
+      data: {},
+      file: {
+        data: buffer,
+        mimetype: file.type,
+        name: file.name,
+        size: file.size,
+      },
+    });
+
+    return Response.json(EndPointResultManager.okWithData({ data: uploadedFile }));
   } catch (error) {
     LoggerV2.error(error);
-    return Response.json({
-      ok: false,
-      message: '증빙서류 파일을 업로드하는데 문제가 발생했습니다',
-    });
+    return Response.json(EndPointResultManager.fail('파일을 업로드하는데 문제가 발생했습니다'));
   }
 }

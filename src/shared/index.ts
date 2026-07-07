@@ -78,6 +78,7 @@ export type {
   Popup as PayloadPopup,
   Banner as PayloadBanner,
   MetaSetting as PayloadMetaSetting,
+  File as PayloadFile,
 } from './types';
 
 // ui

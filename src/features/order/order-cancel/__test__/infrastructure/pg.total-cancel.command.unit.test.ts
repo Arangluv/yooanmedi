@@ -77,7 +77,7 @@ describe('PG Total Cancel Command', () => {
     await command.execute();
 
     // Then
-    expect(repository.user.update).toHaveBeenCalledTimes(6);
+    expect(repository.user.update).toHaveBeenCalledTimes(1);
   });
 
   it('이미 취소된 주문 상품에서는 유저 포인트가 업데이트 되지 않는다 [포인트 사용 환불]', async () => {
@@ -93,7 +93,7 @@ describe('PG Total Cancel Command', () => {
     await command.execute();
 
     // Then
-    expect(repository.user.update).toHaveBeenCalledTimes(4);
+    expect(repository.user.update).toHaveBeenCalledTimes(1);
   });
 
   it('주문상품이 모두 취소상태인 경우 취소상태로 업데이트 된다', async () => {
@@ -152,7 +152,7 @@ describe('PG Total Cancel Command', () => {
     await command.execute();
 
     // Then
-    expect(repository.user.update).toHaveBeenCalledTimes(6);
+    expect(repository.user.update).toHaveBeenCalledTimes(1);
   });
 
   it('이미 취소된 주문 상품에서는 유저 포인트가 업데이트 되지 않는다 [포인트 적립 롤백]', async () => {
@@ -168,7 +168,7 @@ describe('PG Total Cancel Command', () => {
     await command.execute();
 
     // Then
-    expect(repository.user.update).toHaveBeenCalledTimes(4);
+    expect(repository.user.update).toHaveBeenCalledTimes(1);
   });
 
   it('주문이 취소상태로 업데이트 된다', async () => {

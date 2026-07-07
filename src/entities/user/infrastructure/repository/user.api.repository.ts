@@ -2,7 +2,7 @@ import { FindOption } from '@/shared';
 import { UserAdapter } from '../api';
 import { UserRepository } from '../../core';
 import { UserMapper } from '../../mapper';
-import { UpdateUserDto } from '../../dto';
+import { CreateClientRequestDto, UpdateUserDto } from '../../dto';
 
 export class UserApiRepository implements UserRepository {
   private adapter: ReturnType<typeof UserAdapter>;
@@ -37,6 +37,14 @@ export class UserApiRepository implements UserRepository {
 
   public async update(dto: UpdateUserDto) {
     const result = await this.adapter.updateUser(dto);
+    if (!result.ok) {
+      throw result.error;
+    }
+    return UserMapper.responseToUser(result.data);
+  }
+
+  public async create(dto: CreateClientRequestDto) {
+    const result = await this.adapter.createUser(dto);
     if (!result.ok) {
       throw result.error;
     }

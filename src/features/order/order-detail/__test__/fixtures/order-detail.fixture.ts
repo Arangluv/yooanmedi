@@ -7,13 +7,13 @@ import {
 } from '@/entities/order-product/__test__';
 import { createOrderEntityFixture, createOrderFixture } from '@/entities/order/__test__';
 import { createProductEntityFixture, createProductFixture } from '@/entities/product/__test__';
+import { createUserFixture, createUserEntityFixture } from '@/entities/user/__test__';
 import { OrderDetailDto } from '../../dto';
-import { createUserFixture, createUserResponseFixture } from '@/entities/user/__test__';
 
 export const OrderDetailFixtures = {
   response: PayloadAdapterResultManager.ok(
     createOrderEntityFixture({
-      user: createUserResponseFixture(),
+      user: createUserEntityFixture(),
       orderProducts: {
         docs: [
           createOrderProductEntityFixture({

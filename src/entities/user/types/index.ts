@@ -4,4 +4,5 @@ export type {
   GetUserByIdResponse,
   GetUserListResponse,
   UpdateUserResponse,
+  CreateUserResponse,
 } from './user-response.type';

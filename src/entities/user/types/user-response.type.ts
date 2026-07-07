@@ -5,3 +5,4 @@ export type GetUserByHeaderResponse = PayloadAdapterResult<PayloadUser & { colle
 export type GetUserByIdResponse = PayloadAdapterResult<PayloadUser>;
 export type GetUserListResponse = PayloadAdapterResult<PayloadUser[]>;
 export type UpdateUserResponse = PayloadAdapterResult<PayloadUser>;
+export type CreateUserResponse = PayloadAdapterResult<PayloadUser>;

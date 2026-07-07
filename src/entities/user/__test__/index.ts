@@ -1,7 +1,2 @@
-export {
-  UserFixtures,
-  baseUserResponseFixture,
-  createUserFixture,
-  createUserResponseFixture,
-} from './fixtures';
+export { createUserFixture, createUserEntityFixture } from './fixtures';
 export { MockUserAdapter, UserRepositoryMocks } from './mocks';

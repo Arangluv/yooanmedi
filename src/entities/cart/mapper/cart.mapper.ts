@@ -1,7 +1,7 @@
 import { ZodSchemaParser, SchemaParserDto } from '@/shared';
-import { Cart, CartEntity } from '../types';
+import { Cart, CartEntity, OperatorResultCart } from '../types';
 import { CART_ERROR_MESSAGE } from '../constants';
-import { cartSchema } from '../schemas';
+import { cartSchema, operatorResultCartSchema } from '../schemas';
 
 export class CartMapper {
   static entityToDomin(data: CartEntity): Cart {
@@ -14,5 +14,12 @@ export class CartMapper {
     } as SchemaParserDto;
 
     return ZodSchemaParser.safeParseOrThrow(cartSchema, dto);
+  }
+
+  static toOperatorResult(data: CartEntity): OperatorResultCart {
+    return ZodSchemaParser.safeParseOrThrow(operatorResultCartSchema, {
+      data,
+      errorMsg: CART_ERROR_MESSAGE.invalidData,
+    });
   }
 }

@@ -5,4 +5,5 @@ export const MockUserAdapter = () => ({
   getUserById: vi.fn(),
   updateUser: vi.fn(),
   getUserList: vi.fn(),
+  createUser: vi.fn(),
 });

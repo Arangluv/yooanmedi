@@ -1,2 +1,2 @@
-export { cartSchema } from './cart.schema';
+export { cartSchema, operatorResultCartSchema } from './cart.schema';
 export { createCartSchema } from './cart.request.schema';

@@ -1,1 +1,1 @@
-export { type UpdateUserDto } from './user.dto';
+export type { UpdateUserDto, CreateClientRequestDto } from './user.dto';

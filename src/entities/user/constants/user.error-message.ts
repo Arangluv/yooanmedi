@@ -4,4 +4,5 @@ export const USER_ERROR_MESSAGE = {
   updateFail: '유저 정보를 업데이트하는데 문제가 발생했습니다',
   fetchFail: '유저 정보를 가져오는데 문제가 발생했습니다',
   invalidUser: '잘못된 유저 정보 입니다',
+  create: '유저를 생성하는데 문제가 발생했습니다.',
 };
