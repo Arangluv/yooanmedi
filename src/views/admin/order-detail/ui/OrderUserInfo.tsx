@@ -26,6 +26,10 @@ const OrderUserInfo = ({ orderId }: { orderId: number }) => {
             <span>{user.phoneNumber}</span>
           </div>
           <div className="flex items-center justify-between">
+            <span>실무자 연락처</span>
+            <span>{user.managerNumber || '실무자 연락처가 비어있습니다'}</span>
+          </div>
+          <div className="flex items-center justify-between">
             <span>이메일</span>
             <span>{user.contactEmail}</span>
           </div>

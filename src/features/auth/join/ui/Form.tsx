@@ -19,12 +19,14 @@ import { PhoneVerificationInput } from '@/features/phone-verification';
 import { JoinForm as JoinFormType, CheckDuplicatedFieldResultDto } from '../types';
 import { joinFormValidation } from '../validations';
 import { useJoinMutation } from '../hooks';
+import { DEFAULT_JOIN_FORM_VALUES } from '../constants';
 
 export const JoinForm = () => {
   const { mutateAsync: joinMutateAsync, isPending } = useJoinMutation();
 
-  const { control, register, onSubmit, getFieldError } = useForm<JoinFormType>({
+  const { control, register, onSubmit, getFieldError, setValue } = useForm<JoinFormType>({
     resolver: zodResolver(joinFormValidation),
+    defaultValues: DEFAULT_JOIN_FORM_VALUES,
     onSubmit: async (values) => {
       const joinPromise = joinMutateAsync(values); // promise 레퍼런스 확보
 
@@ -38,9 +40,6 @@ export const JoinForm = () => {
               .map((err: CheckDuplicatedFieldResultDto) => err.message)
               .join('\n');
           }
-
-          console.log('err');
-          console.log(err);
 
           return '회원가입을 진행하는데 문제가 발생했습니다';
         },

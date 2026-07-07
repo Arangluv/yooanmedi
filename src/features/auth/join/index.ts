@@ -5,4 +5,4 @@ export { clientJoinApi, type ClientJoinApiResponse } from './api';
 export * from './ui';
 
 // type
-export type { JoinForm } from './types';
+export type { JoinForm as JoinFormType } from './types';

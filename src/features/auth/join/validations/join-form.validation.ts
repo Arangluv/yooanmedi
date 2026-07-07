@@ -41,4 +41,12 @@ export const joinFormValidation = z
   .refine((data) => data.password === data.passwordConfirm, {
     message: '비밀번호가 일치하지 않습니다.',
     path: ['passwordConfirm'],
+  })
+  .refine((data) => data.termsAgree, {
+    message: '이용약관에 동의해주세요',
+    path: ['termsAgree'],
+  })
+  .refine((data) => data.privacyPolicyAgree, {
+    message: '개인정보 처리방침에 동의해주세요',
+    path: ['privacyPolicyAgree'],
   });
