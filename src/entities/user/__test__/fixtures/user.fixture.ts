@@ -1,4 +1,4 @@
-import { User, UserEntity } from '../../types';
+import { User, UserEntity, UserWithHiddenField } from '../../types';
 import { USER_ROLE } from '../../constants';
 
 const baseUserFixture: User = {
@@ -41,9 +41,24 @@ const baseUserEntityFixture: UserEntity = {
   managerNumber: '01027307891',
 };
 
+const baseUserWithHiddenFieldFixture: UserWithHiddenField = {
+  ...baseUserFixture,
+  salt: 'test-salt',
+  hash: 'test-hash',
+};
+
 export const createUserFixture = (override?: Partial<User>): User => {
   return {
     ...baseUserFixture,
+    ...override,
+  };
+};
+
+export const createUserWithHiddenFieldFixture = (
+  override?: Partial<UserWithHiddenField>,
+): UserWithHiddenField => {
+  return {
+    ...baseUserWithHiddenFieldFixture,
     ...override,
   };
 };

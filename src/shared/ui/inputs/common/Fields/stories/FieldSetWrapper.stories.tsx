@@ -14,11 +14,14 @@ type Story = StoryObj<typeof FieldSetWrapper>;
 export const Default: Story = {
   render: () => {
     return (
-      <FieldSetWrapper label={{ text: '필드셋 라벨' }} description={{ text: '필드셋 설명 텍스트' }}>
+      <FieldSetWrapper
+        label={{ content: '필드셋 라벨' }}
+        description={{ content: '필드셋 설명 텍스트' }}
+      >
         <FieldGroupWrapper>
-          <Input label={{ text: 'Input1' }} />
-          <Input label={{ text: 'Input2' }} />
-          <Input label={{ text: 'Input3' }} />
+          <Input label={{ content: 'Input1' }} />
+          <Input label={{ content: 'Input2' }} />
+          <Input label={{ content: 'Input3' }} />
         </FieldGroupWrapper>
       </FieldSetWrapper>
     );
@@ -28,11 +31,11 @@ export const Default: Story = {
 export const NoDescription: Story = {
   render: () => {
     return (
-      <FieldSetWrapper label={{ text: '필드셋 라벨' }}>
+      <FieldSetWrapper label={{ content: '필드셋 라벨' }}>
         <FieldGroupWrapper>
-          <Input label={{ text: 'Input1' }} />
-          <Input label={{ text: 'Input2' }} />
-          <Input label={{ text: 'Input3' }} />
+          <Input label={{ content: 'Input1' }} />
+          <Input label={{ content: 'Input2' }} />
+          <Input label={{ content: 'Input3' }} />
         </FieldGroupWrapper>
       </FieldSetWrapper>
     );
@@ -42,17 +45,20 @@ export const NoDescription: Story = {
 export const WithSeparator: Story = {
   render: () => {
     return (
-      <FieldSetWrapper label={{ text: '필드셋 라벨' }} description={{ text: '필드셋 설명 텍스트' }}>
+      <FieldSetWrapper
+        label={{ content: '필드셋 라벨' }}
+        description={{ content: '필드셋 설명 텍스트' }}
+      >
         <FieldGroupWrapper>
-          <Input label={{ text: 'Input1' }} />
-          <Input label={{ text: 'Input2' }} />
-          <Input label={{ text: 'Input3' }} />
+          <Input label={{ content: 'Input1' }} />
+          <Input label={{ content: 'Input2' }} />
+          <Input label={{ content: 'Input3' }} />
         </FieldGroupWrapper>
         <FieldSeparator />
         <FieldGroupWrapper>
-          <Input label={{ text: 'Input1' }} />
-          <Input label={{ text: 'Input2' }} />
-          <Input label={{ text: 'Input3' }} />
+          <Input label={{ content: 'Input1' }} />
+          <Input label={{ content: 'Input2' }} />
+          <Input label={{ content: 'Input3' }} />
         </FieldGroupWrapper>
       </FieldSetWrapper>
     );

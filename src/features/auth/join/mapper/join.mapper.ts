@@ -17,7 +17,7 @@ export class JoinMapper {
         doctorLicenseNumber: form.doctorLicenseNumber,
         businessNumber: form.businessNumber,
         nursingNumber: form.nursingNumber,
-        address: `${form.address} ${form.addressDetail}`,
+        address: `${form.address} | ${form.addressDetail}`,
         phoneNumber: form.phoneNumber,
         faxNumber: form.faxNumber,
         managerNumber: form.managerNumber,

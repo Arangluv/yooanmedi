@@ -63,7 +63,7 @@ export type {
   Product as PayloadProduct,
   ProductCategory as PayloadProductCategory,
   User as PayloadUser,
-  PointHistory as PayloadPointHistory,
+  PointTransaction as PayloadPointHistory,
   OrderProduct as PayloadOrderProduct,
   OrderProductSelect as PayloadOrderProductSelect,
   RecentPurchasedHistory as PayloadPurchasedHistory,

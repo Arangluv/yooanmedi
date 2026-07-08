@@ -17,10 +17,16 @@ export { useAuthStore } from './hooks';
 export { UserMapper } from './mapper';
 
 // schema
-export { userSchema, userListSchema, updateUserSchema, createClientSchema } from './schemas';
+export {
+  userSchema,
+  userSchemaWithHiddenField,
+  userListSchema,
+  updateUserSchema,
+  createClientSchema,
+} from './schemas';
 
 // types
-export type { User } from './types';
+export type { User, UserWithHiddenField } from './types';
 
 // providers
 export { AuthGuard } from './providers';

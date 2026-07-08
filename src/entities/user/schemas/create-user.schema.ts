@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseSchema } from '@/shared';
-import { USER_ROLE } from '@/entities/user';
+import { USER_ROLE } from '../constants';
 import { userSchema } from './user.schema';
 
 export const createClientSchema = userSchema

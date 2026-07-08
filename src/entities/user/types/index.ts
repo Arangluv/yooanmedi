@@ -1,7 +1,8 @@
-export type { User, UserEntity } from './user.type';
+export type { User, UserEntity, UserWithHiddenField } from './user.type';
 export type {
   GetUserByHeaderResponse,
   GetUserByIdResponse,
+  GetUserWithHiddenFieldResponse,
   GetUserListResponse,
   UpdateUserResponse,
   CreateUserResponse,

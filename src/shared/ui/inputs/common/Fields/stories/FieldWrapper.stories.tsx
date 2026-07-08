@@ -14,7 +14,7 @@ type Story = StoryObj<typeof FieldWrapper>;
 
 const COMMON_PROPS: Story['args'] = {
   children: <Input />,
-  label: { text: '라벨텍스트' },
+  label: { content: '라벨텍스트' },
 };
 
 export const Default: Story = {
@@ -34,7 +34,7 @@ export const WithDescription: Story = {
   args: {
     ...COMMON_PROPS,
     description: {
-      text: '필드 설명 테스트',
+      content: '필드 설명 테스트',
     },
   },
 };
@@ -55,7 +55,7 @@ export const AllVariants: Story = {
     return (
       <div className="flex flex-col gap-4">
         {VARIANTS.map((orientation) => (
-          <FieldWrapper inputId="id" field={{ orientation }} label={{ text: orientation }}>
+          <FieldWrapper inputId="id" field={{ orientation }} label={{ content: orientation }}>
             <Input />
           </FieldWrapper>
         ))}

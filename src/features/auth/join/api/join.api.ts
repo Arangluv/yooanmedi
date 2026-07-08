@@ -3,7 +3,7 @@
 import { EndPointResult, EndPointResultManager, LoggerV2 } from '@/shared';
 import { CreateClientRequestDto, User } from '@/entities/user';
 import { createJoinUsecase } from '../infrastructure';
-import { JoinUniqueCheckFieldDto } from '../dto';
+import { JoinUniqueCheckFieldDto } from '../types';
 
 export type ClientJoinApiResponse = EndPointResult<User>;
 

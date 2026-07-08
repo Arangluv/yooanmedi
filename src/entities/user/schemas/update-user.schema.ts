@@ -5,8 +5,14 @@ import { userSchema } from './user.schema';
 export const updateUserSchema = z.object({
   user: z.number(),
   data: userSchema
+    .extend({ password: z.string() })
     .pick({
+      faxNumber: true,
+      managerNumber: true,
+      contactEmail: true,
+      address: true,
       point: true,
+      password: true,
     })
     .partial(),
 });

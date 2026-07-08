@@ -2,8 +2,7 @@ import { FindOption } from '@/shared';
 import { CartRepository } from '@/entities/cart';
 import { CreateClientRequestDto, UserRepository } from '@/entities/user';
 import { JoinUseCase } from '../usecases';
-import { JoinUniqueCheckFieldDto } from '../dto';
-import { JoinDuplicateFieldError } from '../libs';
+import { JoinUniqueCheckFieldDto } from '../types';
 
 export interface JoinServiceDependencies {
   repository: {

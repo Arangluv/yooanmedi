@@ -1,6 +1,6 @@
 import { AuthGuard } from '@/entities/user';
 import { NuqsProvider, SiteMetadataSetter } from '@/shared';
-import LayoutTopNavbar from '@/entities/order/ui/LayoutTopNavbar';
+import { AccountUtilityBar } from '@/widget/AccountUtilityBar';
 import { CartDetailHydrator, getCartApi } from '@/features/cart-detail';
 import { getFavoriteProductsApi, getFavoritesApi } from '@/features/favorites';
 import { UserApiRepository, UserAdapter } from '@/entities/user/infrastructure';
@@ -26,7 +26,7 @@ export default async function OrderLayout({ children }: { children: React.ReactN
       {/* TODO :: Refactor -> Provider의 Depth가 깊어지는 문제 (전역상태관리 모범사례 참고) */}
       <SiteMetadataSetter mataSettingResponse={siteMetaSettingResponse}>
         <NuqsProvider>
-          <LayoutTopNavbar />
+          <AccountUtilityBar />
           <CartDetailHydrator initialData={cart}>
             <FavoritesHydrator initialData={favoritesResponse}>
               <FavoriteProductsHydrator initialData={favoriteProductsResponse}>

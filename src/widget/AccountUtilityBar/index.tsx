@@ -2,8 +2,9 @@
 
 import { formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';
+import Link from 'next/link';
 
-const LayoutTopNavbar = () => {
+export const AccountUtilityBar = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
 
@@ -14,8 +15,13 @@ const LayoutTopNavbar = () => {
           {user.hospitalName} <span className="text-muted-foreground font-normal">님</span>
         </span>
         <span className="text-muted-foreground text-[13px]">|</span>
+        <Link className="text-muted-foreground text-[13px]" href={'/mypage/info'}>
+          마이페이지
+        </Link>
+        <span className="text-muted-foreground text-[13px]">|</span>
         <span className="text-muted-foreground text-[13px]">
-          보유 적립금 : <span className="text-secondary font-bold">{formatNumberWithCommas(user.point ?? 0)}원</span>
+          보유 적립금 :{' '}
+          <span className="text-secondary font-bold">{formatNumberWithCommas(user.point)}원</span>
         </span>
         <span className="text-muted-foreground text-[13px]">|</span>
         <button onClick={logout} className="text-muted-foreground cursor-pointer text-[13px]">
@@ -25,5 +31,3 @@ const LayoutTopNavbar = () => {
     </div>
   );
 };
-
-export default LayoutTopNavbar;

@@ -13,7 +13,7 @@ export default meta;
 type Story = StoryObj<typeof Input>;
 
 const COMMON_PROPS: Story['args'] = {
-  label: { text: '라벨텍스트' },
+  label: { content: '라벨텍스트' },
 };
 
 export const Default: Story = {
@@ -26,7 +26,7 @@ export const WithDescription: Story = {
   args: {
     ...COMMON_PROPS,
     description: {
-      text: 'input 설명',
+      content: 'input 설명',
     },
   },
 };

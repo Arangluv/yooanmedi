@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { BaseSchema } from '@/shared';
 import { USER_ROLE } from '../constants';
 
 export const userSchema = z.object({
@@ -18,6 +17,11 @@ export const userSchema = z.object({
   phoneNumber: z.string(),
   faxNumber: z.string(),
   managerNumber: z.string(),
+});
+
+export const userSchemaWithHiddenField = userSchema.extend({
+  hash: z.string(),
+  salt: z.string(),
 });
 
 export const userListSchema = z.array(userSchema);

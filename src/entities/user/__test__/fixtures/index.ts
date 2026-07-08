@@ -1,1 +1,5 @@
-export { createUserFixture, createUserEntityFixture } from './user.fixture';
+export {
+  createUserFixture,
+  createUserEntityFixture,
+  createUserWithHiddenFieldFixture,
+} from './user.fixture';

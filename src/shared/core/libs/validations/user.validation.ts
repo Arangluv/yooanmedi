@@ -51,3 +51,5 @@ export const requiredFileValidation = z
 
 export const requiredTermsAgree = z.boolean();
 export const requiredPrivacyPolicyAgree = z.boolean();
+
+export const pointValidation = z.number().min(0, '포인트는 0보다 작을 수 없습니다');

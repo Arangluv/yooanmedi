@@ -11,6 +11,7 @@ import {
   GetUserByHeaderResponse,
   GetUserByIdResponse,
   GetUserListResponse,
+  GetUserWithHiddenFieldResponse,
   UpdateUserResponse,
 } from '../../types';
 import { CreateClientRequestDto, UpdateUserDto } from '../../dto';
@@ -42,6 +43,25 @@ export const UserAdapter = () => ({
         collection: 'users',
         depth: 0,
         id,
+        req,
+      });
+      return PayloadAdapterResultManager.ok(user);
+    } catch (error) {
+      LoggerV2.error(error);
+      const baseError = PayloadCmsErrorTranslator.toBaseError(error, USER_ERROR_MESSAGE.notFound);
+      return PayloadAdapterResultManager.fail(baseError);
+    }
+  },
+
+  getUserWithHiddenField: async (id: number): Promise<GetUserWithHiddenFieldResponse> => {
+    try {
+      const payload = await getPayload();
+      const req = getTransactionContextFromStore();
+      const user = await payload.findByID({
+        collection: 'users',
+        depth: 0,
+        id,
+        showHiddenFields: true,
         req,
       });
       return PayloadAdapterResultManager.ok(user);

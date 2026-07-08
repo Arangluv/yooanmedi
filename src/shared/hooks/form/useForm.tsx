@@ -1,10 +1,11 @@
 'use client';
 
-import { useForm as useBaseForm, UseFormProps, FieldValues } from 'react-hook-form';
+import { useForm as useBaseForm, UseFormProps, FieldValues, UseFormReturn } from 'react-hook-form';
 import { useFieldErrors } from './useFieldErrors';
 
 export type FormSubmitHandler<FormData extends FieldValues> = (
   data: FormData,
+  helpers: UseFormReturn<FormData>,
 ) => void | Promise<void>;
 
 type Parameters<Form extends FieldValues> = UseFormProps<Form> & {
@@ -26,6 +27,6 @@ export function useForm<Form extends FieldValues>(parameters: Parameters<Form>) 
     setError,
     handleSubmit,
     getFieldError,
-    onSubmit: handleSubmit((data) => onSubmit(data)),
+    onSubmit: handleSubmit((data) => onSubmit(data, baseForm)),
   };
 }

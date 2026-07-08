@@ -21,10 +21,20 @@ export class UserApiRepository implements UserRepository {
 
   public async findById(id: number) {
     const result = await this.adapter.getUserById(id);
+
     if (!result.ok) {
       throw result.error;
     }
     return UserMapper.responseToUser(result.data);
+  }
+
+  public async findWithHiddenField(id: number) {
+    const result = await this.adapter.getUserWithHiddenField(id);
+
+    if (!result.ok) {
+      throw result.error;
+    }
+    return UserMapper.responseToUserWithHiddenField(result.data);
   }
 
   public async findMany(option: FindOption) {
