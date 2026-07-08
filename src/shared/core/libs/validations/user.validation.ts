@@ -33,7 +33,8 @@ export const doctorLicenseNumberValidation = z.string().transform((val) => val |
 
 export const requiredPhoneNumberValidation = z
   .string('휴대폰 인증을 진행해주세요')
-  .refine((val) => val !== '', '주소를 입력해주세요');
+  .refine((val) => val !== '', '휴대폰 번호를 입력해주세요')
+  .refine((val) => !isNaN(parseInt(val)), '잘못된 휴대폰번호 형식입니다');
 export const faxNumberValidation = z.string().transform((val) => val || '');
 export const managerNumberValidation = z.string().transform((val) => val || '');
 

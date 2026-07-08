@@ -11,6 +11,7 @@ export class ModifyInfoMapper {
           faxNumber: form.faxNumber,
           managerNumber: form.managerNumber,
           contactEmail: form.email,
+          phoneNumber: form.phoneNumber,
           address: `${form.address} | ${form.addressDetail}`,
         },
       } as UpdateUserDto,

@@ -38,9 +38,8 @@ export const ModifyUserInfoForm = () => {
       point: user.point,
     },
     onSubmit: async (values) => {
-      const modifyInfoPromise = modifyMutateAsync(
-        ModifyInfoMapper.formToRequestDto(values, user.id),
-      );
+      const dto = ModifyInfoMapper.formToRequestDto(values, user.id);
+      const modifyInfoPromise = modifyMutateAsync(dto);
 
       toast.promise(modifyInfoPromise, {
         loading: '회원정보를 수정중입니다..',
@@ -69,6 +68,7 @@ export const ModifyUserInfoForm = () => {
             <Input
               label={{ content: '이메일' }}
               disabled={isPending}
+              isRequired
               {...register('email')}
               fieldError={{ errors: [getFieldError('email')] }}
             />
@@ -96,13 +96,13 @@ export const ModifyUserInfoForm = () => {
           </FieldGroupWrapper>
         </FieldSetWrapper>
         <FieldSeparator />
-        <FieldSetWrapper label={{ content: '연락처' }}>
+        <FieldSetWrapper label={{ content: '연락처' }} disabled={isPending}>
           <FieldGroupWrapper className="flex-row">
             <Input
               label={{ content: '휴대폰 번호' }}
-              disabled
-              readOnly
+              isRequired
               {...register('phoneNumber')}
+              fieldError={{ errors: [getFieldError('phoneNumber')] }}
             />
             <Input
               label={{ content: '실무자 연락처' }}
@@ -127,12 +127,14 @@ export const ModifyUserInfoForm = () => {
               label={{ content: '주소' }}
               description={{ content: '주소찾기를 통해 주소를 수정하실 수 있습니다' }}
               name={'address'}
+              isRequired
               disabled={isPending}
               control={control}
               fieldError={{ errors: [getFieldError('address')] }}
             />
             <Input
               label={{ content: '상세주소' }}
+              isRequired
               disabled={isPending}
               {...register('addressDetail')}
               fieldError={{ errors: [getFieldError('addressDetail')] }}

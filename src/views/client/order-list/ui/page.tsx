@@ -1,10 +1,10 @@
 import { type SearchParams } from 'nuqs/server';
 import { Divider } from '@heroui/react';
-import { QueryHydrationProvider } from '@/shared';
-import { Navbar } from '@/entities/order';
-import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { LoginHeader } from '@/widget/Header/LoginHeader';
 import { getClientOrderListApi } from '@/features/order/order-list';
 import { OrderListSearchParamsGenerator } from '@/features/order/order-list/infrastructure';
+import { ORDER_QUERY_KEYS } from '@/entities/order';
+import { QueryHydrationProvider } from '@/shared';
 import OrderListTitle from './OrderListTitle';
 import OrderListSearch from './OrderListSearch';
 import OrderList from './OrderList';
@@ -26,7 +26,7 @@ const ClientOrderListPage = async ({ searchParams }: PageProps) => {
   return (
     <QueryHydrationProvider initialData={result} queryKey={ORDER_QUERY_KEYS.list(safeSearchParmas)}>
       <div className="flex w-full flex-col">
-        <Navbar />
+        <LoginHeader />
         <div className="flex min-h-[calc(100vh-415px)] w-full justify-center">
           <div className="flex w-5xl flex-col gap-4">
             <OrderListTitle />

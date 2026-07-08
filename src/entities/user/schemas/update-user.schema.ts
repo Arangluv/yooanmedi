@@ -13,6 +13,7 @@ export const updateUserSchema = z.object({
       address: true,
       point: true,
       password: true,
+      phoneNumber: true,
     })
     .partial(),
 });

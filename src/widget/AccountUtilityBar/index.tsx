@@ -2,7 +2,6 @@
 
 import { formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';
-import Link from 'next/link';
 
 export const AccountUtilityBar = () => {
   const user = useAuthStore((state) => state.user);
@@ -14,10 +13,6 @@ export const AccountUtilityBar = () => {
         <span className="text-secondary text-[13px] font-bold">
           {user.hospitalName} <span className="text-muted-foreground font-normal">님</span>
         </span>
-        <span className="text-muted-foreground text-[13px]">|</span>
-        <Link className="text-muted-foreground text-[13px]" href={'/mypage/info'}>
-          마이페이지
-        </Link>
         <span className="text-muted-foreground text-[13px]">|</span>
         <span className="text-muted-foreground text-[13px]">
           보유 적립금 :{' '}

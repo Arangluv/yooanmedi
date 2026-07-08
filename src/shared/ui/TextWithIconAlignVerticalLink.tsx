@@ -1,21 +1,23 @@
-const TextWithIconAlignVertical = ({
+// todo :: refactor
+import Link from 'next/link';
+
+export const TextWithIconAlignVerticalLink = ({
   text,
   icon,
-  onClick,
+  href,
 }: {
   text: string;
   icon: React.ReactNode;
-  onClick: () => void;
+  href: string;
 }) => {
   return (
-    <button
+    <Link
+      href={href}
+      prefetch={false}
       className="hover:bg-muted flex cursor-pointer flex-col items-center gap-1 rounded-lg p-1"
-      onClick={onClick}
     >
       <span className="text-foreground/90">{icon}</span>
       <span className="text-foreground/90 text-[13px]">{text}</span>
-    </button>
+    </Link>
   );
 };
-
-export default TextWithIconAlignVertical;

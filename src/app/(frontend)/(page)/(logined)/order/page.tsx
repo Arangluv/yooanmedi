@@ -18,6 +18,8 @@ import {
 } from '@/features/product-list';
 import { ProductListSearchParamsGenerator } from '@/features/product-list/infrastructure';
 import { ProductListHydrator } from './_providers';
+import { TextWithIconAlignVerticalLink } from '@/shared/ui';
+import { User as UserIcon } from 'lucide-react';
 
 export default async function OrderPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const safeSearchParams = await ProductListSearchParamsGenerator.getSafeSearchParams(searchParams);
@@ -60,6 +62,11 @@ export default async function OrderPage({ searchParams }: { searchParams: Promis
               <div className="flex gap-2">
                 <CartDetailModalOpenTextButton />
                 <OrderLink />
+                <TextWithIconAlignVerticalLink
+                  icon={<UserIcon className="size-6" strokeWidth={1.5} />}
+                  text="마이페이지"
+                  href="/mypage/info"
+                />
               </div>
             </header>
           </div>

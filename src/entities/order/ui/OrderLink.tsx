@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { ScrollText } from 'lucide-react';
-
 import TextWithIconAlignVertical from '@/shared/ui/TextWithIconAlignVertical';
 
 const OrderLink = () => {

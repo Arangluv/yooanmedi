@@ -1,13 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { Header } from '@/widget/Header';
+import { LoginHeader } from '@/widget/Header/LoginHeader';
 import { Separator } from '@/shared/ui/shadcn';
 
 const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex w-full max-w-5xl flex-col gap-8">
-        <Header></Header>
+        <LoginHeader />
         <div className="flex w-full gap-8">
           <nav className="mr-4 flex h-full shrink-0 flex-col gap-4">
             <Link href={'/order'} className="text-muted-foreground/80 hover:text-primary text-lg">
