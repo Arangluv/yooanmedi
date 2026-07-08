@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { BaseError } from '@/shared';
 import { UserMapper } from '../../mapper';
-import { createUserResponseFixture } from '../fixtures';
+import { createUserEntityFixture } from '../fixtures';
 import { userSchema, userListSchema } from '../../schemas';
 
 describe('User Mappter', () => {
   describe('responseToUser', () => {
     it('Adapter Response가 User로 파싱된다', () => {
       // Given
-      const responseResult = createUserResponseFixture();
+      const responseResult = createUserEntityFixture();
 
       // When
       const result = UserMapper.responseToUser(responseResult);
@@ -19,7 +19,7 @@ describe('User Mappter', () => {
 
     it('Adapter Response에 프로퍼티가 추가되어도 User로 파싱된다', () => {
       // Given
-      const responseResult = { ...createUserResponseFixture(), collections: 'users' };
+      const responseResult = { ...createUserEntityFixture(), collections: 'users' };
 
       // When
       const result = UserMapper.responseToUser(responseResult);
@@ -41,9 +41,9 @@ describe('User Mappter', () => {
     it('Adapter Response가 User[]로 파싱된다', () => {
       // Given
       const responseResult = [
-        createUserResponseFixture({ id: 1 }),
-        createUserResponseFixture({ id: 2 }),
-        createUserResponseFixture({ id: 3 }),
+        createUserEntityFixture({ id: 1 }),
+        createUserEntityFixture({ id: 2 }),
+        createUserEntityFixture({ id: 3 }),
       ];
 
       // When

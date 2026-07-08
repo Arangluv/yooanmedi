@@ -1,6 +1,5 @@
 export {
-  UserFixtures,
-  baseUserResponseFixture,
   createUserFixture,
-  createUserResponseFixture,
+  createUserEntityFixture,
+  createUserWithHiddenFieldFixture,
 } from './user.fixture';

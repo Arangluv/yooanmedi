@@ -98,7 +98,7 @@ export const useOrderDetail = (orderId: number) => {
     getCancelledProductContext,
     deliveryInfo: {
       address: result.data.user.address,
-      orderRequest: result.data.orderRequest || '요청사항 없음',
+      orderRequest: result.data.orderRequest || '요청사항이 없습니다',
     },
     paymentsInfo: {
       paymentMethod: PAYMENTS_METHOD_NAME[result.data.paymentsMethod],

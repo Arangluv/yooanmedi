@@ -1,29 +1,25 @@
-import { User, UserEntity } from '../../types';
+import { User, UserEntity, UserWithHiddenField } from '../../types';
 import { USER_ROLE } from '../../constants';
 
-export const UserFixtures = {
-  valid: {
-    basic: {
-      id: 3,
-      role: USER_ROLE.client,
-      isApproved: true,
-      point: 81576,
-      ceo: '테스트',
-      hospitalName: '테스트병원',
-      doctorLicenseNumber: '1',
-      businessNumber: '1234567891',
-      nursingNumber: '12345679',
-      address: '테스트 주소',
-      contactEmail: 'test0001@gmail.com',
-      phoneNumber: '01012345678',
-      faxNumber: '',
-      email: 'test@gmail.com',
-      username: 'testUserName',
-    },
-  },
+const baseUserFixture: User = {
+  id: 3,
+  role: USER_ROLE.client,
+  isApproved: true,
+  point: 81576,
+  ceo: '테스트',
+  hospitalName: '테스트병원',
+  doctorLicenseNumber: '1',
+  businessNumber: '1234567891',
+  nursingNumber: '12345679',
+  address: '테스트 주소',
+  contactEmail: 'test0001@gmail.com',
+  phoneNumber: '01012345678',
+  faxNumber: '',
+  username: 'testUserName',
+  managerNumber: '01012345678',
 };
 
-export const baseUserResponseFixture = {
+const baseUserEntityFixture: UserEntity = {
   id: 3,
   role: USER_ROLE.client,
   isApproved: true,
@@ -42,20 +38,36 @@ export const baseUserResponseFixture = {
   createdAt: '2025-12-31T05:22:06.431Z',
   email: 'test@gmail.com',
   username: 'testUserName',
-} as UserEntity;
+  managerNumber: '01027307891',
+};
+
+const baseUserWithHiddenFieldFixture: UserWithHiddenField = {
+  ...baseUserFixture,
+  salt: 'test-salt',
+  hash: 'test-hash',
+};
 
 export const createUserFixture = (override?: Partial<User>): User => {
   return {
-    ...UserFixtures.valid.basic,
+    ...baseUserFixture,
     ...override,
   };
 };
 
-export const createUserResponseFixture = (
-  override?: Partial<typeof baseUserResponseFixture>,
+export const createUserWithHiddenFieldFixture = (
+  override?: Partial<UserWithHiddenField>,
+): UserWithHiddenField => {
+  return {
+    ...baseUserWithHiddenFieldFixture,
+    ...override,
+  };
+};
+
+export const createUserEntityFixture = (
+  override?: Partial<typeof baseUserEntityFixture>,
 ): UserEntity => {
   return {
-    ...baseUserResponseFixture,
+    ...baseUserEntityFixture,
     ...override,
   };
 };

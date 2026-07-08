@@ -1,42 +1,30 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PayloadAdapterFailureResult, PayloadAdapterSuccessResult } from '@/shared/server';
-import { BaseError, FindOption } from '@/shared';
+import { TestErrorHelper, BaseError, FindOption } from '@/shared';
+import { PayloadAdapterResultManager } from '@/shared/server';
 import { MockUserAdapter } from '../mocks';
-import { baseUserResponseFixture, createUserResponseFixture } from '../fixtures';
-import { UserApiRepository } from '../../infrastructure/repository';
+import { createUserEntityFixture } from '../fixtures';
+import { UserApiRepository } from '../../infrastructure';
 import { userSchema } from '../../schemas';
 import { UpdateUserDto } from '../../dto';
-import { UserEntity } from '../../types';
 
 describe('User Api Repository', () => {
   let userApiRepository: UserApiRepository;
   let mockUserAdapter: ReturnType<typeof MockUserAdapter>;
-  let successAdapterUserResponse: PayloadAdapterSuccessResult<UserEntity>;
-  let failAdapterUserResponse: PayloadAdapterFailureResult;
 
   beforeEach(() => {
     mockUserAdapter = MockUserAdapter();
     userApiRepository = new UserApiRepository(mockUserAdapter);
-    successAdapterUserResponse = {
-      ok: true,
-      data: baseUserResponseFixture,
-    };
-    failAdapterUserResponse = {
-      ok: false,
-      error: new BaseError({
-        clientMsg: 'Test Error',
-        errorName: 'TestErrorFailError',
-      }),
-    };
   });
 
   describe('getUserByHeader', () => {
     it('유저 정보를 가져오는데 성공한다', async () => {
       // Given
-      vi.mocked(mockUserAdapter.getUserByHeader).mockResolvedValue({
-        ...successAdapterUserResponse,
-        collectios: 'users',
-      });
+      vi.mocked(mockUserAdapter.getUserByHeader).mockResolvedValue(
+        PayloadAdapterResultManager.ok({
+          ...createUserEntityFixture(),
+          collection: 'users',
+        }),
+      );
 
       // When
       const result = await userApiRepository.findByHeader();
@@ -48,7 +36,9 @@ describe('User Api Repository', () => {
 
     it('유저 정보를 가져오는데 실패하면 BaseError를 throw한다', async () => {
       // Given
-      vi.mocked(mockUserAdapter.getUserByHeader).mockResolvedValue(failAdapterUserResponse);
+      vi.mocked(mockUserAdapter.getUserByHeader).mockResolvedValue(
+        PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+      );
 
       // When & Then
       await expect(() => userApiRepository.findByHeader()).rejects.toThrow(BaseError);
@@ -59,7 +49,9 @@ describe('User Api Repository', () => {
     it('유저 정보를 가져오는데 성공한다', async () => {
       // Given
       const targetUserId = 3;
-      vi.mocked(mockUserAdapter.getUserById).mockResolvedValue(successAdapterUserResponse);
+      vi.mocked(mockUserAdapter.getUserById).mockResolvedValue(
+        PayloadAdapterResultManager.ok(createUserEntityFixture()),
+      );
 
       // When
       const result = await userApiRepository.findById(targetUserId);
@@ -72,7 +64,9 @@ describe('User Api Repository', () => {
     it('유저 정보를 가져오는데 실패하면 BaseError를 throw한다', async () => {
       // Given
       const targetUserId = 3;
-      vi.mocked(mockUserAdapter.getUserById).mockResolvedValue(failAdapterUserResponse);
+      vi.mocked(mockUserAdapter.getUserById).mockResolvedValue(
+        PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+      );
 
       // When & Then
       await expect(() => userApiRepository.findById(targetUserId)).rejects.toThrow(BaseError);
@@ -83,33 +77,27 @@ describe('User Api Repository', () => {
     it('유저 리스트를 가져오는데 성공한다', async () => {
       // Given
       const option = {} as FindOption;
-      const mockSuccessResult = {
-        ok: true,
-        data: [
-          createUserResponseFixture(),
-          createUserResponseFixture(),
-          createUserResponseFixture(),
-        ],
-      } as PayloadAdapterSuccessResult<UserEntity[]>;
-
-      vi.mocked(mockUserAdapter.getUserList.mockResolvedValue(mockSuccessResult));
+      vi.mocked(
+        mockUserAdapter.getUserList.mockResolvedValue(
+          PayloadAdapterResultManager.ok([
+            createUserEntityFixture({ id: 1 }),
+            createUserEntityFixture({ id: 2 }),
+          ]),
+        ),
+      );
       // When
       const result = await userApiRepository.findMany(option);
 
       // Then
       expect(result).instanceOf(Array);
-      expect(result.length).toBe(3);
+      expect(result.length).toBe(2);
       expect(result[0]).toEqual(expect.schemaMatching(userSchema));
     });
 
     it('User Adapter의 data가 빈 배열인 경우, 빈 배열을 반환한다', async () => {
       // Given
       const option = {} as FindOption;
-      const mockSuccessResult = {
-        ok: true,
-        data: [],
-      } as PayloadAdapterSuccessResult<UserEntity[]>;
-      vi.mocked(mockUserAdapter.getUserList.mockResolvedValue(mockSuccessResult));
+      vi.mocked(mockUserAdapter.getUserList.mockResolvedValue(PayloadAdapterResultManager.ok([])));
 
       // When
       const result = await userApiRepository.findMany(option);
@@ -122,7 +110,9 @@ describe('User Api Repository', () => {
     it('유저 리스트를 가져오는데 실패하면 BaseError를 throw한다', async () => {
       // Given
       const option = {} as FindOption;
-      vi.mocked(mockUserAdapter.getUserList).mockResolvedValue(failAdapterUserResponse);
+      vi.mocked(mockUserAdapter.getUserList).mockResolvedValue(
+        PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+      );
 
       // When & Then
       await expect(() => userApiRepository.findMany(option)).rejects.toThrow(BaseError);
@@ -138,7 +128,11 @@ describe('User Api Repository', () => {
           point: 300,
         },
       } as UpdateUserDto;
-      vi.mocked(mockUserAdapter.updateUser.mockResolvedValue(successAdapterUserResponse));
+      vi.mocked(
+        mockUserAdapter.updateUser.mockResolvedValue(
+          PayloadAdapterResultManager.ok(createUserEntityFixture()),
+        ),
+      );
 
       // When
       const result = await userApiRepository.update(updateDto);
@@ -156,7 +150,11 @@ describe('User Api Repository', () => {
           point: 300,
         },
       } as UpdateUserDto;
-      vi.mocked(mockUserAdapter.updateUser.mockResolvedValue(failAdapterUserResponse));
+      vi.mocked(
+        mockUserAdapter.updateUser.mockResolvedValue(
+          PayloadAdapterResultManager.fail(TestErrorHelper.generateAdapterError()),
+        ),
+      );
 
       // When & Then
       await expect(() => userApiRepository.update(updateDto)).rejects.toThrow(BaseError);

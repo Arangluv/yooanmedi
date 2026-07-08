@@ -63,7 +63,7 @@ export type {
   Product as PayloadProduct,
   ProductCategory as PayloadProductCategory,
   User as PayloadUser,
-  PointHistory as PayloadPointHistory,
+  PointTransaction as PayloadPointHistory,
   OrderProduct as PayloadOrderProduct,
   OrderProductSelect as PayloadOrderProductSelect,
   RecentPurchasedHistory as PayloadPurchasedHistory,
@@ -78,6 +78,7 @@ export type {
   Popup as PayloadPopup,
   Banner as PayloadBanner,
   MetaSetting as PayloadMetaSetting,
+  File as PayloadFile,
 } from './types';
 
 // ui

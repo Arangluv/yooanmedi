@@ -1,16 +1,19 @@
-export interface BaseErrorOptions {
+export interface BaseErrorOptions<TData = unknown> {
   clientMsg: string;
   devMsg?: string;
   errorName: string;
+  data?: TData | null;
 }
 
-export class BaseError extends Error {
+export class BaseError<TData = unknown> extends Error {
   protected devMsg?: string;
+  protected data?: TData | null;
 
-  constructor(options: BaseErrorOptions) {
+  constructor(options: BaseErrorOptions<TData>) {
     super(options.clientMsg);
     this.devMsg = options.devMsg;
     this.name = options.errorName;
+    this.data = options?.data ?? null;
   }
 
   static validationError({ clientMsg, devMsg }: { clientMsg: string; devMsg?: string }): BaseError {
@@ -23,6 +26,10 @@ export class BaseError extends Error {
 
   public getDevMessage(): string {
     return this.devMsg ?? '';
+  }
+
+  public getErrorData(): TData | null {
+    return this.data ?? null;
   }
 }
 

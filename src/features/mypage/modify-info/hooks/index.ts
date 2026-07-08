@@ -1,0 +1,1 @@
+export { useModifyInfoMutation } from './useModifyInfoMutation';

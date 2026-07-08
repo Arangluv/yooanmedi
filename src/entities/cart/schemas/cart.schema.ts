@@ -17,3 +17,7 @@ export const cartSchema = z.object({
     }),
   ),
 });
+
+export const operatorResultCartSchema = cartSchema.extend({
+  cartItems: z.literal(undefined),
+});

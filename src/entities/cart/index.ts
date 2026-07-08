@@ -11,7 +11,7 @@ export { type CartRepository } from './core';
 export { cartSchema } from './schemas';
 
 // type
-export type { Cart, CartEntity } from './types';
+export type { Cart, CartEntity, OperatorResultCart } from './types';
 
 // lib
 export { DeliveryFeeManager } from './libs';

@@ -55,6 +55,8 @@ supabase/
 
 # Dev
 dev/
-
+src/stories/
 # pinboard
 .pinboard.json
+*storybook.log
+storybook-static

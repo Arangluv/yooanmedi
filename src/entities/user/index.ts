@@ -8,7 +8,7 @@ export { USER_ROLE } from './constants';
 export { type UserRepository } from './core';
 
 // dto
-export { type UpdateUserDto } from './dto';
+export type { UpdateUserDto, CreateClientRequestDto } from './dto';
 
 // hooks
 export { useAuthStore } from './hooks';
@@ -17,10 +17,16 @@ export { useAuthStore } from './hooks';
 export { UserMapper } from './mapper';
 
 // schema
-export { userSchema, userListSchema, updateUserSchema } from './schemas';
+export {
+  userSchema,
+  userSchemaWithHiddenField,
+  userListSchema,
+  updateUserSchema,
+  createClientSchema,
+} from './schemas';
 
 // types
-export type { User } from './types';
+export type { User, UserWithHiddenField } from './types';
 
 // providers
 export { AuthGuard } from './providers';

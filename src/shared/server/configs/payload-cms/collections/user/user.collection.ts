@@ -307,6 +307,18 @@ export const user: CollectionConfig = {
           },
           defaultValue: '',
         },
+        {
+          type: 'text',
+          name: 'managerNumber',
+          label: '실무자 번호',
+          admin: {
+            width: '33.33%',
+            condition: (data, siblingData) => {
+              return siblingData.role === 'client';
+            },
+          },
+          defaultValue: '',
+        },
       ],
     },
     {

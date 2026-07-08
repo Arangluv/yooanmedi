@@ -9,14 +9,15 @@ interface EndPointSuccessResultWithData<TData> {
   data: TData;
 }
 
-interface EndPointFailureResult {
+interface EndPointFailureResult<TErrorData = unknown> {
   isSuccess: false;
   message: string;
+  data?: TErrorData;
 }
 
-export type EndPointResult<TData = void> =
+export type EndPointResult<TData = void, TErrorData = unknown> =
   | (TData extends void ? EndPointSuccessResult : EndPointSuccessResultWithData<TData>)
-  | EndPointFailureResult;
+  | EndPointFailureResult<TErrorData>;
 
 // TODO :: will remove
 export const ok = (message: string = 'ok'): EndPointSuccessResult => ({
