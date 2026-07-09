@@ -3,7 +3,7 @@ import MainIcon1 from '@public/main_icon_1.png';
 import MainIcon2 from '@public/main_icon_2.png';
 import MainIcon3 from '@public/main_icon_3.png';
 import BgImage from '@public/v1_logo_small.png';
-import MainForm from './_components/MainForm';
+import MainForm from '../_components/MainForm';
 import CarouselBanner from '@/shared/ui/CarouselBanner';
 import { getBannerApi, GetBannerApiResponse } from '@/entities/banner';
 

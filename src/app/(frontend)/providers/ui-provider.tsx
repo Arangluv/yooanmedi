@@ -1,12 +1,13 @@
 'use client';
 
-import * as React from 'react';
+import React, { FC } from 'react';
 import { HeroUIProvider } from '@heroui/system';
+import { TooltipProvider } from '@/shared/ui/shadcn';
 import { useRouter } from 'next/navigation';
 
-export interface ProvidersProps {
+type Props = {
   children: React.ReactNode;
-}
+};
 
 declare module '@react-types/shared' {
   interface RouterConfig {
@@ -14,8 +15,12 @@ declare module '@react-types/shared' {
   }
 }
 
-export function Providers({ children }: ProvidersProps) {
+export const UIProvider: FC<Props> = ({ children }: Props) => {
   const router = useRouter();
 
-  return <HeroUIProvider navigate={router.push}>{children}</HeroUIProvider>;
-}
+  return (
+    <HeroUIProvider navigate={router.push}>
+      <TooltipProvider>{children}</TooltipProvider>
+    </HeroUIProvider>
+  );
+};
