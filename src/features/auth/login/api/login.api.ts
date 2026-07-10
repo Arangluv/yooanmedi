@@ -3,7 +3,7 @@
 import { login as payloadLogin } from '@payloadcms/next/auth';
 import { payloadConfig, getPayload } from '@/shared/infrastructure';
 
-export async function login(id: string, password: string) {
+export const loginApi = async (id: string, password: string) => {
   try {
     const payload = await getPayload();
 
@@ -55,4 +55,4 @@ export async function login(id: string, password: string) {
       throw new Error('아이디 또는 비밀번호가 올바르지 않습니다');
     }
   }
-}
+};

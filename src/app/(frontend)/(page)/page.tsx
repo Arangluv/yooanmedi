@@ -3,14 +3,14 @@ import MainIcon1 from '@public/main_icon_1.png';
 import MainIcon2 from '@public/main_icon_2.png';
 import MainIcon3 from '@public/main_icon_3.png';
 import BgImage from '@public/v1_logo_small.png';
-import MainForm from '../_components/MainForm';
+import { LoginForm } from '@/features/auth/login';
 import CarouselBanner from '@/shared/ui/CarouselBanner';
 import { getBannerApi, GetBannerApiResponse } from '@/entities/banner';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const bannerResponse = await getBannerApi(); // todo :: refactor
+  const bannerResponse = await getBannerApi();
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -25,7 +25,7 @@ export default async function HomePage() {
             className="w-full rounded-lg p-8"
             style={{ boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)' }}
           >
-            <MainForm />
+            <LoginForm />
           </div>
         </div>
       </div>

@@ -6,6 +6,8 @@ export {
   PRODUCT_LIST_QUERY_KEYS,
 } from './api';
 
+export { ProductListHydrator } from './providers';
+
 export {
   ProductAsideDetail,
   ProductCategotyNavigation,

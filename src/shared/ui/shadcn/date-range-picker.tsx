@@ -16,7 +16,7 @@ interface DateRangePickerProps {
   setDate: (date: DateRange | undefined) => void;
 }
 
-const DateRangePicker = ({ date, setDate }: DateRangePickerProps) => {
+export const DateRangePicker = ({ date, setDate }: DateRangePickerProps) => {
   const [timeZone, setTimeZone] = useState<string | undefined>('Asia/Seoul');
 
   useEffect(() => {
@@ -55,5 +55,3 @@ const DateRangePicker = ({ date, setDate }: DateRangePickerProps) => {
     </Popover>
   );
 };
-
-export default DateRangePicker;

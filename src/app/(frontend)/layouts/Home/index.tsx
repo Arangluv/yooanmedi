@@ -1,30 +1,11 @@
 import '../../../globals.css';
-import { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import React from 'react';
 import { Toaster } from 'sonner';
 import { Check, Info } from 'lucide-react';
 import { Footer } from '@/widget/Footer';
-import { siteConfig } from '@/shared';
 import { UIProvider, TanstackQueryProvider } from '../../providers';
 import { getPopup, PopupModal } from '@/entities/popup';
-
-export const metadata: Metadata = {
-  title: siteConfig.title,
-  description: siteConfig.description,
-  other: {
-    'naver-site-verification': siteConfig.naverSiteVerification,
-  },
-};
-
-export const viewport: Viewport = {
-  width: 1280,
-  userScalable: false,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
-  ],
-};
 
 const siteFont = localFont({
   src: [

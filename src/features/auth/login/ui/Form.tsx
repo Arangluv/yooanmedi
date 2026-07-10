@@ -12,13 +12,13 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
-import { login } from '@/app/(frontend)/actions';
+import { loginApi } from '../api';
 import { BrandLogo } from '@/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 
-export default function MainForm() {
+export const LoginForm = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [content, setContent] = useState<React.ReactNode>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +26,7 @@ export default function MainForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: loginMutation } = useMutation({
-    mutationFn: ({ id, password }: { id: string; password: string }) => login(id, password),
+    mutationFn: ({ id, password }: { id: string; password: string }) => loginApi(id, password),
     onSuccess: (data: { success: boolean; message: string }) => {
       setIsLoading(false);
       if (!data.success) {
@@ -191,9 +191,9 @@ export default function MainForm() {
       </Modal>
     </>
   );
-}
+};
 
-function ErrorContent({ error }: { error: string }) {
+const ErrorContent = ({ error }: { error: string }) => {
   return (
     <div className="flex flex-col">
       <p className="text-foreground-700 text-[15px]">
@@ -201,4 +201,4 @@ function ErrorContent({ error }: { error: string }) {
       </p>
     </div>
   );
-}
+};

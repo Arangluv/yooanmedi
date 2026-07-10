@@ -4,12 +4,11 @@ import { payloadConfig } from '@/shared/server';
 import '@payloadcms/next/css';
 import type { ServerFunctionClient } from 'payload';
 import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts';
-import QueryProvider from '../(frontend)/query-provider';
+import { TanstackQueryProvider } from '../(frontend)/providers/tanstack-query-provider.jsx';
 import React from 'react';
 import { importMap } from './admin/importMap.js';
 import './payloadStyles.css';
 import './custom.scss';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NuqsProvider } from '@/shared';
 
 type Args = {
@@ -27,10 +26,9 @@ const serverFunction: ServerFunctionClient = async function (args) {
 
 const Layout = ({ children }: Args) => (
   <RootLayout config={payloadConfig} importMap={importMap} serverFunction={serverFunction}>
-    <QueryProvider>
+    <TanstackQueryProvider>
       <NuqsProvider>{children}</NuqsProvider>
-      <ReactQueryDevtools />
-    </QueryProvider>
+    </TanstackQueryProvider>
   </RootLayout>
 );
 
