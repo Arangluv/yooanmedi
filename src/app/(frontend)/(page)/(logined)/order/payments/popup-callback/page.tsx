@@ -1,7 +1,3 @@
-import { PaymentsPopupCallbackPage } from '@/views/client/payments';
+import { PaymentsPopupCallbackPage } from '@/views/client/OrderPage/PaymentsPage/PopupCallbackPage';
 
-const PopupCallbackPage = () => {
-  return <PaymentsPopupCallbackPage />;
-};
-
-export default PopupCallbackPage;
+export default PaymentsPopupCallbackPage;

@@ -1,7 +1,3 @@
-import { PaymentPage } from '@/views/client/payments';
-
-const PaymentsPage = () => {
-  return <PaymentPage />;
-};
+import { PaymentsPage } from '@/views/client/OrderPage/PaymentsPage';
 
 export default PaymentsPage;

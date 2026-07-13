@@ -1,4 +1,4 @@
-import { LoginLayout } from '@/app/(frontend)/layouts/LoginLayout.tsx';
+import { LoginLayout } from '@/app/(frontend)/layouts/LoginLayout';
 
 export const dynamic = 'force-dynamic';
 

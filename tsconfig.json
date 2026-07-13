@@ -36,7 +36,11 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/entities/purchased-history",
-    "src/features/payments/model/schemas/payments-context/pg.schema.ts"
-, "src/shared/core/libs/payload-adapter-result", "src/shared/ui/inputs/Button/index.tss", "src/shared/ui/displays/BloackingLoader"  ],
+    "src/features/payments/model/schemas/payments-context/pg.schema.ts",
+    "src/shared/core/libs/payload-adapter-result",
+    "src/shared/ui/inputs/Button/index.tss",
+    "src/shared/ui/displays/BloackingLoader",
+    "src/app/(frontend)/layouts/LoginLayout"
+  ],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-
 import { Button, NumberInput, Divider } from '@heroui/react';
 import { ChevronRight } from 'lucide-react';
 import { usePrice } from '@/entities/price';
