@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import Link from 'next/link';
 import { ScrollText, User } from 'lucide-react';
-import { BrandLogo } from '@/shared';
+import { BrandLogoImageWithFullSize } from '@/shared/ui/brand-logo';
 import { TextWithIconAlignVerticalLink } from '@/shared/ui';
 import { CartDetailModalOpenTextButton } from '@/features/cart-detail';
 
@@ -10,7 +10,7 @@ export const LoginHeader: FC = () => {
     <header className="border-foreground-200 flex w-full items-center justify-center border-b-1 py-6">
       <div className="flex w-5xl items-center justify-between">
         <Link href="/order" prefetch={false}>
-          <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
+          <BrandLogoImageWithFullSize width={140} height={40} className="h-[40px] w-[140px]" />
         </Link>
         <div className="flex gap-2">
           <CartDetailModalOpenTextButton />

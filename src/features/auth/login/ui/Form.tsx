@@ -13,7 +13,7 @@ import {
 } from '@heroui/react';
 import { useMutation } from '@tanstack/react-query';
 import { loginApi } from '../api';
-import { BrandLogo } from '@/shared';
+import { BrandLogoImageWithFullSize } from '@/shared/ui/brand-logo';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
@@ -59,7 +59,7 @@ export const LoginForm = () => {
         {/* 로고 */}
         <div className="mb-8 flex w-full justify-center">
           <div className="h-[60px] w-[210px]">
-            <BrandLogo width={210} height={60} className="h-[60px] w-[210px]" />
+            <BrandLogoImageWithFullSize width={210} height={60} className="h-[60px] w-[210px]" />
           </div>
         </div>
         {/* 폼 */}

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import Link from 'next/link';
-import { BrandLogo } from '@/shared';
+import { BrandLogoImageWithFullSize } from '@/shared/ui/brand-logo';
 
 export const Header: FC = () => {
   return (
@@ -9,7 +9,7 @@ export const Header: FC = () => {
         <div className="flex h-[40px] w-[140px] items-center justify-center">
           <h1 className="sr-only">유안메디팜</h1>
           <Link href="/order" className="flex h-[40px] w-[140px] items-center justify-center">
-            <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
+            <BrandLogoImageWithFullSize width={140} height={40} className="h-[40px] w-[140px]" />
           </Link>
         </div>
       </nav>

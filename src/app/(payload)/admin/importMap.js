@@ -37,8 +37,8 @@ import { TableFeatureClient as TableFeatureClient_e70f5e05f09f93e00b997edb1ef0c8
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_c39be30a9f2d76895202e71dab5a55b0 } from '@/shared/ui/admin/sidebar/EmptyPayloadNav'
 import { default as default_aef67b4deff124b3ff804f69e784ddcb } from '@/shared/ui/admin/Header'
-import { HomeIcon as HomeIcon_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
-import { BrandLogoSmall as BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f } from '@/shared/ui/logos'
+import { HomeIcon as HomeIcon_871d21865f99c8494cd3963d69b0a982 } from '@/shared/ui/brand-logo'
+import { BrandLogoImageWithSquareSize as BrandLogoImageWithSquareSize_871d21865f99c8494cd3963d69b0a982 } from '@/shared/ui/brand-logo'
 import { default as default_0cb5b8c223db30118049548a6d9feb72 } from '@/shared/ui/admin/sidebar/sidebar-provider'
 import { default as default_67cd43dc2ce7b608e28b2da50527c106 } from '@/shared/ui/admin/toast/toast-provider'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
@@ -84,8 +84,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/shared/ui/admin/sidebar/EmptyPayloadNav#default": default_c39be30a9f2d76895202e71dab5a55b0,
   "@/shared/ui/admin/Header#default": default_aef67b4deff124b3ff804f69e784ddcb,
-  "@/shared/ui/logos#HomeIcon": HomeIcon_c4ed48037aede40cf46fe21deda1067f,
-  "@/shared/ui/logos#BrandLogoSmall": BrandLogoSmall_c4ed48037aede40cf46fe21deda1067f,
+  "@/shared/ui/brand-logo#HomeIcon": HomeIcon_871d21865f99c8494cd3963d69b0a982,
+  "@/shared/ui/brand-logo#BrandLogoImageWithSquareSize": BrandLogoImageWithSquareSize_871d21865f99c8494cd3963d69b0a982,
   "@/shared/ui/admin/sidebar/sidebar-provider#default": default_0cb5b8c223db30118049548a6d9feb72,
   "@/shared/ui/admin/toast/toast-provider#default": default_67cd43dc2ce7b608e28b2da50527c106,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,

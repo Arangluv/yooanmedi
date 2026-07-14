@@ -7,7 +7,7 @@ import { s3Storage } from '@payloadcms/storage-s3';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { Collections, getAllCollection } from './collections';
 import { getAllGlobal } from './globals';
-import { translations as ko } from '../../../assets/payload-translation';
+import { translations as ko } from './payload-translation';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -30,8 +30,8 @@ export default buildConfig({
         },
       },
       graphics: {
-        Icon: '@/shared/ui/logos#HomeIcon',
-        Logo: '@/shared/ui/logos#BrandLogoSmall',
+        Icon: '@/shared/ui/brand-logo#HomeIcon',
+        Logo: '@/shared/ui/brand-logo#BrandLogoImageWithSquareSize',
       },
       providers: [
         '@/shared/ui/admin/sidebar/sidebar-provider',

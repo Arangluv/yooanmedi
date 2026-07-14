@@ -21,15 +21,16 @@ import {
   paymentsMethodUsedCard,
   paymentsMethodUsedBankTransfer,
 } from './payments.base.schema';
-import { pgCnoFixture } from '../../__mock__/base.fixture';
 import { generate15digitsNumberBasedOnDate, generateUUID32digits } from '@/shared';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
 
 describe('PaymentsBaseSchema', () => {
   describe('pgCno', () => {
+    const testPgCno = '12345678901234567890';
+
     it('데이터 파싱에 성공한다', () => {
-      const result = pgCno.safeParse(pgCnoFixture);
+      const result = pgCno.safeParse(testPgCno);
       expect(result.success).toBe(true);
     });
 

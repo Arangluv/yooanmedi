@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { User as UserIcon } from 'lucide-react';
-import { BaseError, BrandLogo } from '@/shared';
+import { BaseError } from '@/shared';
+import { BrandLogoImageWithFullSize } from '@/shared/ui/brand-logo';
 import { TextWithIconAlignVerticalLink } from '@/shared/ui';
 import OrderLink from '@/entities/order/ui/OrderLink';
 import { getProductCategoriesApi } from '@/entities/product';
@@ -61,7 +62,11 @@ export const OrderPage = async ({ searchParams }: Props) => {
             <div className="h-full w-5xl">
               <header className="relative flex h-full w-full items-center justify-between">
                 <Link href="/order" prefetch={false}>
-                  <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
+                  <BrandLogoImageWithFullSize
+                    width={140}
+                    height={40}
+                    className="h-[40px] w-[140px]"
+                  />
                 </Link>
                 {/* search area */}
                 <ProductSearchForm />

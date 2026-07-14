@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { AuthGuard } from '@/entities/user';
-import { NuqsProvider, SiteMetadataSetter } from '@/shared';
+import { SiteMetadataSetter } from '@/shared';
 import { AccountUtilityBar } from '@/widget/AccountUtilityBar';
 import { CartDetailHydrator, getCartApi } from '@/features/cart-detail';
 import { getFavoriteProductsApi, getFavoritesApi } from '@/features/favorites';
@@ -29,7 +30,7 @@ export const LoginLayout: FC<Props> = async ({ children }: Props) => {
     <AuthGuard user={user}>
       {/* TODO :: Refactor -> Provider의 Depth가 깊어지는 문제 (전역상태관리 모범사례 참고) */}
       <SiteMetadataSetter mataSettingResponse={siteMetaSettingResponse}>
-        <NuqsProvider>
+        <NuqsAdapter>
           <AccountUtilityBar />
           <CartDetailHydrator initialData={cart}>
             <FavoritesHydrator initialData={favoritesResponse}>
@@ -38,7 +39,7 @@ export const LoginLayout: FC<Props> = async ({ children }: Props) => {
               </FavoriteProductsHydrator>
             </FavoritesHydrator>
           </CartDetailHydrator>
-        </NuqsProvider>
+        </NuqsAdapter>
       </SiteMetadataSetter>
     </AuthGuard>
   );

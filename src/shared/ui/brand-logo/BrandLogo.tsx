@@ -1,10 +1,12 @@
+import Image from 'next/image';
 import { SVGProps } from 'react';
+import { Home } from 'lucide-react';
 
 type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
-export const Logo: React.FC<IconSvgProps> = ({ size = 36, width, height, ...props }) => (
+export const BrandLogoIcon: React.FC<IconSvgProps> = ({ size = 36, width, height, ...props }) => (
   <svg
     version="1.1"
     id="Layer_1"
@@ -15,6 +17,7 @@ export const Logo: React.FC<IconSvgProps> = ({ size = 36, width, height, ...prop
     viewBox="0 0 800 129"
     style={{ background: 'new 0 0 800 129' }}
     xmlSpace="preserve"
+    {...props}
   >
     <g>
       <path
@@ -74,3 +77,45 @@ export const Logo: React.FC<IconSvgProps> = ({ size = 36, width, height, ...prop
     </g>
   </svg>
 );
+
+export const BrandLogoImageWithFullSize = ({
+  width = 140,
+  height = 40,
+  className = '',
+}: {
+  width: number;
+  height: number;
+  className: string;
+}) => {
+  return (
+    <div className={className}>
+      <Image src={'/v1_logo_full.png'} alt="brand logo" width={width} height={height} unoptimized />
+    </div>
+  );
+};
+
+export const BrandLogoImageWithSquareSize = ({
+  width = 100,
+  height = 100,
+  className = '',
+}: {
+  width: number;
+  height: number;
+  className: string;
+}) => {
+  return (
+    <div className={className}>
+      <Image
+        src={'/v1_logo_small.png'}
+        alt="brand logo"
+        width={width}
+        height={height}
+        unoptimized
+      />
+    </div>
+  );
+};
+
+export const HomeIcon = () => {
+  return <Home className="text-foreground-600 h-5 w-5" />;
+};

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { FC } from 'react';
-import { BrandLogo } from '@/shared';
+import { BrandLogoImageWithFullSize } from '@/shared/ui/brand-logo';
 import { Landmark } from 'lucide-react';
 
 export const Footer: FC = () => {
@@ -11,7 +11,7 @@ export const Footer: FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-2">
             <div className="h-[40px] w-[140px]">
-              <BrandLogo width={140} height={40} className="h-[40px] w-[140px]" />
+              <BrandLogoImageWithFullSize width={140} height={40} className="h-[40px] w-[140px]" />
             </div>
             <span className="text-foreground-600 text-[13px]">
               Made by{' '}

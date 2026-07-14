@@ -25,5 +25,3 @@ export {
 } from './constants';
 
 export { ORDER_QUERY_KEYS } from './api';
-
-export { default as Navbar } from './ui/Navbar';
