@@ -3,8 +3,8 @@ import localFont from 'next/font/local';
 import React from 'react';
 import { Toaster } from 'sonner';
 import { Check, Info } from 'lucide-react';
+import { UIProvider, TanstackQueryProvider } from '@/app/providers';
 import { Footer } from '@/widget/Footer';
-import { UIProvider, TanstackQueryProvider } from '../../providers';
 import { getPopup, PopupModal } from '@/entities/popup';
 
 const siteFont = localFont({

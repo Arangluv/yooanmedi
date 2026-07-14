@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -30,17 +29,6 @@
     },
     "target": "ES2022"
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/entities/purchased-history",
-    "src/features/payments/model/schemas/payments-context/pg.schema.ts",
-    "src/shared/core/libs/payload-adapter-result",
-    "src/shared/ui/inputs/Button/index.tss",
-    "src/shared/ui/displays/BloackingLoader",
-    "src/app/(frontend)/layouts/LoginLayout"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
