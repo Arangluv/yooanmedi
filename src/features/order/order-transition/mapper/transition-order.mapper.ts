@@ -1,4 +1,4 @@
-import { PAYMENTS_METHOD, zodSafeParse, ZodSchemaParser } from '@/shared';
+import { PAYMENTS_METHOD, ZodSchemaParser } from '@/shared';
 import { Order } from '@/entities/order';
 import { OrderProduct } from '@/entities/order-product';
 import { PointItem, pointItemSchema } from '@/entities/point';
