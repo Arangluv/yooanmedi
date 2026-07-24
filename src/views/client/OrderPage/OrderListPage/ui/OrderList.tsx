@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { ImageIcon, Info } from 'lucide-react';
 import { Divider } from '@heroui/react';
 import { formatNumberWithCommas, PAYMENTS_METHOD, PAYMENTS_METHOD_NAME } from '@/shared';
@@ -59,7 +59,7 @@ const OrderItem = ({ order }: { order: ClientOrderListItem }) => {
         <div className="flex flex-col gap-1">
           <span className="text-foreground-500 text-sm">주문일시</span>
           <span className="text-foreground-600 text-sm font-bold">
-            {moment(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+            {dayjs(order.createdAt).format('YYYY-MM-DD HH:mm:ss')}
           </span>
         </div>
         <div className="flex flex-col gap-1">

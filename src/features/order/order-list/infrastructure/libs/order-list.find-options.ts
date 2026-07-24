@@ -1,5 +1,5 @@
 import { Where } from 'payload';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { FindOption } from '@/shared';
 import { User } from '@/entities/user';
 import {
@@ -33,8 +33,8 @@ export const OrderListFindOption = {
   }): FindOption => {
     const where: Where = {
       createdAt: {
-        greater_than_equal: moment(searchParams.from).hour(0).minute(0).second(0).toDate(),
-        less_than_equal: moment(searchParams.to).hour(23).minute(59).second(59).toDate(),
+        greater_than_equal: dayjs(searchParams.from).hour(0).minute(0).second(0).toDate(),
+        less_than_equal: dayjs(searchParams.to).hour(23).minute(59).second(59).toDate(),
       },
       user: {
         equals: user.id,

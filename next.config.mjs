@@ -1,4 +1,9 @@
-import { withPayload } from '@payloadcms/next/withPayload'
+import { withPayload } from '@payloadcms/next/withPayload';
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -16,10 +21,10 @@ const nextConfig = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
       '.mjs': ['.mts', '.mjs'],
-    }
+    };
 
-    return webpackConfig
+    return webpackConfig;
   },
-}
+};
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+export default withBundleAnalyzer(withPayload(nextConfig, { devBundleServerPackages: false }));

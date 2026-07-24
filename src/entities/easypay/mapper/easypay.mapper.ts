@@ -1,10 +1,9 @@
-import moment from 'moment';
 import crypto from 'crypto';
+import dayjs from 'dayjs';
 import {
   EASYPAY_CONFIG,
   generate15digitsNumberBasedOnDate,
   generateUUID32digits,
-  getNowYYYYMMDD,
   PAYMENTS_METHOD,
   ZodSchemaParser,
 } from '@/shared';
@@ -89,7 +88,7 @@ export class EasyPayMapper {
       data: {
         mallId: process.env.PAYMENTS_MID,
         shopTransactionId: generateUUID32digits(),
-        approvalReqDate: getNowYYYYMMDD(),
+        approvalReqDate: dayjs().format('YYYYMMDD'),
         authorizationId: dto.authorizationId,
         shopOrderNo: dto.shopOrderNo,
       } as EasyPayPaymentApprovalRequestEntity,
@@ -115,7 +114,7 @@ export class EasyPayMapper {
         shopTransactionId,
         msgAuthValue: hashedAuthMsg,
         reviseTypeCode: EASYPAY_CONFIG.cancelReviseType.partial,
-        cancelReqDate: moment.tz('Asia/Seoul').format('YYYYMMDD'),
+        cancelReqDate: dayjs().format('YYYYMMDD'),
       } as EasyPayPaymentCancelRequestEntity,
       errorMsg: '잘못된 결제등록 데이터입니다',
     });
@@ -139,7 +138,7 @@ export class EasyPayMapper {
         shopTransactionId,
         msgAuthValue: hashedAuthMsg,
         reviseTypeCode: EASYPAY_CONFIG.cancelReviseType.total,
-        cancelReqDate: moment.tz('Asia/Seoul').format('YYYYMMDD'),
+        cancelReqDate: dayjs().format('YYYYMMDD'),
       } as EasyPayPaymentCancelRequestEntity,
       errorMsg: '잘못된 결제등록 데이터입니다',
     });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { ORDER_STATUS } from '@/entities/order';
 import { OrderListSearchParamsFixtures } from '../fixtures';
 import { OrderListSearchParamsGenerator } from '../../infrastructure';
@@ -59,8 +59,8 @@ describe('OrderListSearchParamsGenerator', () => {
 
   describe('getClientSafeSearchParams', () => {
     const defaultSearchParams = {
-      from: moment().subtract(7, 'days').format('YYYYMMDD'),
-      to: moment().format('YYYYMMDD'),
+      from: dayjs().subtract(7, 'days').format('YYYYMMDD'),
+      to: dayjs().format('YYYYMMDD'),
       keyword: null,
       orderStatus: null,
     };

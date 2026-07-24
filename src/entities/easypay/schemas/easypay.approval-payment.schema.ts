@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { PaymentsBaseSchema, EASYPAY_CONFIG, BaseSchema } from '@/shared';
-import moment from 'moment';
+import { PaymentsBaseSchema, BaseSchema } from '@/shared';
 
 const basePaymentApprovalResultSchema = z.object({
   mallId: PaymentsBaseSchema.mallId,
@@ -12,21 +11,11 @@ const basePaymentApprovalResultSchema = z.object({
   msgAuthValue: z.string(),
   escrowUsed: z.string(),
   amount: PaymentsBaseSchema.amount,
-  transactionDate: z
-    .string('transactionDate는 비어있을 수 없습니다.')
-    .refine((val) => {
-      return moment(val, 'YYYYMMDDHHmmss').isValid();
-    }, 'transactionDate는 YYYYMMDDHHmmss 형식이어야 합니다.')
-    .transform((val) => moment(val, 'YYYYMMDDHHmmss').toISOString()),
+  transactionDate: z.string('transactionDate는 비어있을 수 없습니다.'),
   paymentInfo: z.object({
     payMethodTypeCode: z.string(), // ex: 11
     approvalNo: z.string(), // ex: 93674617
-    approvalDate: z
-      .string('approvalDate는 비어있을 수 없습니다.')
-      .refine((val) => {
-        return moment(val, 'YYYYMMDDHHmmss').isValid();
-      }, 'approvalDate는 14자리여야 합니다.')
-      .transform((val) => moment(val, 'YYYYMMDDHHmmss').toISOString()),
+    approvalDate: z.string('approvalDate는 비어있을 수 없습니다.'),
   }),
 });
 

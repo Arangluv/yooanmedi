@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { PAYMENT_STATUS_NAME, PaymentStatus } from '@/entities/order';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
 import { formatNumberWithCommas, PAYMENTS_METHOD_NAME } from '@/shared';
@@ -71,7 +71,7 @@ export const columns: ColumnDef<AdminOrderListItem>[] = [
     accessorKey: 'createdAt',
     header: '주문일시',
     cell: ({ row }) => {
-      return <div>{moment(row.original.createdAt).format('YYYY-MM-DD')}</div>;
+      return <div>{dayjs(row.original.createdAt).format('YYYY-MM-DD')}</div>;
     },
   },
   {

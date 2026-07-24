@@ -1,14 +1,14 @@
 'use client';
 
 import * as XLSX from 'xlsx-js-style'; // xlsx 대신 xlsx-js-style 사용
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 
 export default function OrderListExportButton({ data }: { data: any[] }) {
   const handleExport = () => {
     const workbook = XLSX.utils.book_new();
     const exportData = data.map((item, index) => ({
       번호: index + 1,
-      '주문 일시': moment(item.orderCreatedAt).format('YYYY-MM-DD'),
+      '주문 일시': dayjs(item.orderCreatedAt).format('YYYY-MM-DD'),
       상호명: item.user.hospitalName,
       상품명: item.product.name,
       '상품 가격': item.price,
@@ -66,7 +66,7 @@ export default function OrderListExportButton({ data }: { data: any[] }) {
     }
 
     XLSX.utils.book_append_sheet(workbook, worksheet, 'order_list');
-    XLSX.writeFile(workbook, `${moment().tz('Asia/Seoul').format('YYYYMMDDHHmmss')}_주문내역.xlsx`);
+    XLSX.writeFile(workbook, `${dayjs().format('YYYYMMDDHHmmss')}_주문내역.xlsx`);
   };
 
   return (

@@ -1,7 +1,6 @@
 import { parseAsInteger, parseAsString, parseAsStringLiteral, inferParserType } from 'nuqs';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { PAYMENTS_METHOD } from '@/shared';
-import { ServerSearchParamsAdapter } from '@/shared/server';
 import { ORDER_STATUS, PAYMENT_STATUS, FLG_STATUS } from '@/entities/order';
 
 /**
@@ -9,8 +8,8 @@ import { ORDER_STATUS, PAYMENT_STATUS, FLG_STATUS } from '@/entities/order';
  *
  */
 const BaseOrderListParserMap = {
-  from: parseAsString.withDefault(moment().subtract(7, 'days').format('YYYYMMDD')),
-  to: parseAsString.withDefault(moment().format('YYYYMMDD')),
+  from: parseAsString.withDefault(dayjs().subtract(7, 'days').format('YYYYMMDD')),
+  to: parseAsString.withDefault(dayjs().format('YYYYMMDD')),
   keyword: parseAsString, // product name
   orderStatus: parseAsStringLiteral(Object.values(ORDER_STATUS)),
   paymentStatus: parseAsStringLiteral(Object.values(PAYMENT_STATUS)),

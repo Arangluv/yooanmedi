@@ -1,7 +1,7 @@
 'use client';
 
-import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { formatNumberWithCommas } from '@/shared';
 import { getPurchasedHistories } from '../api';
 
@@ -42,7 +42,7 @@ export const RecentPurchasesTable = ({ user, product }: RecentPurchasesTableProp
           {result.data.map((item) => (
             <tr key={item.id} className="border-foreground-200 border-1 text-xs">
               <td className="border-foreground-200 border-r-1 py-1 text-center">
-                {moment(item.createdAt).format('YYYY-MM-DD')}
+                {dayjs(item.createdAt).format('YYYY-MM-DD')}
               </td>
               <td className="border-foreground-200 border-r-1 text-center">{item.quantity}</td>
               <td className="text-center">{formatNumberWithCommas(item.amount)}원</td>

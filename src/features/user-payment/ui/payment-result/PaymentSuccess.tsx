@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { CircleCheckBig } from 'lucide-react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { formatNumberWithCommas } from '@/shared';
 import { useAuthStore } from '@/entities/user';
 import { useCartMutation } from '@/features/cart-detail';
@@ -38,11 +38,7 @@ const PaymentSuccess = ({
         </div>
         <div className="flex w-full items-center justify-between">
           <span className="text-foreground-600">결제 일시 :</span>
-          <span>
-            {approvalDate
-              ? moment(approvalDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD HH:mm:ss')
-              : ''}
-          </span>
+          <span>{dayjs(approvalDate, 'YYYYMMDDHHmmss').format('YYYY-MM-DD HH:mm:ss')}</span>
         </div>
         <div className="flex w-full items-center justify-between">
           <span className="text-foreground-600">결제 금액 :</span>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import moment from 'moment';
+import dayjs from 'dayjs';
 import { parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { ORDER_STATUS, ORDER_STATUS_NAME } from '@/entities/order';
 
@@ -21,8 +22,8 @@ export const useOrderListSearchFilter = () => {
   );
 
   const [date, setDate] = useState<DateRange | undefined>({
-    from: moment().subtract(7, 'days').toDate(),
-    to: moment().toDate(),
+    from: dayjs().subtract(7, 'days').toDate(),
+    to: dayjs().toDate(),
   });
   const [pnKeyword, setPnKeyword] = useState<string>(filters.pn_keyword);
   const [orderStatus, setOrderStatus] = useState<keyof typeof ORDER_STATUS_NAME | null>(
@@ -43,8 +44,8 @@ export const useOrderListSearchFilter = () => {
 
   const resetFilters = () => {
     setFilters({
-      from: moment().format('YYYYMMDD'),
-      to: moment().format('YYYYMMDD'),
+      from: dayjs().format('YYYYMMDD'),
+      to: dayjs().format('YYYYMMDD'),
       pn_keyword: '',
       order_status: null,
     });
@@ -58,48 +59,48 @@ export const useOrderListSearchFilter = () => {
       setFilters({
         pn_keyword: '',
         order_status: null,
-        from: moment().subtract(7, 'days').format('YYYYMMDD'),
-        to: moment().format('YYYYMMDD'),
+        from: dayjs().subtract(7, 'days').format('YYYYMMDD'),
+        to: dayjs().format('YYYYMMDD'),
       });
     },
     onMonthClick: () => {
       setFilters({
         pn_keyword: '',
         order_status: null,
-        from: moment().subtract(1, 'month').format('YYYYMMDD'),
-        to: moment().format('YYYYMMDD'),
+        from: dayjs().subtract(1, 'month').format('YYYYMMDD'),
+        to: dayjs().format('YYYYMMDD'),
       });
     },
     onThreeMonthsClick: () => {
       setFilters({
         pn_keyword: '',
         order_status: null,
-        from: moment().subtract(3, 'months').format('YYYYMMDD'),
-        to: moment().format('YYYYMMDD'),
+        from: dayjs().subtract(3, 'months').format('YYYYMMDD'),
+        to: dayjs().format('YYYYMMDD'),
       });
     },
     onSixMonthsClick: () => {
       setFilters({
         pn_keyword: '',
         order_status: null,
-        from: moment().subtract(6, 'months').format('YYYYMMDD'),
-        to: moment().format('YYYYMMDD'),
+        from: dayjs().subtract(6, 'months').format('YYYYMMDD'),
+        to: dayjs().format('YYYYMMDD'),
       });
     },
     onYearClick: () => {
       setFilters({
         pn_keyword: '',
         order_status: null,
-        from: moment().subtract(1, 'year').format('YYYYMMDD'),
-        to: moment().format('YYYYMMDD'),
+        from: dayjs().subtract(1, 'year').format('YYYYMMDD'),
+        to: dayjs().format('YYYYMMDD'),
       });
     },
   };
 
   const search = () => {
     setFilters({
-      from: moment(date?.from).format('YYYYMMDD'),
-      to: moment(date?.to).format('YYYYMMDD'),
+      from: dayjs(date?.from).format('YYYYMMDD'),
+      to: dayjs(date?.to).format('YYYYMMDD'),
       pn_keyword: pnKeyword,
       order_status: orderStatus,
     });
@@ -107,8 +108,8 @@ export const useOrderListSearchFilter = () => {
 
   useEffect(() => {
     setDate({
-      from: filters.from ? moment(filters.from).toDate() : moment().subtract(7, 'days').toDate(),
-      to: filters.to ? moment(filters.to).toDate() : moment().toDate(),
+      from: filters.from ? dayjs(filters.from).toDate() : dayjs().subtract(7, 'days').toDate(),
+      to: filters.to ? dayjs(filters.to).toDate() : dayjs().toDate(),
     });
     setPnKeyword(filters.pn_keyword ?? '');
     setOrderStatus(filters.order_status ?? null);

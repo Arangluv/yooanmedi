@@ -6,8 +6,6 @@ export {
   type PaymentsMethod,
 } from './config';
 export {
-  getNowYYYYMMDD,
-  getNowISOString,
   formatNumberWithCommas,
   generateUUID32digits,
   generate15digitsNumberBasedOnDate,

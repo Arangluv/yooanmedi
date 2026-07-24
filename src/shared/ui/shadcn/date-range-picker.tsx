@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { type DateRange } from 'react-day-picker';
 import { CalendarIcon } from 'lucide-react';
 import { ko } from 'date-fns/locale';
@@ -39,10 +39,10 @@ export const DateRangePicker = ({ date, setDate }: DateRangePickerProps) => {
           {date?.from ? (
             date.to ? (
               <>
-                {moment(date.from).format('YYYY-MM-DD')} ~ {moment(date.to).format('YYYY-MM-DD')}
+                {dayjs(date.from).format('YYYY-MM-DD')} ~ {dayjs(date.to).format('YYYY-MM-DD')}
               </>
             ) : (
-              moment(date.from).format('YYYY-MM-DD')
+              dayjs(date.from).format('YYYY-MM-DD')
             )
           ) : (
             <span>날짜를 선택해주세요.</span>

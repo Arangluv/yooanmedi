@@ -1,7 +1,7 @@
 'use client';
 
 import { Fragment } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import OrderStatusBadge from '@/entities/order/ui/admin/badge';
 import EmptyOrderInfo from '@/entities/order/ui/admin/EmptyOrderInfo';
 import { ORDER_STATUS, OrderStatus } from '@/entities/order/constants/order-status';
@@ -48,7 +48,7 @@ const OrderInfoCard = ({
         </CardTitle>
         <CardDescription className="flex flex-row gap-2 text-lg">
           <span>#{order.orderNo}</span>•
-          <span>{moment(date).format('YYYY-MM-DD HH:mm:ss')} 생성</span>
+          <span>{dayjs(date).format('YYYY-MM-DD HH:mm:ss')} 생성</span>
         </CardDescription>
       </CardHeader>
       <CardContent>

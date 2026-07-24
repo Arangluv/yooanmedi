@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { url, string, number } from './base.schema';
 import { EASYPAY_CONFIG } from '@/shared/config/easypay.config';
 import { PAYMENTS_METHOD } from '@/shared/config/site.config';
@@ -67,10 +67,10 @@ export const approvalReqDate = string({
 export const approvalDate = z
   .string()
   .refine(
-    (val) => moment(val, 'YYYYMMDDHHmmss', true).isValid(), // strict을 활성화해야 YYYYMMDD도 걸러낸다
+    (val) => dayjs(val, 'YYYYMMDDHHmmss', true).isValid(), // strict을 활성화해야 YYYYMMDD도 걸러낸다
     'approvalDate는 YYYYMMDDHHmmss 형식이어야 합니다.',
   )
-  .transform((val) => moment(val, 'YYYYMMDDHHmmss').toISOString());
+  .transform((val) => dayjs(val, 'YYYYMMDDHHmmss').toISOString());
 
 export const shopTransactionId = string({
   required_message: 'authorizationId는 비어있을 수 없습니다.',

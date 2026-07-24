@@ -17,7 +17,8 @@
     "test:unit": "vitest --ui --config vitest.unit.config.ts",
     "test:integration": "vitest --ui --config vitest.integration.config.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "@heroui/checkbox": "^2.3.27",
@@ -48,12 +49,11 @@
     "cross-env": "^7.0.3",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.21",
     "dotenv": "16.4.7",
     "framer-motion": "^12.23.12",
     "graphql": "^16.8.1",
     "lucide-react": "^0.554.0",
-    "moment": "^2.30.1",
-    "moment-timezone": "^0.6.0",
     "motion": "^12.23.22",
     "next": "15.5.7",
     "next-themes": "^0.4.6",
@@ -79,6 +79,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
+    "@next/bundle-analyzer": "^16.2.11",
     "@react-types/shared": "^3.32.1",
     "@storybook/addon-a11y": "^10.4.6",
     "@storybook/addon-docs": "^10.4.6",

@@ -1,13 +1,13 @@
 'use server';
 
 import { v4 as uuidv4 } from 'uuid';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import crypto from 'crypto';
 
 export const generateEncryptClientInfo = async (serverPublicKeyBase64: string) => {
   const identifier = 'YOOAN-';
   const clientTxId = identifier + uuidv4().split('-').join('').toUpperCase().substring(0, 26);
-  const requestTime = moment.tz('Asia/Seoul').format('YYYYMMDDHHmmss');
+  const requestTime = dayjs().format('YYYYMMDDHHmmss');
 
   const jsonData = JSON.stringify({
     version: 'V2',

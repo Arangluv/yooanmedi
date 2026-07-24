@@ -1,7 +1,7 @@
 'use client';
 
 import * as XLSX from 'xlsx-js-style';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import SharedExcelExportButton from '@/shared/ui/ExcelExportButton';
 import { ClientOrderListItem } from '@/features/order/order-list';
 
@@ -27,7 +27,7 @@ export const ExcelExportButton = ({ data }: { data: ClientOrderListItem[] }) => 
       order.orderProducts.forEach((orderProduct) => {
         const willPushData = {
           번호: indexCount,
-          주문일시: moment(order.createdAt).format('YYYY-MM-DD'),
+          주문일시: dayjs(order.createdAt).format('YYYY-MM-DD'),
           제조사: orderProduct.product.manufacturer,
           상품명: orderProduct.productNameSnapshot,
           보험코드: orderProduct.product.insurance_code ?? '',

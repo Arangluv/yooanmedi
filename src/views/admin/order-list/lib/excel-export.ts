@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx-js-style';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { ORDER_STATUS_NAME } from '@/entities/order';
 import { PAYMENTS_METHOD_NAME } from '@/shared';
 import { AdminOrderListResult } from '@/features/order/order-list';
@@ -10,7 +10,7 @@ export const exportExcel = async (orders: AdminOrderListResult['orders']) => {
     return {
       번호: index + 1,
       주문번호: item.orderNo,
-      주문일시: moment(item.createdAt).format('YYYY-MM-DD'),
+      주문일시: dayjs(item.createdAt).format('YYYY-MM-DD'),
       상호명: item.user.hospitalName,
       총금액: item.finalPrice,
       // @ts-ignore
