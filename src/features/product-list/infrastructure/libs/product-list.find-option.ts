@@ -53,6 +53,7 @@ export const ProductListFindOption = {
             equals: true,
           },
         },
+        sort: '-stock', // 재고 내림차순으로 정렬
         limit: 12,
       };
     },
