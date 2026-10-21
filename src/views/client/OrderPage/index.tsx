@@ -27,7 +27,6 @@ type Props = {
 
 export const OrderPage = async ({ searchParams }: Props) => {
   const safeSearchParams = await ProductListSearchParamsGenerator.getSafeSearchParams(searchParams);
-
   const [productListResponse, rankingResponse, categoriesResponse] = await Promise.all([
     getProductListApi(safeSearchParams),
     getRankingProductListApi(),
@@ -88,6 +87,7 @@ export const OrderPage = async ({ searchParams }: Props) => {
             <div className="w-[calc((100%-1024px)/2)]"></div>
             <ProductListView
               products={productListResponse.data.products}
+              category={safeSearchParams.category}
               totalCount={productListResponse.data.totalCount}
               condition={safeSearchParams.condition}
               keyword={safeSearchParams.keyword}

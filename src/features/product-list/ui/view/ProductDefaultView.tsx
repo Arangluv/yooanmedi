@@ -8,14 +8,16 @@ import RankingListSection from '../RankingListSection';
 
 const ProductDefaultView = ({
   products,
+  category,
   totalCount,
 }: {
   products: Product[];
+  category: null | number;
   totalCount: number;
 }) => {
   return (
     <section className="mt-16 flex w-5xl flex-shrink-0 flex-col gap-16">
-      <RankingListSection />
+      {category ? null : <RankingListSection />}
       <DefaultListSection products={products} />
       <ProductListPagination totalCount={totalCount} />
     </section>

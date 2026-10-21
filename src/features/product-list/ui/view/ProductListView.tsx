@@ -6,6 +6,7 @@ import { ProductListSearchFieldKey } from '../../constants';
 
 interface ProductListViewProps {
   products: Product[];
+  category: null | number;
   totalCount: number;
   condition: ProductListSearchFieldKey;
   keyword: string;
@@ -14,6 +15,7 @@ interface ProductListViewProps {
 
 export const ProductListView = ({
   products,
+  category,
   totalCount,
   condition,
   keyword,
@@ -34,5 +36,5 @@ export const ProductListView = ({
     );
   }
 
-  return <ProductDefaultView products={products} totalCount={totalCount} />;
+  return <ProductDefaultView category={category} products={products} totalCount={totalCount} />;
 };
